@@ -16,11 +16,11 @@ export default async function DashboardPage() {
   const greet = hour < 12 ? "Xayrli tong" : hour < 18 ? "Xayrli kun" : "Xayrli kech";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
         <p className="text-sm text-[var(--muted)] mb-1">{greet},</p>
-        <h1 className="font-display text-3xl font-bold tracking-tight">{user.fullName}</h1>
-        <p className="text-[var(--muted)] mt-1">{t(`positions.${user.position}`)}</p>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{user.fullName}</h1>
+        <p className="text-[var(--muted)] mt-1 text-sm sm:text-base">{t(`positions.${user.position}`)}</p>
       </div>
 
       <InboxWidget userId={user.id} />

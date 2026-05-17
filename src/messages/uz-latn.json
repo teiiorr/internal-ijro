@@ -186,9 +186,10 @@
       "calendar": "Kalendar"
     },
     "scope": {
-      "mine": "Mening",
+      "mine": "Mening vazifalarim",
       "team": "Jamoa",
-      "all": "Hammasi"
+      "all": "Hammasi",
+      "given": "Berganlarim"
     },
     "fields": {
       "title": "Sarlavha",

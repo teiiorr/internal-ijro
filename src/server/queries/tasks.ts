@@ -21,8 +21,8 @@ export type TaskListFilters = {
   priority?: TaskPriority | null;
   assignedToUserId?: string | null;
   projectId?: string | null;
-  /** Deprecated: kept for API compat. Filtering is always involvement-based now. */
-  scope?: "mine" | "team" | "all";
+  /** "mine" = tasks where I'm an assignee, "given" = tasks I created, default = both. */
+  scope?: "mine" | "given" | "all";
   actorId: string;
   actorPosition: Position;
   actorDepartmentId: string | null;
@@ -40,13 +40,19 @@ export async function listTasks(f: TaskListFilters) {
   if (f.assignedToUserId) conds.push(eq(tasks.assignedToUserId, f.assignedToUserId));
   if (f.projectId) conds.push(eq(tasks.projectId, f.projectId));
 
-  // Every user only sees tasks they're personally involved in:
-  // - listed in task_assignees as an executor
-  // - created by them (for review)
-  conds.push(
-    sql`(${tasks.createdByUserId} = ${f.actorId}
-         OR EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId}))`
-  );
+  // Involvement filter — scope-aware
+  if (f.scope === "mine") {
+    conds.push(
+      sql`EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId})`
+    );
+  } else if (f.scope === "given") {
+    conds.push(sql`${tasks.createdByUserId} = ${f.actorId}`);
+  } else {
+    conds.push(
+      sql`(${tasks.createdByUserId} = ${f.actorId}
+           OR EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId}))`
+    );
+  }
 
   const assignedAlias = users as typeof users;
   const condition = conds.length > 0 ? and(...conds) : undefined;

@@ -52,7 +52,38 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
         )}
       </div>
       <EmployeesFilterBar departments={departments.map((d) => ({ id: d.id, name: d.name }))} />
-      <Card>
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-2">
+        {rows.map((r) => (
+          <Link
+            key={r.id}
+            href={`/employees/${r.id}`}
+            className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:bg-[var(--surface-2)] transition-colors"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-[15px]">{r.fullName}</p>
+                <p className="text-xs text-[var(--muted)] truncate mt-0.5">{r.email}</p>
+              </div>
+              <Badge
+                variant={r.status === "active" ? "success" : r.status === "pending" ? "warning" : r.status === "archived" ? "secondary" : "danger"}
+              >
+                {r.status}
+              </Badge>
+            </div>
+            <div className="flex items-center justify-between mt-2 text-xs text-[var(--muted)]">
+              <span>{t(`positions.${r.position}`)}</span>
+              <span className="truncate ml-2">{r.departmentName ?? "—"}</span>
+            </div>
+          </Link>
+        ))}
+        {rows.length === 0 && (
+          <p className="text-center py-10 text-[var(--muted)]">{t("employees.empty")}</p>
+        )}
+      </div>
+
+      {/* Desktop table */}
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
