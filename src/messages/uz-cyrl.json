@@ -118,7 +118,8 @@
     "submitted": "Юборилган",
     "revision_requested": "Қайта кўриб чиқиш сўралди",
     "paid": "Тўланган",
-    "partial": "Қисман"
+    "partial": "Қисман",
+    "under_review": "Текширувда"
   },
   "auth": {
     "login": {

@@ -118,7 +118,8 @@
     "submitted": "Yuborilgan",
     "revision_requested": "Qayta ko'rib chiqish so'raldi",
     "paid": "To'langan",
-    "partial": "Qisman"
+    "partial": "Qisman",
+    "under_review": "Tekshiruvda"
   },
   "auth": {
     "login": {

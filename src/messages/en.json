@@ -118,7 +118,8 @@
     "submitted": "Submitted",
     "revision_requested": "Revision requested",
     "paid": "Paid",
-    "partial": "Partial"
+    "partial": "Partial",
+    "under_review": "Under review"
   },
   "auth": {
     "login": {

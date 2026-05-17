@@ -118,7 +118,8 @@
     "submitted": "Отправлено",
     "revision_requested": "Запрошена доработка",
     "paid": "Оплачено",
-    "partial": "Частично"
+    "partial": "Частично",
+    "under_review": "На проверке"
   },
   "auth": {
     "login": {
