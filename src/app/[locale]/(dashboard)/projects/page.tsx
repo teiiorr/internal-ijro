@@ -10,9 +10,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Download } from "lucide-react";
 import { can } from "@/lib/permissions";
 
+const PROJECT_VIEW_ROLES = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
+
 export default async function ProjectsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  if (!(PROJECT_VIEW_ROLES as readonly string[]).includes(session.user.position)) redirect("/dashboard");
   const t = await getTranslations();
   const rows = await listProjects({});
   const canCreate = can(session.user.position, "projects.create");

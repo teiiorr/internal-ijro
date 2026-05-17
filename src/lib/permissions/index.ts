@@ -60,6 +60,10 @@ export async function canAssignTaskTo(
   if (assigner.id === assignee.id) return false;
   if (assigner.position === "hr" || assigner.position === "mutaxassis") return false;
   if (assigner.position === "kontragent") return false;
+  if (assignee.position === "kontragent") return false;
+
+  // HR can receive tasks from any manager (cross-department support function).
+  if (assignee.position === "hr") return true;
 
   if (assigner.position === "direktor") return true;
   if (assigner.position === "orinbosar") return assignee.position !== "direktor";

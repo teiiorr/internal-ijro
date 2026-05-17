@@ -12,9 +12,12 @@ import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { CompleteProjectDialog } from "@/components/projects/complete-project-dialog";
 import { GanttChart } from "@/components/projects/gantt-chart";
 
+const PROJECT_VIEW_ROLES = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
+
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  if (!(PROJECT_VIEW_ROLES as readonly string[]).includes(session.user.position)) redirect("/dashboard");
   const t = await getTranslations();
   const { id } = await params;
   const data = await getProject(id);

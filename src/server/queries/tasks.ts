@@ -39,8 +39,17 @@ export async function listTasks(f: TaskListFilters) {
   if (f.projectId) conds.push(eq(tasks.projectId, f.projectId));
 
   // Scope-based filtering by role
-  if (f.scope === "mine" || ["mutaxassis"].includes(f.actorPosition)) {
+  if (f.scope === "mine") {
     conds.push(eq(tasks.assignedToUserId, f.actorId));
+  } else if (f.actorPosition === "mutaxassis") {
+    // Mutaxassis sees only tasks of their own department (assignee in same dept) or own tasks.
+    if (f.actorDepartmentId) {
+      conds.push(
+        sql`(${tasks.assignedToUserId} in (select id from users where department_id = ${f.actorDepartmentId}) OR ${tasks.assignedToUserId} = ${f.actorId})`
+      );
+    } else {
+      conds.push(eq(tasks.assignedToUserId, f.actorId));
+    }
   } else if (f.scope === "team" && ["bosh_mutaxassis", "yetakchi_mutaxassis", "bolim_boshligi"].includes(f.actorPosition)) {
     // Tasks where assigned user reports to me OR is in my department
     conds.push(
@@ -173,7 +182,7 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
       .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
       .from(users)
       .where(
-        sql`${users.status} = 'active' AND ${users.departmentId} = ${actorDepartmentId} AND ${users.position} in ('bosh_mutaxassis','yetakchi_mutaxassis','mutaxassis')`
+        sql`${users.status} = 'active' AND (${users.departmentId} = ${actorDepartmentId} AND ${users.position} in ('bosh_mutaxassis','yetakchi_mutaxassis','mutaxassis') OR ${users.position} = 'hr')`
       )
       .orderBy(users.fullName);
   }
@@ -182,16 +191,16 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
       .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
       .from(users)
       .where(
-        sql`${users.status} = 'active' AND ${users.departmentId} in (select department_id from coordinator_assignments where coordinator_user_id = ${actorId}) AND ${users.position} in ('bolim_boshligi','bosh_mutaxassis','yetakchi_mutaxassis','mutaxassis')`
+        sql`${users.status} = 'active' AND (${users.departmentId} in (select department_id from coordinator_assignments where coordinator_user_id = ${actorId}) AND ${users.position} in ('bolim_boshligi','bosh_mutaxassis','yetakchi_mutaxassis','mutaxassis') OR ${users.position} = 'hr')`
       )
       .orderBy(users.fullName);
   }
   if (actorPosition === "bosh_mutaxassis" || actorPosition === "yetakchi_mutaxassis") {
-    // Direct reports
+    // Direct reports + HR
     return db
       .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
       .from(users)
-      .where(sql`${users.status} = 'active' AND ${users.reportsToUserId} = ${actorId}`)
+      .where(sql`${users.status} = 'active' AND (${users.reportsToUserId} = ${actorId} OR ${users.position} = 'hr')`)
       .orderBy(users.fullName);
   }
   return [];

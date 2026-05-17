@@ -31,7 +31,7 @@ const HR_ROLES: Position[] = ["direktor", "orinbosar", "hr"];
 const ITEMS: Item[] = [
   { href: "/dashboard", icon: LayoutDashboard, key: "dashboard", allowed: ALL },
   { href: "/tasks", icon: CheckSquare, key: "tasks", allowed: STAFF },
-  { href: "/projects", icon: FolderKanban, key: "projects", allowed: ALL },
+  { href: "/projects", icon: FolderKanban, key: "projects", allowed: ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] },
   { href: "/employees", icon: Users, key: "employees", allowed: HR_ROLES },
   { href: "/departments", icon: Building2, key: "departments", allowed: ADMIN },
   { href: "/contractors", icon: Briefcase, key: "contractors", allowed: ADMIN.concat("koordinator") },

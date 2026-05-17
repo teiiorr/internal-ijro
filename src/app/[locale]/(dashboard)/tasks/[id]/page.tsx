@@ -1,19 +1,21 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { eq, inArray, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { departments as deptsTbl, users as usersTbl } from "@/lib/db/schema";
 import { getTask } from "@/server/queries/tasks";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { TaskPriorityBadge, TaskStatusBadge } from "@/components/tasks/task-status-badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { StatusControl } from "@/components/tasks/status-control";
 import { CommentsSection } from "@/components/tasks/comments-section";
 import { ChecklistSection } from "@/components/tasks/checklist-section";
 import { WatcherToggle } from "@/components/tasks/watcher-toggle";
 import { AttachmentsSection } from "@/components/tasks/attachments-section";
-import { sql } from "drizzle-orm";
+import { TaskHeaderCard } from "@/components/tasks/task-header-card";
+import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-card";
+import { ArrowLeft } from "lucide-react";
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -30,70 +32,95 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const isWatcher = data.watchers.some((w) => w.userId === me.id);
   const canEdit = isCreator || isAssignee || ["direktor", "orinbosar"].includes(me.position);
 
-  const allUsers = await db
-    .select({ id: users.id, fullName: users.fullName })
-    .from(users)
-    .where(sql`${users.status} = 'active'`)
-    .orderBy(users.fullName);
+  const ids = Array.from(new Set([data.task.assignedToUserId, ...data.watchers.map((w) => w.userId)]));
+  const peopleRows = await db
+    .select({ id: usersTbl.id, fullName: usersTbl.fullName, deptName: deptsTbl.name })
+    .from(usersTbl)
+    .leftJoin(deptsTbl, eq(deptsTbl.id, usersTbl.departmentId))
+    .where(inArray(usersTbl.id, ids));
+  const peopleMap = new Map(peopleRows.map((p) => [p.id, p]));
 
-  const overdue =
-    data.task.deadline && new Date(data.task.deadline) < new Date() && !["completed", "rejected"].includes(data.task.status);
+  const assignees: AssigneeItem[] = [
+    {
+      id: data.task.assignedToUserId,
+      fullName: peopleMap.get(data.task.assignedToUserId)?.fullName ?? "—",
+      departmentName: peopleMap.get(data.task.assignedToUserId)?.deptName ?? null,
+      status: data.task.status as AssigneeItem["status"],
+      updatedAt: data.task.updatedAt,
+      isPrimary: true,
+    },
+    ...data.watchers
+      .filter((w) => w.userId !== data.task.assignedToUserId)
+      .map<AssigneeItem>((w) => ({
+        id: w.userId,
+        fullName: peopleMap.get(w.userId)?.fullName ?? w.fullName,
+        departmentName: peopleMap.get(w.userId)?.deptName ?? null,
+        status: data.task.status as AssigneeItem["status"],
+        updatedAt: data.task.updatedAt,
+        isWatcher: true,
+      })),
+  ];
+
+  const allUsers = await db
+    .select({ id: usersTbl.id, fullName: usersTbl.fullName })
+    .from(usersTbl)
+    .where(sql`${usersTbl.status} = 'active'`)
+    .orderBy(usersTbl.fullName);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-start flex-wrap gap-3">
-        <div>
+    <div className="space-y-6 max-w-5xl">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <Button asChild variant="ghost" size="icon">
+            <Link href="/tasks"><ArrowLeft className="size-5" /></Link>
+          </Button>
           <h1 className="text-2xl font-bold">{data.task.title}</h1>
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <TaskStatusBadge status={data.task.status} />
-            <TaskPriorityBadge priority={data.task.priority} />
-            {data.task.deadline && (
-              <Badge variant={overdue ? "danger" : "secondary"}>
-                {t("tasks.due")} {new Date(data.task.deadline).toLocaleString()}
-              </Badge>
-            )}
-            {data.project && (
-              <Link href={`/projects/${data.project.id}`} className="text-sm text-[var(--primary)] hover:underline">
-                {data.project.name}
-              </Link>
-            )}
-          </div>
         </div>
         <WatcherToggle taskId={data.task.id} watching={isWatcher} />
       </div>
 
+      <TaskHeaderCard
+        creator={data.creator}
+        task={{
+          title: data.task.title,
+          description: data.task.description,
+          status: data.task.status,
+          priority: data.task.priority,
+          deadline: data.task.deadline as Date | null,
+          createdAt: data.task.createdAt,
+        }}
+      />
+
+      <AssigneesCard items={assignees} />
+
+      {data.task.rejectionReason && (
+        <Card>
+          <CardContent className="p-6">
+            <p className="text-sm text-[var(--danger)] font-medium mb-1">{t("tasks.sections.rejectionReason")}</p>
+            <p className="text-base">{data.task.rejectionReason}</p>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <Card>
-            <CardHeader><CardTitle className="text-lg">{t("tasks.sections.description")}</CardTitle></CardHeader>
-            <CardContent>
-              <p className="whitespace-pre-wrap text-sm">{data.task.description ?? <span className="text-[var(--muted)]">{t("tasks.sections.noDescription")}</span>}</p>
-              {data.task.rejectionReason && (
-                <div className="mt-4 rounded-lg bg-[var(--danger)]/10 p-3 text-sm">
-                  <p className="font-medium">{t("tasks.sections.rejectionReason")}</p>
-                  <p>{data.task.rejectionReason}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle className="text-lg">{t("tasks.sections.checklist")}</CardTitle></CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-3">
+              <h3 className="text-lg font-semibold">{t("tasks.sections.checklist")}</h3>
               <ChecklistSection taskId={data.task.id} items={data.checklist} />
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader><CardTitle className="text-lg">{t("tasks.sections.attachments")}</CardTitle></CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-3">
+              <h3 className="text-lg font-semibold">{t("tasks.sections.attachments")}</h3>
               <AttachmentsSection taskId={data.task.id} attachments={data.attachments} canEdit={canEdit} />
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader><CardTitle className="text-lg">{t("tasks.sections.comments")}</CardTitle></CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-3">
+              <h3 className="text-lg font-semibold">{t("tasks.sections.comments")}</h3>
               <CommentsSection taskId={data.task.id} comments={data.comments.map((c) => ({ ...c, mentions: (c.mentions as string[] | null) ?? null }))} users={allUsers} />
             </CardContent>
           </Card>
@@ -101,38 +128,33 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
         <div className="space-y-6">
           <Card>
-            <CardHeader><CardTitle className="text-lg">{t("tasks.sections.statusSection")}</CardTitle></CardHeader>
-            <CardContent>
+            <CardContent className="p-6 space-y-3">
+              <h3 className="text-lg font-semibold">{t("tasks.sections.statusSection")}</h3>
               <StatusControl taskId={data.task.id} current={data.task.status} isCreator={isCreator} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle className="text-lg">{t("tasks.sections.people")}</CardTitle></CardHeader>
-            <CardContent className="text-sm space-y-2">
-              <div><span className="text-[var(--muted)]">{t("common.assignee")}:</span> {data.assignee?.fullName ?? "—"}</div>
-              <div><span className="text-[var(--muted)]">{t("common.creator")}:</span> {data.creator?.fullName ?? "—"}</div>
-              <div className="pt-2">
-                <span className="text-[var(--muted)]">{t("tasks.sections.watchers")} ({data.watchers.length}):</span>
-                <ul className="mt-1 text-sm">
-                  {data.watchers.map((w) => <li key={w.userId}>{w.fullName}</li>)}
-                </ul>
-              </div>
             </CardContent>
           </Card>
 
           {data.dependencies.length > 0 && (
             <Card>
-              <CardHeader><CardTitle className="text-lg">{t("tasks.sections.dependencies")}</CardTitle></CardHeader>
-              <CardContent>
+              <CardContent className="p-6 space-y-3">
+                <h3 className="text-lg font-semibold">{t("tasks.sections.dependencies")}</h3>
                 <ul className="space-y-1 text-sm">
                   {data.dependencies.map((d) => (
                     <li key={d.id}>
                       <Link href={`/tasks/${d.dependsOnTaskId}`} className="hover:underline">{d.dependsOnTitle}</Link>{" "}
-                      <span className="text-[var(--muted)]">— {d.dependsOnStatus}</span>
+                      <span className="text-[var(--muted)]">— {t(`status.${d.dependsOnStatus}` as "status.completed")}</span>
                     </li>
                   ))}
                 </ul>
+              </CardContent>
+            </Card>
+          )}
+
+          {data.project && (
+            <Card>
+              <CardContent className="p-6 space-y-2">
+                <p className="text-[var(--muted)] text-sm">{t("common.project")}</p>
+                <p className="font-medium">{data.project.name}</p>
               </CardContent>
             </Card>
           )}
