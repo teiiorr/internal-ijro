@@ -6,8 +6,10 @@ import { listTasks } from "@/server/queries/tasks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TasksViewSwitcher } from "@/components/tasks/tasks-view-switcher";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Download } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type StatusTab = "all" | "in_progress" | "under_review" | "completed";
 
 export default async function TasksPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const session = await auth();
@@ -18,19 +20,52 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
 
   const canCreate = !["mutaxassis", "hr", "kontragent"].includes(me.position);
-  const scope = (get("scope") as "mine" | "team" | "all" | undefined) ?? (me.position === "mutaxassis" ? "mine" : "all");
+  const tab = ((get("tab") as StatusTab | undefined) ?? "all") as StatusTab;
 
-  const tasks = await listTasks({
+  const allTasks = await listTasks({
     actorId: me.id,
     actorPosition: me.position,
     actorDepartmentId: me.departmentId,
-    scope,
+    scope: "all",
     search: get("q"),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    status: (get("status") as any) ?? null,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    priority: (get("priority") as any) ?? null,
   });
+
+  const filtered =
+    tab === "all"
+      ? allTasks
+      : tab === "in_progress"
+        ? allTasks.filter((x) => x.status === "in_progress" || x.status === "todo" || x.status === "rejected")
+        : tab === "under_review"
+          ? allTasks.filter((x) => x.status === "under_review")
+          : allTasks.filter((x) => x.status === "completed");
+
+  const counts = {
+    all: allTasks.length,
+    in_progress: allTasks.filter((x) => ["in_progress", "todo", "rejected"].includes(x.status)).length,
+    under_review: allTasks.filter((x) => x.status === "under_review").length,
+    completed: allTasks.filter((x) => x.status === "completed").length,
+  };
+
+  const TabBtn = ({ value, label, color }: { value: StatusTab; label: string; color: string }) => (
+    <Link
+      href={`/tasks?tab=${value}`}
+      replace
+      className={cn(
+        "px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
+        tab === value
+          ? "bg-[var(--background-elevated)] shadow-sm"
+          : "text-[var(--muted)] hover:text-[var(--foreground)]"
+      )}
+    >
+      <span className={tab === value ? color : ""}>{label}</span>
+      <span className={cn(
+        "text-xs rounded-full px-1.5 py-0.5",
+        tab === value ? `${color} bg-[var(--secondary)]` : "bg-[var(--secondary)] text-[var(--muted)]"
+      )}>
+        {counts[value]}
+      </span>
+    </Link>
+  );
 
   return (
     <div className="space-y-6">
@@ -38,7 +73,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
         <h1 className="text-3xl font-bold">{t("tasks.pageTitle")}</h1>
         <div className="flex gap-2">
           <Button asChild variant="outline">
-            <a href={`/api/export/tasks?scope=${scope}`}><Download className="size-4" /> XLSX</a>
+            <a href={`/api/export/tasks?scope=mine`}><Download className="size-4" /> XLSX</a>
           </Button>
           {canCreate && (
             <Button asChild>
@@ -48,19 +83,16 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
         </div>
       </div>
 
-      <Tabs value={scope}>
-        <TabsList>
-          <TabsTrigger value="mine" asChild><Link href="/tasks?scope=mine" replace>{t("tasks.scope.mine")}</Link></TabsTrigger>
-          {!["mutaxassis"].includes(me.position) && <TabsTrigger value="team" asChild><Link href="/tasks?scope=team" replace>{t("tasks.scope.team")}</Link></TabsTrigger>}
-          {["direktor","orinbosar","koordinator","bolim_boshligi"].includes(me.position) && (
-            <TabsTrigger value="all" asChild><Link href="/tasks?scope=all" replace>{t("tasks.scope.all")}</Link></TabsTrigger>
-          )}
-        </TabsList>
-      </Tabs>
+      <div className="flex gap-1 bg-[var(--secondary)] rounded-lg p-1 w-fit">
+        <TabBtn value="all" label={t("common.all")} color="text-[var(--foreground)]" />
+        <TabBtn value="in_progress" label={t("status.in_progress")} color="text-[var(--primary)]" />
+        <TabBtn value="under_review" label={t("status.under_review")} color="text-[var(--warning)]" />
+        <TabBtn value="completed" label={t("status.completed")} color="text-[var(--success)]" />
+      </div>
 
       <Card>
         <CardContent className="p-4">
-          <TasksViewSwitcher tasks={tasks} />
+          <TasksViewSwitcher tasks={filtered} />
         </CardContent>
       </Card>
     </div>

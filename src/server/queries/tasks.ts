@@ -20,6 +20,7 @@ export type TaskListFilters = {
   priority?: TaskPriority | null;
   assignedToUserId?: string | null;
   projectId?: string | null;
+  /** Deprecated: kept for API compat. Filtering is always involvement-based now. */
   scope?: "mine" | "team" | "all";
   actorId: string;
   actorPosition: Position;
@@ -38,25 +39,15 @@ export async function listTasks(f: TaskListFilters) {
   if (f.assignedToUserId) conds.push(eq(tasks.assignedToUserId, f.assignedToUserId));
   if (f.projectId) conds.push(eq(tasks.projectId, f.projectId));
 
-  // Scope-based filtering by role
-  if (f.scope === "mine") {
-    conds.push(eq(tasks.assignedToUserId, f.actorId));
-  } else if (f.actorPosition === "mutaxassis") {
-    // Mutaxassis sees only tasks of their own department (assignee in same dept) or own tasks.
-    if (f.actorDepartmentId) {
-      conds.push(
-        sql`(${tasks.assignedToUserId} in (select id from users where department_id = ${f.actorDepartmentId}) OR ${tasks.assignedToUserId} = ${f.actorId})`
-      );
-    } else {
-      conds.push(eq(tasks.assignedToUserId, f.actorId));
-    }
-  } else if (f.scope === "team" && ["bosh_mutaxassis", "yetakchi_mutaxassis", "bolim_boshligi"].includes(f.actorPosition)) {
-    // Tasks where assigned user reports to me OR is in my department
-    conds.push(
-      sql`(${tasks.assignedToUserId} in (select id from users where reports_to_user_id = ${f.actorId}) OR ${tasks.createdByUserId} = ${f.actorId})`
-    );
-  }
-  // Direktor/Orinbosar see all by default
+  // Every user only sees tasks they're personally involved in:
+  // - assigned to them (for execution)
+  // - created by them (for review / approval)
+  // - watching the task
+  conds.push(
+    sql`(${tasks.assignedToUserId} = ${f.actorId}
+         OR ${tasks.createdByUserId} = ${f.actorId}
+         OR exists (select 1 from task_watchers tw where tw.task_id = ${tasks.id} AND tw.user_id = ${f.actorId}))`
+  );
 
   const assignedAlias = users as typeof users;
   const condition = conds.length > 0 ? and(...conds) : undefined;
