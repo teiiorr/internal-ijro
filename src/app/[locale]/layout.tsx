@@ -2,6 +2,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 import { Manrope, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 
 const manrope = Manrope({
@@ -43,6 +44,14 @@ export default async function LocaleLayout({
       <body>
         <ThemeProvider initial="system">
           <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: { fontFamily: "var(--font-sans)", borderRadius: "12px" },
+              className: "shadow-lifted",
+            }}
+            closeButton
+          />
         </ThemeProvider>
       </body>
     </html>

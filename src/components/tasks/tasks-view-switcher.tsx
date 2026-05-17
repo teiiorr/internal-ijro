@@ -5,8 +5,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TaskPriorityBadge, TaskStatusBadge } from "./task-status-badge";
 import { CalendarView } from "./calendar-view";
 import Link from "next/link";
-import { List, Calendar as CalendarIcon } from "lucide-react";
+import { List, Calendar as CalendarIcon, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { deadlineRelative } from "@/lib/dates";
+import { EmptyState } from "@/components/empty-state";
 
 type T = {
   id: string;
@@ -58,23 +60,34 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
           </TableHeader>
           <TableBody>
             {tasks.map((row) => {
-              const overdue = row.deadline && new Date(row.deadline) < new Date() && !["completed", "rejected"].includes(row.status);
+              const rel = deadlineRelative(row.deadline, { completed: ["completed", "rejected"].includes(row.status) });
               return (
-                <TableRow key={row.id} className={overdue ? "bg-[var(--danger-soft)]" : undefined}>
+                <TableRow key={row.id} className={cn(rel.tone === "overdue" && "bg-[var(--danger-soft)]/40")}>
                   <TableCell><Link href={`/tasks/${row.id}`} className="font-medium hover:underline">{row.title}</Link></TableCell>
                   <TableCell><TaskStatusBadge status={row.status} /></TableCell>
                   <TableCell><TaskPriorityBadge priority={row.priority} /></TableCell>
                   <TableCell>{row.assignedToName ?? "—"}</TableCell>
                   <TableCell>{row.projectName ?? "—"}</TableCell>
-                  <TableCell className="tabular">{row.deadline ? new Date(row.deadline).toLocaleDateString() : "—"}</TableCell>
+                  <TableCell className="tabular">
+                    {row.deadline ? (
+                      <span className={cn(
+                        "inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full",
+                        rel.tone === "overdue" ? "bg-[var(--danger-soft)] text-[var(--danger)]" :
+                        rel.tone === "soon" || rel.tone === "today" ? "bg-[var(--warning-soft)] text-[var(--warning)]" :
+                        "bg-[var(--surface-3)] text-[var(--muted)]"
+                      )}>
+                        {rel.text}
+                      </span>
+                    ) : "—"}
+                  </TableCell>
                 </TableRow>
               );
             })}
-            {tasks.length === 0 && (
-              <TableRow><TableCell colSpan={6} className="text-center py-10 text-[var(--muted)]">{t("tasks.emptyList")}</TableCell></TableRow>
-            )}
           </TableBody>
         </Table>
+      )}
+      {view === "list" && tasks.length === 0 && (
+        <EmptyState icon={Inbox} title={t("tasks.emptyList")} description="Hozircha sizga topshiriqlar yo'q. Yangi topshiriqlar paydo bo'lganda bu yerda ko'rinadi." />
       )}
 
       {view === "calendar" && <CalendarView tasks={tasks} />}

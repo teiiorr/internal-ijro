@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { eq } from "drizzle-orm";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CopyRegistration } from "@/components/copy-registration";
+import { deadlineRelative, formatDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { departments as deptsTbl, users as usersTbl } from "@/lib/db/schema";
 
@@ -58,20 +60,16 @@ export async function TaskHeaderCard({ creator, task }: Props) {
     creatorDept = row[0]?.deptName ?? null;
   }
 
-  const fmtDate = (d: Date | null) =>
-    d ? new Intl.DateTimeFormat("uz-UZ", { day: "numeric", month: "long", year: "numeric" }).format(new Date(d)) : "—";
-  const fmtFull = (d: Date | null) =>
-    d ? new Intl.DateTimeFormat("uz-UZ", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(d)) : "—";
-
-  const overdue = task.deadline && new Date(task.deadline) < new Date() && !["completed", "rejected"].includes(task.status);
+  const isCompleted = ["completed", "rejected"].includes(task.status);
+  const rel = deadlineRelative(task.deadline, { completed: isCompleted });
+  const overdue = rel.tone === "overdue";
+  const soon = rel.tone === "soon" || rel.tone === "today";
 
   return (
     <Card className="overflow-hidden">
       {task.registrationNumber && (
         <div className="px-7 pt-5 pb-3 border-b border-[var(--border)] flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--primary-soft)] text-[var(--primary)] px-3 py-1 text-xs font-bold tabular tracking-tight">
-            № {task.registrationNumber}
-          </span>
+          <CopyRegistration regNum={task.registrationNumber} />
         </div>
       )}
       <div className="p-7 flex flex-col md:flex-row md:items-center gap-5 border-b border-[var(--border)]">
@@ -86,10 +84,13 @@ export async function TaskHeaderCard({ creator, task }: Props) {
           </div>
         </div>
         {task.deadline && (
-          <div className={`shrink-0 rounded-xl px-5 py-3 border ${overdue ? "bg-[var(--danger-soft)] border-[var(--danger)]/20" : "bg-[var(--surface-2)] border-[var(--border)]"}`}>
+          <div className={`shrink-0 rounded-xl px-5 py-3 border ${overdue ? "bg-[var(--danger-soft)] border-[var(--danger)]/30" : soon ? "bg-[var(--warning-soft)] border-[var(--warning)]/30" : "bg-[var(--surface-2)] border-[var(--border)]"}`}>
             <p className="eyebrow mb-1">{t("tasks.fields.deadline")}</p>
-            <p className={`font-display text-xl font-bold tracking-tight tabular ${overdue ? "text-[var(--danger)]" : "text-[var(--foreground)]"}`}>
-              {fmtDate(task.deadline)}
+            <p className={`font-display text-xl font-bold tracking-tight tabular ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--foreground)]"}`}>
+              {formatDate(task.deadline)}
+            </p>
+            <p className={`text-xs font-semibold mt-0.5 ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--muted)]"}`}>
+              {rel.text}
             </p>
           </div>
         )}
@@ -98,7 +99,7 @@ export async function TaskHeaderCard({ creator, task }: Props) {
       <div className="px-7 py-6 grid gap-6 sm:grid-cols-3 text-sm border-b border-[var(--border)]">
         <div>
           <p className="eyebrow mb-1.5">{t("common.created")}</p>
-          <p className="font-medium tabular">{fmtFull(task.createdAt)}</p>
+          <p className="font-medium tabular">{formatDate(task.createdAt)}</p>
         </div>
         <div>
           <p className="eyebrow mb-1.5">{t("common.priority")}</p>

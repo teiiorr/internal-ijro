@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -29,10 +30,15 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
     if (!text.trim()) return;
     const file = fileRef.current?.files?.[0] ?? null;
     start(async () => {
-      await submitTaskResponse({ taskId, responseText: text }, file);
-      setText("");
-      setEditing(false);
-      if (fileRef.current) fileRef.current.value = "";
+      try {
+        await submitTaskResponse({ taskId, responseText: text }, file);
+        toast.success("Javob yuborildi", { description: "Topshiriq beruvchi tekshirib chiqadi." });
+        setText("");
+        setEditing(false);
+        if (fileRef.current) fileRef.current.value = "";
+      } catch (err) {
+        toast.error("Yuborib bo'lmadi", { description: (err as Error).message });
+      }
     });
   }
 

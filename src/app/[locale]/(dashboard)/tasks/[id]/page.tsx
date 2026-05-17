@@ -15,7 +15,7 @@ import { AttachmentsSection } from "@/components/tasks/attachments-section";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
 import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-card";
 import { MyResponseCard } from "@/components/tasks/my-response-card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Printer } from "lucide-react";
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -58,7 +58,12 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         <Button asChild variant="ghost" size="icon">
           <Link href="/tasks"><ArrowLeft className="size-5" /></Link>
         </Button>
-        <h1 className="font-display text-2xl font-bold tracking-tight">{data.task.title}</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight flex-1">{data.task.title}</h1>
+        <Button asChild variant="outline" size="sm">
+          <a href={`/api/export/task/${data.task.id}`} target="_blank">
+            <Printer className="size-4" /> Bosma
+          </a>
+        </Button>
       </div>
 
       <TaskHeaderCard

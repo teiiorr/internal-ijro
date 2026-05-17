@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { reviewAssigneeResponse } from "@/server/actions/tasks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export type AssigneeItem = {
   userId: string;
@@ -73,7 +74,12 @@ export function AssigneesCard({
     d ? new Intl.DateTimeFormat("uz-UZ", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(d)) : "—";
 
   async function review(userId: string, decision: "completed" | "rejected") {
-    await reviewAssigneeResponse(taskId, userId, decision, feedback[userId]);
+    try {
+      await reviewAssigneeResponse(taskId, userId, decision, feedback[userId]);
+      toast.success(decision === "completed" ? "Javob tasdiqlandi" : "Javob rad etildi");
+    } catch (err) {
+      toast.error("Xato", { description: (err as Error).message });
+    }
   }
 
   return (

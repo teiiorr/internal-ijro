@@ -2,9 +2,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bell, Search, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { Search, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NotificationBell } from "@/components/layout/notification-bell";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
@@ -23,7 +24,6 @@ function Avatar({ name }: { name: string }) {
 export function Header({ userName }: { userName: string }) {
   const t = useTranslations();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [unread, setUnread] = useState(0);
   const [q, setQ] = useState("");
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -34,22 +34,6 @@ export function Header({ userName }: { userName: string }) {
     }
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function tick() {
-      try {
-        const res = await fetch("/api/notifications/unread-count", { cache: "no-store" });
-        if (!cancelled && res.ok) {
-          const j = (await res.json()) as { count: number };
-          setUnread(j.count);
-        }
-      } catch {}
-    }
-    tick();
-    const id = setInterval(tick, 60_000);
-    return () => { cancelled = true; clearInterval(id); };
   }, []);
 
   function onSearch(e: React.FormEvent<HTMLFormElement>) {
@@ -83,16 +67,7 @@ export function Header({ userName }: { userName: string }) {
         </form>
 
         <div className="ml-auto flex items-center gap-1.5">
-          <Button asChild variant="ghost" size="icon" aria-label={t("nav.notifications")}>
-            <Link href="/notifications" className="relative">
-              <Bell className="size-[19px]" />
-              {unread > 0 && (
-                <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--danger)] text-white text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--background-elevated)]">
-                  {unread > 99 ? "99+" : unread}
-                </span>
-              )}
-            </Link>
-          </Button>
+          <NotificationBell />
           <LanguageSwitcher />
           <ThemeToggle />
 
