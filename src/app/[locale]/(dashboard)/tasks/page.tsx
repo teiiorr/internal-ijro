@@ -51,16 +51,16 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
       href={`/tasks?tab=${value}`}
       replace
       className={cn(
-        "px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
+        "px-4 py-2 rounded-[8px] text-[14px] font-semibold transition-all flex items-center gap-2",
         tab === value
-          ? "bg-[var(--background-elevated)] shadow-sm"
+          ? `bg-[var(--background-elevated)] shadow-soft ${color}`
           : "text-[var(--muted)] hover:text-[var(--foreground)]"
       )}
     >
-      <span className={tab === value ? color : ""}>{label}</span>
+      <span>{label}</span>
       <span className={cn(
-        "text-xs rounded-full px-1.5 py-0.5",
-        tab === value ? `${color} bg-[var(--secondary)]` : "bg-[var(--secondary)] text-[var(--muted)]"
+        "text-[11px] rounded-full px-1.5 py-0 tabular font-bold",
+        tab === value ? "bg-[var(--surface-3)]" : "bg-[var(--surface-3)] text-[var(--muted)]"
       )}>
         {counts[value]}
       </span>
@@ -70,20 +70,23 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-3xl font-bold">{t("tasks.pageTitle")}</h1>
+        <div>
+          <p className="eyebrow mb-2">Ichki ijro</p>
+          <h1 className="font-display text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
+        </div>
         <div className="flex gap-2">
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" size="lg">
             <a href={`/api/export/tasks?scope=mine`}><Download className="size-4" /> XLSX</a>
           </Button>
           {canCreate && (
-            <Button asChild>
+            <Button asChild size="lg">
               <Link href="/tasks/new"><Plus className="size-4" /> {t("tasks.new")}</Link>
             </Button>
           )}
         </div>
       </div>
 
-      <div className="flex gap-1 bg-[var(--secondary)] rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 w-fit">
         <TabBtn value="all" label={t("common.all")} color="text-[var(--foreground)]" />
         <TabBtn value="in_progress" label={t("status.in_progress")} color="text-[var(--primary)]" />
         <TabBtn value="under_review" label={t("status.under_review")} color="text-[var(--warning)]" />

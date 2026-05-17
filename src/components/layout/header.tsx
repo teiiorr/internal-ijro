@@ -1,14 +1,24 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bell, Search, LogOut, User as UserIcon } from "lucide-react";
+import { Bell, Search, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
-import { Input } from "@/components/ui/input";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+
+function Avatar({ name }: { name: string }) {
+  const parts = name.trim().split(/\s+/).slice(0, 2);
+  const initials = parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
+  return (
+    <div className="size-9 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center text-sm font-semibold">
+      {initials}
+    </div>
+  );
+}
 
 export function Header({ userName }: { userName: string }) {
   const t = useTranslations();
@@ -16,6 +26,15 @@ export function Header({ userName }: { userName: string }) {
   const [unread, setUnread] = useState(0);
   const [q, setQ] = useState("");
   const router = useRouter();
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,43 +59,75 @@ export function Header({ userName }: { userName: string }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-[var(--background-elevated)] px-4 md:px-6">
-      <Link href="/dashboard" className="font-semibold text-xl text-[var(--primary)]">{t("app.name")}</Link>
-      <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-xl mx-auto items-center gap-2">
-        <Search className="size-4 text-[var(--muted)]" />
-        <Input placeholder={t("header.searchPlaceholder")} className="h-10" value={q} onChange={(e) => setQ(e.target.value)} />
-      </form>
-      <div className="ml-auto flex items-center gap-1">
-        <Button asChild variant="ghost" size="icon" aria-label={t("nav.notifications")}>
-          <Link href="/notifications" className="relative">
-            <Bell className="size-5" />
-            {unread > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--danger)] text-white text-[10px] flex items-center justify-center">
-                {unread > 99 ? "99+" : unread}
-              </span>
-            )}
-          </Link>
-        </Button>
-        <LanguageSwitcher />
-        <ThemeToggle />
-        <div className="relative">
-          <Button variant="ghost" size="sm" onClick={() => setMenuOpen((v) => !v)}>
-            <UserIcon className="size-4" />
-            <span className="hidden sm:inline">{userName}</span>
+    <header className="sticky top-0 z-30 h-16 bg-[var(--background)]/85 backdrop-blur-md border-b border-[var(--border)]">
+      <div className="h-full flex items-center gap-3 px-4 md:px-6">
+        <Link href="/dashboard" className="flex items-center gap-2 mr-2">
+          <div className="size-8 rounded-lg bg-[var(--primary)] flex items-center justify-center">
+            <span className="text-[var(--primary-foreground)] text-sm font-bold tracking-tight">II</span>
+          </div>
+          <span className="hidden sm:inline font-display font-bold text-[17px] tracking-tight text-[var(--foreground)]">
+            Ichki Ijro
+          </span>
+        </Link>
+
+        <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-md ml-4">
+          <div className="relative w-full">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
+            <input
+              placeholder={t("header.searchPlaceholder")}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              className="h-10 w-full rounded-[10px] border border-[var(--border)] bg-[var(--surface-2)] pl-10 pr-3 text-[14px] placeholder:text-[var(--subtle)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-soft)] transition-[border-color,box-shadow] duration-150"
+            />
+          </div>
+        </form>
+
+        <div className="ml-auto flex items-center gap-1.5">
+          <Button asChild variant="ghost" size="icon" aria-label={t("nav.notifications")}>
+            <Link href="/notifications" className="relative">
+              <Bell className="size-[19px]" />
+              {unread > 0 && (
+                <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--danger)] text-white text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--background-elevated)]">
+                  {unread > 99 ? "99+" : unread}
+                </span>
+              )}
+            </Link>
           </Button>
-          {menuOpen && (
-            <div className="absolute right-0 mt-2 w-44 rounded-lg border bg-[var(--popover)] p-1 shadow-md z-50">
-              <Link href="/settings" className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-[var(--accent)]" onClick={() => setMenuOpen(false)}>
-                {t("header.accountSettings")}
-              </Link>
-              <button
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-[var(--accent)]"
-              >
-                <LogOut className="size-4" /> {t("header.signOut")}
-              </button>
-            </div>
-          )}
+          <LanguageSwitcher />
+          <ThemeToggle />
+
+          <div ref={menuRef} className="relative ml-1">
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className={cn(
+                "flex items-center gap-2.5 rounded-full pl-1 pr-3 py-1 hover:bg-[var(--surface-3)] transition-colors",
+                menuOpen && "bg-[var(--surface-3)]"
+              )}
+            >
+              <Avatar name={userName} />
+              <span className="hidden md:inline text-sm font-medium">{userName}</span>
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-[var(--border)] bg-[var(--popover)] p-1.5 shadow-lifted z-50">
+                <div className="px-3 py-2 border-b border-[var(--border)] mb-1">
+                  <p className="text-sm font-semibold">{userName}</p>
+                </div>
+                <Link
+                  href="/settings"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm hover:bg-[var(--surface-3)]"
+                >
+                  <SettingsIcon className="size-4 text-[var(--muted)]" /> {t("header.accountSettings")}
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm text-[var(--danger)] hover:bg-[var(--danger-soft)]"
+                >
+                  <LogOut className="size-4" /> {t("header.signOut")}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

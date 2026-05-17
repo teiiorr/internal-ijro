@@ -16,7 +16,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Header userName={session.user.fullName} />
         <div className="flex flex-1">
           <Sidebar position={session.user.position} />
-          <main className="flex-1 p-4 md:p-6">{children}</main>
+          <main className="flex-1 px-4 md:px-8 lg:px-10 py-6 md:py-8 max-w-[1400px] w-full">{children}</main>
         </div>
         <CommandPalette />
       </div>
