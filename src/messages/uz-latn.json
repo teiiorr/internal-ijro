@@ -1,0 +1,120 @@
+{
+  "app": {
+    "name": "Ichki Ijro",
+    "tagline": "Vazifalar, loyihalar va kadrlarni boshqarish"
+  },
+  "common": {
+    "loading": "Yuklanmoqda...",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "back": "Orqaga",
+    "next": "Keyingi",
+    "submit": "Yuborish",
+    "search": "Qidirish",
+    "actions": "Amallar",
+    "yes": "Ha",
+    "no": "Yo'q",
+    "of": "ning"
+  },
+  "nav": {
+    "dashboard": "Bosh sahifa",
+    "tasks": "Vazifalar",
+    "projects": "Loyihalar",
+    "employees": "Xodimlar",
+    "departments": "Bo'limlar",
+    "contractors": "Pudratchilar",
+    "reports": "Hisobotlar",
+    "notifications": "Bildirishnomalar",
+    "auditLog": "Faoliyat jurnali",
+    "settings": "Sozlamalar",
+    "logout": "Chiqish"
+  },
+  "auth": {
+    "login": {
+      "title": "Tizimga kirish",
+      "email": "Email",
+      "password": "Parol",
+      "totp": "2FA kodi",
+      "submit": "Kirish",
+      "forgot": "Parolni unutdingizmi?",
+      "registerContractor": "Pudratchi sifatida ro'yxatdan o'tish",
+      "invalid": "Email yoki parol noto'g'ri",
+      "locked": "Hisob qulflangan. Keyinroq qayta urinib ko'ring."
+    },
+    "forgot": {
+      "title": "Parolni tiklash",
+      "submit": "Havolani yuborish",
+      "sent": "Agar ushbu email mavjud bo'lsa, havola yuborildi.",
+      "backToLogin": "Kirishga qaytish"
+    },
+    "reset": {
+      "title": "Yangi parolni o'rnatish",
+      "password": "Yangi parol",
+      "confirm": "Parolni tasdiqlang",
+      "submit": "Saqlash",
+      "mismatch": "Parollar mos kelmaydi",
+      "invalidToken": "Havola yaroqsiz yoki muddati o'tgan"
+    },
+    "setup": {
+      "title": "Tizimni dastlabki sozlash",
+      "subtitle": "Birinchi Direktor hisobini yarating",
+      "fullName": "To'liq ism",
+      "email": "Email",
+      "password": "Parol",
+      "confirm": "Parolni tasdiqlang",
+      "submit": "Yaratish",
+      "alreadySetup": "Tizim allaqachon sozlangan."
+    },
+    "invite": {
+      "title": "Taklifni qabul qilish",
+      "fullName": "To'liq ism",
+      "password": "Parol",
+      "confirm": "Parolni tasdiqlang",
+      "submit": "Akkauntni yaratish",
+      "invalid": "Taklif yaroqsiz yoki muddati o'tgan"
+    },
+    "registerContractor": {
+      "title": "Pudratchi sifatida ro'yxatdan o'tish",
+      "companyName": "Kompaniya nomi",
+      "contactPerson": "Aloqa shaxsi",
+      "contactEmail": "Email",
+      "contactPhone": "Telefon",
+      "password": "Parol",
+      "submit": "Yuborish",
+      "submitted": "Arizangiz yuborildi. Administrator ko'rib chiqadi."
+    }
+  },
+  "positions": {
+    "direktor": "Direktor",
+    "orinbosar": "O'rinbosar",
+    "koordinator": "Koordinator",
+    "bolim_boshligi": "Bo'lim Boshlig'i",
+    "bosh_mutaxassis": "Bosh mutaxassis",
+    "yetakchi_mutaxassis": "Yetakchi mutaxassis",
+    "mutaxassis": "Mutaxassis",
+    "hr": "HR",
+    "kontragent": "Pudratchi"
+  },
+  "tasks": {
+    "status": {
+      "todo": "Bajarilishi kerak",
+      "in_progress": "Bajarilmoqda",
+      "under_review": "Tekshiruvda",
+      "completed": "Bajarildi",
+      "rejected": "Rad etildi"
+    },
+    "priority": {
+      "low": "Past",
+      "medium": "O'rtacha",
+      "high": "Yuqori",
+      "urgent": "Shoshilinch"
+    }
+  },
+  "theme": { "light": "Yorug'", "dark": "Qorong'i", "system": "Tizimga mos" },
+  "landing": {
+    "hero": "Ichki Ijro — kompaniyaning ichki ijrosini boshqarish tizimi",
+    "cta": "Tizimga kirish"
+  }
+}

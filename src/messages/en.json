@@ -1,0 +1,46 @@
+{
+  "app": { "name": "Ichki Ijro", "tagline": "Task, project and HR management" },
+  "common": {
+    "loading": "Loading...", "save": "Save", "cancel": "Cancel",
+    "delete": "Delete", "edit": "Edit", "back": "Back", "next": "Next",
+    "submit": "Submit", "search": "Search", "actions": "Actions", "yes": "Yes", "no": "No", "of": "of"
+  },
+  "nav": {
+    "dashboard": "Dashboard", "tasks": "Tasks", "projects": "Projects",
+    "employees": "Employees", "departments": "Departments", "contractors": "Contractors",
+    "reports": "Reports", "notifications": "Notifications", "auditLog": "Audit log",
+    "settings": "Settings", "logout": "Sign out"
+  },
+  "auth": {
+    "login": { "title": "Sign in", "email": "Email", "password": "Password",
+      "totp": "2FA code", "submit": "Sign in", "forgot": "Forgot password?",
+      "registerContractor": "Register as contractor",
+      "invalid": "Invalid email or password", "locked": "Account locked, try again later." },
+    "forgot": { "title": "Reset password", "submit": "Send link",
+      "sent": "If the email exists, a link was sent.", "backToLogin": "Back to sign in" },
+    "reset": { "title": "Set new password", "password": "New password",
+      "confirm": "Confirm password", "submit": "Save",
+      "mismatch": "Passwords do not match", "invalidToken": "Link is invalid or expired" },
+    "setup": { "title": "Initial setup", "subtitle": "Create the first Direktor",
+      "fullName": "Full name", "email": "Email", "password": "Password",
+      "confirm": "Confirm password", "submit": "Create", "alreadySetup": "System already initialised." },
+    "invite": { "title": "Accept invitation", "fullName": "Full name",
+      "password": "Password", "confirm": "Confirm password", "submit": "Create account",
+      "invalid": "Invitation is invalid or expired" },
+    "registerContractor": { "title": "Contractor registration",
+      "companyName": "Company name", "contactPerson": "Contact person",
+      "contactEmail": "Email", "contactPhone": "Phone", "password": "Password",
+      "submit": "Submit", "submitted": "Your request has been submitted." }
+  },
+  "positions": { "direktor": "Director", "orinbosar": "Deputy",
+    "koordinator": "Coordinator", "bolim_boshligi": "Head of department",
+    "bosh_mutaxassis": "Senior specialist", "yetakchi_mutaxassis": "Lead specialist",
+    "mutaxassis": "Specialist", "hr": "HR", "kontragent": "Contractor" },
+  "tasks": {
+    "status": { "todo": "To do", "in_progress": "In progress",
+      "under_review": "Under review", "completed": "Completed", "rejected": "Rejected" },
+    "priority": { "low": "Low", "medium": "Medium", "high": "High", "urgent": "Urgent" }
+  },
+  "theme": { "light": "Light", "dark": "Dark", "system": "System" },
+  "landing": { "hero": "Ichki Ijro — internal execution management", "cta": "Sign in" }
+}
