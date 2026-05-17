@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TasksViewSwitcher } from "@/components/tasks/tasks-view-switcher";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 
 export default async function TasksPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const session = await auth();
@@ -34,11 +34,16 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-2xl font-bold">Tasks</h1>
-        {canCreate && (
-          <Button asChild>
-            <Link href="/tasks/new"><Plus className="size-4" /> New task</Link>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <a href={`/api/export/tasks?scope=${scope}`}><Download className="size-4" /> XLSX</a>
           </Button>
-        )}
+          {canCreate && (
+            <Button asChild>
+              <Link href="/tasks/new"><Plus className="size-4" /> New task</Link>
+            </Button>
+          )}
+        </div>
       </div>
 
       <Tabs value={scope}>

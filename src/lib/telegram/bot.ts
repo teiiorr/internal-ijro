@@ -3,7 +3,8 @@ import { Bot, InlineKeyboard, webhookCallback } from "grammy";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { notificationSettings, tasks, users } from "@/lib/db/schema";
-import { changeTaskStatus } from "@/server/actions/tasks";
+import { svcChangeTaskStatusByChatId } from "./service";
+import type { TaskStatus } from "@/lib/permissions/tasks";
 
 const token = process.env.TELEGRAM_BOT_TOKEN ?? "";
 
@@ -65,21 +66,13 @@ function getBot(): Bot | null {
     const [, taskId, status] = m;
     const chatId = ctx.chat?.id?.toString();
     if (!chatId) return ctx.answerCallbackQuery();
-    const linked = await db
-      .select({ userId: notificationSettings.userId })
-      .from(notificationSettings)
-      .where(eq(notificationSettings.telegramChatId, chatId))
-      .limit(1);
-    if (linked.length === 0) return ctx.answerCallbackQuery({ text: "Not linked" });
-    try {
-      // changeTaskStatus uses session — Telegram side cannot impersonate it.
-      // For demo we just acknowledge; a production impl would route via a service token.
-      void changeTaskStatus;
-      void taskId;
-      await ctx.answerCallbackQuery({ text: `Use the web app to change to ${status}.` });
-    } catch (e) {
-      await ctx.answerCallbackQuery({ text: (e as Error).message });
-    }
+    const res = await svcChangeTaskStatusByChatId({
+      chatId,
+      taskId,
+      nextStatus: status as TaskStatus,
+    });
+    if (res.ok) await ctx.answerCallbackQuery({ text: `Status → ${status}` });
+    else await ctx.answerCallbackQuery({ text: res.reason });
   });
 
   // Plain-text: try to interpret as linking code

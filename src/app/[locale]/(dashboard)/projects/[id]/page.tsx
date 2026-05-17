@@ -9,6 +9,7 @@ import { MilestonesList } from "@/components/projects/milestones-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { CompleteProjectDialog } from "@/components/projects/complete-project-dialog";
+import { GanttChart } from "@/components/projects/gantt-chart";
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -46,10 +47,21 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <Tabs defaultValue="milestones">
         <TabsList>
           <TabsTrigger value="milestones">Milestones</TabsTrigger>
+          <TabsTrigger value="gantt">Gantt</TabsTrigger>
           <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
           <TabsTrigger value="tasks">Tasks</TabsTrigger>
           {data.company && <TabsTrigger value="chat">Chat</TabsTrigger>}
         </TabsList>
+
+        <TabsContent value="gantt">
+          <Card><CardContent className="p-6">
+            <GanttChart
+              projectStart={data.project.startDate}
+              projectDeadline={data.project.deadline}
+              milestones={data.milestones.map((m) => ({ id: m.id, title: m.title, status: m.status, deadline: m.deadline, weight: m.weight }))}
+            />
+          </CardContent></Card>
+        </TabsContent>
 
         <TabsContent value="milestones">
           <Card><CardContent className="p-6">

@@ -10,13 +10,18 @@ import { createTask } from "@/server/actions/tasks";
 
 type Person = { id: string; fullName: string; position: string };
 type Project = { id: string; name: string };
+type Task = { id: string; title: string };
 
 const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
+const RECUR = ["", "daily", "weekly", "monthly"] as const;
 
-export function NewTaskForm({ assignees, projects }: { assignees: Person[]; projects: Project[] }) {
+export function NewTaskForm({ assignees, projects, candidateDeps }: { assignees: Person[]; projects: Project[]; candidateDeps: Task[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [deps, setDeps] = useState<string[]>([]);
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurrenceRule, setRecurrenceRule] = useState<string>("");
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,6 +38,10 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           priority: (fd.get("priority") as any) ?? "medium",
           deadline: deadlineStr ? new Date(deadlineStr).toISOString() : null,
+          dependsOnIds: deps.length > 0 ? deps : undefined,
+          isRecurring,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          recurrenceRule: isRecurring && recurrenceRule ? (recurrenceRule as any) : null,
         });
         router.push(`/tasks/${res.id}`);
       } catch (err) {
@@ -86,6 +95,45 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
           <Input id="deadline" name="deadline" type="datetime-local" />
         </div>
       </div>
+
+      <div className="space-y-2">
+        <Label>Depends on (must complete first)</Label>
+        <div className="max-h-48 overflow-y-auto rounded-lg border p-2 space-y-1">
+          {candidateDeps.length === 0 ? (
+            <p className="text-sm text-[var(--muted)]">No candidate tasks.</p>
+          ) : (
+            candidateDeps.map((t) => (
+              <label key={t.id} className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={deps.includes(t.id)}
+                  onChange={(e) => setDeps((d) => e.target.checked ? [...d, t.id] : d.filter((x) => x !== t.id))}
+                />
+                <span>{t.title}</span>
+              </label>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-2 border rounded-lg p-3">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} />
+          <span>Recurring task</span>
+        </label>
+        {isRecurring && (
+          <div className="space-y-1.5">
+            <Label>Repeat</Label>
+            <Select value={recurrenceRule} onValueChange={setRecurrenceRule}>
+              <SelectTrigger><SelectValue placeholder="Choose interval" /></SelectTrigger>
+              <SelectContent>
+                {RECUR.filter(Boolean).map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
+
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
       <Button type="submit" disabled={pending}>Create task</Button>
     </form>

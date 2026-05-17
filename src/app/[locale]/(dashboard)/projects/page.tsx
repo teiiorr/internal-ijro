@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 import { can } from "@/lib/permissions";
 
 export default async function ProjectsPage() {
@@ -19,11 +19,16 @@ export default async function ProjectsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Projects</h1>
-        {canCreate && (
-          <Button asChild>
-            <Link href="/projects/new"><Plus className="size-4" /> New project</Link>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <a href="/api/export/projects"><Download className="size-4" /> XLSX</a>
           </Button>
-        )}
+          {canCreate && (
+            <Button asChild>
+              <Link href="/projects/new"><Plus className="size-4" /> New project</Link>
+            </Button>
+          )}
+        </div>
       </div>
 
       <Card>

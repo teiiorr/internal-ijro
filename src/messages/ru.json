@@ -1,46 +1,125 @@
 {
-  "app": { "name": "Ichki Ijro", "tagline": "Управление задачами, проектами и кадрами" },
+  "app": {
+    "name": "Ichki Ijro",
+    "tagline": "Управление задачами, проектами и кадрами"
+  },
   "common": {
-    "loading": "Загрузка...", "save": "Сохранить", "cancel": "Отмена",
-    "delete": "Удалить", "edit": "Изменить", "back": "Назад", "next": "Далее",
-    "submit": "Отправить", "search": "Поиск", "actions": "Действия", "yes": "Да", "no": "Нет", "of": "из"
+    "loading": "Загрузка...",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Изменить",
+    "back": "Назад",
+    "next": "Далее",
+    "submit": "Отправить",
+    "search": "Поиск",
+    "actions": "Действия",
+    "yes": "Да",
+    "no": "Нет",
+    "of": "из"
   },
   "nav": {
-    "dashboard": "Главная", "tasks": "Задачи", "projects": "Проекты",
-    "employees": "Сотрудники", "departments": "Отделы", "contractors": "Подрядчики",
-    "reports": "Отчёты", "notifications": "Уведомления", "auditLog": "Журнал действий",
-    "settings": "Настройки", "logout": "Выйти"
+    "dashboard": "Главная",
+    "tasks": "Задачи",
+    "projects": "Проекты",
+    "employees": "Сотрудники",
+    "departments": "Отделы",
+    "contractors": "Подрядчики",
+    "reports": "Отчёты",
+    "notifications": "Уведомления",
+    "auditLog": "Журнал действий",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "leaves": "Отпуска"
   },
   "auth": {
-    "login": { "title": "Вход в систему", "email": "Email", "password": "Пароль",
-      "totp": "Код 2FA", "submit": "Войти", "forgot": "Забыли пароль?",
+    "login": {
+      "title": "Вход в систему",
+      "email": "Email",
+      "password": "Пароль",
+      "totp": "Код 2FA",
+      "submit": "Войти",
+      "forgot": "Забыли пароль?",
       "registerContractor": "Регистрация подрядчика",
-      "invalid": "Неверный email или пароль", "locked": "Аккаунт заблокирован, попробуйте позже." },
-    "forgot": { "title": "Восстановление пароля", "submit": "Отправить ссылку",
-      "sent": "Если email существует, ссылка отправлена.", "backToLogin": "Назад ко входу" },
-    "reset": { "title": "Установка нового пароля", "password": "Новый пароль",
-      "confirm": "Подтвердите пароль", "submit": "Сохранить",
-      "mismatch": "Пароли не совпадают", "invalidToken": "Ссылка недействительна или просрочена" },
-    "setup": { "title": "Первоначальная установка", "subtitle": "Создайте первого Директора",
-      "fullName": "Полное имя", "email": "Email", "password": "Пароль",
-      "confirm": "Подтвердите пароль", "submit": "Создать", "alreadySetup": "Система уже настроена." },
-    "invite": { "title": "Принятие приглашения", "fullName": "Полное имя",
-      "password": "Пароль", "confirm": "Подтвердите пароль", "submit": "Создать аккаунт",
-      "invalid": "Приглашение недействительно или просрочено" },
-    "registerContractor": { "title": "Регистрация подрядчика",
-      "companyName": "Название компании", "contactPerson": "Контактное лицо",
-      "contactEmail": "Email", "contactPhone": "Телефон", "password": "Пароль",
-      "submit": "Отправить", "submitted": "Заявка отправлена. Администратор рассмотрит её." }
+      "invalid": "Неверный email или пароль",
+      "locked": "Аккаунт заблокирован, попробуйте позже."
+    },
+    "forgot": {
+      "title": "Восстановление пароля",
+      "submit": "Отправить ссылку",
+      "sent": "Если email существует, ссылка отправлена.",
+      "backToLogin": "Назад ко входу"
+    },
+    "reset": {
+      "title": "Установка нового пароля",
+      "password": "Новый пароль",
+      "confirm": "Подтвердите пароль",
+      "submit": "Сохранить",
+      "mismatch": "Пароли не совпадают",
+      "invalidToken": "Ссылка недействительна или просрочена"
+    },
+    "setup": {
+      "title": "Первоначальная установка",
+      "subtitle": "Создайте первого Директора",
+      "fullName": "Полное имя",
+      "email": "Email",
+      "password": "Пароль",
+      "confirm": "Подтвердите пароль",
+      "submit": "Создать",
+      "alreadySetup": "Система уже настроена."
+    },
+    "invite": {
+      "title": "Принятие приглашения",
+      "fullName": "Полное имя",
+      "password": "Пароль",
+      "confirm": "Подтвердите пароль",
+      "submit": "Создать аккаунт",
+      "invalid": "Приглашение недействительно или просрочено"
+    },
+    "registerContractor": {
+      "title": "Регистрация подрядчика",
+      "companyName": "Название компании",
+      "contactPerson": "Контактное лицо",
+      "contactEmail": "Email",
+      "contactPhone": "Телефон",
+      "password": "Пароль",
+      "submit": "Отправить",
+      "submitted": "Заявка отправлена. Администратор рассмотрит её."
+    }
   },
-  "positions": { "direktor": "Директор", "orinbosar": "Заместитель",
-    "koordinator": "Координатор", "bolim_boshligi": "Начальник отдела",
-    "bosh_mutaxassis": "Главный специалист", "yetakchi_mutaxassis": "Ведущий специалист",
-    "mutaxassis": "Специалист", "hr": "HR", "kontragent": "Подрядчик" },
+  "positions": {
+    "direktor": "Директор",
+    "orinbosar": "Заместитель",
+    "koordinator": "Координатор",
+    "bolim_boshligi": "Начальник отдела",
+    "bosh_mutaxassis": "Главный специалист",
+    "yetakchi_mutaxassis": "Ведущий специалист",
+    "mutaxassis": "Специалист",
+    "hr": "HR",
+    "kontragent": "Подрядчик"
+  },
   "tasks": {
-    "status": { "todo": "К выполнению", "in_progress": "В работе",
-      "under_review": "На проверке", "completed": "Завершено", "rejected": "Отклонено" },
-    "priority": { "low": "Низкий", "medium": "Средний", "high": "Высокий", "urgent": "Срочный" }
+    "status": {
+      "todo": "К выполнению",
+      "in_progress": "В работе",
+      "under_review": "На проверке",
+      "completed": "Завершено",
+      "rejected": "Отклонено"
+    },
+    "priority": {
+      "low": "Низкий",
+      "medium": "Средний",
+      "high": "Высокий",
+      "urgent": "Срочный"
+    }
   },
-  "theme": { "light": "Светлая", "dark": "Тёмная", "system": "Системная" },
-  "landing": { "hero": "Ichki Ijro — корпоративная система управления", "cta": "Войти" }
+  "theme": {
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная"
+  },
+  "landing": {
+    "hero": "Ichki Ijro — корпоративная система управления",
+    "cta": "Войти"
+  }
 }

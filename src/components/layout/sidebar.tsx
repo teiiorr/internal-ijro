@@ -12,6 +12,7 @@ import {
   Bell,
   ScrollText,
   Settings,
+  CalendarDays,
 } from "lucide-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,7 @@ import { cn } from "@/lib/utils";
 type Item = { href: string; icon: React.ComponentType<{ className?: string }>; key: keyof IntlNav; allowed: Position[] };
 type IntlNav = {
   dashboard: string; tasks: string; projects: string; employees: string; departments: string;
-  contractors: string; reports: string; notifications: string; auditLog: string; settings: string;
+  contractors: string; reports: string; leaves: string; notifications: string; auditLog: string; settings: string;
 };
 
 const ALL: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"];
@@ -35,6 +36,7 @@ const ITEMS: Item[] = [
   { href: "/departments", icon: Building2, key: "departments", allowed: ADMIN },
   { href: "/contractors", icon: Briefcase, key: "contractors", allowed: ADMIN.concat("koordinator") },
   { href: "/reports/standup", icon: FileText, key: "reports", allowed: ALL },
+  { href: "/leaves", icon: CalendarDays, key: "leaves", allowed: ALL },
   { href: "/notifications", icon: Bell, key: "notifications", allowed: ALL },
   { href: "/audit-log", icon: ScrollText, key: "auditLog", allowed: ADMIN.concat("hr") },
   { href: "/settings", icon: Settings, key: "settings", allowed: ALL },

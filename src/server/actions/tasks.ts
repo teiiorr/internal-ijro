@@ -30,6 +30,8 @@ const createSchema = z.object({
   deadline: z.string().datetime().nullable().optional(),
   estimatedHours: z.number().nullable().optional(),
   dependsOnIds: z.array(z.string().uuid()).optional(),
+  isRecurring: z.boolean().optional(),
+  recurrenceRule: z.enum(["daily", "weekly", "monthly"]).nullable().optional(),
 });
 
 export async function createTask(input: z.infer<typeof createSchema>): Promise<{ id: string }> {
@@ -58,6 +60,8 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
         deadline: parsed.deadline ? new Date(parsed.deadline) : null,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         estimatedHours: parsed.estimatedHours != null ? (parsed.estimatedHours as any) : null,
+        isRecurring: parsed.isRecurring ?? false,
+        recurrenceRule: parsed.recurrenceRule ?? null,
       })
       .returning({ id: tasks.id });
     if (parsed.dependsOnIds && parsed.dependsOnIds.length > 0) {

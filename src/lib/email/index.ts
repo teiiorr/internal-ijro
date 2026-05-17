@@ -19,7 +19,9 @@ export function getTransporter(): Transporter {
   return cached;
 }
 
-export async function sendMail(opts: { to: string; subject: string; html: string; text?: string }) {
+export type MailAttachment = { filename: string; content: Buffer; contentType?: string };
+
+export async function sendMail(opts: { to: string; subject: string; html: string; text?: string; attachments?: MailAttachment[] }) {
   const from = process.env.SMTP_FROM ?? "Ichki Ijro <no-reply@ichki-ijro.local>";
   const tx = getTransporter();
   return tx.sendMail({ from, ...opts });

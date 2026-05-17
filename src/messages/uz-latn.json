@@ -29,7 +29,8 @@
     "notifications": "Bildirishnomalar",
     "auditLog": "Faoliyat jurnali",
     "settings": "Sozlamalar",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "leaves": "Tatillar"
   },
   "auth": {
     "login": {
@@ -112,7 +113,11 @@
       "urgent": "Shoshilinch"
     }
   },
-  "theme": { "light": "Yorug'", "dark": "Qorong'i", "system": "Tizimga mos" },
+  "theme": {
+    "light": "Yorug'",
+    "dark": "Qorong'i",
+    "system": "Tizimga mos"
+  },
   "landing": {
     "hero": "Ichki Ijro — kompaniyaning ichki ijrosini boshqarish tizimi",
     "cta": "Tizimga kirish"

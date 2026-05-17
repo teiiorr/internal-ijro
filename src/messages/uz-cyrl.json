@@ -1,48 +1,125 @@
 {
-  "app": { "name": "Ички Ижро", "tagline": "Вазифалар, лойиҳалар ва кадрларни бошқариш" },
+  "app": {
+    "name": "Ички Ижро",
+    "tagline": "Вазифалар, лойиҳалар ва кадрларни бошқариш"
+  },
   "common": {
-    "loading": "Юкланмоқда...", "save": "Сақлаш", "cancel": "Бекор қилиш",
-    "delete": "Ўчириш", "edit": "Таҳрирлаш", "back": "Орқага", "next": "Кейинги",
-    "submit": "Юбориш", "search": "Қидириш", "actions": "Амаллар", "yes": "Ҳа", "no": "Йўқ", "of": "нинг"
+    "loading": "Юкланмоқда...",
+    "save": "Сақлаш",
+    "cancel": "Бекор қилиш",
+    "delete": "Ўчириш",
+    "edit": "Таҳрирлаш",
+    "back": "Орқага",
+    "next": "Кейинги",
+    "submit": "Юбориш",
+    "search": "Қидириш",
+    "actions": "Амаллар",
+    "yes": "Ҳа",
+    "no": "Йўқ",
+    "of": "нинг"
   },
   "nav": {
-    "dashboard": "Бош саҳифа", "tasks": "Вазифалар", "projects": "Лойиҳалар",
-    "employees": "Ходимлар", "departments": "Бўлимлар", "contractors": "Пудратчилар",
-    "reports": "Ҳисоботлар", "notifications": "Билдиришномалар",
-    "auditLog": "Фаолият журнали", "settings": "Созламалар", "logout": "Чиқиш"
+    "dashboard": "Бош саҳифа",
+    "tasks": "Вазифалар",
+    "projects": "Лойиҳалар",
+    "employees": "Ходимлар",
+    "departments": "Бўлимлар",
+    "contractors": "Пудратчилар",
+    "reports": "Ҳисоботлар",
+    "notifications": "Билдиришномалар",
+    "auditLog": "Фаолият журнали",
+    "settings": "Созламалар",
+    "logout": "Чиқиш",
+    "leaves": "Таътиллар"
   },
   "auth": {
-    "login": { "title": "Тизимга кириш", "email": "Email", "password": "Парол", "totp": "2FA коди",
-      "submit": "Кириш", "forgot": "Паролни унутдингизми?",
+    "login": {
+      "title": "Тизимга кириш",
+      "email": "Email",
+      "password": "Парол",
+      "totp": "2FA коди",
+      "submit": "Кириш",
+      "forgot": "Паролни унутдингизми?",
       "registerContractor": "Пудратчи сифатида рўйхатдан ўтиш",
       "invalid": "Email ёки парол нотўғри",
       "locked": "Ҳисоб қулфланган. Кейинроқ қайта уриниб кўринг."
     },
-    "forgot": { "title": "Паролни тиклаш", "submit": "Ҳаволани юбориш",
-      "sent": "Агар ушбу email мавжуд бўлса, ҳавола юборилди.", "backToLogin": "Киришга қайтиш" },
-    "reset": { "title": "Янги паролни ўрнатиш", "password": "Янги парол",
-      "confirm": "Паролни тасдиқланг", "submit": "Сақлаш",
-      "mismatch": "Пароллар мос келмайди", "invalidToken": "Ҳавола яроқсиз ёки муддати ўтган" },
-    "setup": { "title": "Тизимни дастлабки созлаш", "subtitle": "Биринчи Директор ҳисобини яратинг",
-      "fullName": "Тўлиқ исм", "email": "Email", "password": "Парол", "confirm": "Паролни тасдиқланг",
-      "submit": "Яратиш", "alreadySetup": "Тизим аллақачон созланган." },
-    "invite": { "title": "Таклифни қабул қилиш", "fullName": "Тўлиқ исм",
-      "password": "Парол", "confirm": "Паролни тасдиқланг", "submit": "Аккаунтни яратиш",
-      "invalid": "Таклиф яроқсиз ёки муддати ўтган" },
-    "registerContractor": { "title": "Пудратчи сифатида рўйхатдан ўтиш",
-      "companyName": "Компания номи", "contactPerson": "Алоқа шахси", "contactEmail": "Email",
-      "contactPhone": "Телефон", "password": "Парол", "submit": "Юбориш",
-      "submitted": "Аризангиз юборилди. Администратор кўриб чиқади." }
+    "forgot": {
+      "title": "Паролни тиклаш",
+      "submit": "Ҳаволани юбориш",
+      "sent": "Агар ушбу email мавжуд бўлса, ҳавола юборилди.",
+      "backToLogin": "Киришга қайтиш"
+    },
+    "reset": {
+      "title": "Янги паролни ўрнатиш",
+      "password": "Янги парол",
+      "confirm": "Паролни тасдиқланг",
+      "submit": "Сақлаш",
+      "mismatch": "Пароллар мос келмайди",
+      "invalidToken": "Ҳавола яроқсиз ёки муддати ўтган"
+    },
+    "setup": {
+      "title": "Тизимни дастлабки созлаш",
+      "subtitle": "Биринчи Директор ҳисобини яратинг",
+      "fullName": "Тўлиқ исм",
+      "email": "Email",
+      "password": "Парол",
+      "confirm": "Паролни тасдиқланг",
+      "submit": "Яратиш",
+      "alreadySetup": "Тизим аллақачон созланган."
+    },
+    "invite": {
+      "title": "Таклифни қабул қилиш",
+      "fullName": "Тўлиқ исм",
+      "password": "Парол",
+      "confirm": "Паролни тасдиқланг",
+      "submit": "Аккаунтни яратиш",
+      "invalid": "Таклиф яроқсиз ёки муддати ўтган"
+    },
+    "registerContractor": {
+      "title": "Пудратчи сифатида рўйхатдан ўтиш",
+      "companyName": "Компания номи",
+      "contactPerson": "Алоқа шахси",
+      "contactEmail": "Email",
+      "contactPhone": "Телефон",
+      "password": "Парол",
+      "submit": "Юбориш",
+      "submitted": "Аризангиз юборилди. Администратор кўриб чиқади."
+    }
   },
-  "positions": { "direktor": "Директор", "orinbosar": "Ўринбосар", "koordinator": "Координатор",
-    "bolim_boshligi": "Бўлим Бошлиғи", "bosh_mutaxassis": "Бош мутахассис",
-    "yetakchi_mutaxassis": "Етакчи мутахассис", "mutaxassis": "Мутахассис", "hr": "HR",
-    "kontragent": "Пудратчи" },
+  "positions": {
+    "direktor": "Директор",
+    "orinbosar": "Ўринбосар",
+    "koordinator": "Координатор",
+    "bolim_boshligi": "Бўлим Бошлиғи",
+    "bosh_mutaxassis": "Бош мутахассис",
+    "yetakchi_mutaxassis": "Етакчи мутахассис",
+    "mutaxassis": "Мутахассис",
+    "hr": "HR",
+    "kontragent": "Пудратчи"
+  },
   "tasks": {
-    "status": { "todo": "Бажарилиши керак", "in_progress": "Бажарилмоқда",
-      "under_review": "Текширувда", "completed": "Бажарилди", "rejected": "Рад этилди" },
-    "priority": { "low": "Паст", "medium": "Ўртача", "high": "Юқори", "urgent": "Шошилинч" }
+    "status": {
+      "todo": "Бажарилиши керак",
+      "in_progress": "Бажарилмоқда",
+      "under_review": "Текширувда",
+      "completed": "Бажарилди",
+      "rejected": "Рад этилди"
+    },
+    "priority": {
+      "low": "Паст",
+      "medium": "Ўртача",
+      "high": "Юқори",
+      "urgent": "Шошилинч"
+    }
   },
-  "theme": { "light": "Ёруғ", "dark": "Қоронғи", "system": "Тизимга мос" },
-  "landing": { "hero": "Ички Ижро — компаниянинг ички ижросини бошқариш тизими", "cta": "Тизимга кириш" }
+  "theme": {
+    "light": "Ёруғ",
+    "dark": "Қоронғи",
+    "system": "Тизимга мос"
+  },
+  "landing": {
+    "hero": "Ички Ижро — компаниянинг ички ижросини бошқариш тизими",
+    "cta": "Тизимга кириш"
+  }
 }

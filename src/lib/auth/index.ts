@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { users, type Position, type UserStatus } from "@/lib/db/schema";
 import { verifyPassword } from "./password";
 import { verifyTotp } from "./twofa";
+import { maybeSendNewDeviceEmail } from "./new-device";
 
 declare module "next-auth" {
   interface Session {
@@ -87,6 +88,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .update(users)
           .set({ failedLoginCount: 0, lockedUntil: null, lastLoginAt: new Date() })
           .where(eq(users.id, user.id));
+
+        // Fire-and-forget new-device email (also writes auth.login_success to activity_log)
+        void maybeSendNewDeviceEmail({
+          userId: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          languagePreference: user.languagePreference,
+        });
 
         return {
           id: user.id,

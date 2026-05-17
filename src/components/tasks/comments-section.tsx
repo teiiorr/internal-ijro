@@ -16,15 +16,20 @@ type C = {
 type User = { id: string; fullName: string };
 
 function parseMentions(text: string, users: User[]): string[] {
-  // Very simple @mention parser: matches @"FullName" or @FirstName_Last (no spaces).
-  const ids: string[] = [];
-  const tokens = text.match(/@([A-Za-zЀ-ӿ0-9_'\-]+)/g) ?? [];
-  for (const tok of tokens) {
-    const slug = tok.slice(1).toLowerCase();
-    const u = users.find((u) => u.fullName.toLowerCase().replace(/\s+/g, "") === slug);
-    if (u) ids.push(u.id);
+  const ids = new Set<string>();
+  // @"Full Name" — explicit quoted form (supports spaces, Cyrillic, apostrophe)
+  for (const m of text.matchAll(/@"([^"]+)"/g)) {
+    const wanted = m[1].toLowerCase().trim();
+    const u = users.find((u) => u.fullName.toLowerCase() === wanted);
+    if (u) ids.add(u.id);
   }
-  return Array.from(new Set(ids));
+  // @FirstWord — match by first word (unique only)
+  for (const m of text.matchAll(/(?:^|\s)@([A-Za-zЀ-ӿ][A-Za-zЀ-ӿ0-9_'\-]+)/g)) {
+    const wanted = m[1].toLowerCase();
+    const candidates = users.filter((u) => u.fullName.toLowerCase().split(/\s+/)[0] === wanted);
+    if (candidates.length === 1) ids.add(candidates[0].id);
+  }
+  return Array.from(ids);
 }
 
 export function CommentsSection({ taskId, comments, users }: { taskId: string; comments: C[]; users: User[] }) {

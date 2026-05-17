@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProfileForm } from "@/components/hr/profile-form";
 import { DocumentsTab } from "@/components/hr/documents-tab";
 import { ArchiveButton } from "@/components/hr/archive-button";
+import { Button } from "@/components/ui/button";
 import { ChangePositionDialog } from "@/components/hr/change-position-dialog";
 import { db } from "@/lib/db";
 import { departments as deptsTable, users as usersTable } from "@/lib/db/schema";
@@ -63,6 +64,11 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
           </div>
         </div>
         <div className="flex gap-2">
+          {canEdit && (
+            <Button asChild variant="outline">
+              <a href={`/api/export/employee-card/${data.user.id}`}>PDF card</a>
+            </Button>
+          )}
           {canChangePosition && (
             <ChangePositionDialog
               userId={data.user.id}
