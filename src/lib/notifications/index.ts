@@ -3,6 +3,7 @@ import { eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { notifications, notificationSettings, users } from "@/lib/db/schema";
 import { sendMail } from "@/lib/email";
+import { sendTelegramTo } from "@/lib/telegram/bot";
 
 export type NotifyArgs = {
   userIds: string[];
@@ -20,7 +21,13 @@ export async function notify(args: NotifyArgs): Promise<void> {
   const uniq = Array.from(new Set(args.userIds));
   // 1) Persist in-app notifications for users who have it enabled
   const settings = await db
-    .select({ userId: notificationSettings.userId, inApp: notificationSettings.inAppEnabled, email: notificationSettings.emailEnabled })
+    .select({
+      userId: notificationSettings.userId,
+      inApp: notificationSettings.inAppEnabled,
+      email: notificationSettings.emailEnabled,
+      telegram: notificationSettings.telegramEnabled,
+      telegramChatId: notificationSettings.telegramChatId,
+    })
     .from(notificationSettings)
     .where(inArray(notificationSettings.userId, uniq));
   const map = new Map(settings.map((s) => [s.userId, s]));
@@ -63,6 +70,13 @@ export async function notify(args: NotifyArgs): Promise<void> {
         })
       )
     );
+  }
+
+  // 3) Telegram
+  const tgTargets = settings.filter((s) => s.telegram && s.telegramChatId && !s.telegramChatId.startsWith("pending:"));
+  if (tgTargets.length > 0) {
+    const body = `${args.title}\n${args.message ?? ""}${args.link ? `\n${process.env.APP_URL ?? ""}${args.link}` : ""}`;
+    await Promise.allSettled(tgTargets.map((t) => sendTelegramTo(t.telegramChatId!, body)));
   }
 }
 
