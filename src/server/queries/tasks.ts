@@ -3,8 +3,10 @@ import { and, asc, desc, eq, gte, ilike, inArray, isNull, lte, or, sql } from "d
 import { db } from "@/lib/db";
 import {
   tasks,
+  taskAssignees,
   users,
   projects,
+  departments,
   taskChecklistItems,
   taskComments,
   taskAttachments,
@@ -39,10 +41,11 @@ export async function listTasks(f: TaskListFilters) {
   if (f.projectId) conds.push(eq(tasks.projectId, f.projectId));
 
   // Every user only sees tasks they're personally involved in:
-  // - assigned to them (for execution)
-  // - created by them (for review / approval)
+  // - listed in task_assignees as an executor
+  // - created by them (for review)
   conds.push(
-    sql`(${tasks.assignedToUserId} = ${f.actorId} OR ${tasks.createdByUserId} = ${f.actorId})`
+    sql`(${tasks.createdByUserId} = ${f.actorId}
+         OR EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId}))`
   );
 
   const assignedAlias = users as typeof users;
@@ -75,12 +78,30 @@ export async function getTask(id: string) {
   const row = await db.select().from(tasks).where(eq(tasks.id, id)).limit(1);
   if (row.length === 0) return null;
   const t = row[0];
-  const [assignee, creator, project, checklist, comments, attachments, deps] = await Promise.all([
-    db.select({ id: users.id, fullName: users.fullName, email: users.email }).from(users).where(eq(users.id, t.assignedToUserId)).limit(1),
-    db.select({ id: users.id, fullName: users.fullName, email: users.email }).from(users).where(eq(users.id, t.createdByUserId)).limit(1),
+  const [creator, project, assigneesList, checklist, comments, attachments, deps] = await Promise.all([
+    db.select({ id: users.id, fullName: users.fullName, email: users.email, position: users.position }).from(users).where(eq(users.id, t.createdByUserId)).limit(1),
     t.projectId
       ? db.select({ id: projects.id, name: projects.name }).from(projects).where(eq(projects.id, t.projectId)).limit(1)
       : Promise.resolve([]),
+    db
+      .select({
+        userId: taskAssignees.userId,
+        status: taskAssignees.status,
+        responseText: taskAssignees.responseText,
+        responseFileUrl: taskAssignees.responseFileUrl,
+        responseFileName: taskAssignees.responseFileName,
+        responseSubmittedAt: taskAssignees.responseSubmittedAt,
+        completedAt: taskAssignees.completedAt,
+        updatedAt: taskAssignees.updatedAt,
+        fullName: users.fullName,
+        position: users.position,
+        departmentName: departments.name,
+      })
+      .from(taskAssignees)
+      .innerJoin(users, eq(users.id, taskAssignees.userId))
+      .leftJoin(departments, eq(departments.id, users.departmentId))
+      .where(eq(taskAssignees.taskId, id))
+      .orderBy(asc(taskAssignees.createdAt)),
     db.select().from(taskChecklistItems).where(eq(taskChecklistItems.taskId, id)).orderBy(asc(taskChecklistItems.orderIndex)),
     db
       .select({
@@ -105,9 +126,9 @@ export async function getTask(id: string) {
 
   return {
     task: t,
-    assignee: assignee[0] ?? null,
     creator: creator[0] ?? null,
     project: project[0] ?? null,
+    assignees: assigneesList,
     checklist,
     comments,
     attachments,

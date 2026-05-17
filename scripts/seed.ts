@@ -273,15 +273,21 @@ async function main() {
     title: string;
     description?: string;
     projectKey?: "yolbars" | "chempion" | "burro" | "sehr" | "ichki";
-    assignee: string;
+    /** First user-key is the "primary" assignee; the rest are co-assignees. */
+    assignees: string[];
     creator: string;
     status?: "todo" | "in_progress" | "under_review" | "completed" | "rejected";
     priority?: "low" | "medium" | "high" | "urgent";
     deadline?: Date | null;
     rejectionReason?: string;
-    isRecurring?: boolean;
-    recurrenceRule?: string;
     completedAt?: Date | null;
+  };
+
+  let regCounter = 0;
+  const dayPrefix = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, "0")}/${String(today.getDate()).padStart(2, "0")}`;
+  const regNum = () => {
+    regCounter += 1;
+    return `${dayPrefix}-${String(regCounter).padStart(2, "0")}`;
   };
 
   const projMap = {
@@ -293,55 +299,61 @@ async function main() {
   } as const;
 
   const taskInputs: TaskInput[] = [
-    { key: "t1", title: "Stsenariy yakuniy versiyasi", projectKey: "yolbars", assignee: "shorakhmedov", creator: "bobomurodov", status: "completed", priority: "high", deadline: daysAgo(60), completedAt: daysAgo(62) },
-    { key: "t2", title: "Storyboard chizish", projectKey: "yolbars", assignee: "odilxojayev", creator: "bobomurodov", status: "completed", priority: "high", deadline: daysAgo(30), completedAt: daysAgo(28) },
-    { key: "t3", title: "Animatsiya yakuniy montaji", projectKey: "yolbars", assignee: "saidmurotov", creator: "mirzaliyev", status: "in_progress", priority: "urgent", deadline: daysAhead(20) },
-    { key: "t4", title: "Ovoz yozish va sozlash", projectKey: "yolbars", assignee: "muxtorov", creator: "mirzaliyev", status: "todo", priority: "high", deadline: daysAhead(30) },
-    { key: "t5", title: "Yakuniy montaj va render", projectKey: "yolbars", assignee: "muxtorov", creator: "mirzaliyev", status: "todo", priority: "high", deadline: daysAhead(45) },
-    { key: "t6", title: "Stsenariy konsepsiyasini tasdiqlash", projectKey: "chempion", assignee: "shorakhmedov", creator: "bobomurodov", status: "under_review", priority: "high", deadline: daysAhead(10) },
-    { key: "t7", title: "Aktyorlar bilan kasting", projectKey: "chempion", assignee: "mingboyev", creator: "yodgorov", status: "todo", priority: "medium", deadline: daysAhead(20) },
-    { key: "t8", title: "S'yomka jadvali", projectKey: "chempion", assignee: "saidmurotov", creator: "mirzaliyev", status: "in_progress", priority: "high", deadline: daysAhead(25) },
-    { key: "t9", title: "Ijtimoiy tarmoqlar uchun anons", projectKey: "chempion", assignee: "gaybullayev", creator: "yodgorov", status: "todo", priority: "high", deadline: daysAhead(15) },
-    { key: "t10", title: "Konseptual hujjat tayyorlash", projectKey: "burro", assignee: "mahkamov", creator: "bobomurodov", status: "in_progress", priority: "medium", deadline: daysAhead(30) },
-    { key: "t11", title: "Bozor tahlilini o'tkazish", projectKey: "burro", assignee: "shorakhmedov", creator: "mahkamov", status: "todo", priority: "medium", deadline: daysAhead(40) },
-    { key: "t12", title: "Yakuniy hisobot va arxivlash", projectKey: "sehr", assignee: "mahkamov", creator: "bobomurodov", status: "completed", priority: "medium", completedAt: daysAgo(12) },
-    { key: "t13", title: "Audit log moduli yakunlash", projectKey: "ichki", assignee: "murodxojayev", creator: "toshxojayev", status: "in_progress", priority: "urgent", deadline: daysAhead(7) },
-    { key: "t14", title: "Hisobotlar moduli sifat tekshiruvi", projectKey: "ichki", assignee: "ilhamov", creator: "serobov", status: "under_review", priority: "high", deadline: daysAhead(10) },
-    { key: "t15", title: "Telegram bot integratsiyasi", projectKey: "ichki", assignee: "murodxojayev", creator: "serobov", status: "completed", priority: "high", completedAt: daysAgo(5) },
-    { title: "Xodimlar reestrini yangilash", assignee: "ilhamov", creator: "ismatullayev", status: "in_progress", priority: "medium", deadline: daysAhead(14) },
-    { title: "Idoradagi printerlarni almashtirish", assignee: "saidkarimov", creator: "abdumannopov", status: "completed", priority: "low", completedAt: daysAgo(3) },
-    { title: "Yangi ofis jihozlash", assignee: "saidkarimov", creator: "abdumannopov", status: "in_progress", priority: "medium", deadline: daysAhead(21) },
-    { title: "Korporativ saytda yangiliklar yangilash", assignee: "gaybullayev", creator: "bosimov", status: "in_progress", priority: "low", deadline: daysAhead(7) },
-    { title: "Sotsial tarmoqlarda kontent rejasi", assignee: "mingboyev", creator: "matyakubov", status: "todo", priority: "high", deadline: daysAhead(5) },
-    { title: "Haftalik standup uchrashuvi", assignee: "yoldashev", creator: "serobov", status: "todo", priority: "medium", isRecurring: true, recurrenceRule: "weekly", deadline: daysAhead(2) },
-    { title: "Oylik moliyaviy hisobot", assignee: "madrahimov", creator: "abdumannopov", status: "todo", priority: "high", isRecurring: true, recurrenceRule: "monthly", deadline: daysAhead(10) },
-    { title: "Eskirgan asboblar inventarizatsiyasi", assignee: "saidkarimov", creator: "abdumannopov", status: "todo", priority: "medium", deadline: daysAgo(5) },
-    { title: "Soliq deklaratsiyasi topshirish", assignee: "madrahimov", creator: "abdumannopov", status: "in_progress", priority: "urgent", deadline: daysAhead(3) },
-    { title: "Reklama bannerini yangilash", assignee: "mingboyev", creator: "yodgorov", status: "rejected", priority: "medium", rejectionReason: "Logotip kerakli o'lchamda emas, qayta tayyorlash kerak.", deadline: daysAhead(5) },
+    // Multi-assignee example: matches user's screenshot — director's order to two execs
+    { key: "t1", title: "\"Alla\" platformasidagi texnik o'zgarishlar yakunlansin va zaruratga ko'ra unga soha mutaxassislarini biriktirish bo'yicha takliflar kiritilsin.", projectKey: "ichki", assignees: ["bobomurodov", "murodxojayev"], creator: "ahmedov", status: "in_progress", priority: "urgent", deadline: daysAhead(7) },
+    { key: "t2", title: "Stsenariy yakuniy versiyasi", projectKey: "yolbars", assignees: ["shorakhmedov", "odilxojayev"], creator: "bobomurodov", status: "completed", priority: "high", deadline: daysAgo(60), completedAt: daysAgo(62) },
+    { key: "t3", title: "Storyboard chizish", projectKey: "yolbars", assignees: ["odilxojayev"], creator: "bobomurodov", status: "completed", priority: "high", deadline: daysAgo(30), completedAt: daysAgo(28) },
+    { key: "t4", title: "Animatsiya yakuniy montaji", projectKey: "yolbars", assignees: ["saidmurotov", "muxtorov"], creator: "mirzaliyev", status: "in_progress", priority: "urgent", deadline: daysAhead(20) },
+    { key: "t5", title: "Ovoz yozish va sozlash", projectKey: "yolbars", assignees: ["muxtorov"], creator: "mirzaliyev", status: "todo", priority: "high", deadline: daysAhead(30) },
+    { key: "t6", title: "Stsenariy konsepsiyasini tasdiqlash", projectKey: "chempion", assignees: ["shorakhmedov"], creator: "bobomurodov", status: "under_review", priority: "high", deadline: daysAhead(10) },
+    { key: "t7", title: "Aktyorlar bilan kasting", projectKey: "chempion", assignees: ["mingboyev", "gaybullayev"], creator: "yodgorov", status: "todo", priority: "medium", deadline: daysAhead(20) },
+    { key: "t8", title: "S'yomka jadvali", projectKey: "chempion", assignees: ["saidmurotov"], creator: "mirzaliyev", status: "in_progress", priority: "high", deadline: daysAhead(25) },
+    { key: "t9", title: "Ijtimoiy tarmoqlar uchun anons", projectKey: "chempion", assignees: ["gaybullayev"], creator: "yodgorov", status: "todo", priority: "high", deadline: daysAhead(15) },
+    { key: "t10", title: "Konseptual hujjat tayyorlash", projectKey: "burro", assignees: ["mahkamov"], creator: "bobomurodov", status: "in_progress", priority: "medium", deadline: daysAhead(30) },
+    { key: "t11", title: "Bozor tahlilini o'tkazish", projectKey: "burro", assignees: ["shorakhmedov"], creator: "mahkamov", status: "todo", priority: "medium", deadline: daysAhead(40) },
+    { key: "t12", title: "Yakuniy hisobot va arxivlash", projectKey: "sehr", assignees: ["mahkamov"], creator: "bobomurodov", status: "completed", priority: "medium", completedAt: daysAgo(12) },
+    { key: "t13", title: "Hisobotlar moduli sifat tekshiruvi", projectKey: "ichki", assignees: ["ilhamov", "murodxojayev"], creator: "serobov", status: "under_review", priority: "high", deadline: daysAhead(10) },
+    { title: "Xodimlar reestrini yangilash", assignees: ["ilhamov"], creator: "ismatullayev", status: "in_progress", priority: "medium", deadline: daysAhead(14) },
+    { title: "Idoradagi printerlarni almashtirish", assignees: ["saidkarimov"], creator: "abdumannopov", status: "completed", priority: "low", completedAt: daysAgo(3) },
+    { title: "Yangi ofis jihozlash", assignees: ["saidkarimov", "madrahimov"], creator: "abdumannopov", status: "in_progress", priority: "medium", deadline: daysAhead(21) },
+    { title: "Korporativ saytda yangiliklar yangilash", assignees: ["gaybullayev"], creator: "bosimov", status: "in_progress", priority: "low", deadline: daysAhead(7) },
+    { title: "Sotsial tarmoqlarda kontent rejasi", assignees: ["mingboyev", "gaybullayev"], creator: "matyakubov", status: "todo", priority: "high", deadline: daysAhead(5) },
+    { title: "Eskirgan asboblar inventarizatsiyasi", assignees: ["saidkarimov"], creator: "abdumannopov", status: "todo", priority: "medium", deadline: daysAgo(5) },
+    { title: "Soliq deklaratsiyasi topshirish", assignees: ["madrahimov"], creator: "abdumannopov", status: "in_progress", priority: "urgent", deadline: daysAhead(3) },
+    { title: "Reklama bannerini yangilash", assignees: ["mingboyev"], creator: "yodgorov", status: "rejected", priority: "medium", rejectionReason: "Logotip kerakli o'lchamda emas, qayta tayyorlash kerak.", deadline: daysAhead(5) },
   ];
 
   const T: Record<string, string> = {};
   for (const t of taskInputs) {
     const ins = await db.insert(schema.tasks).values({
+      registrationNumber: regNum(),
       title: t.title,
       description: t.description ?? null,
       projectId: t.projectKey ? projMap[t.projectKey] : null,
-      assignedToUserId: U[t.assignee],
+      assignedToUserId: U[t.assignees[0]],
       createdByUserId: U[t.creator],
       status: t.status ?? "todo",
       priority: t.priority ?? "medium",
       deadline: t.deadline ?? null,
       rejectionReason: t.rejectionReason ?? null,
-      isRecurring: t.isRecurring ?? false,
-      recurrenceRule: t.recurrenceRule ?? null,
       completedAt: t.completedAt ?? null,
     }).returning({ id: schema.tasks.id });
-    if (t.key) T[t.key] = ins[0].id;
+    const taskId = ins[0].id;
+    if (t.key) T[t.key] = taskId;
+
+    // Insert task_assignees rows for each
+    const uniqueAssignees = Array.from(new Set(t.assignees));
+    await db.insert(schema.taskAssignees).values(uniqueAssignees.map((k, idx) => ({
+      taskId,
+      userId: U[k],
+      // Pre-fill statuses to demo the screenshot vibe: first assignee inherits task status, others "todo"
+      status: idx === 0 ? (t.status ?? "todo") : (t.status === "completed" ? "completed" : "todo"),
+      completedAt: idx === 0 ? (t.completedAt ?? null) : null,
+    })));
   }
 
   // -------------------- 7. DEPENDENCIES --------------------
   await db.insert(schema.taskDependencies).values([
-    { taskId: T["t2"], dependsOnTaskId: T["t1"] },
     { taskId: T["t3"], dependsOnTaskId: T["t2"] },
     { taskId: T["t4"], dependsOnTaskId: T["t3"] },
     { taskId: T["t5"], dependsOnTaskId: T["t4"] },

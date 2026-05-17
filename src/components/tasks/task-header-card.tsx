@@ -14,6 +14,7 @@ type Props = {
     priority: string;
     deadline: Date | null;
     createdAt: Date;
+    registrationNumber: string | null;
   };
 };
 
@@ -66,6 +67,13 @@ export async function TaskHeaderCard({ creator, task }: Props) {
 
   return (
     <Card className="overflow-hidden">
+      {task.registrationNumber && (
+        <div className="px-7 pt-5 pb-3 border-b border-[var(--border)] flex items-center gap-3">
+          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--primary-soft)] text-[var(--primary)] px-3 py-1 text-xs font-bold tabular tracking-tight">
+            № {task.registrationNumber}
+          </span>
+        </div>
+      )}
       <div className="p-7 flex flex-col md:flex-row md:items-center gap-5 border-b border-[var(--border)]">
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <Initials name={creator?.fullName ?? "—"} />

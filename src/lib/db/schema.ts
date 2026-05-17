@@ -241,6 +241,8 @@ export const tasks = pgTable(
   "tasks",
   {
     id: uuid("id").primaryKey().defaultRandom(),
+    /** Official registration number, e.g. 2026/05/18-01. Generated on insert. */
+    registrationNumber: varchar("registration_number", { length: 32 }),
     title: varchar("title", { length: 500 }).notNull(),
     description: text("description"),
     projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),
@@ -248,6 +250,7 @@ export const tasks = pgTable(
     parentTaskId: uuid("parent_task_id").references((): AnyPgColumn => tasks.id, {
       onDelete: "set null",
     }),
+    /** Primary assignee — kept for backward compat. Source of truth for status per person is `taskAssignees`. */
     assignedToUserId: uuid("assigned_to_user_id")
       .notNull()
       .references(() => users.id),
@@ -272,6 +275,33 @@ export const tasks = pgTable(
     projectIdx: index("tasks_project_idx").on(t.projectId),
     statusIdx: index("tasks_status_idx").on(t.status),
     deadlineIdx: index("tasks_deadline_idx").on(t.deadline),
+    regNumIdx: uniqueIndex("tasks_registration_number_idx").on(t.registrationNumber),
+  })
+);
+
+// ---------- 5.10b task_assignees — multi-assignee with per-person status + javob ----------
+export const taskAssignees = pgTable(
+  "task_assignees",
+  {
+    taskId: uuid("task_id")
+      .notNull()
+      .references(() => tasks.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    status: varchar("status", { length: 20 }).default("todo").notNull(),
+    /** Javob — response submitted by the assignee */
+    responseText: text("response_text"),
+    responseFileUrl: text("response_file_url"),
+    responseFileName: varchar("response_file_name", { length: 255 }),
+    responseSubmittedAt: timestamp("response_submitted_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.taskId, t.userId] }),
+    userIdx: index("task_assignees_user_idx").on(t.userId),
   })
 );
 

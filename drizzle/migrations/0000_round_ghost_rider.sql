@@ -242,6 +242,20 @@ CREATE TABLE "standup_reports" (
 	"submitted_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "task_assignees" (
+	"task_id" uuid NOT NULL,
+	"user_id" uuid NOT NULL,
+	"status" varchar(20) DEFAULT 'todo' NOT NULL,
+	"response_text" text,
+	"response_file_url" text,
+	"response_file_name" varchar(255),
+	"response_submitted_at" timestamp with time zone,
+	"completed_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "task_assignees_task_id_user_id_pk" PRIMARY KEY("task_id","user_id")
+);
+--> statement-breakpoint
 CREATE TABLE "task_attachments" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"task_id" uuid NOT NULL,
@@ -289,6 +303,7 @@ CREATE TABLE "task_watchers" (
 --> statement-breakpoint
 CREATE TABLE "tasks" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"registration_number" varchar(32),
 	"title" varchar(500) NOT NULL,
 	"description" text,
 	"project_id" uuid,
@@ -369,6 +384,8 @@ ALTER TABLE "ratings" ADD CONSTRAINT "ratings_project_id_projects_id_fk" FOREIGN
 ALTER TABLE "ratings" ADD CONSTRAINT "ratings_external_company_id_external_companies_id_fk" FOREIGN KEY ("external_company_id") REFERENCES "public"."external_companies"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "ratings" ADD CONSTRAINT "ratings_rated_by_user_id_users_id_fk" FOREIGN KEY ("rated_by_user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "standup_reports" ADD CONSTRAINT "standup_reports_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "task_assignees" ADD CONSTRAINT "task_assignees_task_id_tasks_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."tasks"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "task_assignees" ADD CONSTRAINT "task_assignees_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "task_attachments" ADD CONSTRAINT "task_attachments_task_id_tasks_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."tasks"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "task_attachments" ADD CONSTRAINT "task_attachments_uploaded_by_user_id_users_id_fk" FOREIGN KEY ("uploaded_by_user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "task_checklist_items" ADD CONSTRAINT "task_checklist_items_task_id_tasks_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."tasks"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -393,12 +410,14 @@ CREATE INDEX "projects_status_idx" ON "projects" USING btree ("status");--> stat
 CREATE INDEX "projects_curator_idx" ON "projects" USING btree ("curator_user_id");--> statement-breakpoint
 CREATE INDEX "projects_company_idx" ON "projects" USING btree ("external_company_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "standup_user_date_uniq" ON "standup_reports" USING btree ("user_id","report_date");--> statement-breakpoint
+CREATE INDEX "task_assignees_user_idx" ON "task_assignees" USING btree ("user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "task_deps_uniq" ON "task_dependencies" USING btree ("task_id","depends_on_task_id");--> statement-breakpoint
 CREATE INDEX "tasks_assigned_idx" ON "tasks" USING btree ("assigned_to_user_id");--> statement-breakpoint
 CREATE INDEX "tasks_creator_idx" ON "tasks" USING btree ("created_by_user_id");--> statement-breakpoint
 CREATE INDEX "tasks_project_idx" ON "tasks" USING btree ("project_id");--> statement-breakpoint
 CREATE INDEX "tasks_status_idx" ON "tasks" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "tasks_deadline_idx" ON "tasks" USING btree ("deadline");--> statement-breakpoint
+CREATE UNIQUE INDEX "tasks_registration_number_idx" ON "tasks" USING btree ("registration_number");--> statement-breakpoint
 CREATE UNIQUE INDEX "users_email_idx" ON "users" USING btree ("email");--> statement-breakpoint
 CREATE INDEX "users_dept_idx" ON "users" USING btree ("department_id");--> statement-breakpoint
 CREATE INDEX "users_reports_idx" ON "users" USING btree ("reports_to_user_id");--> statement-breakpoint

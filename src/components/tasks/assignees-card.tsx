@@ -2,17 +2,24 @@
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
-import { Search, Info, BadgeCheck, Bell, Clock4 } from "lucide-react";
+import { Search, BadgeCheck, ChevronDown, Clock4, FileText, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { reviewAssigneeResponse } from "@/server/actions/tasks";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export type AssigneeItem = {
-  id: string;
+  userId: string;
   fullName: string;
+  position: string | null;
   departmentName: string | null;
   status: "todo" | "in_progress" | "under_review" | "completed" | "rejected";
+  responseText: string | null;
+  responseFileUrl: string | null;
+  responseFileName: string | null;
+  responseSubmittedAt: Date | string | null;
+  completedAt: Date | string | null;
   updatedAt: Date | string;
-  isPrimary?: boolean;
-  isWatcher?: boolean;
 };
 
 type Filter = "all" | "in_progress" | "completed";
@@ -27,10 +34,30 @@ function Initials({ name }: { name: string }) {
   );
 }
 
-export function AssigneesCard({ items }: { items: AssigneeItem[] }) {
+const STATUS_DOT: Record<string, string> = {
+  todo: "bg-[var(--muted)]",
+  in_progress: "bg-[var(--primary)]",
+  under_review: "bg-[var(--warning)]",
+  completed: "bg-[var(--success)]",
+  rejected: "bg-[var(--danger)]",
+};
+
+export function AssigneesCard({
+  taskId,
+  currentUserId,
+  isCreator,
+  items,
+}: {
+  taskId: string;
+  currentUserId: string;
+  isCreator: boolean;
+  items: AssigneeItem[];
+}) {
   const t = useTranslations();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Record<string, string>>({});
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -42,13 +69,18 @@ export function AssigneesCard({ items }: { items: AssigneeItem[] }) {
     });
   }, [items, q, filter]);
 
-  const fmt = (d: Date | string) =>
-    new Intl.DateTimeFormat("uz-UZ", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(d));
+  const fmt = (d: Date | string | null) =>
+    d ? new Intl.DateTimeFormat("uz-UZ", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(d)) : "—";
+
+  async function review(userId: string, decision: "completed" | "rejected") {
+    await reviewAssigneeResponse(taskId, userId, decision, feedback[userId]);
+  }
 
   return (
     <Card className="overflow-hidden">
-      <div className="px-7 pt-6 pb-4">
+      <div className="px-7 pt-6 pb-4 flex items-center justify-between gap-3 flex-wrap">
         <h3 className="font-display text-lg font-bold tracking-tight">{t("tasks.sections.people")}</h3>
+        <span className="text-sm text-[var(--muted)] tabular">{items.length}</span>
       </div>
 
       <div className="px-7 pb-4 flex flex-col md:flex-row gap-3 md:items-center">
@@ -84,36 +116,77 @@ export function AssigneesCard({ items }: { items: AssigneeItem[] }) {
       </div>
 
       <div className="px-3 pb-5 space-y-1">
-        {filtered.map((a) => (
-          <div
-            key={a.id + (a.isWatcher ? "-w" : "")}
-            className={cn(
-              "group flex items-center gap-3 rounded-xl px-4 py-3 transition-colors",
-              a.isPrimary
-                ? "bg-[var(--primary-soft)] ring-1 ring-inset ring-[var(--primary)]/15"
-                : "hover:bg-[var(--surface-3)]"
-            )}
-          >
-            <Initials name={a.fullName} />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className="font-semibold text-[15px]">{a.fullName}</p>
-                {a.status === "completed" && <BadgeCheck className="size-[18px] text-[var(--success)]" aria-label="Completed" />}
-                {a.isWatcher && <Bell className="size-[18px] text-[var(--warning)]" aria-label="Watcher" />}
-              </div>
-              <p className="text-[13px] text-[var(--muted)] truncate">{a.departmentName ?? "—"}</p>
-            </div>
-            <div className="flex items-center gap-3 text-[var(--muted)]">
-              <div className="hidden sm:flex items-center gap-1.5 text-[13px] whitespace-nowrap tabular">
-                <Clock4 className="size-3.5" />
-                {fmt(a.updatedAt)}
-              </div>
-              <button className="size-8 rounded-full hover:bg-[var(--background-elevated)] flex items-center justify-center" aria-label="Info">
-                <Info className="size-4" />
+        {filtered.map((a) => {
+          const isMe = a.userId === currentUserId;
+          const isOpen = openId === a.userId;
+          return (
+            <div key={a.userId} className={cn(
+              "rounded-xl transition-colors",
+              isMe ? "bg-[var(--primary-soft)] ring-1 ring-inset ring-[var(--primary)]/15" : "hover:bg-[var(--surface-3)]"
+            )}>
+              <button
+                onClick={() => setOpenId(isOpen ? null : a.userId)}
+                className="w-full flex items-center gap-3 px-4 py-3 text-left"
+              >
+                <span className={cn("size-2 rounded-full shrink-0", STATUS_DOT[a.status])} />
+                <Initials name={a.fullName} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-semibold text-[15px]">{a.fullName}</p>
+                    {a.status === "completed" && <BadgeCheck className="size-[18px] text-[var(--success)]" />}
+                  </div>
+                  <p className="text-[13px] text-[var(--muted)] truncate">{a.departmentName ?? "—"}</p>
+                </div>
+                <div className="flex items-center gap-3 text-[var(--muted)]">
+                  <div className="hidden sm:flex items-center gap-1.5 text-[13px] whitespace-nowrap tabular">
+                    <Clock4 className="size-3.5" />
+                    {fmt(a.updatedAt)}
+                  </div>
+                  <ChevronDown className={cn("size-4 transition-transform", isOpen && "rotate-180")} />
+                </div>
               </button>
+
+              {isOpen && (
+                <div className="px-4 pb-4 pt-1 border-t border-[var(--border)] mt-1 space-y-3">
+                  {a.responseSubmittedAt ? (
+                    <div className="space-y-2">
+                      <p className="eyebrow">Javob</p>
+                      <p className="text-[14px] whitespace-pre-wrap leading-relaxed">{a.responseText}</p>
+                      {a.responseFileUrl && (
+                        <a
+                          href={a.responseFileUrl}
+                          className="inline-flex items-center gap-2 text-sm text-[var(--primary)] hover:underline"
+                        >
+                          <FileText className="size-4" />
+                          {a.responseFileName ?? "Fayl"}
+                        </a>
+                      )}
+                      <p className="text-[12px] text-[var(--muted)] tabular">{fmt(a.responseSubmittedAt)}</p>
+                      {isCreator && a.status === "under_review" && (
+                        <div className="pt-3 space-y-2 border-t border-[var(--border)]">
+                          <Input
+                            placeholder="Izoh (rad etish uchun)"
+                            value={feedback[a.userId] ?? ""}
+                            onChange={(e) => setFeedback((f) => ({ ...f, [a.userId]: e.target.value }))}
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" onClick={() => review(a.userId, "completed")}>{t("common.approve")}</Button>
+                            <Button size="sm" variant="destructive" onClick={() => review(a.userId, "rejected")}>{t("common.reject")}</Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
+                      <AlertCircle className="size-4" />
+                      Ijrochi tomonidan javob kiritilmagan
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
         {filtered.length === 0 && (
           <p className="text-center text-[var(--muted)] py-10 text-sm">{t("common.noResults")}</p>
         )}
