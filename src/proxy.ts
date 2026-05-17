@@ -1,6 +1,7 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { NextResponse, type NextRequest } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -38,6 +39,14 @@ export default async function proxy(req: NextRequest) {
     /\.[a-zA-Z0-9]+$/.test(pathname)
   ) {
     return NextResponse.next();
+  }
+
+  // Rate limiting (per IP). TZ §10.2: 100/min default, 5/min on auth.
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? req.headers.get("x-real-ip") ?? "anon";
+  const isAuth = pathname.includes("/login") || pathname.includes("/forgot-password") || pathname.includes("/reset-password");
+  const rl = isAuth ? rateLimit(`auth:${ip}`, 5, 60_000) : rateLimit(`pg:${ip}`, 100, 60_000);
+  if (!rl.allowed) {
+    return new NextResponse("too_many_requests", { status: 429, headers: { "Retry-After": "60" } });
   }
 
   if (!isPublic(pathname)) {

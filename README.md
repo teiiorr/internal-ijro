@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ichki Ijro
 
-## Getting Started
+Corporate task, project and HR management for BKRM. Implements the TZ in eight stages (see commit history).
 
-First, run the development server:
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.example .env.local
+# edit DATABASE_URL etc.
+pnpm db:migrate      # apply schema
+pnpm db:seed         # demo data (optional)
+pnpm dev             # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If the database has no users, visit `/setup` to create the first Direktor.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Demo seed creates these accounts (password `Password123!`):
+`direktor@bkrm.local`, `hr@bkrm.local`, `koordinator@bkrm.local`, `boshlik@bkrm.local`, `spec1@bkrm.local`, `spec2@bkrm.local`, `contractor@example.com`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Script | Purpose |
+|---|---|
+| `pnpm dev` | Next.js dev server |
+| `pnpm build` | Production build |
+| `pnpm start` | Run built app |
+| `pnpm typecheck` | TypeScript check |
+| `pnpm lint` | ESLint |
+| `pnpm db:generate` | Generate Drizzle migration from schema |
+| `pnpm db:migrate` | Apply pending migrations |
+| `pnpm db:push` | Push schema directly (dev only) |
+| `pnpm db:seed` | Seed demo data |
+| `pnpm tsx scripts/worker.ts` | Run cron worker (reminders, weekly PDF) |
 
-To learn more about Next.js, take a look at the following resources:
+## Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Next.js 16 (App Router) · TypeScript · PostgreSQL · Drizzle ORM · Auth.js v5 · Tailwind v4 · shadcn-style UI · next-intl (uz-latn/uz-cyrl/ru/en) · grammY · ExcelJS · @react-pdf/renderer · node-cron · recharts · dnd-kit.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [SETUP.md](./SETUP.md), [DATABASE.md](./DATABASE.md), [USERS.md](./USERS.md), [API.md](./API.md).
