@@ -9,8 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { MilestonesList } from "@/components/projects/milestones-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
-import { CompleteProjectDialog } from "@/components/projects/complete-project-dialog";
-import { GanttChart } from "@/components/projects/gantt-chart";
 
 const PROJECT_VIEW_ROLES = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
 
@@ -25,7 +23,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const me = session.user;
   const canManage = ["direktor", "orinbosar", "koordinator"].includes(me.position) || data.project.curatorUserId === me.id;
   const canCompletePaymentChange = ["direktor", "orinbosar"].includes(me.position);
-  const canComplete = data.project.status !== "completed" && canManage;
 
   return (
     <div className="space-y-6">
@@ -42,9 +39,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {data.curator && <span className="text-[var(--muted)]">Curator: {data.curator.fullName}</span>}
           </div>
         </div>
-        {canComplete && (
-          <CompleteProjectDialog projectId={data.project.id} externalCompanyId={data.project.externalCompanyId} />
-        )}
       </div>
 
       {data.project.description && <p className="text-sm">{data.project.description}</p>}
@@ -52,21 +46,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <Tabs defaultValue="milestones">
         <TabsList>
           <TabsTrigger value="milestones">{t("projects.tabs.milestones")}</TabsTrigger>
-          <TabsTrigger value="gantt">{t("projects.tabs.gantt")}</TabsTrigger>
           <TabsTrigger value="deliverables">{t("projects.tabs.deliverables")}</TabsTrigger>
           <TabsTrigger value="tasks">{t("projects.tabs.tasks")}</TabsTrigger>
           {data.company && <TabsTrigger value="chat">{t("projects.tabs.chat")}</TabsTrigger>}
         </TabsList>
-
-        <TabsContent value="gantt">
-          <Card><CardContent className="p-6">
-            <GanttChart
-              projectStart={data.project.startDate}
-              projectDeadline={data.project.deadline}
-              milestones={data.milestones.map((m) => ({ id: m.id, title: m.title, status: m.status, deadline: m.deadline, weight: m.weight }))}
-            />
-          </CardContent></Card>
-        </TabsContent>
 
         <TabsContent value="milestones">
           <Card><CardContent className="p-6">

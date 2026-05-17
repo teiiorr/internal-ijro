@@ -1,42 +1,19 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
-import crypto from "node:crypto";
 import { db } from "@/lib/db";
 import { notificationSettings, users } from "@/lib/db/schema";
 import { requireUser } from "@/lib/session";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { generateTwoFactorSecret, buildOtpAuthQr, verifyTotp } from "@/lib/auth/twofa";
 
-export async function generateTelegramLinkingCode(): Promise<{ code: string }> {
-  const me = await requireUser();
-  const code = String(crypto.randomInt(100000, 999999));
-  await db
-    .update(notificationSettings)
-    .set({ telegramChatId: `pending:${code}`, telegramEnabled: false })
-    .where(eq(notificationSettings.userId, me.id));
-  revalidatePath("/settings");
-  return { code };
-}
-
-export async function disconnectTelegram() {
-  const me = await requireUser();
-  await db
-    .update(notificationSettings)
-    .set({ telegramChatId: null, telegramEnabled: false })
-    .where(eq(notificationSettings.userId, me.id));
-  revalidatePath("/settings");
-}
-
 export async function setNotificationFlags(flags: {
   inAppEnabled?: boolean;
   emailEnabled?: boolean;
-  telegramEnabled?: boolean;
   notifyTaskAssigned?: boolean;
   notifyTaskDeadline?: boolean;
   notifyTaskComment?: boolean;
   notifyMention?: boolean;
-  notifyStandupReminder?: boolean;
 }) {
   const me = await requireUser();
   await db
@@ -49,7 +26,6 @@ export async function setNotificationFlags(flags: {
 export async function updateProfilePreferences(input: {
   languagePreference?: string;
   themePreference?: string;
-  timezone?: string;
 }) {
   const me = await requireUser();
   await db

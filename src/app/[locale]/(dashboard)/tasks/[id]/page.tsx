@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { StatusControl } from "@/components/tasks/status-control";
 import { CommentsSection } from "@/components/tasks/comments-section";
 import { ChecklistSection } from "@/components/tasks/checklist-section";
-import { WatcherToggle } from "@/components/tasks/watcher-toggle";
 import { AttachmentsSection } from "@/components/tasks/attachments-section";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
 import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-card";
@@ -29,10 +28,9 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const me = session.user;
   const isCreator = data.task.createdByUserId === me.id;
   const isAssignee = data.task.assignedToUserId === me.id;
-  const isWatcher = data.watchers.some((w) => w.userId === me.id);
   const canEdit = isCreator || isAssignee || ["direktor", "orinbosar"].includes(me.position);
 
-  const ids = Array.from(new Set([data.task.assignedToUserId, ...data.watchers.map((w) => w.userId)]));
+  const ids = Array.from(new Set([data.task.assignedToUserId]));
   const peopleRows = await db
     .select({ id: usersTbl.id, fullName: usersTbl.fullName, deptName: deptsTbl.name })
     .from(usersTbl)
@@ -49,16 +47,6 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
       updatedAt: data.task.updatedAt,
       isPrimary: true,
     },
-    ...data.watchers
-      .filter((w) => w.userId !== data.task.assignedToUserId)
-      .map<AssigneeItem>((w) => ({
-        id: w.userId,
-        fullName: peopleMap.get(w.userId)?.fullName ?? w.fullName,
-        departmentName: peopleMap.get(w.userId)?.deptName ?? null,
-        status: data.task.status as AssigneeItem["status"],
-        updatedAt: data.task.updatedAt,
-        isWatcher: true,
-      })),
   ];
 
   const allUsers = await db
@@ -69,14 +57,11 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="space-y-6 max-w-5xl">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/tasks"><ArrowLeft className="size-5" /></Link>
-          </Button>
-          <h1 className="text-2xl font-bold">{data.task.title}</h1>
-        </div>
-        <WatcherToggle taskId={data.task.id} watching={isWatcher} />
+      <div className="flex items-center gap-3 flex-wrap">
+        <Button asChild variant="ghost" size="icon">
+          <Link href="/tasks"><ArrowLeft className="size-5" /></Link>
+        </Button>
+        <h1 className="font-display text-2xl font-bold tracking-tight">{data.task.title}</h1>
       </div>
 
       <TaskHeaderCard
@@ -121,7 +106,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           <Card>
             <CardContent className="p-6 space-y-3">
               <h3 className="text-lg font-semibold">{t("tasks.sections.comments")}</h3>
-              <CommentsSection taskId={data.task.id} comments={data.comments.map((c) => ({ ...c, mentions: (c.mentions as string[] | null) ?? null }))} users={allUsers} />
+              <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
             </CardContent>
           </Card>
         </div>

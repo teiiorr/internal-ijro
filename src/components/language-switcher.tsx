@@ -10,7 +10,6 @@ const LABEL: Record<string, string> = {
   "uz-latn": "O'zbek",
   "uz-cyrl": "Ўзбек",
   ru: "Русский",
-  en: "English",
 };
 
 export function LanguageSwitcher() {

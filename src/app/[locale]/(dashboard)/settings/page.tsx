@@ -16,29 +16,25 @@ export default async function SettingsPage() {
   ]);
   const me = u[0];
   const s = ns[0] ?? {
-    inAppEnabled: true, emailEnabled: true, telegramEnabled: false, telegramChatId: null,
+    inAppEnabled: true, emailEnabled: false,
     notifyTaskAssigned: true, notifyTaskDeadline: true, notifyTaskComment: true,
-    notifyMention: true, notifyStandupReminder: true,
+    notifyMention: true,
   };
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{t("settings.pageTitle")}</h1>
+      <h1 className="font-display text-3xl font-bold tracking-tight">{t("settings.pageTitle")}</h1>
       <SettingsTabs
         init={{
           languagePreference: me.languagePreference,
           themePreference: me.themePreference,
-          timezone: me.timezone,
           twoFactorEnabled: me.twoFactorEnabled,
           inAppEnabled: s.inAppEnabled,
           emailEnabled: s.emailEnabled,
-          telegramEnabled: s.telegramEnabled,
-          telegramChatId: s.telegramChatId,
           notifyTaskAssigned: s.notifyTaskAssigned,
           notifyTaskDeadline: s.notifyTaskDeadline,
           notifyTaskComment: s.notifyTaskComment,
           notifyMention: s.notifyMention,
-          notifyStandupReminder: s.notifyStandupReminder,
         }}
       />
     </div>

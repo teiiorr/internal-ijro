@@ -4,8 +4,8 @@ import { requireUser } from "@/lib/session";
 import { markAllAsRead, markAsRead } from "@/lib/notifications";
 
 export async function markOneRead(id: string) {
-  const me = await requireUser();
-  await markAsRead(id, me.id);
+  await requireUser();
+  await markAsRead(id);
   revalidatePath("/notifications");
 }
 

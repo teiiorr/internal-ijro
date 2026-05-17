@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { and, eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import {
@@ -8,7 +8,6 @@ import {
   taskChecklistItems,
   taskComments,
   taskAttachments,
-  taskWatchers,
   taskDependencies,
   users,
 } from "@/lib/db/schema";
@@ -28,10 +27,6 @@ const createSchema = z.object({
   parentTaskId: z.string().uuid().nullable().optional(),
   priority: z.enum(TASK_PRIORITIES),
   deadline: z.string().datetime().nullable().optional(),
-  estimatedHours: z.number().nullable().optional(),
-  dependsOnIds: z.array(z.string().uuid()).optional(),
-  isRecurring: z.boolean().optional(),
-  recurrenceRule: z.enum(["daily", "weekly", "monthly"]).nullable().optional(),
 });
 
 export async function createTask(input: z.infer<typeof createSchema>): Promise<{ id: string }> {
@@ -45,30 +40,21 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
   const b: ActorContext = { id: assignee[0].id, position: assignee[0].position, departmentId: assignee[0].departmentId };
   if (!(await canAssignTaskTo(a, b))) throw new Error("forbidden_assign");
 
-  const inserted = await db.transaction(async (tx) => {
-    const ins = await tx
-      .insert(tasks)
-      .values({
-        title: parsed.title,
-        description: parsed.description ?? null,
-        assignedToUserId: parsed.assignedToUserId,
-        createdByUserId: me.id,
-        projectId: parsed.projectId ?? null,
-        milestoneId: parsed.milestoneId ?? null,
-        parentTaskId: parsed.parentTaskId ?? null,
-        priority: parsed.priority,
-        deadline: parsed.deadline ? new Date(parsed.deadline) : null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        estimatedHours: parsed.estimatedHours != null ? (parsed.estimatedHours as any) : null,
-        isRecurring: parsed.isRecurring ?? false,
-        recurrenceRule: parsed.recurrenceRule ?? null,
-      })
-      .returning({ id: tasks.id });
-    if (parsed.dependsOnIds && parsed.dependsOnIds.length > 0) {
-      await tx.insert(taskDependencies).values(parsed.dependsOnIds.map((d) => ({ taskId: ins[0].id, dependsOnTaskId: d })));
-    }
-    return ins[0];
-  });
+  const ins = await db
+    .insert(tasks)
+    .values({
+      title: parsed.title,
+      description: parsed.description ?? null,
+      assignedToUserId: parsed.assignedToUserId,
+      createdByUserId: me.id,
+      projectId: parsed.projectId ?? null,
+      milestoneId: parsed.milestoneId ?? null,
+      parentTaskId: parsed.parentTaskId ?? null,
+      priority: parsed.priority,
+      deadline: parsed.deadline ? new Date(parsed.deadline) : null,
+    })
+    .returning({ id: tasks.id });
+  const inserted = ins[0];
 
   await logActivity({
     userId: me.id,
@@ -137,11 +123,6 @@ export async function changeTaskStatus(taskId: string, nextStatus: (typeof TASK_
   recipients.add(t.createdByUserId);
   recipients.add(t.assignedToUserId);
   recipients.delete(me.id);
-  const watchers = await db
-    .select({ userId: taskWatchers.userId })
-    .from(taskWatchers)
-    .where(eq(taskWatchers.taskId, taskId));
-  for (const w of watchers) if (w.userId !== me.id) recipients.add(w.userId);
 
   await notify({
     userIds: Array.from(recipients),
@@ -161,7 +142,6 @@ const commentSchema = z.object({
   taskId: z.string().uuid(),
   content: z.string().min(1).max(5000),
   parentCommentId: z.string().uuid().nullable().optional(),
-  mentions: z.array(z.string().uuid()).optional(),
 });
 
 export async function addComment(input: z.infer<typeof commentSchema>) {
@@ -174,7 +154,6 @@ export async function addComment(input: z.infer<typeof commentSchema>) {
       userId: me.id,
       content: parsed.content,
       parentCommentId: parsed.parentCommentId ?? null,
-      mentions: parsed.mentions && parsed.mentions.length > 0 ? parsed.mentions : null,
     })
     .returning({ id: taskComments.id });
   await logActivity({
@@ -184,20 +163,17 @@ export async function addComment(input: z.infer<typeof commentSchema>) {
     entityId: parsed.taskId,
     newValue: { commentId: inserted[0].id },
   });
-  // Notify task assignee + creator + watchers + mentions
+  // Notify task assignee + creator
   const t = await db.select().from(tasks).where(eq(tasks.id, parsed.taskId)).limit(1);
   if (t.length > 0) {
     const recipients = new Set<string>();
     recipients.add(t[0].assignedToUserId);
     recipients.add(t[0].createdByUserId);
-    const watchers = await db.select({ userId: taskWatchers.userId }).from(taskWatchers).where(eq(taskWatchers.taskId, parsed.taskId));
-    for (const w of watchers) recipients.add(w.userId);
-    if (parsed.mentions) for (const m of parsed.mentions) recipients.add(m);
     recipients.delete(me.id);
     if (recipients.size > 0) {
       await notify({
         userIds: Array.from(recipients),
-        type: parsed.mentions && parsed.mentions.length > 0 ? "task.mention" : "task.comment",
+        type: "task.comment",
         title: `Comment on: ${t[0].title}`,
         message: parsed.content.slice(0, 280),
         link: `/tasks/${parsed.taskId}`,
@@ -207,16 +183,6 @@ export async function addComment(input: z.infer<typeof commentSchema>) {
     }
   }
   revalidatePath(`/tasks/${parsed.taskId}`);
-}
-
-export async function setWatcher(taskId: string, watching: boolean) {
-  const me = await requireUser();
-  if (watching) {
-    await db.insert(taskWatchers).values({ taskId, userId: me.id }).onConflictDoNothing();
-  } else {
-    await db.delete(taskWatchers).where(and(eq(taskWatchers.taskId, taskId), eq(taskWatchers.userId, me.id)));
-  }
-  revalidatePath(`/tasks/${taskId}`);
 }
 
 const checklistSchema = z.object({
@@ -270,9 +236,3 @@ export async function removeAttachment(attachmentId: string, taskId: string) {
   revalidatePath(`/tasks/${taskId}`);
 }
 
-// Kanban drag-and-drop endpoint (uses canTransition)
-export async function moveTaskOnKanban(taskId: string, nextStatus: (typeof TASK_STATUSES)[number]) {
-  return changeTaskStatus(taskId, nextStatus);
-}
-
-void inArray;

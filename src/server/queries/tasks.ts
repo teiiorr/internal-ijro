@@ -8,7 +8,6 @@ import {
   taskChecklistItems,
   taskComments,
   taskAttachments,
-  taskWatchers,
   taskDependencies,
   type Position,
 } from "@/lib/db/schema";
@@ -42,11 +41,8 @@ export async function listTasks(f: TaskListFilters) {
   // Every user only sees tasks they're personally involved in:
   // - assigned to them (for execution)
   // - created by them (for review / approval)
-  // - watching the task
   conds.push(
-    sql`(${tasks.assignedToUserId} = ${f.actorId}
-         OR ${tasks.createdByUserId} = ${f.actorId}
-         OR exists (select 1 from task_watchers tw where tw.task_id = ${tasks.id} AND tw.user_id = ${f.actorId}))`
+    sql`(${tasks.assignedToUserId} = ${f.actorId} OR ${tasks.createdByUserId} = ${f.actorId})`
   );
 
   const assignedAlias = users as typeof users;
@@ -79,7 +75,7 @@ export async function getTask(id: string) {
   const row = await db.select().from(tasks).where(eq(tasks.id, id)).limit(1);
   if (row.length === 0) return null;
   const t = row[0];
-  const [assignee, creator, project, checklist, comments, attachments, watchers, deps] = await Promise.all([
+  const [assignee, creator, project, checklist, comments, attachments, deps] = await Promise.all([
     db.select({ id: users.id, fullName: users.fullName, email: users.email }).from(users).where(eq(users.id, t.assignedToUserId)).limit(1),
     db.select({ id: users.id, fullName: users.fullName, email: users.email }).from(users).where(eq(users.id, t.createdByUserId)).limit(1),
     t.projectId
@@ -94,18 +90,12 @@ export async function getTask(id: string) {
         userId: taskComments.userId,
         userName: users.fullName,
         parentCommentId: taskComments.parentCommentId,
-        mentions: taskComments.mentions,
       })
       .from(taskComments)
       .innerJoin(users, eq(users.id, taskComments.userId))
       .where(and(eq(taskComments.taskId, id), isNull(taskComments.deletedAt)))
       .orderBy(asc(taskComments.createdAt)),
     db.select().from(taskAttachments).where(eq(taskAttachments.taskId, id)).orderBy(desc(taskAttachments.uploadedAt)),
-    db
-      .select({ userId: taskWatchers.userId, fullName: users.fullName })
-      .from(taskWatchers)
-      .innerJoin(users, eq(users.id, taskWatchers.userId))
-      .where(eq(taskWatchers.taskId, id)),
     db
       .select({ id: taskDependencies.id, dependsOnTaskId: taskDependencies.dependsOnTaskId, dependsOnTitle: tasks.title, dependsOnStatus: tasks.status })
       .from(taskDependencies)
@@ -121,7 +111,6 @@ export async function getTask(id: string) {
     checklist,
     comments,
     attachments,
-    watchers,
     dependencies: deps,
   };
 }

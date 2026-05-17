@@ -17,7 +17,6 @@ export async function SpecialistWidgets({ userId }: { userId: string }) {
       </div>
       <div className="flex gap-2">
         <Button asChild><Link href="/tasks?scope=mine">{t("dashboard.specialist.openMyTasks")}</Link></Button>
-        <Button asChild variant="outline"><Link href="/reports/standup">{t("dashboard.specialist.submitStandup")}</Link></Button>
       </div>
     </div>
   );

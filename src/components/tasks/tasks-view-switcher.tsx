@@ -2,12 +2,10 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { TaskPriorityBadge, TaskStatusBadge } from "./task-status-badge";
-import { KanbanBoard } from "./kanban-board";
 import { CalendarView } from "./calendar-view";
 import Link from "next/link";
-import { List, KanbanSquare, Calendar as CalendarIcon } from "lucide-react";
+import { List, Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type T = {
@@ -22,41 +20,53 @@ type T = {
 
 export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
   const t = useTranslations();
-  const [view, setView] = useState<"list" | "kanban" | "calendar">("list");
+  const [view, setView] = useState<"list" | "calendar">("list");
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-1">
+      <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 w-fit">
         {([
-          ["list", List, t("tasks.view.list")], ["kanban", KanbanSquare, t("tasks.view.kanban")], ["calendar", CalendarIcon, t("tasks.view.calendar")],
+          ["list", List, t("tasks.view.list")],
+          ["calendar", CalendarIcon, t("tasks.view.calendar")],
         ] as const).map(([v, Icon, label]) => (
-          <Button
+          <button
             key={v}
-            size="sm"
-            variant={view === v ? "default" : "outline"}
             onClick={() => setView(v as typeof view)}
-            className={cn(view === v && "shadow")}
+            className={cn(
+              "px-3.5 py-1.5 rounded-[8px] text-sm font-semibold transition-all flex items-center gap-2",
+              view === v
+                ? "bg-[var(--background-elevated)] shadow-soft text-[var(--foreground)]"
+                : "text-[var(--muted)] hover:text-[var(--foreground)]"
+            )}
           >
             <Icon className="size-4" /> {label}
-          </Button>
+          </button>
         ))}
       </div>
+
       {view === "list" && (
         <Table>
           <TableHeader>
-            <TableRow><TableHead>{t("tasks.fields.title")}</TableHead><TableHead>{t("common.status")}</TableHead><TableHead>{t("tasks.fields.priority")}</TableHead><TableHead>{t("tasks.fields.assignee")}</TableHead><TableHead>{t("tasks.fields.project")}</TableHead><TableHead>{t("tasks.fields.deadline")}</TableHead></TableRow>
+            <TableRow>
+              <TableHead>{t("tasks.fields.title")}</TableHead>
+              <TableHead>{t("common.status")}</TableHead>
+              <TableHead>{t("tasks.fields.priority")}</TableHead>
+              <TableHead>{t("tasks.fields.assignee")}</TableHead>
+              <TableHead>{t("tasks.fields.project")}</TableHead>
+              <TableHead>{t("tasks.fields.deadline")}</TableHead>
+            </TableRow>
           </TableHeader>
           <TableBody>
-            {tasks.map((t) => {
-              const overdue = t.deadline && new Date(t.deadline) < new Date() && !["completed", "rejected"].includes(t.status);
+            {tasks.map((row) => {
+              const overdue = row.deadline && new Date(row.deadline) < new Date() && !["completed", "rejected"].includes(row.status);
               return (
-                <TableRow key={t.id} className={overdue ? "bg-[var(--danger)]/5" : undefined}>
-                  <TableCell><Link href={`/tasks/${t.id}`} className="font-medium hover:underline">{t.title}</Link></TableCell>
-                  <TableCell><TaskStatusBadge status={t.status} /></TableCell>
-                  <TableCell><TaskPriorityBadge priority={t.priority} /></TableCell>
-                  <TableCell>{t.assignedToName ?? "—"}</TableCell>
-                  <TableCell>{t.projectName ?? "—"}</TableCell>
-                  <TableCell>{t.deadline ? new Date(t.deadline).toLocaleDateString() : "—"}</TableCell>
+                <TableRow key={row.id} className={overdue ? "bg-[var(--danger-soft)]" : undefined}>
+                  <TableCell><Link href={`/tasks/${row.id}`} className="font-medium hover:underline">{row.title}</Link></TableCell>
+                  <TableCell><TaskStatusBadge status={row.status} /></TableCell>
+                  <TableCell><TaskPriorityBadge priority={row.priority} /></TableCell>
+                  <TableCell>{row.assignedToName ?? "—"}</TableCell>
+                  <TableCell>{row.projectName ?? "—"}</TableCell>
+                  <TableCell className="tabular">{row.deadline ? new Date(row.deadline).toLocaleDateString() : "—"}</TableCell>
                 </TableRow>
               );
             })}
@@ -66,7 +76,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
           </TableBody>
         </Table>
       )}
-      {view === "kanban" && <KanbanBoard initialTasks={tasks} />}
+
       {view === "calendar" && <CalendarView tasks={tasks} />}
     </div>
   );

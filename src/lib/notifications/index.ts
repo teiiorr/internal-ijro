@@ -3,7 +3,6 @@ import { eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { notifications, notificationSettings, users } from "@/lib/db/schema";
 import { sendMail } from "@/lib/email";
-import { sendTelegramTo } from "@/lib/telegram/bot";
 
 export type NotifyArgs = {
   userIds: string[];
@@ -19,19 +18,17 @@ export async function notify(args: NotifyArgs): Promise<void> {
   if (args.userIds.length === 0) return;
 
   const uniq = Array.from(new Set(args.userIds));
-  // 1) Persist in-app notifications for users who have it enabled
   const settings = await db
     .select({
       userId: notificationSettings.userId,
       inApp: notificationSettings.inAppEnabled,
       email: notificationSettings.emailEnabled,
-      telegram: notificationSettings.telegramEnabled,
-      telegramChatId: notificationSettings.telegramChatId,
     })
     .from(notificationSettings)
     .where(inArray(notificationSettings.userId, uniq));
   const map = new Map(settings.map((s) => [s.userId, s]));
 
+  // 1) In-app
   const toInsert: { userId: string; type: string; title: string; message: string | null; link: string | null; relatedEntityType: string | null; relatedEntityId: string | null }[] = [];
   for (const uid of uniq) {
     const s = map.get(uid);
@@ -49,14 +46,11 @@ export async function notify(args: NotifyArgs): Promise<void> {
   }
   if (toInsert.length > 0) await db.insert(notifications).values(toInsert);
 
-  // 2) Emails
-  const emailUserIds = uniq.filter((id) => {
-    const s = map.get(id);
-    return !s || s.email;
-  });
+  // 2) Emails (opt-in: email_enabled must be true)
+  const emailUserIds = uniq.filter((id) => map.get(id)?.email === true);
   if (emailUserIds.length > 0) {
     const recipients = await db
-      .select({ email: users.email, fullName: users.fullName, lang: users.languagePreference })
+      .select({ email: users.email, fullName: users.fullName })
       .from(users)
       .where(inArray(users.id, emailUserIds));
     await Promise.allSettled(
@@ -64,19 +58,12 @@ export async function notify(args: NotifyArgs): Promise<void> {
         sendMail({
           to: r.email,
           subject: args.title,
-          html: `<p>Hello, ${r.fullName}.</p><p>${args.message ?? args.title}</p>${
+          html: `<p>${r.fullName},</p><p>${args.message ?? args.title}</p>${
             args.link ? `<p><a href="${process.env.APP_URL ?? "http://localhost:3000"}${args.link}">Open</a></p>` : ""
           }`,
         })
       )
     );
-  }
-
-  // 3) Telegram
-  const tgTargets = settings.filter((s) => s.telegram && s.telegramChatId && !s.telegramChatId.startsWith("pending:"));
-  if (tgTargets.length > 0) {
-    const body = `${args.title}\n${args.message ?? ""}${args.link ? `\n${process.env.APP_URL ?? ""}${args.link}` : ""}`;
-    await Promise.allSettled(tgTargets.map((t) => sendTelegramTo(t.telegramChatId!, body)));
   }
 }
 
@@ -87,10 +74,9 @@ export async function markAllAsRead(userId: string): Promise<void> {
     .where(eq(notifications.userId, userId));
 }
 
-export async function markAsRead(id: string, userId: string): Promise<void> {
+export async function markAsRead(id: string): Promise<void> {
   await db
     .update(notifications)
     .set({ isRead: true, readAt: new Date() })
     .where(eq(notifications.id, id));
-  void userId;
 }

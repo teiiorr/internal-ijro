@@ -1,15 +1,35 @@
 "use client";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "./theme-provider";
-import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const next = theme === "light" ? "dark" : theme === "dark" ? "system" : "light";
-  const Icon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
+  const { resolved, setTheme } = useTheme();
+  const isDark = resolved === "dark";
   return (
-    <Button variant="ghost" size="icon" aria-label="Toggle theme" onClick={() => setTheme(next)}>
-      <Icon className="size-5" />
-    </Button>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isDark}
+      aria-label="Toggle theme"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className={cn(
+        "relative inline-flex h-9 w-[68px] items-center rounded-full p-1 transition-colors",
+        isDark ? "bg-[var(--primary)]" : "bg-[var(--surface-3)] border border-[var(--border)]"
+      )}
+    >
+      <span
+        className={cn(
+          "inline-flex size-7 items-center justify-center rounded-full bg-[var(--background-elevated)] shadow-soft transition-transform",
+          isDark ? "translate-x-[32px]" : "translate-x-0"
+        )}
+      >
+        {isDark ? (
+          <Moon className="size-4 text-[var(--primary)]" />
+        ) : (
+          <Sun className="size-4 text-[var(--warning)]" />
+        )}
+      </span>
+    </button>
   );
 }

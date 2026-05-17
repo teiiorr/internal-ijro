@@ -1,8 +1,8 @@
 "use client";
 import { useState, useTransition } from "react";
 import Image from "next/image";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,8 +11,6 @@ import {
   changePasswordSelf,
   confirm2fa,
   disable2fa,
-  disconnectTelegram,
-  generateTelegramLinkingCode,
   setNotificationFlags,
   start2faSetup,
   updateProfilePreferences,
@@ -21,184 +19,134 @@ import {
 type Init = {
   languagePreference: string;
   themePreference: string;
-  timezone: string;
   twoFactorEnabled: boolean;
   inAppEnabled: boolean;
   emailEnabled: boolean;
-  telegramEnabled: boolean;
-  telegramChatId: string | null;
   notifyTaskAssigned: boolean;
   notifyTaskDeadline: boolean;
   notifyTaskComment: boolean;
   notifyMention: boolean;
-  notifyStandupReminder: boolean;
 };
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <Card className="p-7">
+      <h2 className="font-display text-lg font-bold tracking-tight mb-5">{title}</h2>
+      {children}
+    </Card>
+  );
+}
+
 export function SettingsTabs({ init }: { init: Init }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
-  const [tgCode, setTgCode] = useState<string | null>(null);
   const [qr, setQr] = useState<string | null>(null);
   const [secret, setSecret] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
+  const flags: [keyof Init, string][] = [
+    ["inAppEnabled", t("settings.notifs.inApp")],
+    ["emailEnabled", t("settings.notifs.email")],
+    ["notifyTaskAssigned", t("settings.notifs.taskAssigned")],
+    ["notifyTaskDeadline", t("settings.notifs.deadline")],
+    ["notifyTaskComment", t("settings.notifs.comments")],
+    ["notifyMention", t("settings.notifs.mentions")],
+  ];
+
   return (
-    <Tabs defaultValue="personal">
-      <TabsList>
-        <TabsTrigger value="personal">Personal</TabsTrigger>
-        <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        <TabsTrigger value="security">Security</TabsTrigger>
-        <TabsTrigger value="telegram">Telegram</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="personal">
-        <Card><CardContent className="p-6 space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-1.5">
-              <Label>Language</Label>
-              <Select defaultValue={init.languagePreference} onValueChange={(v) => start(async () => { await updateProfilePreferences({ languagePreference: v }); })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="uz-latn">O&apos;zbek (latin)</SelectItem>
-                  <SelectItem value="uz-cyrl">Ўзбек (cyrillic)</SelectItem>
-                  <SelectItem value="ru">Русский</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Theme</Label>
-              <Select defaultValue={init.themePreference} onValueChange={(v) => start(async () => { await updateProfilePreferences({ themePreference: v }); })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Timezone</Label>
-              <Input
-                defaultValue={init.timezone}
-                onBlur={(e) => start(async () => { await updateProfilePreferences({ timezone: e.target.value }); })}
-              />
-            </div>
+    <div className="space-y-6 max-w-3xl">
+      <Section title={t("settings.tabs.personal")}>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label>{t("settings.personal.language")}</Label>
+            <Select defaultValue={init.languagePreference} onValueChange={(v) => start(async () => { await updateProfilePreferences({ languagePreference: v }); })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="uz-latn">{t("settings.lang.uz-latn")}</SelectItem>
+                <SelectItem value="uz-cyrl">{t("settings.lang.uz-cyrl")}</SelectItem>
+                <SelectItem value="ru">{t("settings.lang.ru")}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </CardContent></Card>
-      </TabsContent>
+        </div>
+      </Section>
 
-      <TabsContent value="notifications">
-        <Card><CardContent className="p-6 space-y-3">
-          {[
-            ["inAppEnabled", "In-app notifications"],
-            ["emailEnabled", "Email"],
-            ["notifyTaskAssigned", "Task assigned"],
-            ["notifyTaskDeadline", "Deadline approaching"],
-            ["notifyTaskComment", "New comments"],
-            ["notifyMention", "Mentions"],
-            ["notifyStandupReminder", "Standup reminder"],
-          ].map(([key, label]) => (
-            <label key={key} className="flex items-center justify-between text-sm">
+      <Section title={t("settings.tabs.notifications")}>
+        <div className="space-y-3.5">
+          {flags.map(([key, label]) => (
+            <label key={String(key)} className="flex items-center justify-between text-[15px] py-1">
               <span>{label}</span>
               <input
                 type="checkbox"
-                defaultChecked={(init as unknown as Record<string, boolean>)[key]}
+                defaultChecked={init[key] as boolean}
                 onChange={(e) => start(async () => { await setNotificationFlags({ [key]: e.target.checked }); })}
+                className="size-5"
               />
             </label>
           ))}
-        </CardContent></Card>
-      </TabsContent>
+        </div>
+      </Section>
 
-      <TabsContent value="security">
-        <Card>
-          <CardHeader><CardTitle className="text-lg">Change password</CardTitle></CardHeader>
-          <CardContent>
+      <Section title={t("settings.security.changePassword")}>
+        <form
+          className="space-y-3 max-w-md"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            start(async () => {
+              try {
+                await changePasswordSelf(String(fd.get("current") ?? ""), String(fd.get("next") ?? ""));
+                setMsg(t("settings.security.messages.passwordChanged"));
+                (e.target as HTMLFormElement).reset();
+              } catch (err) { setMsg((err as Error).message); }
+            });
+          }}
+        >
+          <Input name="current" type="password" placeholder={t("settings.security.current")} required />
+          <Input name="next" type="password" placeholder={t("settings.security.newPass")} required minLength={8} />
+          <Button type="submit" disabled={pending}>{t("settings.security.change")}</Button>
+          {msg && <p className="text-sm text-[var(--muted)]">{msg}</p>}
+        </form>
+      </Section>
+
+      <Section title={t("settings.security.twoFa")}>
+        {init.twoFactorEnabled ? (
+          <div className="space-y-3 max-w-md">
+            <p className="text-sm text-[var(--success)] font-medium">{t("settings.security.twoFaEnabled")}</p>
             <form
-              className="space-y-3"
+              className="flex gap-2"
               onSubmit={(e) => {
                 e.preventDefault();
-                const fd = new FormData(e.currentTarget);
-                start(async () => {
-                  try {
-                    await changePasswordSelf(String(fd.get("current") ?? ""), String(fd.get("next") ?? ""));
-                    setMsg("Password changed");
-                  } catch (err) { setMsg((err as Error).message); }
-                });
+                const code = (e.currentTarget.elements.namedItem("token") as HTMLInputElement).value;
+                start(async () => { try { await disable2fa(code); setMsg(t("settings.security.messages.twoFaDisabled")); } catch (err) { setMsg((err as Error).message); } });
               }}
             >
-              <Input name="current" type="password" placeholder="Current password" required />
-              <Input name="next" type="password" placeholder="New password (min 8)" required minLength={8} />
-              <Button type="submit" disabled={pending}>Change</Button>
-              {msg && <p className="text-sm">{msg}</p>}
+              <Input name="token" placeholder={t("settings.security.disablePlaceholder")} />
+              <Button variant="destructive" type="submit" disabled={pending}>{t("settings.security.disable")}</Button>
             </form>
-          </CardContent>
-        </Card>
-
-        <Card className="mt-4">
-          <CardHeader><CardTitle className="text-lg">Two-factor authentication</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            {init.twoFactorEnabled ? (
-              <>
-                <p className="text-sm text-[var(--success)]">2FA is enabled.</p>
-                <form
-                  className="flex gap-2"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const code = (e.currentTarget.elements.namedItem("token") as HTMLInputElement).value;
-                    start(async () => { try { await disable2fa(code); setMsg("2FA disabled"); } catch (err) { setMsg((err as Error).message); } });
-                  }}
-                >
-                  <Input name="token" placeholder="Enter current 6-digit code to disable" />
-                  <Button variant="destructive" type="submit" disabled={pending}>Disable</Button>
-                </form>
-              </>
-            ) : (
-              <>
-                {!qr ? (
-                  <Button onClick={() => start(async () => { const r = await start2faSetup(); setQr(r.qr); setSecret(r.secret); })} disabled={pending}>Start setup</Button>
-                ) : (
-                  <div className="space-y-2">
-                    <Image src={qr} alt="2FA QR" width={180} height={180} />
-                    <p className="text-xs text-[var(--muted)]">Or enter secret manually: <code>{secret}</code></p>
-                    <form
-                      className="flex gap-2"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        const code = (e.currentTarget.elements.namedItem("token") as HTMLInputElement).value;
-                        start(async () => { try { await confirm2fa(code); setMsg("2FA enabled"); } catch (err) { setMsg((err as Error).message); } });
-                      }}
-                    >
-                      <Input name="token" placeholder="6-digit code" maxLength={6} required />
-                      <Button type="submit" disabled={pending}>Verify</Button>
-                    </form>
-                  </div>
-                )}
-              </>
-            )}
-            {msg && <p className="text-sm">{msg}</p>}
-          </CardContent>
-        </Card>
-      </TabsContent>
-
-      <TabsContent value="telegram">
-        <Card><CardContent className="p-6 space-y-3 text-sm">
-          {init.telegramChatId && !init.telegramChatId.startsWith("pending:") ? (
-            <>
-              <p>Connected.</p>
-              <Button variant="destructive" disabled={pending} onClick={() => start(async () => { await disconnectTelegram(); })}>Disconnect</Button>
-            </>
-          ) : (
-            <>
-              <p>To connect: generate a code below, then send it to the bot in Telegram.</p>
-              <Button disabled={pending} onClick={() => start(async () => { const r = await generateTelegramLinkingCode(); setTgCode(r.code); })}>
-                Generate code
-              </Button>
-              {tgCode && <p>Your code: <code className="text-lg font-mono">{tgCode}</code></p>}
-            </>
-          )}
-        </CardContent></Card>
-      </TabsContent>
-    </Tabs>
+          </div>
+        ) : !qr ? (
+          <Button onClick={() => start(async () => { const r = await start2faSetup(); setQr(r.qr); setSecret(r.secret); })} disabled={pending}>
+            {t("settings.security.startSetup")}
+          </Button>
+        ) : (
+          <div className="space-y-3 max-w-md">
+            <Image src={qr} alt="2FA QR" width={200} height={200} className="rounded-lg border" />
+            <p className="text-xs text-[var(--muted)]">{t("settings.security.manualEntry")} <code className="font-mono text-[var(--foreground)]">{secret}</code></p>
+            <form
+              className="flex gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const code = (e.currentTarget.elements.namedItem("token") as HTMLInputElement).value;
+                start(async () => { try { await confirm2fa(code); setMsg(t("settings.security.messages.twoFaEnabled")); } catch (err) { setMsg((err as Error).message); } });
+              }}
+            >
+              <Input name="token" placeholder={t("settings.security.codePlaceholder")} maxLength={6} required />
+              <Button type="submit" disabled={pending}>{t("settings.security.verify")}</Button>
+            </form>
+          </div>
+        )}
+      </Section>
+    </div>
   );
 }
