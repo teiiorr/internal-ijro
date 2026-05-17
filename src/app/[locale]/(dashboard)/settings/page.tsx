@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -8,6 +9,7 @@ import { SettingsTabs } from "@/components/settings/settings-tabs";
 export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   const [u, ns] = await Promise.all([
     db.select().from(users).where(eq(users.id, session.user.id)).limit(1),
     db.select().from(notificationSettings).where(eq(notificationSettings.userId, session.user.id)).limit(1),
@@ -21,7 +23,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="text-3xl font-bold">{t("settings.pageTitle")}</h1>
       <SettingsTabs
         init={{
           languagePreference: me.languagePreference,

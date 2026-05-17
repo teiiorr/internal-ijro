@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ type Company = { id: string; name: string };
 type User = { id: string; fullName: string };
 
 export function NewProjectForm({ companies, curators }: { companies: Company[]; curators: User[] }) {
+  const t = useTranslations();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [type, setType] = useState<"internal" | "external">("internal");
@@ -42,27 +44,27 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
   return (
     <form onSubmit={onSubmit} className="space-y-4 max-w-2xl">
       <div className="space-y-1.5">
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name">{t("projects.fields.name")}</Label>
         <Input id="name" name="name" required minLength={2} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t("projects.fields.description")}</Label>
         <Textarea id="description" name="description" rows={3} />
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
-          <Label>Type</Label>
+          <Label>{t("projects.fields.type")}</Label>
           <Select value={type} onValueChange={(v) => setType(v as typeof type)}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="internal">Internal</SelectItem>
-              <SelectItem value="external">External (with contractor)</SelectItem>
+              <SelectItem value="internal">{t("projects.type.internal")}</SelectItem>
+              <SelectItem value="external">{t("projects.type.external")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         {type === "external" && (
           <div className="space-y-1.5">
-            <Label>Contractor company</Label>
+            <Label>{t("projects.fields.contractor")}</Label>
             <Select name="externalCompanyId">
               <SelectTrigger><SelectValue placeholder="Pick approved contractor" /></SelectTrigger>
               <SelectContent>
@@ -72,7 +74,7 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
           </div>
         )}
         <div className="space-y-1.5">
-          <Label>Curator</Label>
+          <Label>{t("projects.fields.curator")}</Label>
           <Select name="curatorUserId">
             <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
             <SelectContent>
@@ -81,15 +83,15 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
           </Select>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="startDate">Start date</Label>
+          <Label htmlFor="startDate">{t("projects.fields.startDate")}</Label>
           <Input id="startDate" name="startDate" type="date" />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="deadline">Deadline</Label>
+          <Label htmlFor="deadline">{t("projects.fields.deadline")}</Label>
           <Input id="deadline" name="deadline" type="date" />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="budget">Budget</Label>
+          <Label htmlFor="budget">{t("projects.fields.budget")}</Label>
           <div className="flex gap-2">
             <Input id="budget" name="budget" type="number" step="0.01" />
             <Input name="budgetCurrency" defaultValue="UZS" className="w-24" />
@@ -97,7 +99,7 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
         </div>
       </div>
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-      <Button type="submit" disabled={pending}>Create project</Button>
+      <Button type="submit" disabled={pending}>{t("projects.new")}</Button>
     </form>
   );
 }

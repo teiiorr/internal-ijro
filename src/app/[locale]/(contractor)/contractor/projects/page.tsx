@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { listProjectsForContractor } from "@/server/queries/projects";
@@ -8,10 +9,11 @@ import { Badge } from "@/components/ui/badge";
 export default async function ContractorProjectsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   const { projects } = await listProjectsForContractor(session.user.id);
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">My projects</h1>
+      <h1 className="text-3xl font-bold">{t("contractor.dashboard.myProjects")}</h1>
       <Card>
         <CardContent className="p-4 space-y-2">
           {projects.map((p) => (
@@ -22,7 +24,7 @@ export default async function ContractorProjectsPage() {
               </div>
             </Link>
           ))}
-          {projects.length === 0 && <p className="text-sm text-[var(--muted)]">No projects.</p>}
+          {projects.length === 0 && <p className="text-sm text-[var(--muted)]">{t("contractor.dashboard.noProjects")}</p>}
         </CardContent>
       </Card>
     </div>

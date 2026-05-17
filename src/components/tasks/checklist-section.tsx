@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/utils";
 type Item = { id: string; content: string; isCompleted: boolean };
 
 export function ChecklistSection({ taskId, items }: { taskId: string; items: Item[] }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [text, setText] = useState("");
 
@@ -26,13 +28,13 @@ export function ChecklistSection({ taskId, items }: { taskId: string; items: Ite
             </Button>
           </li>
         ))}
-        {items.length === 0 && <li className="text-sm text-[var(--muted)]">No checklist items.</li>}
+        {items.length === 0 && <li className="text-sm text-[var(--muted)]">{t("tasks.sections.noChecklist")}</li>}
       </ul>
       <div className="flex gap-2">
         <Input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="New checklist item..."
+          placeholder={t("tasks.sections.newChecklistItem")}
           onKeyDown={(e) => {
             if (e.key === "Enter" && text.trim()) {
               start(async () => { await addChecklistItem({ taskId, content: text }); setText(""); });

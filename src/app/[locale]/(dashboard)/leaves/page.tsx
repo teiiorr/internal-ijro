@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { desc, eq, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -10,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default async function LeavesPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
 
   const me = session.user;
   const canManage = ["direktor", "orinbosar", "hr"].includes(me.position);
@@ -53,7 +55,7 @@ export default async function LeavesPage() {
     <div className="space-y-6">
       {canManage && currentMonth.length > 0 && (
         <Card>
-          <CardHeader><CardTitle>Leaves calendar</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("leaves.calendar")}</CardTitle></CardHeader>
           <CardContent>
             <LeavesCalendar items={currentMonth as Parameters<typeof LeavesCalendar>[0]["items"]} />
           </CardContent>

@@ -41,15 +41,15 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
   return (
     <form onSubmit={onSubmit} className="space-y-4 max-w-lg">
       <div className="space-y-1.5">
-        <Label htmlFor="fullName">Full name</Label>
+        <Label htmlFor="fullName">{t("common.fullName")}</Label>
         <Input id="fullName" name="fullName" required minLength={2} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t("common.email")}</Label>
         <Input id="email" name="email" type="email" required />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="position">Position</Label>
+        <Label htmlFor="position">{t("common.position")}</Label>
         <Select name="position" defaultValue="mutaxassis">
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
@@ -60,7 +60,7 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
         </Select>
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="departmentId">Department</Label>
+        <Label htmlFor="departmentId">{t("common.department")}</Label>
         <Select name="departmentId">
           <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
           <SelectContent>
@@ -71,7 +71,7 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
         </Select>
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="reportsToUserId">Reports to</Label>
+        <Label htmlFor="reportsToUserId">{t("employees.reportsTo")}</Label>
         <Select name="reportsToUserId">
           <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
           <SelectContent>

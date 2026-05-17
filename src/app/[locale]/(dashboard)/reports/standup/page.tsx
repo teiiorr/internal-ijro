@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -12,6 +13,7 @@ import { submitStandup } from "@/server/actions/standup";
 export default async function StandupPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   const me = session.user;
   const today = new Date().toISOString().slice(0, 10);
 
@@ -56,42 +58,42 @@ export default async function StandupPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Daily standup</h1>
+      <h1 className="text-3xl font-bold">{t("reports.standupTitle")}</h1>
 
       <Card>
-        <CardHeader><CardTitle>Today ({today})</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("reports.todayLabel")} ({today})</CardTitle></CardHeader>
         <CardContent>
           <form action={submitStandup} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="doneYesterday">What I did yesterday</Label>
+              <Label htmlFor="doneYesterday">{t("reports.doneYesterday")}</Label>
               <Textarea id="doneYesterday" name="doneYesterday" rows={3} defaultValue={cur?.doneYesterday ?? ""} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="plannedToday">What I plan to do today</Label>
+              <Label htmlFor="plannedToday">{t("reports.plannedToday")}</Label>
               <Textarea id="plannedToday" name="plannedToday" rows={3} defaultValue={cur?.plannedToday ?? ""} />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="blockers">Blockers</Label>
+              <Label htmlFor="blockers">{t("reports.blockers")}</Label>
               <Textarea id="blockers" name="blockers" rows={2} defaultValue={cur?.blockers ?? ""} />
             </div>
-            <Button type="submit">{cur ? "Update" : "Submit"}</Button>
+            <Button type="submit">{cur ? t("reports.update") : t("reports.submit")}</Button>
           </form>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>My history</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("reports.myHistory")}</CardTitle></CardHeader>
         <CardContent>
           {myHistory.length === 0 ? (
-            <p className="text-sm text-[var(--muted)]">No history yet.</p>
+            <p className="text-sm text-[var(--muted)]">{t("reports.noHistory")}</p>
           ) : (
             <ul className="space-y-3">
               {myHistory.map((r) => (
                 <li key={r.id} className="border rounded-lg p-3 text-sm">
                   <p className="text-xs text-[var(--muted)] mb-1">{r.reportDate}</p>
-                  {r.doneYesterday && <p><span className="text-[var(--muted)]">Done:</span> {r.doneYesterday}</p>}
-                  {r.plannedToday && <p><span className="text-[var(--muted)]">Plan:</span> {r.plannedToday}</p>}
-                  {r.blockers && <p><span className="text-[var(--danger)]">Blockers:</span> {r.blockers}</p>}
+                  {r.doneYesterday && <p><span className="text-[var(--muted)]">{t("reports.done")}:</span> {r.doneYesterday}</p>}
+                  {r.plannedToday && <p><span className="text-[var(--muted)]">{t("reports.plan")}:</span> {r.plannedToday}</p>}
+                  {r.blockers && <p><span className="text-[var(--danger)]">{t("reports.blockers")}:</span> {r.blockers}</p>}
                 </li>
               ))}
             </ul>
@@ -101,7 +103,7 @@ export default async function StandupPage() {
 
       {subordinateReports.length > 0 && (
         <Card>
-          <CardHeader><CardTitle>Team reports (14d)</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("reports.teamReports")}</CardTitle></CardHeader>
           <CardContent>
             <ul className="space-y-3">
               {subordinateReports.map((r, i) => (

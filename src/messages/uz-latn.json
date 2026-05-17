@@ -6,9 +6,13 @@
   "common": {
     "loading": "Yuklanmoqda...",
     "save": "Saqlash",
+    "saved": "Saqlandi",
     "cancel": "Bekor qilish",
     "delete": "O'chirish",
     "edit": "Tahrirlash",
+    "add": "Qo'shish",
+    "create": "Yaratish",
+    "update": "Yangilash",
     "back": "Orqaga",
     "next": "Keyingi",
     "submit": "Yuborish",
@@ -16,7 +20,63 @@
     "actions": "Amallar",
     "yes": "Ha",
     "no": "Yo'q",
-    "of": "ning"
+    "of": "jami",
+    "all": "Hammasi",
+    "none": "Yo'q",
+    "open": "Ochish",
+    "close": "Yopish",
+    "upload": "Yuklash",
+    "download": "Yuklab olish",
+    "send": "Yuborish",
+    "confirm": "Tasdiqlash",
+    "reject": "Rad etish",
+    "approve": "Tasdiqlash",
+    "archive": "Arxivlash",
+    "restore": "Tiklash",
+    "export": "Eksport",
+    "print": "Chop etish",
+    "name": "Nomi",
+    "fullName": "To'liq ism",
+    "email": "Email",
+    "phone": "Telefon",
+    "status": "Holat",
+    "type": "Turi",
+    "date": "Sana",
+    "from": "Boshlanishi",
+    "to": "Tugashi",
+    "reason": "Sababi",
+    "title": "Sarlavha",
+    "description": "Tavsif",
+    "notes": "Izohlar",
+    "file": "Fayl",
+    "files": "Fayllar",
+    "size": "Hajmi",
+    "created": "Yaratildi",
+    "updated": "Yangilandi",
+    "deadline": "Muddat",
+    "priority": "Muhimlik",
+    "assignee": "Ijrochi",
+    "creator": "Yaratuvchi",
+    "project": "Loyiha",
+    "department": "Bo'lim",
+    "position": "Lavozim",
+    "head": "Rahbar",
+    "members": "A'zolar",
+    "progress": "Bajarilish",
+    "weight": "Vazn",
+    "payment": "To'lov",
+    "amount": "Summa",
+    "score": "Baho",
+    "rating": "Reyting",
+    "confirmDelete": "Rostdan ham o'chirilsinmi?",
+    "noResults": "Natija topilmadi",
+    "noData": "Ma'lumot yo'q",
+    "today": "Bugun",
+    "yesterday": "Kecha",
+    "week": "Hafta",
+    "month": "Oy",
+    "quarter": "Chorak",
+    "year": "Yil"
   },
   "nav": {
     "dashboard": "Bosh sahifa",
@@ -26,11 +86,39 @@
     "departments": "Bo'limlar",
     "contractors": "Pudratchilar",
     "reports": "Hisobotlar",
+    "leaves": "Tatillar",
     "notifications": "Bildirishnomalar",
     "auditLog": "Faoliyat jurnali",
     "settings": "Sozlamalar",
     "logout": "Chiqish",
-    "leaves": "Tatillar"
+    "contractorPortal": "Pudratchi portali"
+  },
+  "positions": {
+    "direktor": "Direktor",
+    "orinbosar": "O'rinbosar",
+    "koordinator": "Koordinator",
+    "bolim_boshligi": "Bo'lim Boshlig'i",
+    "bosh_mutaxassis": "Bosh mutaxassis",
+    "yetakchi_mutaxassis": "Yetakchi mutaxassis",
+    "mutaxassis": "Mutaxassis",
+    "hr": "HR",
+    "kontragent": "Pudratchi"
+  },
+  "status": {
+    "active": "Faol",
+    "pending": "Kutilmoqda",
+    "archived": "Arxivlangan",
+    "blocked": "Bloklangan",
+    "approved": "Tasdiqlangan",
+    "rejected": "Rad etilgan",
+    "completed": "Bajarilgan",
+    "in_progress": "Bajarilmoqda",
+    "planning": "Rejalashtirilmoqda",
+    "cancelled": "Bekor qilingan",
+    "submitted": "Yuborilgan",
+    "revision_requested": "Qayta ko'rib chiqish so'raldi",
+    "paid": "To'langan",
+    "partial": "Qisman"
   },
   "auth": {
     "login": {
@@ -87,18 +175,33 @@
       "submitted": "Arizangiz yuborildi. Administrator ko'rib chiqadi."
     }
   },
-  "positions": {
-    "direktor": "Direktor",
-    "orinbosar": "O'rinbosar",
-    "koordinator": "Koordinator",
-    "bolim_boshligi": "Bo'lim Boshlig'i",
-    "bosh_mutaxassis": "Bosh mutaxassis",
-    "yetakchi_mutaxassis": "Yetakchi mutaxassis",
-    "mutaxassis": "Mutaxassis",
-    "hr": "HR",
-    "kontragent": "Pudratchi"
-  },
   "tasks": {
+    "pageTitle": "Vazifalar",
+    "newTitle": "Yangi vazifa yaratish",
+    "new": "Yangi vazifa",
+    "view": {
+      "list": "Ro'yxat",
+      "kanban": "Kanban",
+      "calendar": "Kalendar"
+    },
+    "scope": {
+      "mine": "Mening",
+      "team": "Jamoa",
+      "all": "Hammasi"
+    },
+    "fields": {
+      "title": "Sarlavha",
+      "description": "Tavsif",
+      "assignee": "Ijrochi",
+      "project": "Loyiha",
+      "priority": "Muhimlik",
+      "deadline": "Muddat",
+      "dependsOn": "Bog'liqliklar (oldin bajarilishi kerak)",
+      "recurring": "Takrorlanadigan vazifa",
+      "repeat": "Takrorlash",
+      "pickAssignee": "Ijrochini tanlang",
+      "noProject": "Loyihasiz"
+    },
     "status": {
       "todo": "Bajarilishi kerak",
       "in_progress": "Bajarilmoqda",
@@ -111,12 +214,404 @@
       "medium": "O'rtacha",
       "high": "Yuqori",
       "urgent": "Shoshilinch"
+    },
+    "transitions": {
+      "start": "Boshlash",
+      "submit": "Tekshiruvga yuborish",
+      "approve": "Tasdiqlash",
+      "reject": "Rad etish",
+      "resume": "Davom ettirish",
+      "reasonPlaceholder": "Rad etish sababini ko'rsating...",
+      "confirmReject": "Rad etishni tasdiqlash",
+      "noTransitions": "O'tkazish imkoniyatlari yo'q."
+    },
+    "sections": {
+      "description": "Tavsif",
+      "checklist": "Tekshiruv ro'yxati",
+      "attachments": "Biriktirilgan fayllar",
+      "comments": "Sharhlar",
+      "statusSection": "Holat",
+      "people": "Ishtirokchilar",
+      "dependencies": "Bog'liqliklar",
+      "noDescription": "Tavsif kiritilmagan.",
+      "rejectionReason": "Rad etish sababi",
+      "noChecklist": "Tekshiruv ro'yxati bo'sh.",
+      "noAttachments": "Biriktirilgan fayllar yo'q.",
+      "noComments": "Sharhlar yo'q.",
+      "writeComment": "Sharh yozing... @\"To'liq Ism\" orqali eslab o'ting",
+      "newChecklistItem": "Yangi tekshiruv punkti...",
+      "watcher": "Kuzatuvchi",
+      "watchers": "Kuzatuvchilar",
+      "watch": "Kuzatish",
+      "unwatch": "Kuzatishni to'xtatish",
+      "send": "Yuborish"
+    },
+    "overdue": "Muddat o'tgan",
+    "due": "Muddat",
+    "emptyList": "Vazifalar yo'q"
+  },
+  "projects": {
+    "pageTitle": "Loyihalar",
+    "new": "Yangi loyiha",
+    "newTitle": "Loyiha yaratish",
+    "fields": {
+      "name": "Loyiha nomi",
+      "description": "Tavsif",
+      "type": "Turi",
+      "curator": "Kurator",
+      "contractor": "Pudratchi",
+      "startDate": "Boshlanish sanasi",
+      "deadline": "Tugatish muddati",
+      "budget": "Byudjet",
+      "progress": "Bajarilish"
+    },
+    "type": {
+      "internal": "Ichki",
+      "external": "Pudratchi bilan"
+    },
+    "tabs": {
+      "milestones": "Bosqichlar",
+      "gantt": "Gantt diagrammasi",
+      "deliverables": "Materiallar",
+      "tasks": "Vazifalar",
+      "chat": "Suhbat",
+      "paymentsTabName": "Bosqichlar va to'lovlar"
+    },
+    "milestones": {
+      "addBtn": "Bosqich qo'shish",
+      "noMilestones": "Hozircha bosqichlar yo'q.",
+      "title": "Sarlavha",
+      "deadline": "Muddat",
+      "weight": "Vazn",
+      "paymentAmount": "To'lov summasi",
+      "paymentStatus": "To'lov holati"
+    },
+    "deliverables": {
+      "addBtn": "Material yuklash",
+      "submit": "Material yuklash",
+      "feedback": "Izoh",
+      "message": "Xabar",
+      "milestone": "Bosqich",
+      "type": "Turi",
+      "file": "Fayl",
+      "noDeliverables": "Hali materiallar yo'q.",
+      "types": {
+        "document": "Hujjat",
+        "video": "Video",
+        "image": "Rasm",
+        "archive": "Arxiv",
+        "other": "Boshqa"
+      }
+    },
+    "chat": {
+      "placeholder": "Xabar yozing...",
+      "noMessages": "Xabarlar yo'q."
+    },
+    "complete": {
+      "btn": "Yakunlash va baholash",
+      "title": "Loyihani yakunlash",
+      "ratePrompt": "Pudratchini baholang:",
+      "notesPlaceholder": "Izohlar (ixtiyoriy)",
+      "confirm": "Yakunlash"
+    },
+    "ratings": "Reytinglar",
+    "noLinkedTasks": "Ushbu loyihaga vazifa biriktirilmagan.",
+    "headers": {
+      "name": "Nomi",
+      "type": "Turi",
+      "curator": "Kurator",
+      "company": "Kompaniya",
+      "progress": "Bajarilish",
+      "deadline": "Muddat",
+      "status": "Holat"
+    },
+    "empty": "Loyihalar yo'q"
+  },
+  "employees": {
+    "pageTitle": "Xodimlar",
+    "newTitle": "Yangi xodim qo'shish",
+    "addBtn": "Xodim qo'shish",
+    "reportsTo": "Bevosita rahbar",
+    "table": {
+      "name": "Ism familiya",
+      "email": "Email",
+      "position": "Lavozim",
+      "department": "Bo'lim",
+      "status": "Holat",
+      "hireDate": "Ishga kirgan sana"
+    },
+    "empty": "Xodim topilmadi",
+    "tabs": {
+      "main": "Asosiy",
+      "documents": "Hujjatlar",
+      "history": "Lavozim tarixi",
+      "leaves": "Tatillar",
+      "notes": "HR yozuvlari"
+    },
+    "profile": {
+      "sectionTitle": "Profil",
+      "birthDate": "Tug'ilgan sana",
+      "maritalStatus": "Oilaviy holati",
+      "passportSerial": "Pasport seriyasi",
+      "passportNumber": "Pasport raqami",
+      "passportIssuedDate": "Berilgan sana",
+      "passportIssuedBy": "Kim tomonidan berilgan",
+      "inn": "INN",
+      "emergencyContactName": "Favqulodda holat uchun aloqa",
+      "emergencyContactPhone": "Aloqa telefoni",
+      "emergencyContactRelation": "Aloqasi",
+      "address": "Manzil",
+      "education": "Ma'lumot",
+      "hr_notes": "HR yozuvlari",
+      "printPdf": "PDF kartochka",
+      "viewOnly": "Faqat ko'rish.",
+      "notesNote": "Yozuvlar faqat HR uchun ko'rinadi."
+    },
+    "docs": {
+      "type": "Hujjat turi",
+      "title": "Sarlavha",
+      "file": "Fayl",
+      "upload": "Yuklash",
+      "uploaded": "Yuklanildi",
+      "noDocs": "Hujjatlar yo'q",
+      "types": {
+        "contract": "Mehnat shartnomasi",
+        "passport": "Pasport",
+        "diploma": "Diplom",
+        "medical": "Tibbiy ma'lumotnoma",
+        "certificate": "Sertifikat",
+        "other": "Boshqa"
+      }
+    },
+    "history": {
+      "date": "Sana",
+      "from": "Avvalgi",
+      "to": "Yangi",
+      "reason": "Sababi",
+      "noHistory": "O'zgarishlar yo'q"
+    },
+    "changePosition": {
+      "btn": "Lavozimni o'zgartirish",
+      "title": "Lavozim va bo'limni o'zgartirish",
+      "newPosition": "Yangi lavozim",
+      "department": "Bo'lim",
+      "reportsTo": "Bevosita rahbar",
+      "reason": "Sababi"
+    },
+    "archive": {
+      "btn": "Arxivlash",
+      "btnRestore": "Tiklash"
     }
   },
-  "theme": {
-    "light": "Yorug'",
-    "dark": "Qorong'i",
-    "system": "Tizimga mos"
+  "departments": {
+    "pageTitle": "Bo'limlar",
+    "addBtn": "Bo'lim qo'shish",
+    "table": {
+      "name": "Nomi",
+      "head": "Rahbar",
+      "members": "A'zolar"
+    },
+    "fields": {
+      "name": "Nomi",
+      "head": "Rahbar",
+      "parent": "Yuqori bo'lim",
+      "description": "Tavsif",
+      "nameRu": "Nomi (Rus)",
+      "nameEn": "Nomi (Ing)",
+      "nameUzLatn": "Nomi (O'zbek lotin)",
+      "nameUzCyrl": "Nomi (O'zbek kiril)"
+    },
+    "empty": "Bo'limlar yo'q"
+  },
+  "contractors": {
+    "pageTitle": "Pudratchilar",
+    "pendingTitle": "Tasdiqlash kutilmoqda",
+    "allTitle": "Barcha pudratchilar",
+    "none": "Yo'q.",
+    "reason": "Sababi"
+  },
+  "reports": {
+    "standupTitle": "Kunlik standup",
+    "todayLabel": "Bugun",
+    "doneYesterday": "Kecha nima qildim",
+    "plannedToday": "Bugun nima rejalashtirdim",
+    "blockers": "To'siqlar",
+    "myHistory": "Mening tarixim",
+    "teamReports": "Jamoa hisobotlari (14 kun)",
+    "noHistory": "Tarix yo'q.",
+    "submit": "Topshirish",
+    "update": "Yangilash",
+    "done": "Bajarildi",
+    "plan": "Reja"
+  },
+  "leaves": {
+    "pageTitle": "Tatillar",
+    "request": "Tatil so'rash",
+    "myLeaves": "Mening tatillarim",
+    "pending": "Tasdiqlash kutilmoqda",
+    "calendar": "Tatillar kalendari",
+    "types": {
+      "vacation": "Yillik tatil",
+      "sick": "Kasallik varaqasi",
+      "unpaid": "To'lovsiz tatil",
+      "other": "Boshqa"
+    },
+    "fields": {
+      "type": "Turi",
+      "start": "Boshlanishi",
+      "end": "Tugashi",
+      "reason": "Sababi"
+    },
+    "none": "Tatillar yo'q."
+  },
+  "notifications": {
+    "pageTitle": "Bildirishnomalar",
+    "markAllRead": "Hammasini o'qilgan deb belgilash",
+    "open": "Ochish",
+    "empty": "Bildirishnomalar yo'q."
+  },
+  "audit": {
+    "pageTitle": "Faoliyat jurnali",
+    "table": {
+      "time": "Vaqt",
+      "user": "Foydalanuvchi",
+      "action": "Amal",
+      "entity": "Obyekt",
+      "ip": "IP"
+    },
+    "empty": "Yozuvlar yo'q."
+  },
+  "settings": {
+    "pageTitle": "Sozlamalar",
+    "tabs": {
+      "personal": "Shaxsiy",
+      "notifications": "Bildirishnomalar",
+      "security": "Xavfsizlik",
+      "telegram": "Telegram"
+    },
+    "personal": {
+      "language": "Til",
+      "theme": "Mavzu",
+      "timezone": "Vaqt mintaqasi"
+    },
+    "notifs": {
+      "inApp": "Tizim ichida bildirishnomalar",
+      "email": "Email",
+      "taskAssigned": "Vazifa yuklanganda",
+      "deadline": "Muddat yaqinlashganda",
+      "comments": "Yangi sharhlar",
+      "mentions": "Esga olishlar",
+      "standup": "Standup eslatmasi"
+    },
+    "security": {
+      "changePassword": "Parolni o'zgartirish",
+      "current": "Joriy parol",
+      "newPass": "Yangi parol (kamida 8 belgi)",
+      "change": "O'zgartirish",
+      "twoFa": "Ikki bosqichli autentifikatsiya",
+      "twoFaEnabled": "2FA yoqilgan.",
+      "startSetup": "Sozlashni boshlash",
+      "manualEntry": "Yoki maxfiy kalitni qo'lda kiriting:",
+      "codePlaceholder": "6 raqamli kod",
+      "verify": "Tekshirish",
+      "disablePlaceholder": "O'chirish uchun joriy 6 raqamli kodni kiriting",
+      "disable": "O'chirish",
+      "messages": {
+        "passwordChanged": "Parol o'zgartirildi",
+        "twoFaEnabled": "2FA yoqildi",
+        "twoFaDisabled": "2FA o'chirildi"
+      }
+    },
+    "telegram": {
+      "connected": "Bog'langan.",
+      "disconnect": "Uzish",
+      "hint": "Bog'lash uchun: pastdan kod hosil qiling va uni Telegram botiga yuboring.",
+      "generate": "Kod hosil qilish",
+      "yourCode": "Sizning kodingiz:"
+    },
+    "theme": {
+      "light": "Yorug'",
+      "dark": "Qorong'i",
+      "system": "Tizimga mos"
+    },
+    "lang": {
+      "uz-latn": "O'zbekcha (lotin)",
+      "uz-cyrl": "O'zbekcha (kirill)",
+      "ru": "Ruscha",
+      "en": "Inglizcha"
+    }
+  },
+  "contractor": {
+    "accountUnderReview": "Hisobingiz tekshiruvda",
+    "statusLabel": "Sizning pudratchi arizangiz holati:",
+    "nda": {
+      "title": "Maxfiylik kelishuvi",
+      "body1": "Ushbu kelishuvni qabul qilish orqali siz ushbu portal orqali ulashilgan barcha ma'lumotlar, hujjatlar va aloqalarni qat'iy maxfiy saqlashga rozilik bildirasiz.",
+      "body2": "Kelishuvni buzish shartnomani bekor qilish va O'zbekiston Respublikasi qonunchiligiga muvofiq huquqiy oqibatlarga olib kelishi mumkin.",
+      "accept": "Qabul qilaman"
+    },
+    "dashboard": {
+      "activeProjects": "Faol loyihalar",
+      "completed": "Yakunlangan",
+      "total": "Jami",
+      "myProjects": "Mening loyihalarim",
+      "noProjects": "Sizga loyihalar biriktirilmagan.",
+      "averageRating": "O'rtacha reyting"
+    },
+    "profile": {
+      "title": "Kompaniya profili",
+      "contactPerson": "Aloqa shaxsi",
+      "email": "Email",
+      "phone": "Telefon",
+      "status": "Holat",
+      "rating": "Reyting",
+      "specialization": "Mutaxassisligi",
+      "noCompany": "Bog'langan kompaniya yo'q."
+    }
+  },
+  "dashboard": {
+    "title": "Bosh sahifa",
+    "hr": {
+      "activeEmployees": "Faol xodimlar",
+      "newThisMonth": "Bu oyda qo'shilganlar",
+      "onLeave": "Hozir tatilda",
+      "pendingInvites": "Kutilayotgan takliflar",
+      "birthdays": "Bu haftadagi tug'ilgan kunlar",
+      "noBirthdays": "Bu hafta tug'ilgan kun yo'q.",
+      "departments": "Bo'limlar",
+      "noDepartments": "Hozircha bo'limlar yo'q."
+    },
+    "manager": {
+      "tasks30": "Vazifalar (30 kun)",
+      "inProgress": "Bajarilmoqda",
+      "overdue": "Muddati o'tgan",
+      "activeProjects": "Faol loyihalar",
+      "byStatus": "Vazifalar holati bo'yicha",
+      "activity30": "Yaratilgan va yakunlangan (30 kun)",
+      "topPerformers": "Eng samarali (30 kun)",
+      "mostOverdue": "Eng ko'p kechikishlar",
+      "noCompletions": "Hali yakunlash yo'q.",
+      "allOnTrack": "Hammasi muddatida."
+    },
+    "specialist": {
+      "dueToday": "Bugun muddat",
+      "thisWeek": "Bu hafta",
+      "soon": "Yaqin (24 soat)",
+      "overdue": "Muddati o'tgan",
+      "openMyTasks": "Mening vazifalarim",
+      "submitStandup": "Standup topshirish"
+    }
+  },
+  "commandPalette": {
+    "placeholder": "Buyruq yoki sahifa nomini kiriting...",
+    "hint": "Ochish/yopish uchun ⌘K bosing.",
+    "groupPages": "Sahifalar",
+    "noResults": "Natija yo'q."
+  },
+  "header": {
+    "searchPlaceholder": "Vazifalarni qidirish...",
+    "accountSettings": "Sozlamalar",
+    "signOut": "Chiqish"
   },
   "landing": {
     "hero": "Ichki Ijro — kompaniyaning ichki ijrosini boshqarish tizimi",

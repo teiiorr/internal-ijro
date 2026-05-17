@@ -8,8 +8,10 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "next-intl";
 
 export function Header({ userName }: { userName: string }) {
+  const t = useTranslations();
   const [menuOpen, setMenuOpen] = useState(false);
   const [unread, setUnread] = useState(0);
   const [q, setQ] = useState("");
@@ -39,13 +41,13 @@ export function Header({ userName }: { userName: string }) {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-[var(--background-elevated)] px-4 md:px-6">
-      <Link href="/dashboard" className="font-semibold text-lg text-[var(--primary)]">Ichki Ijro</Link>
+      <Link href="/dashboard" className="font-semibold text-xl text-[var(--primary)]">{t("app.name")}</Link>
       <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-xl mx-auto items-center gap-2">
         <Search className="size-4 text-[var(--muted)]" />
-        <Input placeholder="Search tasks..." className="h-9" value={q} onChange={(e) => setQ(e.target.value)} />
+        <Input placeholder={t("header.searchPlaceholder")} className="h-10" value={q} onChange={(e) => setQ(e.target.value)} />
       </form>
       <div className="ml-auto flex items-center gap-1">
-        <Button asChild variant="ghost" size="icon" aria-label="Notifications">
+        <Button asChild variant="ghost" size="icon" aria-label={t("nav.notifications")}>
           <Link href="/notifications" className="relative">
             <Bell className="size-5" />
             {unread > 0 && (
@@ -65,13 +67,13 @@ export function Header({ userName }: { userName: string }) {
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-44 rounded-lg border bg-[var(--popover)] p-1 shadow-md z-50">
               <Link href="/settings" className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-[var(--accent)]" onClick={() => setMenuOpen(false)}>
-                Settings
+                {t("header.accountSettings")}
               </Link>
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}
                 className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-[var(--accent)]"
               >
-                <LogOut className="size-4" /> Sign out
+                <LogOut className="size-4" /> {t("header.signOut")}
               </button>
             </div>
           )}

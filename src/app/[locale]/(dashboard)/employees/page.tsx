@@ -42,7 +42,7 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold">{t("nav.employees")}</h1>
+          <h1 className="text-3xl font-bold">{t("nav.employees")}</h1>
           <p className="text-sm text-[var(--muted)]">{total} {t("common.of")}</p>
         </div>
         {canAdd && (
@@ -57,12 +57,12 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Position</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Hire date</TableHead>
+                <TableHead>{t("employees.table.name")}</TableHead>
+                <TableHead>{t("employees.table.email")}</TableHead>
+                <TableHead>{t("employees.table.position")}</TableHead>
+                <TableHead>{t("employees.table.department")}</TableHead>
+                <TableHead>{t("employees.table.status")}</TableHead>
+                <TableHead>{t("employees.table.hireDate")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -91,7 +91,7 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
               {rows.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-10 text-[var(--muted)]">
-                    No employees found
+                    {t("employees.empty")}
                   </TableCell>
                 </TableRow>
               )}

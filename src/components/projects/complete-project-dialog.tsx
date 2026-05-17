@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { completeProjectWithRating } from "@/server/actions/projects";
 import { cn } from "@/lib/utils";
 
 export function CompleteProjectDialog({ projectId, externalCompanyId }: { projectId: string; externalCompanyId: string | null }) {
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const [score, setScore] = useState(5);
@@ -23,14 +25,14 @@ export function CompleteProjectDialog({ projectId, externalCompanyId }: { projec
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Complete & rate</Button>
+        <Button variant="default">{t("projects.complete.btn")}</Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>Complete project</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t("projects.complete.title")}</DialogTitle></DialogHeader>
         <div className="space-y-3">
           {externalCompanyId && (
             <div className="space-y-2">
-              <p className="text-sm">Rate the contractor:</p>
+              <p className="text-sm">{t("projects.complete.ratePrompt")}</p>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button key={n} onClick={() => setScore(n)} className="p-1" type="button">
@@ -40,11 +42,11 @@ export function CompleteProjectDialog({ projectId, externalCompanyId }: { projec
               </div>
             </div>
           )}
-          <Textarea placeholder="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+          <Textarea placeholder={t("projects.complete.notesPlaceholder")} value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
         </div>
         <DialogFooter>
-          <DialogClose asChild><Button variant="ghost">Cancel</Button></DialogClose>
-          <Button onClick={onSubmit} disabled={pending}>Complete</Button>
+          <DialogClose asChild><Button variant="ghost">{t("common.cancel")}</Button></DialogClose>
+          <Button onClick={onSubmit} disabled={pending}>{t("projects.complete.confirm")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { listProjectsForContractor } from "@/server/queries/projects";
@@ -8,32 +9,33 @@ import { Badge } from "@/components/ui/badge";
 export default async function ContractorDashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   const { company, projects } = await listProjectsForContractor(session.user.id);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">{company?.name ?? session.user.fullName}</h1>
-        {company?.rating && <p className="text-sm text-[var(--muted)]">Average rating: ⭐ {company.rating}</p>}
+        {company?.rating && <p className="text-sm text-[var(--muted)]">{t("contractor.dashboard.averageRating")}: ⭐ {company.rating}</p>}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">Active projects</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("contractor.dashboard.activeProjects")}</CardTitle></CardHeader>
           <CardContent><p className="text-3xl font-semibold">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">Completed</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("contractor.dashboard.completed")}</CardTitle></CardHeader>
           <CardContent><p className="text-3xl font-semibold">{projects.filter((p) => p.status === "completed").length}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">Total</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("contractor.dashboard.total")}</CardTitle></CardHeader>
           <CardContent><p className="text-3xl font-semibold">{projects.length}</p></CardContent>
         </Card>
       </div>
 
       <Card>
-        <CardHeader><CardTitle>My projects</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("contractor.dashboard.myProjects")}</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-2">
             {projects.map((p) => (
@@ -50,7 +52,7 @@ export default async function ContractorDashboardPage() {
                 </div>
               </Link>
             ))}
-            {projects.length === 0 && <p className="text-sm text-[var(--muted)]">No projects assigned to you yet.</p>}
+            {projects.length === 0 && <p className="text-sm text-[var(--muted)]">{t("contractor.dashboard.noProjects")}</p>}
           </div>
         </CardContent>
       </Card>

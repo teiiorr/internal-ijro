@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useRef, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { attachFileToTask, removeAttachment } from "@/server/actions/tasks";
 type A = { id: string; fileUrl: string; fileName: string; fileSize: number | null };
 
 export function AttachmentsSection({ taskId, attachments, canEdit }: { taskId: string; attachments: A[]; canEdit: boolean }) {
+  const t = useTranslations();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
 
@@ -35,7 +37,7 @@ export function AttachmentsSection({ taskId, attachments, canEdit }: { taskId: s
             )}
           </li>
         ))}
-        {attachments.length === 0 && <li className="text-sm text-[var(--muted)]">No attachments.</li>}
+        {attachments.length === 0 && <li className="text-sm text-[var(--muted)]">{t("tasks.sections.noAttachments")}</li>}
       </ul>
       {canEdit && (
         <Input type="file" ref={fileRef} onChange={onPick} disabled={pending} />

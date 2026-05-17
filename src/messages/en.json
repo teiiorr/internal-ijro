@@ -6,9 +6,13 @@
   "common": {
     "loading": "Loading...",
     "save": "Save",
+    "saved": "Saved",
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
+    "add": "Add",
+    "create": "Create",
+    "update": "Update",
     "back": "Back",
     "next": "Next",
     "submit": "Submit",
@@ -16,7 +20,63 @@
     "actions": "Actions",
     "yes": "Yes",
     "no": "No",
-    "of": "of"
+    "of": "of",
+    "all": "All",
+    "none": "None",
+    "open": "Open",
+    "close": "Close",
+    "upload": "Upload",
+    "download": "Download",
+    "send": "Send",
+    "confirm": "Confirm",
+    "reject": "Reject",
+    "approve": "Approve",
+    "archive": "Archive",
+    "restore": "Restore",
+    "export": "Export",
+    "print": "Print",
+    "name": "Name",
+    "fullName": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "type": "Type",
+    "date": "Date",
+    "from": "From",
+    "to": "To",
+    "reason": "Reason",
+    "title": "Title",
+    "description": "Description",
+    "notes": "Notes",
+    "file": "File",
+    "files": "Files",
+    "size": "Size",
+    "created": "Created",
+    "updated": "Updated",
+    "deadline": "Deadline",
+    "priority": "Priority",
+    "assignee": "Assignee",
+    "creator": "Creator",
+    "project": "Project",
+    "department": "Department",
+    "position": "Position",
+    "head": "Head",
+    "members": "Members",
+    "progress": "Progress",
+    "weight": "Weight",
+    "payment": "Payment",
+    "amount": "Amount",
+    "score": "Score",
+    "rating": "Rating",
+    "confirmDelete": "Really delete?",
+    "noResults": "No results",
+    "noData": "No data",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "week": "Week",
+    "month": "Month",
+    "quarter": "Quarter",
+    "year": "Year"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -26,11 +86,39 @@
     "departments": "Departments",
     "contractors": "Contractors",
     "reports": "Reports",
+    "leaves": "Leaves",
     "notifications": "Notifications",
     "auditLog": "Audit log",
     "settings": "Settings",
     "logout": "Sign out",
-    "leaves": "Leaves"
+    "contractorPortal": "Contractor portal"
+  },
+  "positions": {
+    "direktor": "Director",
+    "orinbosar": "Deputy",
+    "koordinator": "Coordinator",
+    "bolim_boshligi": "Head of department",
+    "bosh_mutaxassis": "Senior specialist",
+    "yetakchi_mutaxassis": "Lead specialist",
+    "mutaxassis": "Specialist",
+    "hr": "HR",
+    "kontragent": "Contractor"
+  },
+  "status": {
+    "active": "Active",
+    "pending": "Pending",
+    "archived": "Archived",
+    "blocked": "Blocked",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed",
+    "in_progress": "In progress",
+    "planning": "Planning",
+    "cancelled": "Cancelled",
+    "submitted": "Submitted",
+    "revision_requested": "Revision requested",
+    "paid": "Paid",
+    "partial": "Partial"
   },
   "auth": {
     "login": {
@@ -42,7 +130,7 @@
       "forgot": "Forgot password?",
       "registerContractor": "Register as contractor",
       "invalid": "Invalid email or password",
-      "locked": "Account locked, try again later."
+      "locked": "Account locked. Try again later."
     },
     "forgot": {
       "title": "Reset password",
@@ -60,7 +148,7 @@
     },
     "setup": {
       "title": "Initial setup",
-      "subtitle": "Create the first Direktor",
+      "subtitle": "Create the first Director",
       "fullName": "Full name",
       "email": "Email",
       "password": "Password",
@@ -87,18 +175,33 @@
       "submitted": "Your request has been submitted."
     }
   },
-  "positions": {
-    "direktor": "Director",
-    "orinbosar": "Deputy",
-    "koordinator": "Coordinator",
-    "bolim_boshligi": "Head of department",
-    "bosh_mutaxassis": "Senior specialist",
-    "yetakchi_mutaxassis": "Lead specialist",
-    "mutaxassis": "Specialist",
-    "hr": "HR",
-    "kontragent": "Contractor"
-  },
   "tasks": {
+    "pageTitle": "Tasks",
+    "newTitle": "Create new task",
+    "new": "New task",
+    "view": {
+      "list": "List",
+      "kanban": "Kanban",
+      "calendar": "Calendar"
+    },
+    "scope": {
+      "mine": "Mine",
+      "team": "Team",
+      "all": "All"
+    },
+    "fields": {
+      "title": "Title",
+      "description": "Description",
+      "assignee": "Assignee",
+      "project": "Project",
+      "priority": "Priority",
+      "deadline": "Deadline",
+      "dependsOn": "Depends on (must complete first)",
+      "recurring": "Recurring task",
+      "repeat": "Repeat",
+      "pickAssignee": "Pick assignee",
+      "noProject": "No project"
+    },
     "status": {
       "todo": "To do",
       "in_progress": "In progress",
@@ -111,12 +214,404 @@
       "medium": "Medium",
       "high": "High",
       "urgent": "Urgent"
+    },
+    "transitions": {
+      "start": "Start",
+      "submit": "Submit for review",
+      "approve": "Approve",
+      "reject": "Reject",
+      "resume": "Resume",
+      "reasonPlaceholder": "Reason for rejection...",
+      "confirmReject": "Confirm reject",
+      "noTransitions": "No transitions available."
+    },
+    "sections": {
+      "description": "Description",
+      "checklist": "Checklist",
+      "attachments": "Attachments",
+      "comments": "Comments",
+      "statusSection": "Status",
+      "people": "People",
+      "dependencies": "Dependencies",
+      "noDescription": "No description.",
+      "rejectionReason": "Rejection reason",
+      "noChecklist": "No checklist items.",
+      "noAttachments": "No attachments.",
+      "noComments": "No comments yet.",
+      "writeComment": "Write a comment... @\"Full Name\" to mention",
+      "newChecklistItem": "New checklist item...",
+      "watcher": "Watcher",
+      "watchers": "Watchers",
+      "watch": "Watch",
+      "unwatch": "Unwatch",
+      "send": "Send"
+    },
+    "overdue": "Overdue",
+    "due": "Due",
+    "emptyList": "No tasks"
+  },
+  "projects": {
+    "pageTitle": "Projects",
+    "new": "New project",
+    "newTitle": "Create project",
+    "fields": {
+      "name": "Project name",
+      "description": "Description",
+      "type": "Type",
+      "curator": "Curator",
+      "contractor": "Contractor",
+      "startDate": "Start date",
+      "deadline": "Deadline",
+      "budget": "Budget",
+      "progress": "Progress"
+    },
+    "type": {
+      "internal": "Internal",
+      "external": "External"
+    },
+    "tabs": {
+      "milestones": "Milestones",
+      "gantt": "Gantt",
+      "deliverables": "Deliverables",
+      "tasks": "Tasks",
+      "chat": "Chat",
+      "paymentsTabName": "Milestones & payments"
+    },
+    "milestones": {
+      "addBtn": "Add milestone",
+      "noMilestones": "No milestones yet.",
+      "title": "Title",
+      "deadline": "Deadline",
+      "weight": "Weight",
+      "paymentAmount": "Payment amount",
+      "paymentStatus": "Payment status"
+    },
+    "deliverables": {
+      "addBtn": "Submit deliverable",
+      "submit": "Submit",
+      "feedback": "Feedback",
+      "message": "Message",
+      "milestone": "Milestone",
+      "type": "Type",
+      "file": "File",
+      "noDeliverables": "No deliverables yet.",
+      "types": {
+        "document": "Document",
+        "video": "Video",
+        "image": "Image",
+        "archive": "Archive",
+        "other": "Other"
+      }
+    },
+    "chat": {
+      "placeholder": "Write a message...",
+      "noMessages": "No messages."
+    },
+    "complete": {
+      "btn": "Complete & rate",
+      "title": "Complete project",
+      "ratePrompt": "Rate the contractor:",
+      "notesPlaceholder": "Notes (optional)",
+      "confirm": "Complete"
+    },
+    "ratings": "Ratings",
+    "noLinkedTasks": "No tasks linked to this project.",
+    "headers": {
+      "name": "Name",
+      "type": "Type",
+      "curator": "Curator",
+      "company": "Company",
+      "progress": "Progress",
+      "deadline": "Deadline",
+      "status": "Status"
+    },
+    "empty": "No projects"
+  },
+  "employees": {
+    "pageTitle": "Employees",
+    "newTitle": "Invite new employee",
+    "addBtn": "Add employee",
+    "reportsTo": "Reports to",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "position": "Position",
+      "department": "Department",
+      "status": "Status",
+      "hireDate": "Hire date"
+    },
+    "empty": "No employees found",
+    "tabs": {
+      "main": "Main",
+      "documents": "Documents",
+      "history": "Position history",
+      "leaves": "Leaves",
+      "notes": "HR notes"
+    },
+    "profile": {
+      "sectionTitle": "Profile",
+      "birthDate": "Birth date",
+      "maritalStatus": "Marital status",
+      "passportSerial": "Passport serial",
+      "passportNumber": "Passport number",
+      "passportIssuedDate": "Issued date",
+      "passportIssuedBy": "Issued by",
+      "inn": "INN",
+      "emergencyContactName": "Emergency contact name",
+      "emergencyContactPhone": "Contact phone",
+      "emergencyContactRelation": "Relation",
+      "address": "Address",
+      "education": "Education",
+      "hr_notes": "HR notes",
+      "printPdf": "PDF card",
+      "viewOnly": "View only.",
+      "notesNote": "Notes are visible to HR only."
+    },
+    "docs": {
+      "type": "Document type",
+      "title": "Title",
+      "file": "File",
+      "upload": "Upload",
+      "uploaded": "Uploaded",
+      "noDocs": "No documents",
+      "types": {
+        "contract": "Contract",
+        "passport": "Passport",
+        "diploma": "Diploma",
+        "medical": "Medical",
+        "certificate": "Certificate",
+        "other": "Other"
+      }
+    },
+    "history": {
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "reason": "Reason",
+      "noHistory": "No changes"
+    },
+    "changePosition": {
+      "btn": "Change position",
+      "title": "Change position / department",
+      "newPosition": "New position",
+      "department": "Department",
+      "reportsTo": "Reports to",
+      "reason": "Reason"
+    },
+    "archive": {
+      "btn": "Archive",
+      "btnRestore": "Restore"
     }
   },
-  "theme": {
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
+  "departments": {
+    "pageTitle": "Departments",
+    "addBtn": "Add department",
+    "table": {
+      "name": "Name",
+      "head": "Head",
+      "members": "Members"
+    },
+    "fields": {
+      "name": "Name",
+      "head": "Head",
+      "parent": "Parent department",
+      "description": "Description",
+      "nameRu": "Name (Ru)",
+      "nameEn": "Name (En)",
+      "nameUzLatn": "Name (Uz-Latn)",
+      "nameUzCyrl": "Name (Uz-Cyrl)"
+    },
+    "empty": "No departments"
+  },
+  "contractors": {
+    "pageTitle": "Contractors",
+    "pendingTitle": "Pending approval",
+    "allTitle": "All contractors",
+    "none": "None.",
+    "reason": "Reason"
+  },
+  "reports": {
+    "standupTitle": "Daily standup",
+    "todayLabel": "Today",
+    "doneYesterday": "What I did yesterday",
+    "plannedToday": "What I plan to do today",
+    "blockers": "Blockers",
+    "myHistory": "My history",
+    "teamReports": "Team reports (14d)",
+    "noHistory": "No history yet.",
+    "submit": "Submit",
+    "update": "Update",
+    "done": "Done",
+    "plan": "Plan"
+  },
+  "leaves": {
+    "pageTitle": "Leaves",
+    "request": "Request leave",
+    "myLeaves": "My leaves",
+    "pending": "Pending approval",
+    "calendar": "Leaves calendar",
+    "types": {
+      "vacation": "Vacation",
+      "sick": "Sick",
+      "unpaid": "Unpaid",
+      "other": "Other"
+    },
+    "fields": {
+      "type": "Type",
+      "start": "Start",
+      "end": "End",
+      "reason": "Reason"
+    },
+    "none": "No leaves."
+  },
+  "notifications": {
+    "pageTitle": "Notifications",
+    "markAllRead": "Mark all read",
+    "open": "Open",
+    "empty": "No notifications."
+  },
+  "audit": {
+    "pageTitle": "Audit log",
+    "table": {
+      "time": "Time",
+      "user": "User",
+      "action": "Action",
+      "entity": "Entity",
+      "ip": "IP"
+    },
+    "empty": "No log entries."
+  },
+  "settings": {
+    "pageTitle": "Settings",
+    "tabs": {
+      "personal": "Personal",
+      "notifications": "Notifications",
+      "security": "Security",
+      "telegram": "Telegram"
+    },
+    "personal": {
+      "language": "Language",
+      "theme": "Theme",
+      "timezone": "Timezone"
+    },
+    "notifs": {
+      "inApp": "In-app notifications",
+      "email": "Email",
+      "taskAssigned": "Task assigned",
+      "deadline": "Deadline approaching",
+      "comments": "New comments",
+      "mentions": "Mentions",
+      "standup": "Standup reminder"
+    },
+    "security": {
+      "changePassword": "Change password",
+      "current": "Current password",
+      "newPass": "New password (min 8)",
+      "change": "Change",
+      "twoFa": "Two-factor authentication",
+      "twoFaEnabled": "2FA is enabled.",
+      "startSetup": "Start setup",
+      "manualEntry": "Or enter secret manually:",
+      "codePlaceholder": "6-digit code",
+      "verify": "Verify",
+      "disablePlaceholder": "Enter current 6-digit code to disable",
+      "disable": "Disable",
+      "messages": {
+        "passwordChanged": "Password changed",
+        "twoFaEnabled": "2FA enabled",
+        "twoFaDisabled": "2FA disabled"
+      }
+    },
+    "telegram": {
+      "connected": "Connected.",
+      "disconnect": "Disconnect",
+      "hint": "To connect: generate a code below and send it to the bot in Telegram.",
+      "generate": "Generate code",
+      "yourCode": "Your code:"
+    },
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "lang": {
+      "uz-latn": "Uzbek (Latin)",
+      "uz-cyrl": "Uzbek (Cyrillic)",
+      "ru": "Russian",
+      "en": "English"
+    }
+  },
+  "contractor": {
+    "accountUnderReview": "Account under review",
+    "statusLabel": "Your contractor application status:",
+    "nda": {
+      "title": "Non-disclosure agreement",
+      "body1": "By accepting this NDA, you agree to keep all information, documents and communication shared via this portal strictly confidential.",
+      "body2": "Violation may result in contract termination and legal consequences under the laws of the Republic of Uzbekistan.",
+      "accept": "I accept"
+    },
+    "dashboard": {
+      "activeProjects": "Active projects",
+      "completed": "Completed",
+      "total": "Total",
+      "myProjects": "My projects",
+      "noProjects": "No projects assigned to you yet.",
+      "averageRating": "Average rating"
+    },
+    "profile": {
+      "title": "Company profile",
+      "contactPerson": "Contact person",
+      "email": "Email",
+      "phone": "Phone",
+      "status": "Status",
+      "rating": "Rating",
+      "specialization": "Specialization",
+      "noCompany": "No company linked."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "hr": {
+      "activeEmployees": "Active employees",
+      "newThisMonth": "New this month",
+      "onLeave": "On leave now",
+      "pendingInvites": "Pending invitations",
+      "birthdays": "Birthdays this week",
+      "noBirthdays": "No birthdays this week.",
+      "departments": "Departments",
+      "noDepartments": "No departments yet."
+    },
+    "manager": {
+      "tasks30": "Tasks (30d)",
+      "inProgress": "In progress",
+      "overdue": "Overdue",
+      "activeProjects": "Active projects",
+      "byStatus": "Tasks by status",
+      "activity30": "Created vs completed (30d)",
+      "topPerformers": "Top performers (30d)",
+      "mostOverdue": "Most overdue",
+      "noCompletions": "No completions yet.",
+      "allOnTrack": "All on track."
+    },
+    "specialist": {
+      "dueToday": "Due today",
+      "thisWeek": "This week",
+      "soon": "Soon (24h)",
+      "overdue": "Overdue",
+      "openMyTasks": "Open my tasks",
+      "submitStandup": "Submit standup"
+    }
+  },
+  "commandPalette": {
+    "placeholder": "Type a command or page name...",
+    "hint": "Press ⌘K to toggle.",
+    "groupPages": "Pages",
+    "noResults": "No results."
+  },
+  "header": {
+    "searchPlaceholder": "Search tasks...",
+    "accountSettings": "Settings",
+    "signOut": "Sign out"
   },
   "landing": {
     "hero": "Ichki Ijro — internal execution management",

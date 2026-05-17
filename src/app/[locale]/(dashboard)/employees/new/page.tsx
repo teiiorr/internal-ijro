@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { eq, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -9,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default async function NewEmployeePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   if (!["direktor", "orinbosar", "hr"].includes(session.user.position)) redirect("/employees");
 
   const [dept, mgrs] = await Promise.all([
@@ -24,7 +26,7 @@ export default async function NewEmployeePage() {
   return (
     <Card className="max-w-2xl">
       <CardHeader>
-        <CardTitle>Invite new employee</CardTitle>
+        <CardTitle>{t("employees.newTitle")}</CardTitle>
       </CardHeader>
       <CardContent>
         <InviteEmployeeForm departments={dept} managers={mgrs} />

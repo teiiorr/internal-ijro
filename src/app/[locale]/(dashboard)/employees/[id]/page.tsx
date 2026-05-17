@@ -66,7 +66,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
         <div className="flex gap-2">
           {canEdit && (
             <Button asChild variant="outline">
-              <a href={`/api/export/employee-card/${data.user.id}`}>PDF card</a>
+              <a href={`/api/export/employee-card/${data.user.id}`}>{t("employees.profile.printPdf")}</a>
             </Button>
           )}
           {canChangePosition && (
@@ -84,23 +84,23 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
 
       <Tabs defaultValue="main">
         <TabsList>
-          <TabsTrigger value="main">Main</TabsTrigger>
-          <TabsTrigger value="docs">Documents</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
-          <TabsTrigger value="leaves">Leaves</TabsTrigger>
-          <TabsTrigger value="notes">HR notes</TabsTrigger>
+          <TabsTrigger value="main">{t("employees.tabs.main")}</TabsTrigger>
+          <TabsTrigger value="docs">{t("employees.tabs.documents")}</TabsTrigger>
+          <TabsTrigger value="history">{t("employees.tabs.history")}</TabsTrigger>
+          <TabsTrigger value="leaves">{t("employees.tabs.leaves")}</TabsTrigger>
+          <TabsTrigger value="notes">{t("employees.tabs.notes")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="main">
           <Card>
-            <CardHeader><CardTitle>Profile</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("employees.profile.sectionTitle")}</CardTitle></CardHeader>
             <CardContent>
               <div className="grid gap-2 md:grid-cols-3 mb-6 text-sm">
-                <div><span className="text-[var(--muted)]">Email:</span> {data.user.email}</div>
-                <div><span className="text-[var(--muted)]">Phone:</span> {data.user.phone ?? "—"}</div>
-                <div><span className="text-[var(--muted)]">Hire date:</span> {data.user.hireDate ?? "—"}</div>
+                <div><span className="text-[var(--muted)]">{t("common.email")}:</span> {data.user.email}</div>
+                <div><span className="text-[var(--muted)]">{t("common.phone")}:</span> {data.user.phone ?? "—"}</div>
+                <div><span className="text-[var(--muted)]">{t("employees.table.hireDate")}:</span> {data.user.hireDate ?? "—"}</div>
               </div>
-              {canEdit ? <ProfileForm userId={data.user.id} profile={data.profile} /> : <p className="text-sm text-[var(--muted)]">View only.</p>}
+              {canEdit ? <ProfileForm userId={data.user.id} profile={data.profile} /> : <p className="text-sm text-[var(--muted)]">{t("employees.profile.viewOnly")}</p>}
             </CardContent>
           </Card>
         </TabsContent>
@@ -118,7 +118,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                  <TableRow><TableHead>Date</TableHead><TableHead>From</TableHead><TableHead>To</TableHead><TableHead>Reason</TableHead></TableRow>
+                  <TableRow><TableHead>{t("employees.history.date")}</TableHead><TableHead>{t("employees.history.from")}</TableHead><TableHead>{t("employees.history.to")}</TableHead><TableHead>{t("employees.history.reason")}</TableHead></TableRow>
                 </TableHeader>
                 <TableBody>
                   {history.map((h) => (
@@ -130,7 +130,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
                     </TableRow>
                   ))}
                   {history.length === 0 && (
-                    <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">No changes</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("employees.history.noHistory")}</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -143,7 +143,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                  <TableRow><TableHead>Type</TableHead><TableHead>From</TableHead><TableHead>To</TableHead><TableHead>Status</TableHead></TableRow>
+                  <TableRow><TableHead>{t("leaves.fields.type")}</TableHead><TableHead>{t("leaves.fields.start")}</TableHead><TableHead>{t("leaves.fields.end")}</TableHead><TableHead>{t("common.status")}</TableHead></TableRow>
                 </TableHeader>
                 <TableBody>
                   {leaves.map((l) => (
@@ -155,7 +155,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
                     </TableRow>
                   ))}
                   {leaves.length === 0 && (
-                    <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">No leaves</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("leaves.none")}</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
@@ -166,7 +166,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
         <TabsContent value="notes">
           <Card>
             <CardContent className="p-6">
-              <p className="text-sm text-[var(--muted)] mb-3">Notes are visible to HR only.</p>
+              <p className="text-sm text-[var(--muted)] mb-3">{t("employees.profile.notesNote")}</p>
               <div className="whitespace-pre-wrap rounded-lg bg-[var(--secondary)] p-4 text-sm min-h-[120px]">
                 {data.profile?.notesHr || "—"}
               </div>

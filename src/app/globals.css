@@ -91,12 +91,20 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Scale entire UI: base 16 -> 18 makes all rem-based sizes ~12.5% larger */
+html { font-size: 18px; }
+
+@media (max-width: 480px) {
+  html { font-size: 17px; }
+}
+
 * { border-color: var(--border); }
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
 }
 
 html { color-scheme: light; }

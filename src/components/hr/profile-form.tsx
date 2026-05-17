@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +24,7 @@ type ProfileLike = {
 };
 
 export function ProfileForm({ userId, profile }: { userId: string; profile: ProfileLike | null }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [ok, setOk] = useState(false);
   const p = profile ?? {};
@@ -62,28 +64,28 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
-        <F name="birthDate" label="Birth date" type="date" defaultValue={p.birthDate} />
-        <F name="maritalStatus" label="Marital status" defaultValue={p.maritalStatus} />
-        <F name="passportSerial" label="Passport serial" defaultValue={p.passportSerial} />
-        <F name="passportNumber" label="Passport number" defaultValue={p.passportNumber} />
-        <F name="passportIssuedDate" label="Passport issued date" type="date" defaultValue={p.passportIssuedDate} />
-        <F name="passportIssuedBy" label="Passport issued by" defaultValue={p.passportIssuedBy} />
-        <F name="inn" label="INN" defaultValue={p.inn} />
-        <F name="emergencyContactName" label="Emergency contact name" defaultValue={p.emergencyContactName} />
-        <F name="emergencyContactPhone" label="Emergency contact phone" defaultValue={p.emergencyContactPhone} />
-        <F name="emergencyContactRelation" label="Relation" defaultValue={p.emergencyContactRelation} />
+        <F name="birthDate" label={t("employees.profile.birthDate")} type="date" defaultValue={p.birthDate} />
+        <F name="maritalStatus" label={t("employees.profile.maritalStatus")} defaultValue={p.maritalStatus} />
+        <F name="passportSerial" label={t("employees.profile.passportSerial")} defaultValue={p.passportSerial} />
+        <F name="passportNumber" label={t("employees.profile.passportNumber")} defaultValue={p.passportNumber} />
+        <F name="passportIssuedDate" label={t("employees.profile.passportIssuedDate")} type="date" defaultValue={p.passportIssuedDate} />
+        <F name="passportIssuedBy" label={t("employees.profile.passportIssuedBy")} defaultValue={p.passportIssuedBy} />
+        <F name="inn" label={t("employees.profile.inn")} defaultValue={p.inn} />
+        <F name="emergencyContactName" label={t("employees.profile.emergencyContactName")} defaultValue={p.emergencyContactName} />
+        <F name="emergencyContactPhone" label={t("employees.profile.emergencyContactPhone")} defaultValue={p.emergencyContactPhone} />
+        <F name="emergencyContactRelation" label={t("employees.profile.emergencyContactRelation")} defaultValue={p.emergencyContactRelation} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="address">Address</Label>
+        <Label htmlFor="address">{t("employees.profile.address")}</Label>
         <Textarea id="address" name="address" rows={2} defaultValue={p.address ?? ""} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="education">Education</Label>
+        <Label htmlFor="education">{t("employees.profile.education")}</Label>
         <Textarea id="education" name="education" rows={2} defaultValue={p.education ?? ""} />
       </div>
       <div className="flex items-center gap-3">
-        <Button type="submit" disabled={pending}>Save</Button>
-        {ok && <span className="text-sm text-[var(--success)]">Saved</span>}
+        <Button type="submit" disabled={pending}>{t("common.save")}</Button>
+        {ok && <span className="text-sm text-[var(--success)]">{t("common.saved")}</span>}
       </div>
     </form>
   );

@@ -6,9 +6,13 @@
   "common": {
     "loading": "Юкланмоқда...",
     "save": "Сақлаш",
+    "saved": "Сақланди",
     "cancel": "Бекор қилиш",
     "delete": "Ўчириш",
     "edit": "Таҳрирлаш",
+    "add": "Қўшиш",
+    "create": "Яратиш",
+    "update": "Янгилаш",
     "back": "Орқага",
     "next": "Кейинги",
     "submit": "Юбориш",
@@ -16,7 +20,63 @@
     "actions": "Амаллар",
     "yes": "Ҳа",
     "no": "Йўқ",
-    "of": "нинг"
+    "of": "жами",
+    "all": "Ҳаммаси",
+    "none": "Йўқ",
+    "open": "Очиш",
+    "close": "Ёпиш",
+    "upload": "Юклаш",
+    "download": "Юклаб олиш",
+    "send": "Юбориш",
+    "confirm": "Тасдиқлаш",
+    "reject": "Рад этиш",
+    "approve": "Тасдиқлаш",
+    "archive": "Архивлаш",
+    "restore": "Тиклаш",
+    "export": "Экспорт",
+    "print": "Чоп этиш",
+    "name": "Номи",
+    "fullName": "Тўлиқ исм",
+    "email": "Email",
+    "phone": "Телефон",
+    "status": "Ҳолат",
+    "type": "Тури",
+    "date": "Сана",
+    "from": "Бошланиши",
+    "to": "Тугаши",
+    "reason": "Сабаби",
+    "title": "Сарлавҳа",
+    "description": "Тавсиф",
+    "notes": "Изоҳлар",
+    "file": "Файл",
+    "files": "Файллар",
+    "size": "Ҳажми",
+    "created": "Яратилди",
+    "updated": "Янгиланди",
+    "deadline": "Муддат",
+    "priority": "Муҳимлик",
+    "assignee": "Ижрочи",
+    "creator": "Яратувчи",
+    "project": "Лойиҳа",
+    "department": "Бўлим",
+    "position": "Лавозим",
+    "head": "Раҳбар",
+    "members": "Аъзолар",
+    "progress": "Бажарилиш",
+    "weight": "Вазн",
+    "payment": "Тўлов",
+    "amount": "Сумма",
+    "score": "Баҳо",
+    "rating": "Рейтинг",
+    "confirmDelete": "Ростдан ҳам ўчирилсинми?",
+    "noResults": "Натижа топилмади",
+    "noData": "Маълумот йўқ",
+    "today": "Бугун",
+    "yesterday": "Кеча",
+    "week": "Ҳафта",
+    "month": "Ой",
+    "quarter": "Чорак",
+    "year": "Йил"
   },
   "nav": {
     "dashboard": "Бош саҳифа",
@@ -26,11 +86,39 @@
     "departments": "Бўлимлар",
     "contractors": "Пудратчилар",
     "reports": "Ҳисоботлар",
+    "leaves": "Таътиллар",
     "notifications": "Билдиришномалар",
     "auditLog": "Фаолият журнали",
     "settings": "Созламалар",
     "logout": "Чиқиш",
-    "leaves": "Таътиллар"
+    "contractorPortal": "Пудратчи портали"
+  },
+  "positions": {
+    "direktor": "Директор",
+    "orinbosar": "Ўринбосар",
+    "koordinator": "Координатор",
+    "bolim_boshligi": "Бўлим Бошлиғи",
+    "bosh_mutaxassis": "Бош мутахассис",
+    "yetakchi_mutaxassis": "Етакчи мутахассис",
+    "mutaxassis": "Мутахассис",
+    "hr": "HR",
+    "kontragent": "Пудратчи"
+  },
+  "status": {
+    "active": "Фаол",
+    "pending": "Кутилмоқда",
+    "archived": "Архивланган",
+    "blocked": "Блокланган",
+    "approved": "Тасдиқланган",
+    "rejected": "Рад этилган",
+    "completed": "Бажарилган",
+    "in_progress": "Бажарилмоқда",
+    "planning": "Режалаштирилмоқда",
+    "cancelled": "Бекор қилинган",
+    "submitted": "Юборилган",
+    "revision_requested": "Қайта кўриб чиқиш сўралди",
+    "paid": "Тўланган",
+    "partial": "Қисман"
   },
   "auth": {
     "login": {
@@ -87,18 +175,33 @@
       "submitted": "Аризангиз юборилди. Администратор кўриб чиқади."
     }
   },
-  "positions": {
-    "direktor": "Директор",
-    "orinbosar": "Ўринбосар",
-    "koordinator": "Координатор",
-    "bolim_boshligi": "Бўлим Бошлиғи",
-    "bosh_mutaxassis": "Бош мутахассис",
-    "yetakchi_mutaxassis": "Етакчи мутахассис",
-    "mutaxassis": "Мутахассис",
-    "hr": "HR",
-    "kontragent": "Пудратчи"
-  },
   "tasks": {
+    "pageTitle": "Вазифалар",
+    "newTitle": "Янги вазифа яратиш",
+    "new": "Янги вазифа",
+    "view": {
+      "list": "Рўйхат",
+      "kanban": "Канбан",
+      "calendar": "Календарь"
+    },
+    "scope": {
+      "mine": "Менинг",
+      "team": "Жамоа",
+      "all": "Ҳаммаси"
+    },
+    "fields": {
+      "title": "Сарлавҳа",
+      "description": "Тавсиф",
+      "assignee": "Ижрочи",
+      "project": "Лойиҳа",
+      "priority": "Муҳимлик",
+      "deadline": "Муддат",
+      "dependsOn": "Боғлиқликлар (олдин бажарилиши керак)",
+      "recurring": "Такрорланадиган вазифа",
+      "repeat": "Такрорлаш",
+      "pickAssignee": "Ижрочини танланг",
+      "noProject": "Лойиҳасиз"
+    },
     "status": {
       "todo": "Бажарилиши керак",
       "in_progress": "Бажарилмоқда",
@@ -111,12 +214,404 @@
       "medium": "Ўртача",
       "high": "Юқори",
       "urgent": "Шошилинч"
+    },
+    "transitions": {
+      "start": "Бошлаш",
+      "submit": "Текширувга юбориш",
+      "approve": "Тасдиқлаш",
+      "reject": "Рад этиш",
+      "resume": "Давом эттириш",
+      "reasonPlaceholder": "Рад этиш сабабини кўрсатинг...",
+      "confirmReject": "Рад этишни тасдиқлаш",
+      "noTransitions": "Ўтказиш имкониятлари йўқ."
+    },
+    "sections": {
+      "description": "Тавсиф",
+      "checklist": "Текширув рўйхати",
+      "attachments": "Бириктирилган файллар",
+      "comments": "Шарҳлар",
+      "statusSection": "Ҳолат",
+      "people": "Иштирокчилар",
+      "dependencies": "Боғлиқликлар",
+      "noDescription": "Тавсиф киритилмаган.",
+      "rejectionReason": "Рад этиш сабаби",
+      "noChecklist": "Текширув рўйхати бўш.",
+      "noAttachments": "Бириктирилган файллар йўқ.",
+      "noComments": "Шарҳлар йўқ.",
+      "writeComment": "Шарҳ ёзинг... @\"Тўлиқ Исм\" орқали эслаб ўтинг",
+      "newChecklistItem": "Янги текширув пункти...",
+      "watcher": "Кузатувчи",
+      "watchers": "Кузатувчилар",
+      "watch": "Кузатиш",
+      "unwatch": "Кузатишни тўхтатиш",
+      "send": "Юбориш"
+    },
+    "overdue": "Муддат ўтган",
+    "due": "Муддат",
+    "emptyList": "Вазифалар йўқ"
+  },
+  "projects": {
+    "pageTitle": "Лойиҳалар",
+    "new": "Янги лойиҳа",
+    "newTitle": "Лойиҳа яратиш",
+    "fields": {
+      "name": "Лойиҳа номи",
+      "description": "Тавсиф",
+      "type": "Тури",
+      "curator": "Куратор",
+      "contractor": "Пудратчи",
+      "startDate": "Бошланиш санаси",
+      "deadline": "Тугатиш муддати",
+      "budget": "Бюджет",
+      "progress": "Бажарилиш"
+    },
+    "type": {
+      "internal": "Ички",
+      "external": "Пудратчи билан"
+    },
+    "tabs": {
+      "milestones": "Босқичлар",
+      "gantt": "Gantt диаграммаси",
+      "deliverables": "Материаллар",
+      "tasks": "Вазифалар",
+      "chat": "Суҳбат",
+      "paymentsTabName": "Босқичлар ва тўловлар"
+    },
+    "milestones": {
+      "addBtn": "Босқич қўшиш",
+      "noMilestones": "Ҳозирча босқичлар йўқ.",
+      "title": "Сарлавҳа",
+      "deadline": "Муддат",
+      "weight": "Вазн",
+      "paymentAmount": "Тўлов суммаси",
+      "paymentStatus": "Тўлов ҳолати"
+    },
+    "deliverables": {
+      "addBtn": "Материал юклаш",
+      "submit": "Материал юклаш",
+      "feedback": "Изоҳ",
+      "message": "Хабар",
+      "milestone": "Босқич",
+      "type": "Тури",
+      "file": "Файл",
+      "noDeliverables": "Ҳали материаллар йўқ.",
+      "types": {
+        "document": "Ҳужжат",
+        "video": "Видео",
+        "image": "Расм",
+        "archive": "Архив",
+        "other": "Бошқа"
+      }
+    },
+    "chat": {
+      "placeholder": "Хабар ёзинг...",
+      "noMessages": "Хабарлар йўқ."
+    },
+    "complete": {
+      "btn": "Якунлаш ва баҳолаш",
+      "title": "Лойиҳани якунлаш",
+      "ratePrompt": "Пудратчини баҳоланг:",
+      "notesPlaceholder": "Изоҳлар (ихтиёрий)",
+      "confirm": "Якунлаш"
+    },
+    "ratings": "Рейтинглар",
+    "noLinkedTasks": "Ушбу лойиҳага вазифа бириктирилмаган.",
+    "headers": {
+      "name": "Номи",
+      "type": "Тури",
+      "curator": "Куратор",
+      "company": "Компания",
+      "progress": "Бажарилиш",
+      "deadline": "Муддат",
+      "status": "Ҳолат"
+    },
+    "empty": "Лойиҳалар йўқ"
+  },
+  "employees": {
+    "pageTitle": "Ходимлар",
+    "newTitle": "Янги ходим қўшиш",
+    "addBtn": "Ходим қўшиш",
+    "reportsTo": "Бевосита раҳбар",
+    "table": {
+      "name": "Исм фамилия",
+      "email": "Email",
+      "position": "Лавозим",
+      "department": "Бўлим",
+      "status": "Ҳолат",
+      "hireDate": "Ишга кирган сана"
+    },
+    "empty": "Ходим топилмади",
+    "tabs": {
+      "main": "Асосий",
+      "documents": "Ҳужжатлар",
+      "history": "Лавозим тарихи",
+      "leaves": "Таътиллар",
+      "notes": "HR ёзувлари"
+    },
+    "profile": {
+      "sectionTitle": "Профиль",
+      "birthDate": "Туғилган сана",
+      "maritalStatus": "Оилавий ҳолати",
+      "passportSerial": "Паспорт серияси",
+      "passportNumber": "Паспорт рақами",
+      "passportIssuedDate": "Берилган сана",
+      "passportIssuedBy": "Ким томонидан берилган",
+      "inn": "INN",
+      "emergencyContactName": "Фавқулодда ҳолат учун алоқа",
+      "emergencyContactPhone": "Алоқа телефони",
+      "emergencyContactRelation": "Алоқаси",
+      "address": "Манзил",
+      "education": "Маълумот",
+      "hr_notes": "HR ёзувлари",
+      "printPdf": "PDF карточка",
+      "viewOnly": "Фақат кўриш.",
+      "notesNote": "Ёзувлар фақат HR учун кўринади."
+    },
+    "docs": {
+      "type": "Ҳужжат тури",
+      "title": "Сарлавҳа",
+      "file": "Файл",
+      "upload": "Юклаш",
+      "uploaded": "Юкланилди",
+      "noDocs": "Ҳужжатлар йўқ",
+      "types": {
+        "contract": "Меҳнат шартномаси",
+        "passport": "Паспорт",
+        "diploma": "Диплом",
+        "medical": "Тиббий маълумотнома",
+        "certificate": "Сертификат",
+        "other": "Бошқа"
+      }
+    },
+    "history": {
+      "date": "Сана",
+      "from": "Аввалги",
+      "to": "Янги",
+      "reason": "Сабаби",
+      "noHistory": "Ўзгаришлар йўқ"
+    },
+    "changePosition": {
+      "btn": "Лавозимни ўзгартириш",
+      "title": "Лавозим ва бўлимни ўзгартириш",
+      "newPosition": "Янги лавозим",
+      "department": "Бўлим",
+      "reportsTo": "Бевосита раҳбар",
+      "reason": "Сабаби"
+    },
+    "archive": {
+      "btn": "Архивлаш",
+      "btnRestore": "Тиклаш"
     }
   },
-  "theme": {
-    "light": "Ёруғ",
-    "dark": "Қоронғи",
-    "system": "Тизимга мос"
+  "departments": {
+    "pageTitle": "Бўлимлар",
+    "addBtn": "Бўлим қўшиш",
+    "table": {
+      "name": "Номи",
+      "head": "Раҳбар",
+      "members": "Аъзолар"
+    },
+    "fields": {
+      "name": "Номи",
+      "head": "Раҳбар",
+      "parent": "Юқори бўлим",
+      "description": "Тавсиф",
+      "nameRu": "Номи (Рус)",
+      "nameEn": "Номи (Инг)",
+      "nameUzLatn": "Номи (Ўзбек лотин)",
+      "nameUzCyrl": "Номи (Ўзбек кирил)"
+    },
+    "empty": "Бўлимлар йўқ"
+  },
+  "contractors": {
+    "pageTitle": "Пудратчилар",
+    "pendingTitle": "Тасдиқлаш кутилмоқда",
+    "allTitle": "Барча пудратчилар",
+    "none": "Йўқ.",
+    "reason": "Сабаби"
+  },
+  "reports": {
+    "standupTitle": "Кунлик стендап",
+    "todayLabel": "Бугун",
+    "doneYesterday": "Кеча нима қилдим",
+    "plannedToday": "Бугун нима режалаштирдим",
+    "blockers": "Тўсиқлар",
+    "myHistory": "Менинг тарихим",
+    "teamReports": "Жамоа ҳисоботлари (14 кун)",
+    "noHistory": "Тарих йўқ.",
+    "submit": "Топшириш",
+    "update": "Янгилаш",
+    "done": "Бажарилди",
+    "plan": "Режа"
+  },
+  "leaves": {
+    "pageTitle": "Таътиллар",
+    "request": "Таътил сўраш",
+    "myLeaves": "Менинг таътилларим",
+    "pending": "Тасдиқлаш кутилмоқда",
+    "calendar": "Таътиллар календари",
+    "types": {
+      "vacation": "Йиллик таътил",
+      "sick": "Касаллик варақаси",
+      "unpaid": "Тўловсиз таътил",
+      "other": "Бошқа"
+    },
+    "fields": {
+      "type": "Тури",
+      "start": "Бошланиши",
+      "end": "Тугаши",
+      "reason": "Сабаби"
+    },
+    "none": "Таътиллар йўқ."
+  },
+  "notifications": {
+    "pageTitle": "Билдиришномалар",
+    "markAllRead": "Ҳаммасини ўқилган деб белгилаш",
+    "open": "Очиш",
+    "empty": "Билдиришномалар йўқ."
+  },
+  "audit": {
+    "pageTitle": "Фаолият журнали",
+    "table": {
+      "time": "Вақт",
+      "user": "Фойдаланувчи",
+      "action": "Амал",
+      "entity": "Объект",
+      "ip": "IP"
+    },
+    "empty": "Ёзувлар йўқ."
+  },
+  "settings": {
+    "pageTitle": "Созламалар",
+    "tabs": {
+      "personal": "Шахсий",
+      "notifications": "Билдиришномалар",
+      "security": "Хавфсизлик",
+      "telegram": "Telegram"
+    },
+    "personal": {
+      "language": "Тил",
+      "theme": "Мавзу",
+      "timezone": "Вақт минтақаси"
+    },
+    "notifs": {
+      "inApp": "Тизим ичида билдиришномалар",
+      "email": "Email",
+      "taskAssigned": "Вазифа юкланганда",
+      "deadline": "Муддат яқинлашганда",
+      "comments": "Янги шарҳлар",
+      "mentions": "Эслаб ўтишлар",
+      "standup": "Стендап эслатмаси"
+    },
+    "security": {
+      "changePassword": "Паролни ўзгартириш",
+      "current": "Жорий парол",
+      "newPass": "Янги парол (камида 8 белги)",
+      "change": "Ўзгартириш",
+      "twoFa": "Икки босқичли аутентификация",
+      "twoFaEnabled": "2FA ёқилган.",
+      "startSetup": "Созлашни бошлаш",
+      "manualEntry": "Ёки махфий калитни қўлда киритинг:",
+      "codePlaceholder": "6 рақамли код",
+      "verify": "Текшириш",
+      "disablePlaceholder": "Ўчириш учун жорий 6 рақамли кодни киритинг",
+      "disable": "Ўчириш",
+      "messages": {
+        "passwordChanged": "Парол ўзгартирилди",
+        "twoFaEnabled": "2FA ёқилди",
+        "twoFaDisabled": "2FA ўчирилди"
+      }
+    },
+    "telegram": {
+      "connected": "Боғланган.",
+      "disconnect": "Узиш",
+      "hint": "Боғлаш учун: пастдан код ҳосил қилинг ва уни Telegram ботига юборинг.",
+      "generate": "Код ҳосил қилиш",
+      "yourCode": "Сизнинг кодингиз:"
+    },
+    "theme": {
+      "light": "Ёруғ",
+      "dark": "Қоронғи",
+      "system": "Тизимга мос"
+    },
+    "lang": {
+      "uz-latn": "Ўзбекча (лотин)",
+      "uz-cyrl": "Ўзбекча (кирилл)",
+      "ru": "Русча",
+      "en": "Инглизча"
+    }
+  },
+  "contractor": {
+    "accountUnderReview": "Ҳисобингиз текширувда",
+    "statusLabel": "Сизнинг пудратчи аризангиз ҳолати:",
+    "nda": {
+      "title": "Махфийлик келишуви",
+      "body1": "Ушбу келишувни қабул қилиш орқали сиз ушбу портал орқали улашилган барча маълумотлар, ҳужжатлар ва алоқаларни қатъий махфий сақлашга розилик билдирасиз.",
+      "body2": "Келишувни бузиш шартномани бекор қилиш ва Ўзбекистон Республикаси қонунчилигига мувофиқ ҳуқуқий оқибатларга олиб келиши мумкин.",
+      "accept": "Қабул қиламан"
+    },
+    "dashboard": {
+      "activeProjects": "Фаол лойиҳалар",
+      "completed": "Якунланган",
+      "total": "Жами",
+      "myProjects": "Менинг лойиҳаларим",
+      "noProjects": "Сизга лойиҳалар бириктирилмаган.",
+      "averageRating": "Ўртача рейтинг"
+    },
+    "profile": {
+      "title": "Компания профили",
+      "contactPerson": "Алоқа шахси",
+      "email": "Email",
+      "phone": "Телефон",
+      "status": "Ҳолат",
+      "rating": "Рейтинг",
+      "specialization": "Мутахассислиги",
+      "noCompany": "Боғланган компания йўқ."
+    }
+  },
+  "dashboard": {
+    "title": "Бош саҳифа",
+    "hr": {
+      "activeEmployees": "Фаол ходимлар",
+      "newThisMonth": "Бу ойда қўшилганлар",
+      "onLeave": "Ҳозир таътилда",
+      "pendingInvites": "Кутилаётган таклифлар",
+      "birthdays": "Бу ҳафтадаги туғилган кунлар",
+      "noBirthdays": "Бу ҳафта туғилган кун йўқ.",
+      "departments": "Бўлимлар",
+      "noDepartments": "Ҳозирча бўлимлар йўқ."
+    },
+    "manager": {
+      "tasks30": "Вазифалар (30 кун)",
+      "inProgress": "Бажарилмоқда",
+      "overdue": "Муддати ўтган",
+      "activeProjects": "Фаол лойиҳалар",
+      "byStatus": "Вазифалар ҳолати бўйича",
+      "activity30": "Яратилган ва якунланган (30 кун)",
+      "topPerformers": "Энг самарали (30 кун)",
+      "mostOverdue": "Энг кўп кечикишлар",
+      "noCompletions": "Ҳали якунлаш йўқ.",
+      "allOnTrack": "Ҳаммаси муддатида."
+    },
+    "specialist": {
+      "dueToday": "Бугун муддат",
+      "thisWeek": "Бу ҳафта",
+      "soon": "Яқин (24 соат)",
+      "overdue": "Муддати ўтган",
+      "openMyTasks": "Менинг вазифаларим",
+      "submitStandup": "Стендап топшириш"
+    }
+  },
+  "commandPalette": {
+    "placeholder": "Буйруқ ёки саҳифа номини киритинг...",
+    "hint": "Очиш/ёпиш учун ⌘K босинг.",
+    "groupPages": "Саҳифалар",
+    "noResults": "Натижа йўқ."
+  },
+  "header": {
+    "searchPlaceholder": "Вазифаларни қидириш...",
+    "accountSettings": "Созламалар",
+    "signOut": "Чиқиш"
   },
   "landing": {
     "hero": "Ички Ижро — компаниянинг ички ижросини бошқариш тизими",

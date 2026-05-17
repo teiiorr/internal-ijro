@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ export function LeavesPageClient({
   pendingForReview: Leave[];
   canManage: boolean;
 }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [open, setOpen] = useState(false);
   const [rejectId, setRejectId] = useState<string | null>(null);
@@ -38,41 +40,41 @@ export function LeavesPageClient({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Leaves</h1>
-        {open ? null : <Button onClick={() => setOpen(true)}>Request leave</Button>}
+        <h1 className="text-3xl font-bold">{t("leaves.pageTitle")}</h1>
+        {open ? null : <Button onClick={() => setOpen(true)}>{t("leaves.request")}</Button>}
       </div>
 
       {open && (
         <Card><CardContent className="p-6">
           <form action={(fd) => start(async () => { await requestLeave(fd); setOpen(false); })} className="grid gap-3 md:grid-cols-4 items-end">
             <div className="space-y-1.5">
-              <Label>Type</Label>
+              <Label>{t("leaves.fields.type")}</Label>
               <Select name="type" defaultValue="vacation">
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="vacation">Vacation</SelectItem>
-                  <SelectItem value="sick">Sick</SelectItem>
-                  <SelectItem value="unpaid">Unpaid</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="vacation">{t("leaves.types.vacation")}</SelectItem>
+                  <SelectItem value="sick">{t("leaves.types.sick")}</SelectItem>
+                  <SelectItem value="unpaid">{t("leaves.types.unpaid")}</SelectItem>
+                  <SelectItem value="other">{t("leaves.types.other")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5"><Label>Start</Label><Input name="startDate" type="date" required /></div>
-            <div className="space-y-1.5"><Label>End</Label><Input name="endDate" type="date" required /></div>
-            <div className="space-y-1.5 md:col-span-4"><Label>Reason</Label><Textarea name="reason" rows={2} /></div>
+            <div className="space-y-1.5"><Label>{t("leaves.fields.start")}</Label><Input name="startDate" type="date" required /></div>
+            <div className="space-y-1.5"><Label>{t("leaves.fields.end")}</Label><Input name="endDate" type="date" required /></div>
+            <div className="space-y-1.5 md:col-span-4"><Label>{t("leaves.fields.reason")}</Label><Textarea name="reason" rows={2} /></div>
             <div className="md:col-span-4 flex gap-2">
-              <Button type="submit" disabled={pending}>Submit</Button>
-              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
+              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
             </div>
           </form>
         </CardContent></Card>
       )}
 
       <Card>
-        <CardHeader><CardTitle>My leaves</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("leaves.myLeaves")}</CardTitle></CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader><TableRow><TableHead>Type</TableHead><TableHead>From</TableHead><TableHead>To</TableHead><TableHead>Status</TableHead><TableHead>Reason</TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>{t("leaves.fields.type")}</TableHead><TableHead>{t("leaves.fields.start")}</TableHead><TableHead>{t("leaves.fields.end")}</TableHead><TableHead>{t("common.status")}</TableHead><TableHead>{t("leaves.fields.reason")}</TableHead></TableRow></TableHeader>
             <TableBody>
               {myLeaves.map((l) => (
                 <TableRow key={l.id}>
@@ -83,7 +85,7 @@ export function LeavesPageClient({
                   <TableCell className="text-[var(--muted)] text-sm">{l.status === "rejected" ? l.rejectionReason : l.reason}</TableCell>
                 </TableRow>
               ))}
-              {myLeaves.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-[var(--muted)] py-6">No leaves.</TableCell></TableRow>}
+              {myLeaves.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-[var(--muted)] py-6">{t("leaves.none")}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </CardContent>
@@ -91,9 +93,9 @@ export function LeavesPageClient({
 
       {canManage && (
         <Card>
-          <CardHeader><CardTitle>Pending approval</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t("leaves.pending")}</CardTitle></CardHeader>
           <CardContent className="space-y-3">
-            {pendingForReview.length === 0 && <p className="text-sm text-[var(--muted)]">None.</p>}
+            {pendingForReview.length === 0 && <p className="text-sm text-[var(--muted)]">{t("contractors.none")}</p>}
             {pendingForReview.map((l) => (
               <div key={l.id} className="border rounded-lg p-3 flex items-center justify-between flex-wrap gap-3">
                 <div>
@@ -103,14 +105,14 @@ export function LeavesPageClient({
                 <div className="flex gap-2 items-center">
                   {rejectId === l.id ? (
                     <>
-                      <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason" className="h-9 w-48" />
-                      <Button size="sm" variant="destructive" disabled={pending} onClick={() => start(async () => { await rejectLeave(l.id, reason); setRejectId(null); setReason(""); })}>Confirm reject</Button>
-                      <Button size="sm" variant="ghost" onClick={() => setRejectId(null)}>Cancel</Button>
+                      <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t("common.reason")} className="h-9 w-48" />
+                      <Button size="sm" variant="destructive" disabled={pending} onClick={() => start(async () => { await rejectLeave(l.id, reason); setRejectId(null); setReason(""); })}>{t("tasks.transitions.confirmReject")}</Button>
+                      <Button size="sm" variant="ghost" onClick={() => setRejectId(null)}>{t("common.cancel")}</Button>
                     </>
                   ) : (
                     <>
-                      <Button size="sm" disabled={pending} onClick={() => start(async () => { await approveLeave(l.id); })}>Approve</Button>
-                      <Button size="sm" variant="outline" onClick={() => setRejectId(l.id)}>Reject</Button>
+                      <Button size="sm" disabled={pending} onClick={() => start(async () => { await approveLeave(l.id); })}>{t("common.approve")}</Button>
+                      <Button size="sm" variant="outline" onClick={() => setRejectId(l.id)}>{t("common.reject")}</Button>
                     </>
                   )}
                 </div>

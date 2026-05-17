@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ const STATUSES = ["pending", "in_progress", "completed"] as const;
 const PAY = ["pending", "partial", "paid"] as const;
 
 export function MilestonesList({ projectId, items, canManage, canChangePayment }: { projectId: string; items: M[]; canManage: boolean; canChangePayment: boolean }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [adding, setAdding] = useState(false);
 
@@ -81,24 +83,24 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment }
             </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-sm text-[var(--muted)]">No milestones yet.</p>}
+        {items.length === 0 && <p className="text-sm text-[var(--muted)]">{t("projects.milestones.noMilestones")}</p>}
       </div>
       {canManage && (
         adding ? (
           <form onSubmit={onAdd} className="border rounded-lg p-3 space-y-3">
             <div className="grid gap-2 md:grid-cols-4">
-              <div className="space-y-1 md:col-span-2"><Label>Title</Label><Input name="title" required /></div>
-              <div className="space-y-1"><Label>Deadline</Label><Input name="deadline" type="date" /></div>
-              <div className="space-y-1"><Label>Weight</Label><Input name="weight" type="number" defaultValue={1} min={1} /></div>
-              <div className="space-y-1"><Label>Payment</Label><Input name="paymentAmount" type="number" step="0.01" /></div>
+              <div className="space-y-1 md:col-span-2"><Label>{t("projects.milestones.title")}</Label><Input name="title" required /></div>
+              <div className="space-y-1"><Label>{t("projects.milestones.deadline")}</Label><Input name="deadline" type="date" /></div>
+              <div className="space-y-1"><Label>{t("projects.milestones.weight")}</Label><Input name="weight" type="number" defaultValue={1} min={1} /></div>
+              <div className="space-y-1"><Label>{t("projects.milestones.paymentAmount")}</Label><Input name="paymentAmount" type="number" step="0.01" /></div>
             </div>
             <div className="flex gap-2">
-              <Button type="submit" disabled={pending}>Add milestone</Button>
-              <Button type="button" variant="ghost" onClick={() => setAdding(false)}>Cancel</Button>
+              <Button type="submit" disabled={pending}>{t("projects.milestones.addBtn")}</Button>
+              <Button type="button" variant="ghost" onClick={() => setAdding(false)}>{t("common.cancel")}</Button>
             </div>
           </form>
         ) : (
-          <Button variant="outline" onClick={() => setAdding(true)}>Add milestone</Button>
+          <Button variant="outline" onClick={() => setAdding(true)}>{t("projects.milestones.addBtn")}</Button>
         )
       )}
     </div>

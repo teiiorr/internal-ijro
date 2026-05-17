@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ type Dept = {
 type Manager = { id: string; fullName: string };
 
 export function DepartmentsManager({ departments, managers }: { departments: Dept[]; managers: Manager[] }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<string | "new" | null>(null);
 
@@ -45,7 +47,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
   }
 
   function onDelete(id: string) {
-    if (!confirm("Delete department?")) return;
+    if (!confirm(t("common.confirmDelete"))) return;
     start(async () => { await deleteDepartment(id); });
   }
 
@@ -54,11 +56,11 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
       <CardContent className="p-6">
         <form onSubmit={(e) => onSubmit(e, id)} className="grid gap-3 md:grid-cols-2">
           <div className="space-y-1.5 md:col-span-2">
-            <Label>Name</Label>
+            <Label>{t("departments.fields.name")}</Label>
             <Input name="name" required defaultValue={initial?.name ?? ""} />
           </div>
           <div className="space-y-1.5">
-            <Label>Head</Label>
+            <Label>{t("departments.fields.head")}</Label>
             <Select name="headUserId" defaultValue={initial?.headUserId ?? undefined}>
               <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
               <SelectContent>
@@ -67,7 +69,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Parent department</Label>
+            <Label>{t("departments.fields.parent")}</Label>
             <Select name="parentDepartmentId" defaultValue={initial?.parentDepartmentId ?? undefined}>
               <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
               <SelectContent>
@@ -78,28 +80,28 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Name (Ru)</Label>
+            <Label>{t("departments.fields.nameRu")}</Label>
             <Input name="nameRu" />
           </div>
           <div className="space-y-1.5">
-            <Label>Name (En)</Label>
+            <Label>{t("departments.fields.nameEn")}</Label>
             <Input name="nameEn" />
           </div>
           <div className="space-y-1.5">
-            <Label>Name (Uz-Latn)</Label>
+            <Label>{t("departments.fields.nameUzLatn")}</Label>
             <Input name="nameUzLatn" />
           </div>
           <div className="space-y-1.5">
-            <Label>Name (Uz-Cyrl)</Label>
+            <Label>{t("departments.fields.nameUzCyrl")}</Label>
             <Input name="nameUzCyrl" />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <Label>Description</Label>
+            <Label>{t("departments.fields.description")}</Label>
             <Textarea name="description" rows={2} />
           </div>
           <div className="md:col-span-2 flex gap-2">
-            <Button type="submit" disabled={pending}>Save</Button>
-            <Button type="button" variant="ghost" onClick={() => setEditing(null)}><X className="size-4" /> Cancel</Button>
+            <Button type="submit" disabled={pending}>{t("common.save")}</Button>
+            <Button type="button" variant="ghost" onClick={() => setEditing(null)}><X className="size-4" /> {t("common.cancel")}</Button>
           </div>
         </form>
       </CardContent>
@@ -110,7 +112,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
     <div className="space-y-4">
       <div className="flex justify-end">
         {editing === "new" ? null : (
-          <Button onClick={() => setEditing("new")}><Plus className="size-4" /> Add department</Button>
+          <Button onClick={() => setEditing("new")}><Plus className="size-4" /> {t("departments.addBtn")}</Button>
         )}
       </div>
       {editing === "new" && <Form id="new" />}
@@ -119,7 +121,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow><TableHead>Name</TableHead><TableHead>Head</TableHead><TableHead>Members</TableHead><TableHead></TableHead></TableRow>
+              <TableRow><TableHead>{t("departments.table.name")}</TableHead><TableHead>{t("departments.table.head")}</TableHead><TableHead>{t("departments.table.members")}</TableHead><TableHead></TableHead></TableRow>
             </TableHeader>
             <TableBody>
               {departments.map((d) => (
@@ -134,7 +136,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
                 </TableRow>
               ))}
               {departments.length === 0 && (
-                <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">No departments</TableCell></TableRow>
+                <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("departments.empty")}</TableCell></TableRow>
               )}
             </TableBody>
           </Table>

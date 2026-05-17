@@ -1,32 +1,34 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-type Item = { label: string; href: string; group: string };
+type Item = { labelKey: string; href: string };
 
-const STATIC_ITEMS: Item[] = [
-  { label: "Dashboard", href: "/dashboard", group: "Pages" },
-  { label: "Tasks", href: "/tasks", group: "Pages" },
-  { label: "New task", href: "/tasks/new", group: "Pages" },
-  { label: "Projects", href: "/projects", group: "Pages" },
-  { label: "New project", href: "/projects/new", group: "Pages" },
-  { label: "Employees", href: "/employees", group: "Pages" },
-  { label: "Invite employee", href: "/employees/new", group: "Pages" },
-  { label: "Departments", href: "/departments", group: "Pages" },
-  { label: "Contractors", href: "/contractors", group: "Pages" },
-  { label: "Standup", href: "/reports/standup", group: "Pages" },
-  { label: "Leaves", href: "/leaves", group: "Pages" },
-  { label: "Notifications", href: "/notifications", group: "Pages" },
-  { label: "Audit log", href: "/audit-log", group: "Pages" },
-  { label: "Settings", href: "/settings", group: "Pages" },
+const ITEMS: Item[] = [
+  { labelKey: "nav.dashboard", href: "/dashboard" },
+  { labelKey: "nav.tasks", href: "/tasks" },
+  { labelKey: "tasks.new", href: "/tasks/new" },
+  { labelKey: "nav.projects", href: "/projects" },
+  { labelKey: "projects.new", href: "/projects/new" },
+  { labelKey: "nav.employees", href: "/employees" },
+  { labelKey: "employees.addBtn", href: "/employees/new" },
+  { labelKey: "nav.departments", href: "/departments" },
+  { labelKey: "nav.contractors", href: "/contractors" },
+  { labelKey: "reports.standupTitle", href: "/reports/standup" },
+  { labelKey: "nav.leaves", href: "/leaves" },
+  { labelKey: "nav.notifications", href: "/notifications" },
+  { labelKey: "nav.auditLog", href: "/audit-log" },
+  { labelKey: "nav.settings", href: "/settings" },
 ];
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const router = useRouter();
+  const t = useTranslations();
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -40,23 +42,24 @@ export function CommandPalette() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const items = useMemo(() => ITEMS.map((i) => ({ ...i, label: t(i.labelKey as Parameters<typeof t>[0]) })), [t]);
   const filtered = useMemo(() => {
-    if (!q) return STATIC_ITEMS;
-    return STATIC_ITEMS.filter((i) => i.label.toLowerCase().includes(q.toLowerCase()));
-  }, [q]);
+    if (!q) return items;
+    return items.filter((i) => i.label.toLowerCase().includes(q.toLowerCase()));
+  }, [q, items]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-xl">
         <Input
-          placeholder="Type a command or page name…"
+          placeholder={t("commandPalette.placeholder")}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           autoFocus
         />
         <div className="max-h-80 overflow-y-auto -mx-2 mt-2">
           {filtered.length === 0 ? (
-            <p className="text-sm text-[var(--muted)] px-3 py-4 text-center">No results.</p>
+            <p className="text-sm text-[var(--muted)] px-3 py-4 text-center">{t("commandPalette.noResults")}</p>
           ) : (
             filtered.map((i) => (
               <button
@@ -65,12 +68,12 @@ export function CommandPalette() {
                 className="w-full text-left px-3 py-2 rounded-md hover:bg-[var(--accent)] text-sm flex justify-between"
               >
                 <span>{i.label}</span>
-                <span className="text-xs text-[var(--muted)]">{i.group}</span>
+                <span className="text-xs text-[var(--muted)]">{t("commandPalette.groupPages")}</span>
               </button>
             ))
           )}
         </div>
-        <p className="text-xs text-[var(--muted)] mt-2">Press <kbd className="px-1 py-0.5 rounded bg-[var(--secondary)]">⌘K</kbd> to toggle.</p>
+        <p className="text-xs text-[var(--muted)] mt-2">{t("commandPalette.hint")}</p>
       </DialogContent>
     </Dialog>
   );

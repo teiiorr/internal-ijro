@@ -1,9 +1,11 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { archiveEmployee, restoreEmployee } from "@/server/actions/employees";
 
 export function ArchiveButton({ userId, status }: { userId: string; status: string }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
@@ -11,7 +13,7 @@ export function ArchiveButton({ userId, status }: { userId: string; status: stri
   if (status === "archived") {
     return (
       <Button variant="outline" disabled={pending} onClick={() => start(async () => { await restoreEmployee(userId); })}>
-        Restore
+        {t("employees.archive.btnRestore")}
       </Button>
     );
   }
@@ -33,12 +35,12 @@ export function ArchiveButton({ userId, status }: { userId: string; status: stri
             setOpen(false);
           })}
         >
-          Archive
+          {t("employees.archive.btn")}
         </Button>
-        <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+        <Button variant="ghost" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
       </div>
     );
   }
 
-  return <Button variant="destructive" onClick={() => setOpen(true)}>Archive</Button>;
+  return <Button variant="destructive" onClick={() => setOpen(true)}>{t("employees.archive.btn")}</Button>;
 }

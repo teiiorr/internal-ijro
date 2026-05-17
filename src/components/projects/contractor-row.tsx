@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { approveContractor, rejectContractor } from "@/server/actions/projects";
 type C = { id: string; name: string; contactPerson: string | null; contactEmail: string | null; status: string; rating: string | null };
 
 export function ContractorRow({ c }: { c: C }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [reason, setReason] = useState("");
   const [showReject, setShowReject] = useState(false);
@@ -23,14 +25,14 @@ export function ContractorRow({ c }: { c: C }) {
         {c.rating && <Badge variant="secondary">⭐ {c.rating}</Badge>}
         {c.status === "pending" && (
           <>
-            <Button size="sm" disabled={pending} onClick={() => start(async () => { await approveContractor(c.id); })}>Approve</Button>
+            <Button size="sm" disabled={pending} onClick={() => start(async () => { await approveContractor(c.id); })}>{t("common.approve")}</Button>
             {showReject ? (
               <>
-                <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason" className="h-9 w-40" />
-                <Button size="sm" variant="destructive" disabled={pending} onClick={() => start(async () => { await rejectContractor(c.id, reason); setShowReject(false); })}>Reject</Button>
+                <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t("common.reason")} className="h-9 w-40" />
+                <Button size="sm" variant="destructive" disabled={pending} onClick={() => start(async () => { await rejectContractor(c.id, reason); setShowReject(false); })}>{t("common.reject")}</Button>
               </>
             ) : (
-              <Button size="sm" variant="outline" onClick={() => setShowReject(true)}>Reject</Button>
+              <Button size="sm" variant="outline" onClick={() => setShowReject(true)}>{t("common.reject")}</Button>
             )}
           </>
         )}

@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -20,13 +21,14 @@ type T = {
 };
 
 export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
+  const t = useTranslations();
   const [view, setView] = useState<"list" | "kanban" | "calendar">("list");
 
   return (
     <div className="space-y-4">
       <div className="flex gap-1">
         {([
-          ["list", List, "List"], ["kanban", KanbanSquare, "Kanban"], ["calendar", CalendarIcon, "Calendar"],
+          ["list", List, t("tasks.view.list")], ["kanban", KanbanSquare, t("tasks.view.kanban")], ["calendar", CalendarIcon, t("tasks.view.calendar")],
         ] as const).map(([v, Icon, label]) => (
           <Button
             key={v}
@@ -42,7 +44,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
       {view === "list" && (
         <Table>
           <TableHeader>
-            <TableRow><TableHead>Title</TableHead><TableHead>Status</TableHead><TableHead>Priority</TableHead><TableHead>Assignee</TableHead><TableHead>Project</TableHead><TableHead>Deadline</TableHead></TableRow>
+            <TableRow><TableHead>{t("tasks.fields.title")}</TableHead><TableHead>{t("common.status")}</TableHead><TableHead>{t("tasks.fields.priority")}</TableHead><TableHead>{t("tasks.fields.assignee")}</TableHead><TableHead>{t("tasks.fields.project")}</TableHead><TableHead>{t("tasks.fields.deadline")}</TableHead></TableRow>
           </TableHeader>
           <TableBody>
             {tasks.map((t) => {
@@ -59,7 +61,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
               );
             })}
             {tasks.length === 0 && (
-              <TableRow><TableCell colSpan={6} className="text-center py-10 text-[var(--muted)]">No tasks</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="text-center py-10 text-[var(--muted)]">{t("tasks.emptyList")}</TableCell></TableRow>
             )}
           </TableBody>
         </Table>

@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { getProject } from "@/server/queries/projects";
@@ -14,6 +15,7 @@ import { GanttChart } from "@/components/projects/gantt-chart";
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   const { id } = await params;
   const data = await getProject(id);
   if (!data) notFound();
@@ -30,7 +32,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <div className="flex items-center gap-2 mt-1 flex-wrap text-sm">
             <Badge variant="secondary">{data.project.type}</Badge>
             <Badge variant={data.project.status === "completed" ? "success" : "default"}>{data.project.status}</Badge>
-            <span className="text-[var(--muted)]">Progress: {data.project.progressPercentage}%</span>
+            <span className="text-[var(--muted)]">{t("common.progress")}: {data.project.progressPercentage}%</span>
             {data.company && (
               <span className="text-[var(--muted)]">Contractor: <Link href="/contractors" className="hover:underline text-[var(--primary)]">{data.company.name}</Link></span>
             )}
@@ -46,11 +48,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
       <Tabs defaultValue="milestones">
         <TabsList>
-          <TabsTrigger value="milestones">Milestones</TabsTrigger>
-          <TabsTrigger value="gantt">Gantt</TabsTrigger>
-          <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
-          <TabsTrigger value="tasks">Tasks</TabsTrigger>
-          {data.company && <TabsTrigger value="chat">Chat</TabsTrigger>}
+          <TabsTrigger value="milestones">{t("projects.tabs.milestones")}</TabsTrigger>
+          <TabsTrigger value="gantt">{t("projects.tabs.gantt")}</TabsTrigger>
+          <TabsTrigger value="deliverables">{t("projects.tabs.deliverables")}</TabsTrigger>
+          <TabsTrigger value="tasks">{t("projects.tabs.tasks")}</TabsTrigger>
+          {data.company && <TabsTrigger value="chat">{t("projects.tabs.chat")}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="gantt">
@@ -89,7 +91,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <TabsContent value="tasks">
           <Card><CardContent className="p-6">
             {data.tasks.length === 0 ? (
-              <p className="text-sm text-[var(--muted)]">No tasks linked to this project yet.</p>
+              <p className="text-sm text-[var(--muted)]">{t("projects.noLinkedTasks")}</p>
             ) : (
               <ul className="space-y-1 text-sm">
                 {data.tasks.map((t) => (
@@ -117,7 +119,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
       {data.ratings.length > 0 && (
         <Card>
-          <CardHeader><CardTitle className="text-lg">Ratings</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-lg">{t("projects.ratings")}</CardTitle></CardHeader>
           <CardContent className="space-y-2">
             {data.ratings.map((r) => (
               <div key={r.id} className="text-sm">

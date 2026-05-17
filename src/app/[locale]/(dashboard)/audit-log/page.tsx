@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { listAudit } from "@/server/queries/audit";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import Link from "next/link";
 export default async function AuditLogPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   const me = session.user;
   if (!["direktor", "orinbosar", "hr"].includes(me.position)) redirect("/dashboard");
 
@@ -29,7 +31,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Audit log</h1>
+        <h1 className="text-3xl font-bold">{t("audit.pageTitle")}</h1>
         <Button asChild variant="outline">
           <Link href={`/api/export/audit?${new URLSearchParams(sp as Record<string, string>).toString()}`}>
             <Download className="size-4" /> XLSX
@@ -41,7 +43,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow><TableHead>Time</TableHead><TableHead>User</TableHead><TableHead>Action</TableHead><TableHead>Entity</TableHead><TableHead>IP</TableHead></TableRow>
+              <TableRow><TableHead>{t("audit.table.time")}</TableHead><TableHead>{t("audit.table.user")}</TableHead><TableHead>{t("audit.table.action")}</TableHead><TableHead>{t("audit.table.entity")}</TableHead><TableHead>{t("audit.table.ip")}</TableHead></TableRow>
             </TableHeader>
             <TableBody>
               {rows.map((r) => (
@@ -54,7 +56,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
                 </TableRow>
               ))}
               {rows.length === 0 && (
-                <TableRow><TableCell colSpan={5} className="text-center py-10 text-[var(--muted)]">No log entries.</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center py-10 text-[var(--muted)]">{t("audit.empty")}</TableCell></TableRow>
               )}
             </TableBody>
           </Table>

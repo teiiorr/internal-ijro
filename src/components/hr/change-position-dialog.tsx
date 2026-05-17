@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ export function ChangePositionDialog({
   departments: { id: string; name: string }[];
   managers: { id: string; fullName: string }[];
 }) {
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const [pos, setPos] = useState(currentPosition);
@@ -50,13 +52,13 @@ export function ChangePositionDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Change position</Button>
+        <Button variant="outline">{t("employees.changePosition.btn")}</Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>Change position / department</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t("employees.changePosition.title")}</DialogTitle></DialogHeader>
         <form onSubmit={onSubmit} className="space-y-3">
           <div className="space-y-1.5">
-            <Label>New position</Label>
+            <Label>{t("employees.changePosition.newPosition")}</Label>
             <Select value={pos} onValueChange={setPos}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -65,7 +67,7 @@ export function ChangePositionDialog({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Department</Label>
+            <Label>{t("employees.changePosition.department")}</Label>
             <Select value={dept} onValueChange={setDept}>
               <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
               <SelectContent>
@@ -74,7 +76,7 @@ export function ChangePositionDialog({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Reports to</Label>
+            <Label>{t("employees.changePosition.reportsTo")}</Label>
             <Select value={reportsTo} onValueChange={setReportsTo}>
               <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
               <SelectContent>
@@ -83,12 +85,12 @@ export function ChangePositionDialog({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Reason</Label>
+            <Label>{t("employees.changePosition.reason")}</Label>
             <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={2} />
           </div>
           <DialogFooter>
-            <DialogClose asChild><Button type="button" variant="ghost">Cancel</Button></DialogClose>
-            <Button type="submit" disabled={pending}>Save</Button>
+            <DialogClose asChild><Button type="button" variant="ghost">{t("common.cancel")}</Button></DialogClose>
+            <Button type="submit" disabled={pending}>{t("common.save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

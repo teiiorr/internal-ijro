@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ const TYPES = [
 ] as const;
 
 export function DocumentsTab({ userId, documents, canEdit }: { userId: string; documents: Doc[]; canEdit: boolean }) {
+  const t = useTranslations();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
   const [docType, setDocType] = useState<string>("contract");
@@ -39,7 +41,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
   }
 
   function onDelete(id: string) {
-    if (!confirm("Delete document?")) return;
+    if (!confirm(t("common.confirmDelete"))) return;
     start(async () => { await deleteEmployeeDocument(id); });
   }
 
@@ -48,7 +50,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
       {canEdit && (
         <form onSubmit={onUpload} className="grid gap-3 md:grid-cols-4 items-end border rounded-lg p-4">
           <div className="space-y-1.5">
-            <Label>Type</Label>
+            <Label>{t("employees.docs.type")}</Label>
             <Select value={docType} onValueChange={setDocType} name="documentType">
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -57,14 +59,14 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Title</Label>
+            <Label>{t("employees.docs.title")}</Label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
           </div>
           <div className="space-y-1.5 md:col-span-2">
-            <Label>File</Label>
+            <Label>{t("employees.docs.file")}</Label>
             <div className="flex gap-2">
               <Input type="file" ref={fileRef} required />
-              <Button type="submit" disabled={pending}>Upload</Button>
+              <Button type="submit" disabled={pending}>{t("employees.docs.upload")}</Button>
             </div>
           </div>
         </form>
@@ -72,8 +74,8 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Title</TableHead><TableHead>Type</TableHead>
-            <TableHead>Size</TableHead><TableHead>Uploaded</TableHead><TableHead></TableHead>
+            <TableHead>{t("employees.docs.title")}</TableHead><TableHead>{t("employees.docs.type")}</TableHead>
+            <TableHead>{t("common.size")}</TableHead><TableHead>{t("employees.docs.uploaded")}</TableHead><TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -96,7 +98,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
             </TableRow>
           ))}
           {documents.length === 0 && (
-            <TableRow><TableCell colSpan={5} className="text-center text-[var(--muted)] py-6">No documents</TableCell></TableRow>
+            <TableRow><TableCell colSpan={5} className="text-center text-[var(--muted)] py-6">{t("employees.docs.noDocs")}</TableCell></TableRow>
           )}
         </TableBody>
       </Table>

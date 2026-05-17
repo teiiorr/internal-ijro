@@ -6,9 +6,13 @@
   "common": {
     "loading": "Загрузка...",
     "save": "Сохранить",
+    "saved": "Сохранено",
     "cancel": "Отмена",
     "delete": "Удалить",
     "edit": "Изменить",
+    "add": "Добавить",
+    "create": "Создать",
+    "update": "Обновить",
     "back": "Назад",
     "next": "Далее",
     "submit": "Отправить",
@@ -16,7 +20,63 @@
     "actions": "Действия",
     "yes": "Да",
     "no": "Нет",
-    "of": "из"
+    "of": "из",
+    "all": "Все",
+    "none": "Нет",
+    "open": "Открыть",
+    "close": "Закрыть",
+    "upload": "Загрузить",
+    "download": "Скачать",
+    "send": "Отправить",
+    "confirm": "Подтвердить",
+    "reject": "Отклонить",
+    "approve": "Одобрить",
+    "archive": "Архивировать",
+    "restore": "Восстановить",
+    "export": "Экспорт",
+    "print": "Печать",
+    "name": "Название",
+    "fullName": "Полное имя",
+    "email": "Email",
+    "phone": "Телефон",
+    "status": "Статус",
+    "type": "Тип",
+    "date": "Дата",
+    "from": "С",
+    "to": "По",
+    "reason": "Причина",
+    "title": "Заголовок",
+    "description": "Описание",
+    "notes": "Заметки",
+    "file": "Файл",
+    "files": "Файлы",
+    "size": "Размер",
+    "created": "Создано",
+    "updated": "Обновлено",
+    "deadline": "Срок",
+    "priority": "Приоритет",
+    "assignee": "Исполнитель",
+    "creator": "Создатель",
+    "project": "Проект",
+    "department": "Отдел",
+    "position": "Должность",
+    "head": "Руководитель",
+    "members": "Сотрудники",
+    "progress": "Прогресс",
+    "weight": "Вес",
+    "payment": "Оплата",
+    "amount": "Сумма",
+    "score": "Оценка",
+    "rating": "Рейтинг",
+    "confirmDelete": "Действительно удалить?",
+    "noResults": "Ничего не найдено",
+    "noData": "Нет данных",
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "week": "Неделя",
+    "month": "Месяц",
+    "quarter": "Квартал",
+    "year": "Год"
   },
   "nav": {
     "dashboard": "Главная",
@@ -26,11 +86,39 @@
     "departments": "Отделы",
     "contractors": "Подрядчики",
     "reports": "Отчёты",
+    "leaves": "Отпуска",
     "notifications": "Уведомления",
     "auditLog": "Журнал действий",
     "settings": "Настройки",
     "logout": "Выйти",
-    "leaves": "Отпуска"
+    "contractorPortal": "Портал подрядчика"
+  },
+  "positions": {
+    "direktor": "Директор",
+    "orinbosar": "Заместитель",
+    "koordinator": "Координатор",
+    "bolim_boshligi": "Начальник отдела",
+    "bosh_mutaxassis": "Главный специалист",
+    "yetakchi_mutaxassis": "Ведущий специалист",
+    "mutaxassis": "Специалист",
+    "hr": "HR",
+    "kontragent": "Подрядчик"
+  },
+  "status": {
+    "active": "Активный",
+    "pending": "В ожидании",
+    "archived": "Архивный",
+    "blocked": "Заблокирован",
+    "approved": "Одобрено",
+    "rejected": "Отклонено",
+    "completed": "Завершено",
+    "in_progress": "В работе",
+    "planning": "Планирование",
+    "cancelled": "Отменён",
+    "submitted": "Отправлено",
+    "revision_requested": "Запрошена доработка",
+    "paid": "Оплачено",
+    "partial": "Частично"
   },
   "auth": {
     "login": {
@@ -42,7 +130,7 @@
       "forgot": "Забыли пароль?",
       "registerContractor": "Регистрация подрядчика",
       "invalid": "Неверный email или пароль",
-      "locked": "Аккаунт заблокирован, попробуйте позже."
+      "locked": "Аккаунт заблокирован. Попробуйте позже."
     },
     "forgot": {
       "title": "Восстановление пароля",
@@ -87,18 +175,33 @@
       "submitted": "Заявка отправлена. Администратор рассмотрит её."
     }
   },
-  "positions": {
-    "direktor": "Директор",
-    "orinbosar": "Заместитель",
-    "koordinator": "Координатор",
-    "bolim_boshligi": "Начальник отдела",
-    "bosh_mutaxassis": "Главный специалист",
-    "yetakchi_mutaxassis": "Ведущий специалист",
-    "mutaxassis": "Специалист",
-    "hr": "HR",
-    "kontragent": "Подрядчик"
-  },
   "tasks": {
+    "pageTitle": "Задачи",
+    "newTitle": "Создать новую задачу",
+    "new": "Новая задача",
+    "view": {
+      "list": "Список",
+      "kanban": "Канбан",
+      "calendar": "Календарь"
+    },
+    "scope": {
+      "mine": "Мои",
+      "team": "Команда",
+      "all": "Все"
+    },
+    "fields": {
+      "title": "Заголовок",
+      "description": "Описание",
+      "assignee": "Исполнитель",
+      "project": "Проект",
+      "priority": "Приоритет",
+      "deadline": "Срок",
+      "dependsOn": "Зависимости (должны быть выполнены ранее)",
+      "recurring": "Повторяющаяся задача",
+      "repeat": "Повторение",
+      "pickAssignee": "Выберите исполнителя",
+      "noProject": "Без проекта"
+    },
     "status": {
       "todo": "К выполнению",
       "in_progress": "В работе",
@@ -111,12 +214,404 @@
       "medium": "Средний",
       "high": "Высокий",
       "urgent": "Срочный"
+    },
+    "transitions": {
+      "start": "Начать",
+      "submit": "Отправить на проверку",
+      "approve": "Одобрить",
+      "reject": "Отклонить",
+      "resume": "Продолжить",
+      "reasonPlaceholder": "Укажите причину отклонения...",
+      "confirmReject": "Подтвердить отклонение",
+      "noTransitions": "Нет доступных переходов."
+    },
+    "sections": {
+      "description": "Описание",
+      "checklist": "Чек-лист",
+      "attachments": "Прикреплённые файлы",
+      "comments": "Комментарии",
+      "statusSection": "Статус",
+      "people": "Участники",
+      "dependencies": "Зависимости",
+      "noDescription": "Описание не указано.",
+      "rejectionReason": "Причина отклонения",
+      "noChecklist": "Чек-лист пуст.",
+      "noAttachments": "Нет прикреплённых файлов.",
+      "noComments": "Нет комментариев.",
+      "writeComment": "Написать комментарий... @\"Полное Имя\" для упоминания",
+      "newChecklistItem": "Новый пункт чек-листа...",
+      "watcher": "Наблюдатель",
+      "watchers": "Наблюдатели",
+      "watch": "Наблюдать",
+      "unwatch": "Не наблюдать",
+      "send": "Отправить"
+    },
+    "overdue": "Просрочено",
+    "due": "Срок",
+    "emptyList": "Нет задач"
+  },
+  "projects": {
+    "pageTitle": "Проекты",
+    "new": "Новый проект",
+    "newTitle": "Создать проект",
+    "fields": {
+      "name": "Название проекта",
+      "description": "Описание",
+      "type": "Тип",
+      "curator": "Куратор",
+      "contractor": "Подрядчик",
+      "startDate": "Дата начала",
+      "deadline": "Срок завершения",
+      "budget": "Бюджет",
+      "progress": "Прогресс"
+    },
+    "type": {
+      "internal": "Внутренний",
+      "external": "С подрядчиком"
+    },
+    "tabs": {
+      "milestones": "Этапы",
+      "gantt": "Диаграмма Ганта",
+      "deliverables": "Материалы",
+      "tasks": "Задачи",
+      "chat": "Чат",
+      "paymentsTabName": "Этапы и оплаты"
+    },
+    "milestones": {
+      "addBtn": "Добавить этап",
+      "noMilestones": "Этапов пока нет.",
+      "title": "Заголовок",
+      "deadline": "Срок",
+      "weight": "Вес",
+      "paymentAmount": "Сумма оплаты",
+      "paymentStatus": "Статус оплаты"
+    },
+    "deliverables": {
+      "addBtn": "Загрузить материал",
+      "submit": "Загрузить материал",
+      "feedback": "Отзыв",
+      "message": "Сообщение",
+      "milestone": "Этап",
+      "type": "Тип",
+      "file": "Файл",
+      "noDeliverables": "Материалов пока нет.",
+      "types": {
+        "document": "Документ",
+        "video": "Видео",
+        "image": "Изображение",
+        "archive": "Архив",
+        "other": "Другое"
+      }
+    },
+    "chat": {
+      "placeholder": "Напишите сообщение...",
+      "noMessages": "Сообщений нет."
+    },
+    "complete": {
+      "btn": "Завершить и оценить",
+      "title": "Завершение проекта",
+      "ratePrompt": "Оцените подрядчика:",
+      "notesPlaceholder": "Комментарий (опционально)",
+      "confirm": "Завершить"
+    },
+    "ratings": "Рейтинги",
+    "noLinkedTasks": "К этому проекту задачи не привязаны.",
+    "headers": {
+      "name": "Название",
+      "type": "Тип",
+      "curator": "Куратор",
+      "company": "Компания",
+      "progress": "Прогресс",
+      "deadline": "Срок",
+      "status": "Статус"
+    },
+    "empty": "Проектов нет"
+  },
+  "employees": {
+    "pageTitle": "Сотрудники",
+    "newTitle": "Пригласить нового сотрудника",
+    "addBtn": "Добавить сотрудника",
+    "reportsTo": "Прямой руководитель",
+    "table": {
+      "name": "ФИО",
+      "email": "Email",
+      "position": "Должность",
+      "department": "Отдел",
+      "status": "Статус",
+      "hireDate": "Дата приёма"
+    },
+    "empty": "Сотрудники не найдены",
+    "tabs": {
+      "main": "Основное",
+      "documents": "Документы",
+      "history": "История должностей",
+      "leaves": "Отпуска",
+      "notes": "HR заметки"
+    },
+    "profile": {
+      "sectionTitle": "Профиль",
+      "birthDate": "Дата рождения",
+      "maritalStatus": "Семейное положение",
+      "passportSerial": "Серия паспорта",
+      "passportNumber": "Номер паспорта",
+      "passportIssuedDate": "Дата выдачи",
+      "passportIssuedBy": "Кем выдан",
+      "inn": "ИНН",
+      "emergencyContactName": "Контакт для экстренной связи",
+      "emergencyContactPhone": "Телефон контакта",
+      "emergencyContactRelation": "Степень родства",
+      "address": "Адрес",
+      "education": "Образование",
+      "hr_notes": "HR заметки",
+      "printPdf": "PDF карточка",
+      "viewOnly": "Только просмотр.",
+      "notesNote": "Заметки видны только HR."
+    },
+    "docs": {
+      "type": "Тип документа",
+      "title": "Заголовок",
+      "file": "Файл",
+      "upload": "Загрузить",
+      "uploaded": "Загружено",
+      "noDocs": "Документов нет",
+      "types": {
+        "contract": "Трудовой договор",
+        "passport": "Паспорт",
+        "diploma": "Диплом",
+        "medical": "Медицинская справка",
+        "certificate": "Сертификат",
+        "other": "Другое"
+      }
+    },
+    "history": {
+      "date": "Дата",
+      "from": "Прежняя",
+      "to": "Новая",
+      "reason": "Причина",
+      "noHistory": "Изменений нет"
+    },
+    "changePosition": {
+      "btn": "Изменить должность",
+      "title": "Изменить должность и отдел",
+      "newPosition": "Новая должность",
+      "department": "Отдел",
+      "reportsTo": "Прямой руководитель",
+      "reason": "Причина"
+    },
+    "archive": {
+      "btn": "Архивировать",
+      "btnRestore": "Восстановить"
     }
   },
-  "theme": {
-    "light": "Светлая",
-    "dark": "Тёмная",
-    "system": "Системная"
+  "departments": {
+    "pageTitle": "Отделы",
+    "addBtn": "Добавить отдел",
+    "table": {
+      "name": "Название",
+      "head": "Руководитель",
+      "members": "Сотрудники"
+    },
+    "fields": {
+      "name": "Название",
+      "head": "Руководитель",
+      "parent": "Родительский отдел",
+      "description": "Описание",
+      "nameRu": "Название (Рус)",
+      "nameEn": "Название (En)",
+      "nameUzLatn": "Название (Уз лат)",
+      "nameUzCyrl": "Название (Уз кир)"
+    },
+    "empty": "Отделов нет"
+  },
+  "contractors": {
+    "pageTitle": "Подрядчики",
+    "pendingTitle": "Ожидают одобрения",
+    "allTitle": "Все подрядчики",
+    "none": "Нет.",
+    "reason": "Причина"
+  },
+  "reports": {
+    "standupTitle": "Ежедневный standup",
+    "todayLabel": "Сегодня",
+    "doneYesterday": "Что сделал вчера",
+    "plannedToday": "Что планирую сегодня",
+    "blockers": "Блокеры",
+    "myHistory": "Моя история",
+    "teamReports": "Отчёты команды (14 дней)",
+    "noHistory": "Истории нет.",
+    "submit": "Отправить",
+    "update": "Обновить",
+    "done": "Сделано",
+    "plan": "План"
+  },
+  "leaves": {
+    "pageTitle": "Отпуска",
+    "request": "Запросить отпуск",
+    "myLeaves": "Мои отпуска",
+    "pending": "Ожидают одобрения",
+    "calendar": "Календарь отпусков",
+    "types": {
+      "vacation": "Ежегодный отпуск",
+      "sick": "Больничный",
+      "unpaid": "Без сохранения",
+      "other": "Другое"
+    },
+    "fields": {
+      "type": "Тип",
+      "start": "С",
+      "end": "По",
+      "reason": "Причина"
+    },
+    "none": "Отпусков нет."
+  },
+  "notifications": {
+    "pageTitle": "Уведомления",
+    "markAllRead": "Отметить все прочитанными",
+    "open": "Открыть",
+    "empty": "Нет уведомлений."
+  },
+  "audit": {
+    "pageTitle": "Журнал действий",
+    "table": {
+      "time": "Время",
+      "user": "Пользователь",
+      "action": "Действие",
+      "entity": "Объект",
+      "ip": "IP"
+    },
+    "empty": "Записей нет."
+  },
+  "settings": {
+    "pageTitle": "Настройки",
+    "tabs": {
+      "personal": "Личные",
+      "notifications": "Уведомления",
+      "security": "Безопасность",
+      "telegram": "Telegram"
+    },
+    "personal": {
+      "language": "Язык",
+      "theme": "Тема",
+      "timezone": "Часовой пояс"
+    },
+    "notifs": {
+      "inApp": "Уведомления в системе",
+      "email": "Email",
+      "taskAssigned": "Назначение задачи",
+      "deadline": "Приближение срока",
+      "comments": "Новые комментарии",
+      "mentions": "Упоминания",
+      "standup": "Напоминание standup"
+    },
+    "security": {
+      "changePassword": "Сменить пароль",
+      "current": "Текущий пароль",
+      "newPass": "Новый пароль (минимум 8)",
+      "change": "Изменить",
+      "twoFa": "Двухфакторная аутентификация",
+      "twoFaEnabled": "2FA включена.",
+      "startSetup": "Начать настройку",
+      "manualEntry": "Или введите ключ вручную:",
+      "codePlaceholder": "6-значный код",
+      "verify": "Проверить",
+      "disablePlaceholder": "Введите текущий 6-значный код для отключения",
+      "disable": "Отключить",
+      "messages": {
+        "passwordChanged": "Пароль изменён",
+        "twoFaEnabled": "2FA включена",
+        "twoFaDisabled": "2FA отключена"
+      }
+    },
+    "telegram": {
+      "connected": "Подключено.",
+      "disconnect": "Отключить",
+      "hint": "Чтобы подключить: сгенерируйте код ниже и отправьте его в Telegram-бот.",
+      "generate": "Сгенерировать код",
+      "yourCode": "Ваш код:"
+    },
+    "theme": {
+      "light": "Светлая",
+      "dark": "Тёмная",
+      "system": "Системная"
+    },
+    "lang": {
+      "uz-latn": "Узбекский (латиница)",
+      "uz-cyrl": "Узбекский (кириллица)",
+      "ru": "Русский",
+      "en": "Английский"
+    }
+  },
+  "contractor": {
+    "accountUnderReview": "Аккаунт на проверке",
+    "statusLabel": "Статус вашей заявки подрядчика:",
+    "nda": {
+      "title": "Соглашение о неразглашении",
+      "body1": "Принимая это соглашение, вы обязуетесь хранить в строгой тайне всю информацию, документы и переписку, переданные через этот портал.",
+      "body2": "Нарушение соглашения может повлечь расторжение контракта и юридические последствия согласно законодательству Республики Узбекистан.",
+      "accept": "Я принимаю"
+    },
+    "dashboard": {
+      "activeProjects": "Активные проекты",
+      "completed": "Завершено",
+      "total": "Всего",
+      "myProjects": "Мои проекты",
+      "noProjects": "Вам пока не назначены проекты.",
+      "averageRating": "Средний рейтинг"
+    },
+    "profile": {
+      "title": "Профиль компании",
+      "contactPerson": "Контактное лицо",
+      "email": "Email",
+      "phone": "Телефон",
+      "status": "Статус",
+      "rating": "Рейтинг",
+      "specialization": "Специализация",
+      "noCompany": "Компания не подключена."
+    }
+  },
+  "dashboard": {
+    "title": "Главная",
+    "hr": {
+      "activeEmployees": "Активные сотрудники",
+      "newThisMonth": "Новые в этом месяце",
+      "onLeave": "Сейчас в отпуске",
+      "pendingInvites": "Ожидающие приглашения",
+      "birthdays": "Дни рождения этой недели",
+      "noBirthdays": "На этой неделе нет дней рождения.",
+      "departments": "Отделы",
+      "noDepartments": "Отделов пока нет."
+    },
+    "manager": {
+      "tasks30": "Задачи (30 дней)",
+      "inProgress": "В работе",
+      "overdue": "Просроченные",
+      "activeProjects": "Активные проекты",
+      "byStatus": "Задачи по статусу",
+      "activity30": "Создано и завершено (30 дней)",
+      "topPerformers": "Топ исполнители (30 дней)",
+      "mostOverdue": "Больше всех просрочек",
+      "noCompletions": "Завершений пока нет.",
+      "allOnTrack": "Всё в графике."
+    },
+    "specialist": {
+      "dueToday": "На сегодня",
+      "thisWeek": "На неделе",
+      "soon": "Скоро (24ч)",
+      "overdue": "Просрочено",
+      "openMyTasks": "Открыть мои задачи",
+      "submitStandup": "Отправить standup"
+    }
+  },
+  "commandPalette": {
+    "placeholder": "Введите команду или название страницы...",
+    "hint": "Нажмите ⌘K чтобы открыть/закрыть.",
+    "groupPages": "Страницы",
+    "noResults": "Ничего не найдено."
+  },
+  "header": {
+    "searchPlaceholder": "Поиск задач...",
+    "accountSettings": "Настройки",
+    "signOut": "Выйти"
   },
   "landing": {
     "hero": "Ichki Ijro — корпоративная система управления",

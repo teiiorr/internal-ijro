@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,7 @@ export function DeliverablesList({
   canReview: boolean;
   milestones: { id: string; title: string }[];
 }) {
+  const t = useTranslations();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
   const [feedback, setFeedback] = useState<Record<string, string>>({});
@@ -77,12 +79,12 @@ export function DeliverablesList({
             </div>
             {d.message && <p className="text-sm">{d.message}</p>}
             {d.adminFeedback && (
-              <p className="text-sm rounded bg-[var(--secondary)] p-2"><span className="text-[var(--muted)]">Feedback:</span> {d.adminFeedback}</p>
+              <p className="text-sm rounded bg-[var(--secondary)] p-2"><span className="text-[var(--muted)]">{t("projects.deliverables.feedback")}:</span> {d.adminFeedback}</p>
             )}
             {canReview && d.status === "submitted" && (
               <div className="flex gap-2 flex-wrap">
                 <Input
-                  placeholder="Feedback"
+                  placeholder={t("projects.deliverables.feedback")}
                   value={feedback[d.id] ?? ""}
                   onChange={(e) => setFeedback((f) => ({ ...f, [d.id]: e.target.value }))}
                   className="flex-1 min-w-[200px] h-9"
@@ -102,37 +104,37 @@ export function DeliverablesList({
             )}
           </div>
         ))}
-        {items.length === 0 && <p className="text-sm text-[var(--muted)]">No deliverables yet.</p>}
+        {items.length === 0 && <p className="text-sm text-[var(--muted)]">{t("projects.deliverables.noDeliverables")}</p>}
       </div>
 
       {canSubmit && (
         <form onSubmit={onSubmit} className="border rounded-lg p-3 space-y-3">
-          <h4 className="font-medium">Submit deliverable</h4>
+          <h4 className="font-medium">{t("projects.deliverables.submit")}</h4>
           <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-1">
-              <Label>Type</Label>
+              <Label>{t("projects.deliverables.type")}</Label>
               <Select name="type" defaultValue="document">
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Milestone</Label>
+              <Label>{t("projects.deliverables.milestone")}</Label>
               <Select name="milestoneId">
                 <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                 <SelectContent>{milestones.map((m) => <SelectItem key={m.id} value={m.id}>{m.title}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>File</Label>
+              <Label>{t("projects.deliverables.file")}</Label>
               <Input type="file" ref={fileRef} required />
             </div>
           </div>
           <div className="space-y-1">
-            <Label>Message</Label>
+            <Label>{t("projects.deliverables.message")}</Label>
             <Textarea name="message" rows={2} />
           </div>
-          <Button type="submit" disabled={pending}>Submit</Button>
+          <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
         </form>
       )}
     </div>

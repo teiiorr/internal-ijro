@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { eq, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -9,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default async function NewProjectPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   if (!["direktor", "orinbosar", "koordinator"].includes(session.user.position)) redirect("/projects");
   const [companies, curators] = await Promise.all([
     db.select({ id: externalCompanies.id, name: externalCompanies.name }).from(externalCompanies).where(eq(externalCompanies.status, "approved")).orderBy(externalCompanies.name),
@@ -16,7 +18,7 @@ export default async function NewProjectPage() {
   ]);
   return (
     <Card className="max-w-3xl">
-      <CardHeader><CardTitle>Create project</CardTitle></CardHeader>
+      <CardHeader><CardTitle>{t("projects.newTitle")}</CardTitle></CardHeader>
       <CardContent><NewProjectForm companies={companies} curators={curators} /></CardContent>
     </Card>
   );

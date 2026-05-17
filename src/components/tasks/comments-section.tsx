@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ function parseMentions(text: string, users: User[]): string[] {
 }
 
 export function CommentsSection({ taskId, comments, users }: { taskId: string; comments: C[]; users: User[] }) {
+  const t = useTranslations();
   const [pending, start] = useTransition();
   const [text, setText] = useState("");
 
@@ -57,16 +59,16 @@ export function CommentsSection({ taskId, comments, users }: { taskId: string; c
             <p className="whitespace-pre-wrap">{c.content}</p>
           </div>
         ))}
-        {comments.length === 0 && <p className="text-sm text-[var(--muted)]">No comments yet.</p>}
+        {comments.length === 0 && <p className="text-sm text-[var(--muted)]">{t("tasks.sections.noComments")}</p>}
       </div>
       <div className="space-y-2">
         <Textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Write a comment... mention with @FullName"
+          placeholder={t("tasks.sections.writeComment")}
           rows={3}
         />
-        <Button onClick={send} disabled={pending || !text.trim()}>Send</Button>
+        <Button onClick={send} disabled={pending || !text.trim()}>{t("tasks.sections.send")}</Button>
       </div>
     </div>
   );

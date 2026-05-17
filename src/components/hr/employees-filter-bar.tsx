@@ -43,7 +43,7 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
       <Select defaultValue={sp.get("departmentId") ?? "all"} onValueChange={(v) => update("departmentId", v)}>
         <SelectTrigger><SelectValue placeholder={t("nav.departments")} /></SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{t("nav.departments")}: —</SelectItem>
+          <SelectItem value="all">{t("nav.departments")}: {t("common.all")}</SelectItem>
           {departments.map((d) => (
             <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
           ))}

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -9,6 +10,7 @@ import { DepartmentsManager } from "@/components/hr/departments-manager";
 export default async function DepartmentsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   if (!["direktor", "orinbosar"].includes(session.user.position)) redirect("/dashboard");
 
   const [depts, managers] = await Promise.all([
@@ -22,7 +24,7 @@ export default async function DepartmentsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Departments</h1>
+      <h1 className="text-3xl font-bold">{t("departments.pageTitle")}</h1>
       <DepartmentsManager departments={depts} managers={managers} />
     </div>
   );
