@@ -1,14 +1,15 @@
 import { auth } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HrWidgets } from "@/components/dashboards/hr-widgets";
+import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
+import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
 
 export default async function DashboardPage() {
   const session = await auth();
   const t = await getTranslations();
   const user = session!.user;
-
-  const isHr = user.position === "hr" || user.position === "direktor" || user.position === "orinbosar";
+  const isManager = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(user.position);
+  const isHr = user.position === "hr";
 
   return (
     <div className="space-y-6">
@@ -17,15 +18,9 @@ export default async function DashboardPage() {
         <p className="text-[var(--muted)]">{t(`positions.${user.position}`)}</p>
       </div>
 
-      {isHr ? (
-        <HrWidgets />
-      ) : (
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card><CardHeader><CardTitle className="text-lg">{t("nav.tasks")}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold">—</p></CardContent></Card>
-          <Card><CardHeader><CardTitle className="text-lg">{t("nav.projects")}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold">—</p></CardContent></Card>
-          <Card><CardHeader><CardTitle className="text-lg">{t("nav.notifications")}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold">0</p></CardContent></Card>
-        </div>
-      )}
+      {isHr && <HrWidgets />}
+      {isManager && <ManagerWidgets />}
+      {!isManager && !isHr && <SpecialistWidgets userId={user.id} />}
     </div>
   );
 }
