@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Ichki Ijro",
-    "tagline": "Управление задачами, проектами и кадрами"
+    "tagline": "Управление задачами, проектами и кадрами",
+    "organizationName": "Центр развития детского контента"
   },
   "common": {
     "loading": "Загрузка...",
@@ -76,7 +77,16 @@
     "week": "Неделя",
     "month": "Месяц",
     "quarter": "Квартал",
-    "year": "Год"
+    "year": "Год",
+    "emptyValue": "—",
+    "selectPlaceholder": "Выбрать",
+    "separator": "·",
+    "notSpecified": "Не указано",
+    "copy": {
+      "success": "Скопировано",
+      "failed": "Не удалось скопировать"
+    },
+    "registrationLabel": "Номер"
   },
   "nav": {
     "dashboard": "Главная",
@@ -90,6 +100,7 @@
     "notifications": "Уведомления",
     "auditLog": "Журнал действий",
     "settings": "Настройки",
+    "profile": "Профиль",
     "logout": "Выйти",
     "contractorPortal": "Портал подрядчика"
   },
@@ -179,7 +190,12 @@
   "tasks": {
     "pageTitle": "Задачи",
     "newTitle": "Создать новую задачу",
-    "new": "Новая задача",
+    "new": {
+      "noAssignees": "Исполнители не выбраны",
+      "addAssigneeBtn": "Добавить исполнителя",
+      "selectAssigneeError": "Выберите хотя бы одного исполнителя",
+      "primaryAssigneeHint": "Первый выбранный — основной исполнитель"
+    },
     "view": {
       "list": "Список",
       "kanban": "Канбан",
@@ -202,7 +218,8 @@
       "recurring": "Повторяющаяся задача",
       "repeat": "Повторение",
       "pickAssignee": "Выберите исполнителя",
-      "noProject": "Без проекта"
+      "noProject": "Без проекта",
+      "assignees": "Исполнители"
     },
     "status": {
       "todo": "К выполнению",
@@ -250,11 +267,41 @@
     },
     "overdue": "Просрочено",
     "due": "Срок",
-    "emptyList": "Нет задач"
+    "emptyList": "Нет задач",
+    "empty": {
+      "description": "Пока нет задач"
+    },
+    "sectionLabel": "Задачи",
+    "response": {
+      "title": "Ваш ответ",
+      "placeholder": "Кратко опишите выполненную работу",
+      "submitted": "Ответ отправлен",
+      "submittedDescription": "Создатель задачи проверит",
+      "error": "Не удалось отправить",
+      "approved": "Принят",
+      "underReview": "На проверке",
+      "rejected": "Отклонён",
+      "resubmitBtn": "Отправить заново"
+    },
+    "review": {
+      "responseLabel": "Ответ",
+      "noResponse": "Исполнитель пока не дал ответ",
+      "feedbackPlaceholder": "Комментарий (для отклонения)",
+      "approvedToast": "Ответ принят",
+      "rejectedToast": "Ответ отклонён",
+      "errorToast": "Произошла ошибка"
+    },
+    "print": "Печать",
+    "deadline": {
+      "deadlineLabel": "Срок выполнения"
+    }
   },
   "projects": {
     "pageTitle": "Проекты",
-    "new": "Новый проект",
+    "new": {
+      "contractorPlaceholder": "Выберите утверждённого подрядчика",
+      "defaultCurrency": "UZS"
+    },
     "newTitle": "Создать проект",
     "fields": {
       "name": "Название проекта",
@@ -269,7 +316,7 @@
     },
     "type": {
       "internal": "Внутренний",
-      "external": "С подрядчиком"
+      "external": "Внешний"
     },
     "tabs": {
       "milestones": "Этапы",
@@ -284,9 +331,15 @@
       "noMilestones": "Этапов пока нет.",
       "title": "Заголовок",
       "deadline": "Срок",
-      "weight": "Вес",
+      "weight": "вес",
       "paymentAmount": "Сумма оплаты",
-      "paymentStatus": "Статус оплаты"
+      "paymentStatus": "Статус оплаты",
+      "paymentLabel": "оплата",
+      "payment": {
+        "pending": "ожидает",
+        "partial": "частично",
+        "paid": "оплачено"
+      }
     },
     "deliverables": {
       "addBtn": "Загрузить материал",
@@ -327,7 +380,18 @@
       "deadline": "Срок",
       "status": "Статус"
     },
-    "empty": "Проектов нет"
+    "empty": "Проектов нет",
+    "contractorLabel": "Подрядчик",
+    "curatorLabel": "Куратор",
+    "deliverable": {
+      "types": {
+        "document": "Документ",
+        "video": "Видео",
+        "image": "Изображение",
+        "archive": "Архив",
+        "other": "Другое"
+      }
+    }
   },
   "employees": {
     "pageTitle": "Сотрудники",
@@ -470,7 +534,8 @@
     "pageTitle": "Уведомления",
     "markAllRead": "Отметить все прочитанными",
     "open": "Открыть",
-    "empty": "Нет уведомлений."
+    "empty": "Нет уведомлений.",
+    "viewAll": "Показать все →"
   },
   "audit": {
     "pageTitle": "Журнал действий",
@@ -545,12 +610,17 @@
   },
   "contractor": {
     "accountUnderReview": "Аккаунт на проверке",
+    "applicationStatus": "Статус вашей заявки подрядчика",
+    "reason": "Причина",
     "statusLabel": "Статус вашей заявки подрядчика:",
     "nda": {
-      "title": "Соглашение о неразглашении",
+      "title": "Соглашение о конфиденциальности",
       "body1": "Принимая это соглашение, вы обязуетесь хранить в строгой тайне всю информацию, документы и переписку, переданные через этот портал.",
       "body2": "Нарушение соглашения может повлечь расторжение контракта и юридические последствия согласно законодательству Республики Узбекистан.",
-      "accept": "Я принимаю"
+      "accept": "Я принимаю",
+      "description1": "Принимая данное соглашение, вы обязуетесь хранить в строгой конфиденциальности всю информацию, которой делятся через этот портал.",
+      "description2": "Нарушение соглашения может привести к расторжению договора и правовым последствиям согласно законодательству Республики Узбекистан.",
+      "acceptBtn": "Принимаю"
     },
     "dashboard": {
       "activeProjects": "Активные проекты",
@@ -569,7 +639,8 @@
       "rating": "Рейтинг",
       "specialization": "Специализация",
       "noCompany": "Компания не подключена."
-    }
+    },
+    "portalLabel": "Портал подрядчика"
   },
   "dashboard": {
     "title": "Главная",
@@ -602,6 +673,11 @@
       "overdue": "Просрочено",
       "openMyTasks": "Открыть мои задачи",
       "submitStandup": "Отправить standup"
+    },
+    "greeting": {
+      "morning": "Доброе утро",
+      "afternoon": "Добрый день",
+      "evening": "Добрый вечер"
     }
   },
   "commandPalette": {
@@ -617,6 +693,23 @@
   },
   "landing": {
     "hero": "Ichki Ijro — корпоративная система управления",
-    "cta": "Войти"
+    "cta": "Войти",
+    "tagline": "Управление задачами, проектами и кадрами",
+    "copyright": "Все права защищены"
+  },
+  "theme": {
+    "toggleLabel": "Переключить тему",
+    "darkOn": "Тёмная тема",
+    "lightOn": "Светлая тема"
+  },
+  "inbox": {
+    "awaitingApproval": "Ожидают моего одобрения",
+    "approvalDescription": "Проверьте, одобрите или отклоните",
+    "noResponses": "Нет ожидающих проверки ответов",
+    "responsePrefix": "Ответ:",
+    "assignedPrefix": "Назначил:",
+    "myTasks": "Нужно выполнить",
+    "myTasksDescription": "Назначенные вам задачи",
+    "allComplete": "Всё выполнено"
   }
 }

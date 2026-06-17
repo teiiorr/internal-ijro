@@ -76,9 +76,9 @@ export function AssigneesCard({
   async function review(userId: string, decision: "completed" | "rejected") {
     try {
       await reviewAssigneeResponse(taskId, userId, decision, feedback[userId]);
-      toast.success(decision === "completed" ? "Javob tasdiqlandi" : "Javob rad etildi");
+      toast.success(decision === "completed" ? t("tasks.review.approvedToast") : t("tasks.review.rejectedToast"));
     } catch (err) {
-      toast.error("Xato", { description: (err as Error).message });
+      toast.error(t("tasks.review.errorToast"), { description: (err as Error).message });
     }
   }
 
@@ -156,7 +156,7 @@ export function AssigneesCard({
                 <div className="px-4 pb-4 pt-1 border-t border-[var(--border)] mt-1 space-y-3">
                   {a.responseSubmittedAt ? (
                     <div className="space-y-2">
-                      <p className="eyebrow">Javob</p>
+                      <p className="eyebrow">{t("tasks.review.responseLabel")}</p>
                       <p className="text-[14px] whitespace-pre-wrap leading-relaxed">{a.responseText}</p>
                       {a.responseFileUrl && (
                         <a
@@ -171,7 +171,7 @@ export function AssigneesCard({
                       {isCreator && a.status === "under_review" && (
                         <div className="pt-3 space-y-2 border-t border-[var(--border)]">
                           <Input
-                            placeholder="Izoh (rad etish uchun)"
+                            placeholder={t("tasks.review.feedbackPlaceholder")}
                             value={feedback[a.userId] ?? ""}
                             onChange={(e) => setFeedback((f) => ({ ...f, [a.userId]: e.target.value }))}
                           />
@@ -185,7 +185,7 @@ export function AssigneesCard({
                   ) : (
                     <div className="flex items-center gap-2 text-sm text-[var(--muted)]">
                       <AlertCircle className="size-4" />
-                      Ijrochi tomonidan javob kiritilmagan
+                      {t("tasks.review.noResponse")}
                     </div>
                   )}
                 </div>

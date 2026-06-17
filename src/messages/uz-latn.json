@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Ichki Ijro",
-    "tagline": "Vazifalar, loyihalar va kadrlarni boshqarish"
+    "tagline": "Vazifalar, loyihalar va kadrlarni boshqarish",
+    "organizationName": "Bolalar Kontentini Rivojlantirish Markazi"
   },
   "common": {
     "loading": "Yuklanmoqda...",
@@ -76,7 +77,16 @@
     "week": "Hafta",
     "month": "Oy",
     "quarter": "Chorak",
-    "year": "Yil"
+    "year": "Yil",
+    "emptyValue": "—",
+    "selectPlaceholder": "Tanlang",
+    "separator": "·",
+    "notSpecified": "Belgilanmagan",
+    "copy": {
+      "success": "Nusxa olindi",
+      "failed": "Nusxa olib bo'lmadi"
+    },
+    "registrationLabel": "Raqam"
   },
   "nav": {
     "dashboard": "Bosh sahifa",
@@ -90,6 +100,7 @@
     "notifications": "Bildirishnomalar",
     "auditLog": "Faoliyat jurnali",
     "settings": "Sozlamalar",
+    "profile": "Profil",
     "logout": "Chiqish",
     "contractorPortal": "Pudratchi portali"
   },
@@ -179,7 +190,12 @@
   "tasks": {
     "pageTitle": "Vazifalar",
     "newTitle": "Yangi vazifa yaratish",
-    "new": "Yangi vazifa",
+    "new": {
+      "noAssignees": "Ijrochilar tanlanmagan",
+      "addAssigneeBtn": "Ijrochi qo'shish",
+      "selectAssigneeError": "Kamida bitta ijrochi tanlang",
+      "primaryAssigneeHint": "Birinchi tanlangan ijrochi — asosiy"
+    },
     "view": {
       "list": "Ro'yxat",
       "kanban": "Kanban",
@@ -202,7 +218,8 @@
       "recurring": "Takrorlanadigan vazifa",
       "repeat": "Takrorlash",
       "pickAssignee": "Ijrochini tanlang",
-      "noProject": "Loyihasiz"
+      "noProject": "Loyihasiz",
+      "assignees": "Ijrochilar"
     },
     "status": {
       "todo": "Bajarilishi kerak",
@@ -250,11 +267,41 @@
     },
     "overdue": "Muddat o'tgan",
     "due": "Muddat",
-    "emptyList": "Vazifalar yo'q"
+    "emptyList": "Vazifalar yo'q",
+    "empty": {
+      "description": "Hozircha topshiriqlar yo'q"
+    },
+    "sectionLabel": "Topshiriqlar",
+    "response": {
+      "title": "Sizning javobingiz",
+      "placeholder": "Bajarilgan ish haqida qisqacha yozing",
+      "submitted": "Javob yuborildi",
+      "submittedDescription": "Topshiriq beruvchi tekshirib chiqadi",
+      "error": "Yuborib bo'lmadi",
+      "approved": "Qabul qilindi",
+      "underReview": "Tekshiruvda",
+      "rejected": "Rad etildi",
+      "resubmitBtn": "Qayta yuborish"
+    },
+    "review": {
+      "responseLabel": "Javob",
+      "noResponse": "Ijrochi tomonidan javob kiritilmagan",
+      "feedbackPlaceholder": "Izoh (rad etish uchun)",
+      "approvedToast": "Javob tasdiqlandi",
+      "rejectedToast": "Javob rad etildi",
+      "errorToast": "Xatolik yuz berdi"
+    },
+    "print": "Bosma",
+    "deadline": {
+      "deadlineLabel": "Bajarish muddati"
+    }
   },
   "projects": {
     "pageTitle": "Loyihalar",
-    "new": "Yangi loyiha",
+    "new": {
+      "contractorPlaceholder": "Tasdiqlangan pudratchini tanlang",
+      "defaultCurrency": "UZS"
+    },
     "newTitle": "Loyiha yaratish",
     "fields": {
       "name": "Loyiha nomi",
@@ -269,7 +316,7 @@
     },
     "type": {
       "internal": "Ichki",
-      "external": "Pudratchi bilan"
+      "external": "Tashqi"
     },
     "tabs": {
       "milestones": "Bosqichlar",
@@ -284,9 +331,15 @@
       "noMilestones": "Hozircha bosqichlar yo'q.",
       "title": "Sarlavha",
       "deadline": "Muddat",
-      "weight": "Vazn",
+      "weight": "vazn",
       "paymentAmount": "To'lov summasi",
-      "paymentStatus": "To'lov holati"
+      "paymentStatus": "To'lov holati",
+      "paymentLabel": "to'lov",
+      "payment": {
+        "pending": "kutilmoqda",
+        "partial": "qisman",
+        "paid": "to'langan"
+      }
     },
     "deliverables": {
       "addBtn": "Material yuklash",
@@ -327,7 +380,18 @@
       "deadline": "Muddat",
       "status": "Holat"
     },
-    "empty": "Loyihalar yo'q"
+    "empty": "Loyihalar yo'q",
+    "contractorLabel": "Pudratchi",
+    "curatorLabel": "Kurator",
+    "deliverable": {
+      "types": {
+        "document": "Hujjat",
+        "video": "Video",
+        "image": "Rasm",
+        "archive": "Arxiv",
+        "other": "Boshqa"
+      }
+    }
   },
   "employees": {
     "pageTitle": "Xodimlar",
@@ -470,7 +534,8 @@
     "pageTitle": "Bildirishnomalar",
     "markAllRead": "Hammasini o'qilgan deb belgilash",
     "open": "Ochish",
-    "empty": "Bildirishnomalar yo'q."
+    "empty": "Bildirishnomalar yo'q.",
+    "viewAll": "Hammasini ko'rish →"
   },
   "audit": {
     "pageTitle": "Faoliyat jurnali",
@@ -544,13 +609,18 @@
     }
   },
   "contractor": {
-    "accountUnderReview": "Hisobingiz tekshiruvda",
+    "accountUnderReview": "Hisob tekshiruvda",
+    "applicationStatus": "Sizning pudratchi arizangiz holati",
+    "reason": "Sababi",
     "statusLabel": "Sizning pudratchi arizangiz holati:",
     "nda": {
       "title": "Maxfiylik kelishuvi",
       "body1": "Ushbu kelishuvni qabul qilish orqali siz ushbu portal orqali ulashilgan barcha ma'lumotlar, hujjatlar va aloqalarni qat'iy maxfiy saqlashga rozilik bildirasiz.",
       "body2": "Kelishuvni buzish shartnomani bekor qilish va O'zbekiston Respublikasi qonunchiligiga muvofiq huquqiy oqibatlarga olib kelishi mumkin.",
-      "accept": "Qabul qilaman"
+      "accept": "Qabul qilaman",
+      "description1": "Mazkur maxfiylik kelishuvini qabul qilish orqali siz ushbu portal orqali ulashilgan barcha ma'lumotlarni qat'iy maxfiy saqlashga rozilik bildirasiz.",
+      "description2": "Kelishuvni buzish O'zbekiston Respublikasi qonunchiligiga muvofiq shartnomani bekor qilishga va huquqiy oqibatlarga olib kelishi mumkin.",
+      "acceptBtn": "Qabul qilaman"
     },
     "dashboard": {
       "activeProjects": "Faol loyihalar",
@@ -569,7 +639,8 @@
       "rating": "Reyting",
       "specialization": "Mutaxassisligi",
       "noCompany": "Bog'langan kompaniya yo'q."
-    }
+    },
+    "portalLabel": "Pudratchi portali"
   },
   "dashboard": {
     "title": "Bosh sahifa",
@@ -602,6 +673,11 @@
       "overdue": "Muddati o'tgan",
       "openMyTasks": "Mening vazifalarim",
       "submitStandup": "Standup topshirish"
+    },
+    "greeting": {
+      "morning": "Xayrli tong",
+      "afternoon": "Xayrli kun",
+      "evening": "Xayrli kech"
     }
   },
   "commandPalette": {
@@ -617,6 +693,23 @@
   },
   "landing": {
     "hero": "Ichki Ijro — kompaniyaning ichki ijrosini boshqarish tizimi",
-    "cta": "Tizimga kirish"
+    "cta": "Tizimga kirish",
+    "tagline": "Vazifalar, loyihalar va kadrlarni boshqarish",
+    "copyright": "Barcha huquqlar himoyalangan"
+  },
+  "theme": {
+    "toggleLabel": "Mavzuni almashtirish",
+    "darkOn": "Qorong'i mavzu",
+    "lightOn": "Yorug' mavzu"
+  },
+  "inbox": {
+    "awaitingApproval": "Mening tasdig'im kutmoqda",
+    "approvalDescription": "Tekshirib, qabul yoki rad etishingiz kerak",
+    "noResponses": "Tekshirish uchun javoblar yo'q",
+    "responsePrefix": "Javob:",
+    "assignedPrefix": "Bergan:",
+    "myTasks": "Bajarish kerak",
+    "myTasksDescription": "Sizga yuklatilgan topshiriqlar",
+    "allComplete": "Hammasi bajarilgan"
   }
 }

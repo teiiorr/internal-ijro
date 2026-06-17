@@ -32,12 +32,12 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
     start(async () => {
       try {
         await submitTaskResponse({ taskId, responseText: text }, file);
-        toast.success("Javob yuborildi", { description: "Topshiriq beruvchi tekshirib chiqadi." });
+        toast.success(t("tasks.response.submitted"), { description: t("tasks.response.submittedDescription") });
         setText("");
         setEditing(false);
         if (fileRef.current) fileRef.current.value = "";
       } catch (err) {
-        toast.error("Yuborib bo'lmadi", { description: (err as Error).message });
+        toast.error(t("tasks.response.error"), { description: (err as Error).message });
       }
     });
   }
@@ -48,20 +48,20 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
   return (
     <Card className="overflow-hidden">
       <div className="px-7 pt-6 pb-4 flex items-center justify-between">
-        <h3 className="font-display text-lg font-bold tracking-tight">Javobingiz</h3>
+        <h3 className="font-display text-lg font-bold tracking-tight">{t("tasks.response.title")}</h3>
         {myStatus === "completed" && (
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--success)]">
-            <BadgeCheck className="size-4" /> Qabul qilindi
+            <BadgeCheck className="size-4" /> {t("tasks.response.approved")}
           </span>
         )}
         {myStatus === "under_review" && (
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--warning)]">
-            Tekshiruvda
+            {t("tasks.response.underReview")}
           </span>
         )}
         {myStatus === "rejected" && (
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--danger)]">
-            Rad etildi
+            {t("tasks.response.rejected")}
           </span>
         )}
       </div>
@@ -77,13 +77,13 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
             )}
             <p className="text-[12px] text-[var(--muted)] tabular">{fmt(responseSubmittedAt)}</p>
             {myStatus === "rejected" && (
-              <Button variant="outline" onClick={() => setEditing(true)}>Qayta yuborish</Button>
+              <Button variant="outline" onClick={() => setEditing(true)}>{t("tasks.response.resubmitBtn")}</Button>
             )}
           </div>
         ) : (
           <form onSubmit={onSubmit} className="space-y-3">
             <Textarea
-              placeholder="Bajarilgan ish haqida qisqacha yozing..."
+              placeholder={t("tasks.response.placeholder")}
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={4}

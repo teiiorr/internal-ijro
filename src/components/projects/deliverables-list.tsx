@@ -64,22 +64,22 @@ export function DeliverablesList({
     <div className="space-y-3">
       <div className="space-y-2">
         {items.map((d) => (
-          <div key={d.id} className="border rounded-lg p-3 space-y-2">
+          <div key={d.id} className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
-                <a href={d.fileUrl} className="font-medium hover:underline">{d.fileName}</a>
-                <p className="text-xs text-[var(--muted)]">{d.type} · {new Date(d.submittedAt).toLocaleString()}</p>
+                <a href={d.fileUrl} className="font-semibold hover:underline">{d.fileName}</a>
+                <p className="text-xs text-[var(--muted)]">{t(`projects.deliverable.types.${d.type}` as "projects.deliverable.types.document")} · {new Date(d.submittedAt).toLocaleString()}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={d.status === "approved" ? "success" : d.status === "rejected" ? "danger" : d.status === "revision_requested" ? "warning" : "secondary"}>
-                  {d.status}
+                  {t(`status.${d.status}` as "status.submitted")}
                 </Badge>
-                <Button asChild variant="ghost" size="icon"><a href={d.fileUrl}><Download className="size-4" /></a></Button>
+                <Button asChild variant="ghost" size="icon-sm"><a href={d.fileUrl}><Download className="size-4" /></a></Button>
               </div>
             </div>
             {d.message && <p className="text-sm">{d.message}</p>}
             {d.adminFeedback && (
-              <p className="text-sm rounded bg-[var(--secondary)] p-2"><span className="text-[var(--muted)]">{t("projects.deliverables.feedback")}:</span> {d.adminFeedback}</p>
+              <p className="text-sm rounded-xl bg-[var(--surface-2)] p-3"><span className="text-[var(--muted)] font-medium">{t("projects.deliverables.feedback")}:</span> {d.adminFeedback}</p>
             )}
             {canReview && d.status === "submitted" && (
               <div className="flex gap-2 flex-wrap">
@@ -87,17 +87,17 @@ export function DeliverablesList({
                   placeholder={t("projects.deliverables.feedback")}
                   value={feedback[d.id] ?? ""}
                   onChange={(e) => setFeedback((f) => ({ ...f, [d.id]: e.target.value }))}
-                  className="flex-1 min-w-[200px] h-9"
+                  className="flex-1 min-w-[200px]"
                 />
                 {REVIEW.map((s) => (
                   <Button
                     key={s}
                     size="sm"
-                    variant={s === "approved" ? "default" : s === "rejected" ? "destructive" : "outline"}
+                    variant={s === "approved" ? "default" : s === "rejected" ? "destructive" : "glass"}
                     disabled={pending}
                     onClick={() => start(async () => { await reviewDeliverable(d.id, s, feedback[d.id]); })}
                   >
-                    {s}
+                    {t(`status.${s}` as "status.approved")}
                   </Button>
                 ))}
               </div>
@@ -108,29 +108,29 @@ export function DeliverablesList({
       </div>
 
       {canSubmit && (
-        <form onSubmit={onSubmit} className="border rounded-lg p-3 space-y-3">
-          <h4 className="font-medium">{t("projects.deliverables.submit")}</h4>
+        <form onSubmit={onSubmit} className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 space-y-3">
+          <h4 className="font-semibold">{t("projects.deliverables.submit")}</h4>
           <div className="grid gap-3 md:grid-cols-3">
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label>{t("projects.deliverables.type")}</Label>
               <Select name="type" defaultValue="document">
                 <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                <SelectContent>{TYPES.map((ty) => <SelectItem key={ty} value={ty}>{t(`projects.deliverable.types.${ty}` as "projects.deliverable.types.document")}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label>{t("projects.deliverables.milestone")}</Label>
               <Select name="milestoneId">
-                <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
                 <SelectContent>{milestones.map((m) => <SelectItem key={m.id} value={m.id}>{m.title}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label>{t("projects.deliverables.file")}</Label>
               <Input type="file" ref={fileRef} required />
             </div>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Label>{t("projects.deliverables.message")}</Label>
             <Textarea name="message" rows={2} />
           </div>

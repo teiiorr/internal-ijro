@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   const isHr = user.position === "hr";
 
   const hour = new Date().getHours();
-  const greet = hour < 12 ? "Xayrli tong" : hour < 18 ? "Xayrli kun" : "Xayrli kech";
+  const greet = hour < 12 ? t("dashboard.greeting.morning") : hour < 18 ? t("dashboard.greeting.afternoon") : t("dashboard.greeting.evening");
 
   return (
     <div className="space-y-6 sm:space-y-8">

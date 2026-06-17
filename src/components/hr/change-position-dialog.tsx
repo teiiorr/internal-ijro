@@ -69,7 +69,7 @@ export function ChangePositionDialog({
           <div className="space-y-1.5">
             <Label>{t("employees.changePosition.department")}</Label>
             <Select value={dept} onValueChange={setDept}>
-              <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
               <SelectContent>
                 {departments.map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
               </SelectContent>
@@ -78,7 +78,7 @@ export function ChangePositionDialog({
           <div className="space-y-1.5">
             <Label>{t("employees.changePosition.reportsTo")}</Label>
             <Select value={reportsTo} onValueChange={setReportsTo}>
-              <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
               <SelectContent>
                 {managers.map((m) => <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>)}
               </SelectContent>

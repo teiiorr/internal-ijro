@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { resetPassword } from "@/server/actions/auth-flow";
 
 export default function ResetPasswordPage({ params }: { params: Promise<{ token: string }> }) {
@@ -29,20 +29,26 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
   }
 
   return (
-    <Card>
-      <CardHeader><CardTitle>{t("auth.reset.title")}</CardTitle></CardHeader>
-      <CardContent>
+    <Card className="p-2">
+      <CardContent className="px-7 py-8 space-y-6">
+        <div className="text-center space-y-2">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.reset.title")}</h1>
+        </div>
         <form onSubmit={onSubmit} className="space-y-4">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="password">{t("auth.reset.password")}</Label>
             <Input id="password" name="password" type="password" required minLength={8} />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="confirm">{t("auth.reset.confirm")}</Label>
             <Input id="confirm" name="confirm" type="password" required minLength={8} />
           </div>
-          {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-          <Button type="submit" className="w-full">{t("auth.reset.submit")}</Button>
+          {error && (
+            <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
+              <p className="text-sm font-medium text-[var(--danger)]">{error}</p>
+            </div>
+          )}
+          <Button type="submit" className="w-full" size="lg">{t("auth.reset.submit")}</Button>
         </form>
       </CardContent>
     </Card>

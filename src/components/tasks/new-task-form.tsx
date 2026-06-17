@@ -46,7 +46,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
     e.preventDefault();
     setError(null);
     if (selectedIds.length === 0) {
-      setError("Kamida bitta ijrochi tanlang");
+      setError(t("tasks.new.selectAssigneeError"));
       return;
     }
     const fd = new FormData(e.currentTarget);
@@ -83,14 +83,16 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
       </div>
 
       <div className="space-y-2">
-        <Label>Ijrochilar</Label>
-        <div className="rounded-[10px] border border-[var(--border-strong)] bg-[var(--background-elevated)] p-3 space-y-2">
+        <Label>{t("tasks.fields.assignees")}</Label>
+        <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-xl backdrop-saturate-180 p-4 space-y-3">
           {selectedPeople.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {selectedPeople.map((p, i) => (
                 <div key={p.id} className={cn(
-                  "inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium",
-                  i === 0 ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--primary-soft)] text-[var(--primary)]"
+                  "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold",
+                  i === 0
+                    ? "bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-[var(--primary-foreground)] shadow-[0_4px_12px_-2px_rgba(94,99,224,0.4)]"
+                    : "bg-[var(--primary-soft)] text-[var(--primary)] border border-[var(--primary)]/15"
                 )}>
                   {p.fullName}
                   <button type="button" onClick={() => toggle(p.id)} className="opacity-70 hover:opacity-100">
@@ -100,33 +102,33 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
               ))}
             </div>
           ) : (
-            <p className="text-sm text-[var(--muted)]">Ijrochilar tanlanmagan</p>
+            <p className="text-sm text-[var(--muted)]">{t("tasks.new.noAssignees")}</p>
           )}
           <div className="flex gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen((v) => !v)}>
-              <Plus className="size-4" /> Ijrochi qo'shish
+            <Button type="button" variant="glass" size="sm" onClick={() => setPickerOpen((v) => !v)}>
+              <Plus className="size-4" /> {t("tasks.new.addAssigneeBtn")}
             </Button>
           </div>
           {pickerOpen && (
             <div className="mt-2 space-y-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
                 <input
                   placeholder={t("common.search")}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="h-10 w-full rounded-[8px] border border-[var(--border)] bg-[var(--surface-2)] pl-9 pr-3 text-sm focus-visible:outline-none focus-visible:border-[var(--primary)]"
+                  className="h-11 w-full rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-2)] pl-10 pr-3 text-[15px] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:ring-4 focus-visible:ring-[var(--primary)]/15"
                 />
               </div>
-              <div className="max-h-56 overflow-y-auto rounded-[8px] border border-[var(--border)] divide-y divide-[var(--border)]">
+              <div className="max-h-56 overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--surface)]/70 backdrop-blur-md divide-y divide-[var(--border)]/60">
                 {filteredCandidates.map((p) => (
                   <button
                     key={p.id}
                     type="button"
                     onClick={() => { toggle(p.id); setSearch(""); }}
-                    className="w-full text-left px-3 py-2 hover:bg-[var(--surface-3)] text-sm"
+                    className="w-full text-left px-4 py-3 hover:bg-[var(--surface-3)] text-sm transition-colors"
                   >
-                    <span className="font-medium">{p.fullName}</span>
+                    <span className="font-semibold">{p.fullName}</span>
                     <span className="text-[var(--muted)] ml-2 text-xs">{t(`positions.${p.position}` as "positions.direktor")}</span>
                   </button>
                 ))}
@@ -137,14 +139,14 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
             </div>
           )}
         </div>
-        <p className="text-xs text-[var(--muted)]">Birinchi tanlangan ijrochi — asosiy.</p>
+        <p className="text-xs text-[var(--muted)]">{t("tasks.new.primaryAssigneeHint")}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label>{t("tasks.fields.project")}</Label>
           <Select name="projectId">
-            <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
             <SelectContent>
               {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
             </SelectContent>

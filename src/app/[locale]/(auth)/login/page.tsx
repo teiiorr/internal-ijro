@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 
 export default function LoginPage() {
@@ -32,34 +32,38 @@ export default function LoginPage() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("auth.login.title")}</CardTitle>
-        <CardDescription>{t("app.tagline")}</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="p-2">
+      <CardContent className="px-7 py-8 space-y-7">
+        <div className="text-center space-y-2">
+          <h1 className="font-display text-3xl font-bold tracking-tight">{t("auth.login.title")}</h1>
+          <p className="text-[var(--muted)]">{t("app.tagline")}</p>
+        </div>
         <form onSubmit={onSubmit} className="space-y-4">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="email">{t("auth.login.email")}</Label>
             <Input id="email" name="email" type="email" autoComplete="email" required />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="password">{t("auth.login.password")}</Label>
             <Input id="password" name="password" type="password" autoComplete="current-password" required />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="totp">{t("auth.login.totp")}</Label>
-            <Input id="totp" name="totp" inputMode="numeric" placeholder="------" />
+            <Input id="totp" name="totp" inputMode="numeric" maxLength={6} placeholder="123 456" className="tabular text-center text-lg tracking-[0.3em]" />
           </div>
-          {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-          <Button type="submit" className="w-full" disabled={pending}>
+          {error && (
+            <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
+              <p className="text-sm font-medium text-[var(--danger)]">{error}</p>
+            </div>
+          )}
+          <Button type="submit" className="w-full" size="lg" disabled={pending}>
             {t("auth.login.submit")}
           </Button>
-          <div className="flex justify-between text-sm">
-            <Link href="/forgot-password" className="text-[var(--primary)] hover:underline">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-sm pt-2">
+            <Link href="/forgot-password" className="text-[var(--primary)] font-semibold hover:underline">
               {t("auth.login.forgot")}
             </Link>
-            <Link href="/register-contractor" className="text-[var(--primary)] hover:underline">
+            <Link href="/register-contractor" className="text-[var(--primary)] font-semibold hover:underline">
               {t("auth.login.registerContractor")}
             </Link>
           </div>

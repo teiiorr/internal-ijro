@@ -1,10 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { externalCompanies } from "@/lib/db/schema";
 import { getProject } from "@/server/queries/projects";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { MilestonesList } from "@/components/projects/milestones-list";
@@ -14,6 +15,7 @@ import { ProjectChat } from "@/components/projects/project-chat";
 export default async function ContractorProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const t = await getTranslations();
   const { id } = await params;
   const data = await getProject(id);
   if (!data) notFound();
@@ -24,18 +26,18 @@ export default async function ContractorProjectPage({ params }: { params: Promis
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">{data.project.name}</h1>
-        <div className="flex items-center gap-2 mt-1 text-sm">
-          <Badge variant={data.project.status === "completed" ? "success" : "default"}>{data.project.status}</Badge>
-          <span className="text-[var(--muted)]">Progress: {data.project.progressPercentage}%</span>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{data.project.name}</h1>
+        <div className="flex items-center gap-2 mt-2 text-sm">
+          <Badge variant={data.project.status === "completed" ? "success" : "default"}>{t(`status.${data.project.status}` as "status.planning")}</Badge>
+          <span className="text-[var(--muted)]">{t("projects.headers.progress")}: {data.project.progressPercentage}%</span>
         </div>
       </div>
 
       <Tabs defaultValue="milestones">
         <TabsList>
-          <TabsTrigger value="milestones">Milestones & payments</TabsTrigger>
-          <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
-          <TabsTrigger value="chat">Chat</TabsTrigger>
+          <TabsTrigger value="milestones">{t("projects.tabs.milestones")}</TabsTrigger>
+          <TabsTrigger value="deliverables">{t("projects.tabs.deliverables")}</TabsTrigger>
+          <TabsTrigger value="chat">{t("projects.tabs.chat")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="milestones">

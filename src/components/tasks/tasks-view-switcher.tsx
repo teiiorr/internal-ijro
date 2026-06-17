@@ -90,7 +90,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
               );
             })}
             {tasks.length === 0 && (
-              <EmptyState icon={Inbox} title={t("tasks.emptyList")} description="Hozircha topshiriqlar yo'q." />
+              <EmptyState icon={Inbox} title={t("tasks.emptyList")} description={t("tasks.empty.description")} />
             )}
           </div>
 

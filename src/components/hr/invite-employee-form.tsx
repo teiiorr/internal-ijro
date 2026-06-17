@@ -62,7 +62,7 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
       <div className="space-y-1.5">
         <Label htmlFor="departmentId">{t("common.department")}</Label>
         <Select name="departmentId">
-          <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
           <SelectContent>
             {departments.map((d) => (
               <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
@@ -73,7 +73,7 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
       <div className="space-y-1.5">
         <Label htmlFor="reportsToUserId">{t("employees.reportsTo")}</Label>
         <Select name="reportsToUserId">
-          <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
           <SelectContent>
             {managers.map((m) => (
               <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>

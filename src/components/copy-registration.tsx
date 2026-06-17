@@ -1,9 +1,11 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 
 export function CopyRegistration({ regNum }: { regNum: string }) {
+  const t = useTranslations();
   const [copied, setCopied] = useState(false);
   return (
     <button
@@ -12,10 +14,10 @@ export function CopyRegistration({ regNum }: { regNum: string }) {
         try {
           await navigator.clipboard.writeText(regNum);
           setCopied(true);
-          toast.success("Nusxa olindi", { description: `№ ${regNum}` });
+          toast.success(t("common.copy.success"), { description: `№ ${regNum}` });
           setTimeout(() => setCopied(false), 1500);
         } catch {
-          toast.error("Nusxa olib bo'lmadi");
+          toast.error(t("common.copy.failed"));
         }
       }}
       className="inline-flex items-center gap-2 rounded-full bg-[var(--primary-soft)] text-[var(--primary)] px-3 py-1 text-xs font-bold tabular tracking-tight hover:bg-[var(--primary-soft-strong)] transition-colors"

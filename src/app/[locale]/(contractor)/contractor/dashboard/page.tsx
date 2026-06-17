@@ -15,22 +15,22 @@ export default async function ContractorDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">{company?.name ?? session.user.fullName}</h1>
-        {company?.rating && <p className="text-sm text-[var(--muted)]">{t("contractor.dashboard.averageRating")}: ⭐ {company.rating}</p>}
+        <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{company?.name ?? session.user.fullName}</h1>
+        {company?.rating && <p className="text-sm text-[var(--muted)] mt-1">{t("contractor.dashboard.averageRating")}: ⭐ {company.rating}</p>}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("contractor.dashboard.activeProjects")}</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-semibold">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>
+          <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.activeProjects")}</CardTitle></CardHeader>
+          <CardContent><p className="text-4xl font-display font-bold tabular">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("contractor.dashboard.completed")}</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-semibold">{projects.filter((p) => p.status === "completed").length}</p></CardContent>
+          <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.completed")}</CardTitle></CardHeader>
+          <CardContent><p className="text-4xl font-display font-bold tabular">{projects.filter((p) => p.status === "completed").length}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("contractor.dashboard.total")}</CardTitle></CardHeader>
-          <CardContent><p className="text-3xl font-semibold">{projects.length}</p></CardContent>
+          <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.total")}</CardTitle></CardHeader>
+          <CardContent><p className="text-4xl font-display font-bold tabular">{projects.length}</p></CardContent>
         </Card>
       </div>
 
@@ -39,20 +39,20 @@ export default async function ContractorDashboardPage() {
         <CardContent>
           <div className="space-y-2">
             {projects.map((p) => (
-              <Link key={p.id} href={`/contractor/projects/${p.id}`} className="block border rounded-lg p-3 hover:bg-[var(--accent)]">
-                <div className="flex justify-between items-start">
+              <Link key={p.id} href={`/contractor/projects/${p.id}`} className="block rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 hover:bg-[var(--surface-2)] transition-colors">
+                <div className="flex justify-between items-start flex-wrap gap-2">
                   <div>
-                    <p className="font-medium">{p.name}</p>
-                    {p.deadline && <p className="text-xs text-[var(--muted)]">Due {p.deadline}</p>}
+                    <p className="font-semibold">{p.name}</p>
+                    {p.deadline && <p className="text-xs text-[var(--muted)] mt-1">{t("tasks.deadline.deadlineLabel")}: {p.deadline}</p>}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={p.status === "completed" ? "success" : "default"}>{p.status}</Badge>
-                    <span className="text-sm text-[var(--muted)]">{p.progressPercentage}%</span>
+                  <div className="flex items-center gap-3">
+                    <Badge variant={p.status === "completed" ? "success" : "default"}>{t(`status.${p.status}` as "status.planning")}</Badge>
+                    <span className="text-sm font-semibold text-[var(--muted)] tabular">{p.progressPercentage}%</span>
                   </div>
                 </div>
               </Link>
             ))}
-            {projects.length === 0 && <p className="text-sm text-[var(--muted)]">{t("contractor.dashboard.noProjects")}</p>}
+            {projects.length === 0 && <p className="text-sm text-[var(--muted)] text-center py-6">{t("contractor.dashboard.noProjects")}</p>}
           </div>
         </CardContent>
       </Card>

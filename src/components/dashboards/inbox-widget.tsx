@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { Inbox, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
 import { inboxAwaitingMyApproval, inboxMyActive, type InboxItem } from "@/server/queries/inbox";
@@ -34,6 +35,7 @@ function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
 }
 
 export async function InboxWidget({ userId }: { userId: string }) {
+  const t = await getTranslations();
   const [pendingApproval, myActive] = await Promise.all([
     inboxAwaitingMyApproval(userId),
     inboxMyActive(userId),
@@ -48,8 +50,8 @@ export async function InboxWidget({ userId }: { userId: string }) {
               <Inbox className="size-5 text-[var(--warning)]" />
             </div>
             <div>
-              <h3 className="font-display text-base font-bold tracking-tight">Mening tasdig'im kutmoqda</h3>
-              <p className="text-xs text-[var(--muted)]">Tekshirib, qabul yoki rad etishingiz kerak</p>
+              <h3 className="font-display text-base font-bold tracking-tight">{t("inbox.awaitingApproval")}</h3>
+              <p className="text-xs text-[var(--muted)]">{t("inbox.approvalDescription")}</p>
             </div>
           </div>
           <span className="text-xl font-display font-bold tabular">{pendingApproval.length}</span>
@@ -58,11 +60,11 @@ export async function InboxWidget({ userId }: { userId: string }) {
           {pendingApproval.length === 0 ? (
             <div className="px-3 py-6 text-center">
               <CheckCircle2 className="size-8 text-[var(--success)] mx-auto mb-2" />
-              <p className="text-sm text-[var(--muted)]">Hozircha tekshirish uchun javoblar yo'q</p>
+              <p className="text-sm text-[var(--muted)]">{t("inbox.noResponses")}</p>
             </div>
           ) : (
             pendingApproval.slice(0, 6).map((item) => (
-              <Row key={item.id + (item.responseFromName ?? "")} item={item} prefix="Javob:" />
+              <Row key={item.id + (item.responseFromName ?? "")} item={item} prefix={t("inbox.responsePrefix")} />
             ))
           )}
         </div>
@@ -75,8 +77,8 @@ export async function InboxWidget({ userId }: { userId: string }) {
               <AlertCircle className="size-5 text-[var(--primary)]" />
             </div>
             <div>
-              <h3 className="font-display text-base font-bold tracking-tight">Bajarish kerak</h3>
-              <p className="text-xs text-[var(--muted)]">Sizga yuklatilgan topshiriqlar</p>
+              <h3 className="font-display text-base font-bold tracking-tight">{t("inbox.myTasks")}</h3>
+              <p className="text-xs text-[var(--muted)]">{t("inbox.myTasksDescription")}</p>
             </div>
           </div>
           <span className="text-xl font-display font-bold tabular">{myActive.length}</span>
@@ -85,11 +87,11 @@ export async function InboxWidget({ userId }: { userId: string }) {
           {myActive.length === 0 ? (
             <div className="px-3 py-6 text-center">
               <CheckCircle2 className="size-8 text-[var(--success)] mx-auto mb-2" />
-              <p className="text-sm text-[var(--muted)]">Hammasi bajarilgan 🎉</p>
+              <p className="text-sm text-[var(--muted)]">{t("inbox.allComplete")} 🎉</p>
             </div>
           ) : (
             myActive.slice(0, 6).map((item) => (
-              <Row key={item.id} item={item} prefix="Bergan:" />
+              <Row key={item.id} item={item} prefix={t("inbox.assignedPrefix")} />
             ))
           )}
         </div>

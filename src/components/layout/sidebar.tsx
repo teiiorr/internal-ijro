@@ -55,38 +55,37 @@ export function Sidebar({ position }: { position: Position }) {
   const sections: ("primary" | "work" | "system")[] = ["primary", "work", "system"];
 
   return (
-    <aside className="hidden md:flex flex-col w-[248px] shrink-0 bg-[var(--background)] py-4 px-3">
-      <nav className="space-y-6">
-        {sections.map((s) => {
-          const items = visible.filter((i) => i.section === s);
-          if (items.length === 0) return null;
-          return (
-            <div key={s} className="space-y-0.5">
-              {items.map(({ href, icon: Icon, key }) => {
-                const active = pathname === href || pathname.startsWith(`${href}/`);
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={cn(
-                      "group flex items-center gap-3 rounded-[10px] px-3 h-10 text-[14px] font-medium relative",
-                      active
-                        ? "bg-[var(--primary-soft)] text-[var(--primary)]"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-3)]"
-                    )}
-                  >
-                    {active && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-[var(--primary)]" />
-                    )}
-                    <Icon className={cn("size-[18px] shrink-0", active ? "text-[var(--primary)]" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
-                    <span>{t(key)}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          );
-        })}
-      </nav>
+    <aside className="hidden md:block w-[272px] shrink-0">
+      <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass max-h-[calc(100vh-110px)] overflow-y-auto">
+        <nav className="space-y-6">
+          {sections.map((s) => {
+            const items = visible.filter((i) => i.section === s);
+            if (items.length === 0) return null;
+            return (
+              <div key={s} className="space-y-1">
+                {items.map(({ href, icon: Icon, key }) => {
+                  const active = pathname === href || pathname.startsWith(`${href}/`);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={cn(
+                        "group flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold relative transition-all",
+                        active
+                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--primary-hover)] text-[var(--primary-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_14px_-2px_rgba(94,99,224,0.45)]"
+                          : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-3)]"
+                      )}
+                    >
+                      <Icon className={cn("size-5 shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
+                      <span>{t(key)}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </nav>
+      </div>
     </aside>
   );
 }

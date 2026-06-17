@@ -94,7 +94,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
     <div className="space-y-5 sm:space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
-          <p className="eyebrow mb-1.5 sm:mb-2">Ichki ijro</p>
+          <p className="eyebrow mb-1.5 sm:mb-2">{t("app.name")}</p>
           <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
         </div>
         <div className="flex gap-2">

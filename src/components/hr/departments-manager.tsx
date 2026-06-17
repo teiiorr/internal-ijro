@@ -62,7 +62,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
           <div className="space-y-1.5">
             <Label>{t("departments.fields.head")}</Label>
             <Select name="headUserId" defaultValue={initial?.headUserId ?? undefined}>
-              <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
               <SelectContent>
                 {managers.map((m) => <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>)}
               </SelectContent>
@@ -71,7 +71,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
           <div className="space-y-1.5">
             <Label>{t("departments.fields.parent")}</Label>
             <Select name="parentDepartmentId" defaultValue={initial?.parentDepartmentId ?? undefined}>
-              <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
               <SelectContent>
                 {departments
                   .filter((d) => d.id !== initial?.id)

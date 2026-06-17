@@ -1,100 +1,130 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   DESIGN TOKENS
-   Refined palette inspired by Linear / Stripe / Vercel.
+   iOS LIQUID GLASS — DESIGN TOKENS
+   Translucent surfaces over a vibrant aurora background.
    ========================================================================= */
 :root {
-  /* Surface */
-  --background:           #F7F7F9;
+  /* Surface (used when glass is not appropriate) */
+  --background:           #F4F5FA;
   --background-elevated:  #FFFFFF;
-  --surface-2:            #FAFAFB;
-  --surface-3:            #F1F1F4;
+  --surface-2:            rgba(255, 255, 255, 0.6);
+  --surface-3:            rgba(255, 255, 255, 0.4);
 
   /* Text */
-  --foreground:           #0A0A0F;
-  --muted:                #65676E;
-  --muted-foreground:     #65676E;
-  --subtle:               #9295A0;
+  --foreground:           #0A0A14;
+  --muted:                #5A5C66;
+  --muted-foreground:     #5A5C66;
+  --subtle:               #8A8C97;
 
   /* Lines */
-  --border:               #ECECEF;
-  --border-strong:        #DEDEE2;
-  --input:                #DEDEE2;
+  --border:               rgba(15, 17, 28, 0.08);
+  --border-strong:        rgba(15, 17, 28, 0.14);
+  --input:                rgba(15, 17, 28, 0.14);
   --ring:                 #5E63E0;
 
-  /* Brand */
+  /* Brand — saturated indigo / violet */
   --primary:              #5E63E0;
   --primary-hover:        #4D52CC;
   --primary-foreground:   #FFFFFF;
-  --primary-soft:         rgba(94, 99, 224, 0.10);
-  --primary-soft-strong:  rgba(94, 99, 224, 0.16);
+  --primary-soft:         rgba(94, 99, 224, 0.12);
+  --primary-soft-strong:  rgba(94, 99, 224, 0.20);
 
-  /* Status */
+  /* Status — high-contrast on glass */
   --success:              #16A34A;
-  --success-soft:         rgba(22, 163, 74, 0.10);
-  --warning:              #D97706;
-  --warning-soft:         rgba(217, 119, 6, 0.12);
+  --success-soft:         rgba(22, 163, 74, 0.14);
+  --warning:              #C2410C;
+  --warning-soft:         rgba(217, 119, 6, 0.16);
   --danger:               #DC2626;
-  --danger-soft:          rgba(220, 38, 38, 0.10);
+  --danger-soft:          rgba(220, 38, 38, 0.12);
   --destructive:          #DC2626;
   --destructive-foreground: #FFFFFF;
   --info:                 #2563EB;
 
   /* Component aliases */
-  --secondary:            #F1F1F4;
-  --secondary-foreground: #0A0A0F;
-  --accent:               #F1F1F4;
-  --accent-foreground:    #0A0A0F;
-  --card:                 #FFFFFF;
-  --card-foreground:      #0A0A0F;
-  --popover:              #FFFFFF;
-  --popover-foreground:   #0A0A0F;
+  --secondary:            rgba(15, 17, 28, 0.05);
+  --secondary-foreground: #0A0A14;
+  --accent:               rgba(15, 17, 28, 0.05);
+  --accent-foreground:    #0A0A14;
+  --card:                 rgba(255, 255, 255, 0.70);
+  --card-foreground:      #0A0A14;
+  --popover:              rgba(255, 255, 255, 0.85);
+  --popover-foreground:   #0A0A14;
+
+  /* Glass-specific */
+  --glass-fill:           rgba(255, 255, 255, 0.55);
+  --glass-fill-strong:    rgba(255, 255, 255, 0.72);
+  --glass-border-top:     rgba(255, 255, 255, 0.85);
+  --glass-border:         rgba(255, 255, 255, 0.55);
+  --glass-shadow:         0 8px 32px -4px rgba(31, 38, 135, 0.10),
+                          0 2px 8px -2px rgba(31, 38, 135, 0.04),
+                          inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --glass-blur:           24px;
+  --glass-saturate:       180%;
+
+  /* Aurora colors for the page background */
+  --aurora-1:             #C7BFFA;  /* lavender */
+  --aurora-2:             #FFD6D6;  /* peach */
+  --aurora-3:             #BFE6FF;  /* sky */
+  --aurora-4:             #D9F2D9;  /* mint */
 
   /* Radius scale */
-  --radius:               12px;
+  --radius:               14px;
 }
 
 .dark {
-  --background:           #0A0A0C;
-  --background-elevated:  #131318;
-  --surface-2:            #16161B;
-  --surface-3:            #1C1C22;
+  --background:           #08080C;
+  --background-elevated:  #14141B;
+  --surface-2:            rgba(255, 255, 255, 0.04);
+  --surface-3:            rgba(255, 255, 255, 0.07);
 
-  --foreground:           #F4F4F6;
-  --muted:                #9295A0;
-  --muted-foreground:     #9295A0;
-  --subtle:               #65676E;
+  --foreground:           #F4F4F8;
+  --muted:                #A0A2B0;
+  --muted-foreground:     #A0A2B0;
+  --subtle:               #6E7080;
 
-  --border:               #25252B;
-  --border-strong:        #2F2F36;
-  --input:                #25252B;
-  --ring:                 #7C82F5;
+  --border:               rgba(255, 255, 255, 0.07);
+  --border-strong:        rgba(255, 255, 255, 0.12);
+  --input:                rgba(255, 255, 255, 0.10);
+  --ring:                 #8E94F7;
 
-  --primary:              #7C82F5;
-  --primary-hover:        #8E94F7;
-  --primary-foreground:   #0A0A0C;
-  --primary-soft:         rgba(124, 130, 245, 0.14);
-  --primary-soft-strong:  rgba(124, 130, 245, 0.22);
+  --primary:              #8E94F7;
+  --primary-hover:        #A0A5FA;
+  --primary-foreground:   #08080C;
+  --primary-soft:         rgba(142, 148, 247, 0.18);
+  --primary-soft-strong:  rgba(142, 148, 247, 0.28);
 
-  --success:              #22C55E;
-  --success-soft:         rgba(34, 197, 94, 0.16);
-  --warning:              #F59E0B;
-  --warning-soft:         rgba(245, 158, 11, 0.16);
-  --danger:               #EF4444;
-  --danger-soft:          rgba(239, 68, 68, 0.16);
-  --destructive:          #EF4444;
-  --destructive-foreground: #0A0A0C;
+  --success:              #34D399;
+  --success-soft:         rgba(52, 211, 153, 0.18);
+  --warning:              #FBBF24;
+  --warning-soft:         rgba(251, 191, 36, 0.18);
+  --danger:               #F87171;
+  --danger-soft:          rgba(248, 113, 113, 0.18);
+  --destructive:          #F87171;
+  --destructive-foreground: #08080C;
   --info:                 #60A5FA;
 
-  --secondary:            #1C1C22;
-  --secondary-foreground: #F4F4F6;
-  --accent:               #1C1C22;
-  --accent-foreground:    #F4F4F6;
-  --card:                 #131318;
-  --card-foreground:      #F4F4F6;
-  --popover:              #131318;
-  --popover-foreground:   #F4F4F6;
+  --secondary:            rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #F4F4F8;
+  --accent:               rgba(255, 255, 255, 0.06);
+  --accent-foreground:    #F4F4F8;
+  --card:                 rgba(20, 20, 28, 0.65);
+  --card-foreground:      #F4F4F8;
+  --popover:              rgba(20, 20, 28, 0.92);
+  --popover-foreground:   #F4F4F8;
+
+  --glass-fill:           rgba(20, 20, 28, 0.55);
+  --glass-fill-strong:    rgba(20, 20, 28, 0.78);
+  --glass-border-top:     rgba(255, 255, 255, 0.14);
+  --glass-border:         rgba(255, 255, 255, 0.08);
+  --glass-shadow:         0 8px 32px -4px rgba(0, 0, 0, 0.45),
+                          0 2px 8px -2px rgba(0, 0, 0, 0.25),
+                          inset 0 1px 0 rgba(255, 255, 255, 0.10);
+
+  --aurora-1:             #4338CA;
+  --aurora-2:             #BE185D;
+  --aurora-3:             #1E3A8A;
+  --aurora-4:             #134E4A;
 }
 
 @theme inline {
@@ -123,25 +153,25 @@
   --color-popover:              var(--popover);
   --color-popover-foreground:   var(--popover-foreground);
 
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
 
   /* Typography */
-  --font-sans:    "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Plus Jakarta Sans", "Manrope", system-ui, sans-serif;
+  --font-sans:    "Manrope", "Inter", "SF Pro Text", system-ui, -apple-system, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Manrope", "SF Pro Display", system-ui, sans-serif;
   --font-mono:    "JetBrains Mono", ui-monospace, monospace;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================================================================
-   BASE
+   AURORA BACKGROUND — fixed, behind everything
    ========================================================================= */
 html {
-  font-size: 16px;
+  font-size: 17px;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -153,13 +183,29 @@ html.dark { color-scheme: dark; }
 
 body {
   background: var(--background);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 10% 8%, var(--aurora-1) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 92% 12%, var(--aurora-2) 0%, transparent 50%),
+    radial-gradient(ellipse 65% 55% at 88% 88%, var(--aurora-3) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 12% 92%, var(--aurora-4) 0%, transparent 50%);
+  background-attachment: fixed;
+  background-size: 100% 100%;
   color: var(--foreground);
   font-family: var(--font-sans);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
-  font-size: 0.9375rem;       /* 15px base */
+  font-size: 1rem;            /* 17px base */
   line-height: 1.55;
   font-weight: 400;
   letter-spacing: -0.005em;
+  min-height: 100vh;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(ellipse 80% 60% at 12% 10%, var(--aurora-1) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 90% 14%, var(--aurora-2) 0%, transparent 60%),
+    radial-gradient(ellipse 65% 55% at 88% 88%, var(--aurora-3) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 12% 92%, var(--aurora-4) 0%, transparent 60%);
 }
 
 * { border-color: var(--border); }
@@ -169,20 +215,22 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-feature-settings: "cv11", "ss01";
-  letter-spacing: -0.02em;
+  letter-spacing: -0.022em;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.18;
+  color: var(--foreground);
 }
-h1 { font-size: 1.875rem; letter-spacing: -0.025em; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
+h1 { font-size: 2rem;     letter-spacing: -0.028em; }   /* 34 */
+h2 { font-size: 1.625rem; letter-spacing: -0.024em; }   /* 28 */
+h3 { font-size: 1.375rem; }                              /* 23 */
+h4 { font-size: 1.125rem; }                              /* 19 */
 
-p { line-height: 1.55; }
+p { line-height: 1.6; }
 
 /* Labels and tiny uppercase */
 .eyebrow {
-  font-size: 0.6875rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--muted);
@@ -192,7 +240,49 @@ p { line-height: 1.55; }
 .tabular { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
 
 /* =========================================================================
-   FORM CONTROLS
+   GLASS UTILITIES
+   ========================================================================= */
+.glass {
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter:         blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-strong {
+  background: var(--glass-fill-strong);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  backdrop-filter:         blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-bar {
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter:         blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter:         blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--glass-shadow);
+}
+
+/* Soft no-backdrop fallback for browsers without backdrop-filter (rare) */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass, .glass-strong, .glass-bar, .glass-card {
+    background: var(--background-elevated);
+  }
+}
+
+/* =========================================================================
+   FORM CONTROLS — bigger, easier to tap
    ========================================================================= */
 input, textarea, select { font: inherit; }
 
@@ -200,64 +290,62 @@ input[type="text"], input[type="email"], input[type="password"],
 input[type="search"], input[type="tel"], input[type="number"],
 input[type="date"], input[type="datetime-local"], input[type="time"],
 input[type="url"], input[type="file"] {
-  min-height: 44px;
+  min-height: 48px;
+  font-size: 1rem;
 }
-textarea { min-height: 96px; line-height: 1.55; }
+textarea { min-height: 112px; line-height: 1.6; font-size: 1rem; }
 
-/* Custom checkbox accent */
-input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); width: 1.125rem; height: 1.125rem; }
 
-/* Selection */
 ::selection { background: var(--primary-soft-strong); color: var(--foreground); }
 
-/* Scrollbar (webkit) — subtle */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--border-strong);
-  border: 2px solid var(--background);
+  border: 2px solid transparent;
+  background-clip: padding-box;
   border-radius: 10px;
 }
-::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); background-clip: padding-box; }
 
 /* =========================================================================
-   SHADOW SCALE (high quality, layered, soft)
+   SHADOW SCALE
    ========================================================================= */
 .shadow-soft {
   box-shadow:
     0 1px 0 0 rgba(15, 17, 28, 0.02),
-    0 2px 8px -2px rgba(15, 17, 28, 0.05);
+    0 4px 14px -4px rgba(15, 17, 28, 0.06);
 }
 .shadow-lifted {
   box-shadow:
     0 1px 1px 0 rgba(15, 17, 28, 0.02),
-    0 6px 18px -4px rgba(15, 17, 28, 0.08),
-    0 12px 32px -8px rgba(15, 17, 28, 0.06);
+    0 10px 30px -8px rgba(15, 17, 28, 0.12),
+    0 18px 50px -12px rgba(15, 17, 28, 0.08);
 }
 .dark .shadow-soft {
   box-shadow:
     0 1px 0 0 rgba(0, 0, 0, 0.5),
-    0 2px 8px -2px rgba(0, 0, 0, 0.4);
+    0 4px 14px -4px rgba(0, 0, 0, 0.4);
 }
 .dark .shadow-lifted {
   box-shadow:
     0 1px 1px 0 rgba(0, 0, 0, 0.5),
-    0 8px 24px -6px rgba(0, 0, 0, 0.6);
+    0 16px 40px -10px rgba(0, 0, 0, 0.6);
 }
 
-/* Override Tailwind defaults to use our soft scale */
 .shadow-sm { box-shadow:
   0 1px 0 0 rgba(15, 17, 28, 0.02),
   0 1px 3px 0 rgba(15, 17, 28, 0.04); }
 .shadow {   box-shadow:
   0 1px 1px 0 rgba(15, 17, 28, 0.02),
-  0 4px 12px -2px rgba(15, 17, 28, 0.06); }
+  0 6px 16px -4px rgba(15, 17, 28, 0.08); }
 .shadow-md {box-shadow:
   0 2px 6px -1px rgba(15, 17, 28, 0.04),
-  0 8px 24px -4px rgba(15, 17, 28, 0.08); }
+  0 12px 28px -6px rgba(15, 17, 28, 0.10); }
 .shadow-lg {box-shadow:
-  0 4px 12px -2px rgba(15, 17, 28, 0.06),
-  0 16px 40px -8px rgba(15, 17, 28, 0.12); }
+  0 6px 16px -4px rgba(15, 17, 28, 0.10),
+  0 24px 48px -12px rgba(15, 17, 28, 0.14); }
 
 .dark .shadow-sm,
 .dark .shadow,
@@ -265,11 +353,11 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
 .dark .shadow-lg {
   box-shadow:
     0 1px 0 0 rgba(0, 0, 0, 0.5),
-    0 4px 12px -2px rgba(0, 0, 0, 0.45);
+    0 6px 16px -4px rgba(0, 0, 0, 0.45);
 }
 
 /* =========================================================================
-   FOCUS RING — clean, accessible
+   FOCUS RING
    ========================================================================= */
 *:focus-visible {
   outline: none;
@@ -279,14 +367,22 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); }
 
 /* Smoother transitions */
 button, a, [role="button"] {
-  transition: background-color 160ms ease, color 160ms ease,
-              border-color 160ms ease, box-shadow 160ms ease,
-              transform 120ms ease;
+  transition: background-color 180ms ease, color 180ms ease,
+              border-color 180ms ease, box-shadow 180ms ease,
+              transform 140ms ease, backdrop-filter 180ms ease;
 }
 
 /* =========================================================================
-   UTILITY — pretty divider, eyebrow label
+   UTILITIES
    ========================================================================= */
 .divider-soft { border-top: 1px solid var(--border); }
 .text-balance { text-wrap: balance; }
 .text-pretty  { text-wrap: pretty; }
+.safe-bottom  { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Subtle floating animation for hero cards */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+.animate-float { animation: float-soft 6s ease-in-out infinite; }

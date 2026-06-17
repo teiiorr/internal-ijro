@@ -22,14 +22,14 @@ export default async function ProjectsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">{t("projects.pageTitle")}</h1>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="font-display text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
         <div className="flex gap-2">
-          <Button asChild variant="outline">
+          <Button asChild variant="glass" size="default">
             <a href="/api/export/projects"><Download className="size-4" /> XLSX</a>
           </Button>
           {canCreate && (
-            <Button asChild>
+            <Button asChild size="default">
               <Link href="/projects/new"><Plus className="size-4" /> {t("projects.new")}</Link>
             </Button>
           )}
@@ -45,24 +45,24 @@ export default async function ProjectsPage() {
             <TableBody>
               {rows.map((p) => (
                 <TableRow key={p.id}>
-                  <TableCell><Link href={`/projects/${p.id}`} className="font-medium hover:underline">{p.name}</Link></TableCell>
-                  <TableCell>{p.type}</TableCell>
-                  <TableCell>{p.curatorName ?? "—"}</TableCell>
-                  <TableCell>{p.companyName ?? "—"}</TableCell>
+                  <TableCell><Link href={`/projects/${p.id}`} className="font-semibold hover:text-[var(--primary)] transition-colors">{p.name}</Link></TableCell>
+                  <TableCell>{t(`projects.type.${p.type}` as "projects.type.internal")}</TableCell>
+                  <TableCell>{p.curatorName ?? t("common.emptyValue")}</TableCell>
+                  <TableCell>{p.companyName ?? t("common.emptyValue")}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1.5 bg-[var(--secondary)] rounded">
-                        <div className="h-full bg-[var(--primary)] rounded" style={{ width: `${p.progressPercentage}%` }} />
+                    <div className="flex items-center gap-3 min-w-[140px]">
+                      <div className="flex-1 h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
+                        <div className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]" style={{ width: `${p.progressPercentage}%` }} />
                       </div>
-                      <span className="text-xs w-8">{p.progressPercentage}%</span>
+                      <span className="text-xs font-semibold tabular w-8 text-right">{p.progressPercentage}%</span>
                     </div>
                   </TableCell>
-                  <TableCell>{p.deadline ?? "—"}</TableCell>
-                  <TableCell><Badge variant={p.status === "completed" ? "success" : p.status === "planning" ? "secondary" : "default"}>{p.status}</Badge></TableCell>
+                  <TableCell>{p.deadline ?? t("common.emptyValue")}</TableCell>
+                  <TableCell><Badge variant={p.status === "completed" ? "success" : p.status === "planning" ? "secondary" : "default"}>{t(`status.${p.status}` as "status.planning")}</Badge></TableCell>
                 </TableRow>
               ))}
               {rows.length === 0 && (
-                <TableRow><TableCell colSpan={7} className="text-center py-10 text-[var(--muted)]">{t("projects.empty")}</TableCell></TableRow>
+                <TableRow><TableCell colSpan={7} className="text-center py-12 text-[var(--muted)]">{t("projects.empty")}</TableCell></TableRow>
               )}
             </TableBody>
           </Table>
