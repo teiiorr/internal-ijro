@@ -19,6 +19,7 @@ import { db } from "@/lib/db";
 import { departments as deptsTable, users as usersTable } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatDate } from "@/lib/dates";
 
 export default async function EmployeePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -123,7 +124,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
                 <TableBody>
                   {history.map((h) => (
                     <TableRow key={h.id}>
-                      <TableCell>{new Date(h.changeDate).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatDate(h.changeDate)}</TableCell>
                       <TableCell>{h.oldPosition ? t(`positions.${h.oldPosition}` as `positions.direktor`) : "—"}</TableCell>
                       <TableCell>{t(`positions.${h.newPosition}` as `positions.direktor`)}</TableCell>
                       <TableCell className="text-[var(--muted)]">{h.reason ?? "—"}</TableCell>

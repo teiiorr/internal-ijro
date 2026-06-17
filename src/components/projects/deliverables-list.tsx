@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Download } from "lucide-react";
 import { submitDeliverable, reviewDeliverable } from "@/server/actions/projects";
+import { formatDateTime } from "@/lib/dates";
 
 type D = {
   id: string;
@@ -68,7 +69,7 @@ export function DeliverablesList({
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
                 <a href={d.fileUrl} className="font-semibold hover:underline">{d.fileName}</a>
-                <p className="text-xs text-[var(--muted)]">{t(`projects.deliverable.types.${d.type}` as "projects.deliverable.types.document")} · {new Date(d.submittedAt).toLocaleString()}</p>
+                <p className="text-xs text-[var(--muted)]">{t(`projects.deliverable.types.${d.type}` as "projects.deliverable.types.document")} · {formatDateTime(d.submittedAt)}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={d.status === "approved" ? "success" : d.status === "rejected" ? "danger" : d.status === "revision_requested" ? "warning" : "secondary"}>

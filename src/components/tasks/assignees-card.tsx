@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { reviewAssigneeResponse } from "@/server/actions/tasks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatDateTime } from "@/lib/dates";
 import { toast } from "sonner";
 
 export type AssigneeItem = {
@@ -70,8 +71,7 @@ export function AssigneesCard({
     });
   }, [items, q, filter]);
 
-  const fmt = (d: Date | string | null) =>
-    d ? new Intl.DateTimeFormat("uz-UZ", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(d)) : "—";
+  const fmt = (d: Date | string | null) => (d ? formatDateTime(d) : "—");
 
   async function review(userId: string, decision: "completed" | "rejected") {
     try {
@@ -127,8 +127,10 @@ export function AssigneesCard({
           const isOpen = openId === a.userId;
           return (
             <div key={a.userId} className={cn(
-              "rounded-xl transition-colors",
-              isMe ? "bg-[var(--primary-soft)] ring-1 ring-inset ring-[var(--primary)]/15" : "hover:bg-[var(--surface-3)]"
+              "rounded-lg transition-colors border",
+              isMe
+                ? "bg-[var(--primary-soft-strong)] border-[var(--primary)]/30"
+                : "border-transparent hover:bg-[var(--surface-3)] hover:border-[var(--border)]"
             )}>
               <button
                 onClick={() => setOpenId(isOpen ? null : a.userId)}

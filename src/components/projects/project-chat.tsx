@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { postProjectMessage } from "@/server/actions/projects";
+import { formatDateTime } from "@/lib/dates";
 
 type Msg = { id: string; content: string; createdAt: Date | string; userName: string };
 
@@ -27,7 +28,7 @@ export function ProjectChat({ projectId, messages }: { projectId: string; messag
           <div key={m.id} className="text-sm">
             <div className="flex justify-between text-xs text-[var(--muted)] mb-1">
               <span className="font-medium text-[var(--foreground)]">{m.userName}</span>
-              <span>{new Date(m.createdAt).toLocaleString()}</span>
+              <span className="tabular">{formatDateTime(m.createdAt)}</span>
             </div>
             <p className="whitespace-pre-wrap">{m.content}</p>
           </div>

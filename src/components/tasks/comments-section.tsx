@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { addComment } from "@/server/actions/tasks";
+import { formatDateTime } from "@/lib/dates";
 
 type C = {
   id: string;
@@ -47,7 +48,7 @@ export function CommentsSection({ taskId, comments }: { taskId: string; comments
             <div className="flex-1 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3.5">
               <div className="flex justify-between items-baseline mb-1">
                 <span className="font-semibold text-sm">{c.userName}</span>
-                <span className="text-[12px] text-[var(--muted)] tabular">{new Date(c.createdAt).toLocaleString()}</span>
+                <span className="text-[12px] text-[var(--muted)] tabular">{formatDateTime(c.createdAt)}</span>
               </div>
               <p className="text-sm whitespace-pre-wrap leading-relaxed">{c.content}</p>
             </div>

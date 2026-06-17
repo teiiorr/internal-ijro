@@ -8,6 +8,7 @@ import { notifications } from "@/lib/db/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { markAllRead } from "@/server/actions/notifications";
+import { formatDateTime } from "@/lib/dates";
 import { CheckCheck } from "lucide-react";
 
 export default async function NotificationsPage() {
@@ -44,7 +45,7 @@ export default async function NotificationsPage() {
                   {n.message && <p className="text-sm text-[var(--muted)] mt-1">{n.message}</p>}
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  <span className="text-xs text-[var(--muted)] whitespace-nowrap tabular">{new Date(n.createdAt).toLocaleString()}</span>
+                  <span className="text-xs text-[var(--muted)] whitespace-nowrap tabular">{formatDateTime(n.createdAt)}</span>
                   {n.link && (
                     <Button asChild size="sm" variant="outline">
                       <Link href={n.link}>{t("notifications.open")}</Link>

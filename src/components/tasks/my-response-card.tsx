@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { BadgeCheck, FileText } from "lucide-react";
 import { submitTaskResponse } from "@/server/actions/tasks";
+import { formatDateTime } from "@/lib/dates";
 
 type Props = {
   taskId: string;
@@ -42,8 +43,7 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
     });
   }
 
-  const fmt = (d: Date | string | null) =>
-    d ? new Intl.DateTimeFormat("uz-UZ", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(d)) : "—";
+  const fmt = (d: Date | string | null) => (d ? formatDateTime(d) : "—");
 
   return (
     <Card className="overflow-hidden">

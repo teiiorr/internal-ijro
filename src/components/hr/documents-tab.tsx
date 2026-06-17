@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { uploadEmployeeDocument, deleteEmployeeDocument } from "@/server/actions/employees";
 import { Trash2, Download } from "lucide-react";
+import { formatDate } from "@/lib/dates";
 
 type Doc = {
   id: string;
@@ -84,7 +85,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
               <TableCell>{d.title}</TableCell>
               <TableCell>{d.documentType}</TableCell>
               <TableCell>{d.fileSize ? `${Math.round(d.fileSize / 1024)} KB` : "—"}</TableCell>
-              <TableCell>{new Date(d.uploadedAt).toLocaleDateString()}</TableCell>
+              <TableCell>{formatDate(d.uploadedAt)}</TableCell>
               <TableCell className="text-right">
                 <Button asChild variant="ghost" size="icon">
                   <a href={d.fileUrl}><Download className="size-4" /></a>
