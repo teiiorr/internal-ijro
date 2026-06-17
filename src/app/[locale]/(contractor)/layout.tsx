@@ -19,12 +19,12 @@ export default async function ContractorLayout({ children }: { children: React.R
   if (company.length > 0 && company[0].status !== "approved") {
     return (
       <SessionProvider>
-        <div className="min-h-screen flex flex-col bg-[var(--background)]">
+        <div className="min-h-screen flex flex-col">
           <Header userName={session.user.fullName} />
           <main className="flex-1 flex items-center justify-center p-6">
-            <div className="max-w-md text-center space-y-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-7">
-              <h1 className="text-xl font-semibold tracking-tight">{t("contractor.accountUnderReview")}</h1>
-              <p className="text-sm text-[var(--muted)]">
+            <div className="max-w-md text-center space-y-4 glass-strong rounded-3xl p-8">
+              <h1 className="text-2xl font-extrabold tracking-tight gradient-text">{t("contractor.accountUnderReview")}</h1>
+              <p className="text-sm text-[var(--muted)] font-medium">
                 {t("contractor.applicationStatus")}: <strong className="text-[var(--foreground)]">{t(`status.${company[0].status}` as "status.pending")}</strong>.
                 {company[0].rejectionReason && <span> {t("contractor.reason")}: {company[0].rejectionReason}</span>}
               </p>
@@ -48,22 +48,22 @@ export default async function ContractorLayout({ children }: { children: React.R
 
   return (
     <SessionProvider>
-      <div className="min-h-screen flex flex-col bg-[var(--background)]">
+      <div className="min-h-screen flex flex-col">
         <Header userName={session.user.fullName} />
-        <div className="flex flex-1">
-          <aside className="hidden md:flex flex-col w-60 shrink-0 border-r border-[var(--border)]">
-            <div className="sticky top-14 py-5 px-3">
-              <p className="px-3 py-2 text-[11px] uppercase tracking-widest text-[var(--muted)] font-semibold">{t("contractor.portalLabel")}</p>
-              <nav className="space-y-0.5">
+        <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
+          <aside className="hidden md:block w-[272px] shrink-0">
+            <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass-strong">
+              <p className="px-3 py-2 text-[11px] uppercase tracking-widest text-[var(--muted)] font-bold">{t("contractor.portalLabel")}</p>
+              <nav className="space-y-1">
                 {NAV.map(({ href, icon: Icon, label }) => (
-                  <Link key={href} href={href} className="flex items-center gap-3 rounded-md px-3 h-9 text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-2)] transition-colors">
-                    <Icon className="size-4" /> {label}
+                  <Link key={href} href={href} className="flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--glass-fill)] transition-colors">
+                    <Icon className="size-5" /> {label}
                   </Link>
                 ))}
               </nav>
             </div>
           </aside>
-          <main className="flex-1 px-5 md:px-8 py-6 md:py-8 max-w-[1280px] mx-auto w-full">{children}</main>
+          <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 min-w-0">{children}</main>
         </div>
       </div>
     </SessionProvider>

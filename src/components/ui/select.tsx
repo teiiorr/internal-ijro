@@ -15,10 +15,12 @@ export const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-11 w-full items-center justify-between gap-2 rounded-xl border-2 border-[var(--input)] " +
-      "bg-[var(--surface)] px-3.5 text-[15px] text-[var(--foreground)] font-medium " +
-      "transition-colors duration-150 " +
-      "focus-visible:outline-none focus-visible:border-[var(--foreground)] " +
+      "flex h-11 w-full items-center justify-between gap-2 rounded-2xl border border-[var(--input)] " +
+      "bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 " +
+      "px-4 text-[15px] text-[var(--foreground)] font-medium " +
+      "shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] " +
+      "transition-[border-color,box-shadow] duration-200 " +
+      "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-glow)] " +
       "data-[placeholder]:text-[var(--subtle)] " +
       "disabled:cursor-not-allowed disabled:opacity-50",
       className
@@ -42,8 +44,11 @@ export const SelectContent = React.forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        "relative z-50 min-w-[10rem] overflow-hidden rounded-xl border-2 border-[var(--foreground)] " +
-        "bg-[var(--popover)] text-[var(--popover-foreground)] shadow-[var(--shadow-3)]",
+        "relative z-50 min-w-[10rem] overflow-hidden rounded-2xl " +
+        "bg-[var(--glass-fill-strong)] backdrop-blur-2xl backdrop-saturate-180 " +
+        "border border-[var(--glass-border)] " +
+        "text-[var(--popover-foreground)] " +
+        "shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_24px_56px_-12px_rgba(20,25,60,0.22)]",
         position === "popper" && "data-[side=bottom]:translate-y-1",
         className
       )}
@@ -62,16 +67,16 @@ export const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-md py-2 pl-8 pr-3 text-sm font-medium outline-none " +
-      "focus:bg-[var(--accent)] focus:text-[var(--accent-foreground)] " +
+      "relative flex w-full cursor-pointer select-none items-center rounded-xl py-2 pl-9 pr-3 text-sm font-medium outline-none " +
+      "focus:bg-[var(--primary-soft)] focus:text-[var(--foreground)] " +
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute left-2.5 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="size-4" />
+        <Check className="size-4 text-[var(--primary)]" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

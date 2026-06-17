@@ -15,7 +15,7 @@ function Avatar({ name }: { name: string }) {
   const parts = name.trim().split(/\s+/).slice(0, 2);
   const initials = parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
   return (
-    <div className="size-9 rounded-lg bg-[var(--foreground)] text-[var(--background)] flex items-center justify-center text-[13px] font-bold">
+    <div className="size-9 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] text-white flex items-center justify-center text-[12px] font-extrabold shadow-[inset_0_1px_0_rgba(255,255,255,0.30),0_4px_12px_-2px_var(--primary-glow)]">
       {initials}
     </div>
   );
@@ -43,60 +43,59 @@ export function Header({ userName }: { userName: string }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 bg-[var(--background)] border-b-2 border-[var(--foreground)]">
-      <div className="h-16 flex items-center gap-3 px-5 md:px-10">
-        <Link href="/dashboard" className="flex items-center gap-3 mr-3 shrink-0">
-          <Logo size={32} />
-          <div className="hidden sm:flex flex-col">
-            <span className="font-bold text-[15px] tracking-tight leading-none">{t("app.name")}</span>
-            <span className="eyebrow mt-1 text-[10px]">MMXXVI</span>
-          </div>
+    <header className="sticky top-0 z-30 glass-bar">
+      <div className="h-[68px] flex items-center gap-3 px-4 md:px-8 max-w-[1500px] mx-auto">
+        <Link href="/dashboard" className="flex items-center gap-2.5 mr-3 shrink-0">
+          <Logo size={36} />
+          <span className="hidden sm:inline font-extrabold text-[17px] tracking-tight text-[var(--foreground)]">
+            {t("app.name")}
+          </span>
         </Link>
 
         <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-md ml-4">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
             <input
               placeholder={t("header.searchPlaceholder")}
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              className="h-10 w-full rounded-lg border-2 border-[var(--input)] bg-[var(--surface)] pl-9 pr-3 text-[14px] font-medium placeholder:text-[var(--subtle)] focus-visible:outline-none focus-visible:border-[var(--foreground)] transition-colors"
+              className="h-11 w-full rounded-full border border-[var(--input)] bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 pl-11 pr-4 text-[14px] font-medium placeholder:text-[var(--subtle)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-glow)] transition-all duration-200"
             />
           </div>
         </form>
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-1.5">
           <NotificationBell />
           <LanguageSwitcher />
           <ThemeToggle />
 
-          <div ref={menuRef} className="relative ml-2">
+          <div ref={menuRef} className="relative ml-1">
             <button
               onClick={() => setMenuOpen((v) => !v)}
               className={cn(
-                "flex items-center gap-2.5 rounded-lg pl-1 pr-3 py-1 transition-colors",
-                menuOpen ? "bg-[var(--surface-2)]" : "hover:bg-[var(--surface-2)]"
+                "flex items-center gap-2.5 rounded-2xl pl-1 pr-3 py-1 transition-colors",
+                menuOpen ? "bg-[var(--glass-fill-strong)]" : "hover:bg-[var(--glass-fill)]"
               )}
             >
               <Avatar name={userName} />
               <span className="hidden md:inline text-sm font-bold">{userName}</span>
             </button>
             {menuOpen && (
-              <div className="absolute right-0 mt-2 w-64 rounded-xl border-2 border-[var(--foreground)] bg-[var(--popover)] p-1.5 shadow-[var(--shadow-3)] z-50">
-                <div className="px-3 py-3 border-b-2 border-[var(--border)] mb-1.5">
+              <div className="absolute right-0 mt-2 w-64 rounded-2xl glass-strong p-1.5 z-50">
+                <div className="px-3 py-3 border-b border-[var(--border)] mb-1.5">
                   <p className="eyebrow text-[10px]">{t("header.signedInAs") ?? "Signed in"}</p>
                   <p className="text-sm font-bold mt-1">{userName}</p>
                 </div>
                 <Link
                   href="/settings"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold hover:bg-[var(--surface-2)] transition-colors"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
                 >
-                  <SettingsIcon className="size-4" /> {t("header.accountSettings")}
+                  <SettingsIcon className="size-4 text-[var(--muted)]" /> {t("header.accountSettings")}
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-bold text-[var(--danger)] hover:bg-[var(--danger-soft)] transition-colors"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--danger)] hover:bg-[var(--danger-soft)] transition-colors"
                 >
                   <LogOut className="size-4" /> {t("header.signOut")}
                 </button>

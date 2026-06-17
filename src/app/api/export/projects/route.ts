@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import { auth } from "@/lib/auth";
 import { listProjects } from "@/server/queries/projects";
+import { applyMontserrat } from "@/lib/excel";
 
 export const runtime = "nodejs";
 
@@ -26,8 +27,8 @@ export async function GET(req: NextRequest) {
     { header: "Contractor", key: "companyName", width: 22 },
     { header: "Deadline", key: "deadline", width: 14 },
   ];
-  ws.getRow(1).font = { bold: true };
   for (const r of rows) ws.addRow(r);
+  applyMontserrat(ws);
   const buf = await wb.xlsx.writeBuffer();
   return new NextResponse(new Uint8Array(buf), {
     headers: {

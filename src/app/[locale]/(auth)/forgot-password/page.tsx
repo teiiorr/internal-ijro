@@ -18,19 +18,14 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="text-left space-y-3">
-        <span className="eyebrow">№ 02 · Reset</span>
-        <h1 className="font-bold leading-[0.95] text-[2.5rem] tracking-[-0.035em]">
-          {t("auth.forgot.title")}<span className="serif-italic">.</span>
-        </h1>
-      </div>
+    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-6">
+      <h1 className="text-center text-3xl font-extrabold tracking-tight gradient-text">{t("auth.forgot.title")}</h1>
       {done ? (
-        <div className="space-y-5">
-          <div className="rounded-xl bg-[var(--accent)] text-[var(--accent-foreground)] px-5 py-4">
-            <p className="font-bold">{t("auth.forgot.sent")}</p>
+        <div className="space-y-4 text-center">
+          <div className="rounded-2xl bg-[var(--success-soft)] border border-[var(--success)]/20 px-4 py-4">
+            <p className="text-sm font-bold text-[var(--success)]">{t("auth.forgot.sent")}</p>
           </div>
-          <Link href="/login" className="uline font-bold text-[var(--foreground)] text-sm">
+          <Link className="inline-block text-[var(--primary)] font-bold hover:underline text-sm" href="/login">
             {t("auth.forgot.backToLogin")}
           </Link>
         </div>
@@ -41,8 +36,8 @@ export default function ForgotPasswordPage() {
             <Input id="email" name="email" type="email" required />
           </div>
           <Button type="submit" className="w-full" size="lg">{t("auth.forgot.submit")}</Button>
-          <div className="pt-3 border-t-2 border-[var(--border)]">
-            <Link className="uline font-bold text-sm text-[var(--foreground)]" href="/login">
+          <div className="text-center pt-2">
+            <Link className="text-sm text-[var(--muted)] hover:text-[var(--primary)] font-semibold transition-colors" href="/login">
               {t("auth.forgot.backToLogin")}
             </Link>
           </div>

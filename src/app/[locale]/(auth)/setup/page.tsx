@@ -13,12 +13,9 @@ export default async function SetupPage() {
 function SetupForm() {
   const t = useTranslations();
   return (
-    <div className="space-y-8">
-      <div className="text-left space-y-3">
-        <span className="eyebrow">№ 00 · Setup</span>
-        <h1 className="font-bold leading-[0.95] text-[2.5rem] tracking-[-0.035em]">
-          {t("auth.setup.title")}<span className="serif-italic">.</span>
-        </h1>
+    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-6">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-extrabold tracking-tight gradient-text">{t("auth.setup.title")}</h1>
         <p className="text-[var(--muted)] font-medium">{t("auth.setup.subtitle")}</p>
       </div>
       <form action={setupDirektor} className="space-y-5">

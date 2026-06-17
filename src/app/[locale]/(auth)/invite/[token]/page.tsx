@@ -28,13 +28,8 @@ export default function InvitePage({ params }: { params: Promise<{ token: string
   }
 
   return (
-    <div className="space-y-8">
-      <div className="text-left space-y-3">
-        <span className="eyebrow">№ 04 · Invite</span>
-        <h1 className="font-bold leading-[0.95] text-[2.5rem] tracking-[-0.035em]">
-          {t("auth.invite.title")}<span className="serif-italic">.</span>
-        </h1>
-      </div>
+    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-6">
+      <h1 className="text-center text-3xl font-extrabold tracking-tight gradient-text">{t("auth.invite.title")}</h1>
       <form onSubmit={onSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="fullName">{t("auth.invite.fullName")}</Label>
@@ -49,7 +44,7 @@ export default function InvitePage({ params }: { params: Promise<{ token: string
           <Input id="confirm" name="confirm" type="password" required minLength={8} />
         </div>
         {error && (
-          <div className="rounded-xl bg-[var(--danger-soft)] border-2 border-[var(--danger)] px-4 py-3">
+          <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
             <p className="text-sm font-bold text-[var(--danger)]">{error}</p>
           </div>
         )}

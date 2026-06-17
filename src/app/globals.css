@@ -1,134 +1,169 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   STUDIO EDITORIAL — DESIGN TOKENS
-   Warm cream base. Ink black. Citron pop. Serif italic for display.
-   Chunky radii. Editorial composition. No gradient. No glass.
+   iOS LIQUID GLASS — VIBRANT WOW EDITION
+   Vibrant animated aurora behind frosted glass surfaces.
+   Saturated accent colors. Multi-layer depth. Premium feel.
    ========================================================================= */
 :root {
-  /* Surfaces */
-  --background:           #F4EFE4;
-  --background-warm:      #EBE3D2;
-  --surface:              #FBF7ED;
-  --surface-2:            #EBE3D2;
-  --surface-3:            #DDD1B8;
+  /* Aurora — 6 vibrant orbs */
+  --aurora-1: #B8A4FF;   /* lavender */
+  --aurora-2: #FFB4D0;   /* pink */
+  --aurora-3: #A8E6FF;   /* sky */
+  --aurora-4: #C4FF9D;   /* lime */
+  --aurora-5: #FFD68A;   /* peach */
+  --aurora-6: #FF9DD3;   /* magenta */
 
-  /* Ink scale */
-  --foreground:           #15201C;
-  --muted:                #5C6661;
-  --muted-foreground:     #5C6661;
-  --subtle:               #8B938E;
+  /* Base canvas under aurora */
+  --background:       #F2F4FB;
+  --background-2:     #E8EBF5;
 
-  /* Edges */
-  --border:               #D5C9B0;
-  --border-strong:        #B8A988;
-  --input:                #C7B999;
-  --ring:                 #15201C;
+  /* Glass surface tokens */
+  --glass-fill:        rgba(255, 255, 255, 0.52);
+  --glass-fill-strong: rgba(255, 255, 255, 0.72);
+  --glass-fill-soft:   rgba(255, 255, 255, 0.40);
+  --glass-border:      rgba(255, 255, 255, 0.85);
+  --glass-border-soft: rgba(255, 255, 255, 0.55);
+  --glass-edge-top:    rgba(255, 255, 255, 1.0);
+  --glass-shadow:      rgba(20, 25, 60, 0.10);
+  --glass-shadow-deep: rgba(20, 25, 60, 0.18);
+  --glass-blur:        24px;
+  --glass-saturate:    180%;
 
-  /* Primary — deep ink-green */
-  --primary:              #15201C;
-  --primary-hover:        #2A332F;
-  --primary-foreground:   #FBF7ED;
-  --primary-soft:         #E4DAC0;
-  --primary-soft-strong:  #D5C9B0;
+  /* Solid surfaces (rare — use glass) */
+  --surface:           rgba(255, 255, 255, 0.85);
+  --surface-2:         rgba(255, 255, 255, 0.60);
+  --surface-3:         rgba(255, 255, 255, 0.40);
 
-  /* Accent — citron pop (creative, unexpected) */
-  --accent:               #D2E84A;
-  --accent-hover:         #C5DB42;
-  --accent-foreground:    #15201C;
-  --accent-soft:          #F0F4D0;
+  /* Text */
+  --foreground:        #0E1330;
+  --muted:             #57607F;
+  --muted-foreground:  #57607F;
+  --subtle:            #8A92AE;
 
-  /* Secondary pop — terracotta */
-  --secondary-pop:        #C6562F;
-  --secondary-pop-soft:   #F5DDD3;
+  /* Lines */
+  --border:            rgba(14, 19, 48, 0.10);
+  --border-strong:     rgba(14, 19, 48, 0.18);
+  --input:             rgba(14, 19, 48, 0.16);
+  --ring:              #6366F1;
+
+  /* Brand — vibrant indigo */
+  --primary:               #6366F1;
+  --primary-hover:         #5054E5;
+  --primary-foreground:    #FFFFFF;
+  --primary-soft:          rgba(99, 102, 241, 0.12);
+  --primary-soft-strong:   rgba(99, 102, 241, 0.22);
+  --primary-glow:          rgba(99, 102, 241, 0.55);
+
+  /* Accent — magenta pop */
+  --accent:                #EC4899;
+  --accent-hover:          #DB2777;
+  --accent-foreground:     #FFFFFF;
+  --accent-soft:           rgba(236, 72, 153, 0.14);
+  --accent-glow:           rgba(236, 72, 153, 0.55);
 
   /* Status */
-  --success:              #2D5A3F;
-  --success-soft:         #D8E5DC;
-  --warning:              #8B4513;
-  --warning-soft:         #F0E0D0;
-  --danger:               #9A2D2D;
-  --danger-soft:          #F0DADA;
-  --destructive:          #9A2D2D;
-  --destructive-foreground: #FBF7ED;
-  --info:                 #2D4A5A;
+  --success:               #10B981;
+  --success-soft:          rgba(16, 185, 129, 0.14);
+  --warning:               #F59E0B;
+  --warning-soft:          rgba(245, 158, 11, 0.16);
+  --danger:                #EF4444;
+  --danger-soft:           rgba(239, 68, 68, 0.14);
+  --destructive:           #EF4444;
+  --destructive-foreground:#FFFFFF;
+  --info:                  #3B82F6;
 
-  --secondary:            #EBE3D2;
-  --secondary-foreground: #15201C;
-  --card:                 #FBF7ED;
-  --card-foreground:      #15201C;
-  --popover:              #FBF7ED;
-  --popover-foreground:   #15201C;
+  --secondary:             rgba(14, 19, 48, 0.06);
+  --secondary-foreground:  #0E1330;
+  --card:                  var(--glass-fill);
+  --card-foreground:       #0E1330;
+  --popover:               var(--glass-fill-strong);
+  --popover-foreground:    #0E1330;
 
-  /* Chunky radii — editorial cards */
-  --radius-xs:  4px;
-  --radius-sm:  8px;
-  --radius:     10px;
-  --radius-md:  12px;
-  --radius-lg:  16px;
-  --radius-xl:  20px;
-  --radius-2xl: 24px;
+  /* Radii — chunky iOS */
+  --radius-xs:  6px;
+  --radius-sm:  10px;
+  --radius:     14px;
+  --radius-md:  16px;
+  --radius-lg:  20px;
+  --radius-xl:  24px;
+  --radius-2xl: 32px;
 
-  /* Warm soft shadows — editorial depth */
-  --shadow-1: 0 1px 0 rgba(21, 32, 28, 0.04), 0 2px 8px -2px rgba(21, 32, 28, 0.06);
-  --shadow-2: 0 2px 0 rgba(21, 32, 28, 0.04), 0 8px 20px -6px rgba(21, 32, 28, 0.10);
-  --shadow-3: 0 4px 0 rgba(21, 32, 28, 0.04), 0 20px 40px -12px rgba(21, 32, 28, 0.16);
-  /* Lifted button — slight offset for tactile feel */
-  --shadow-lift: 0 2px 0 var(--foreground);
+  /* Glass shadows — depth-of-field */
+  --shadow-1: 0 1px 2px rgba(20, 25, 60, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --shadow-2: 0 8px 24px -6px rgba(20, 25, 60, 0.12), 0 2px 6px rgba(20, 25, 60, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --shadow-3: 0 24px 56px -12px rgba(20, 25, 60, 0.22), 0 6px 16px rgba(20, 25, 60, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  --shadow-glow: 0 0 0 6px var(--primary-glow);
 }
 
 .dark {
-  --background:           #0E1814;
-  --background-warm:      #14201B;
-  --surface:              #1A2620;
-  --surface-2:            #243029;
-  --surface-3:            #2F3A33;
+  --aurora-1: #5B47B5;
+  --aurora-2: #B5478A;
+  --aurora-3: #2D5F7A;
+  --aurora-4: #3D7A4A;
+  --aurora-5: #B57D3D;
+  --aurora-6: #8A4AB5;
 
-  --foreground:           #F4EFE4;
-  --muted:                #A09A8D;
-  --muted-foreground:     #A09A8D;
-  --subtle:               #72706B;
+  --background:       #0A0C1A;
+  --background-2:     #11142A;
 
-  --border:               #2F3A33;
-  --border-strong:        #45504A;
-  --input:                #3A453F;
-  --ring:                 #F4EFE4;
+  --glass-fill:        rgba(20, 24, 50, 0.55);
+  --glass-fill-strong: rgba(20, 24, 50, 0.78);
+  --glass-fill-soft:   rgba(20, 24, 50, 0.35);
+  --glass-border:      rgba(255, 255, 255, 0.10);
+  --glass-border-soft: rgba(255, 255, 255, 0.06);
+  --glass-edge-top:    rgba(255, 255, 255, 0.12);
+  --glass-shadow:      rgba(0, 0, 0, 0.4);
+  --glass-shadow-deep: rgba(0, 0, 0, 0.6);
 
-  --primary:              #F4EFE4;
-  --primary-hover:        #E5DFD0;
-  --primary-foreground:   #0E1814;
-  --primary-soft:         #243029;
-  --primary-soft-strong:  #2F3A33;
+  --surface:           rgba(20, 24, 50, 0.85);
+  --surface-2:         rgba(20, 24, 50, 0.65);
+  --surface-3:         rgba(20, 24, 50, 0.45);
 
-  --accent:               #D2E84A;
-  --accent-hover:         #B8CC3A;
-  --accent-foreground:    #15201C;
-  --accent-soft:          #2A331C;
+  --foreground:        #F0F2FF;
+  --muted:             #A4ABCC;
+  --muted-foreground:  #A4ABCC;
+  --subtle:            #6E76A0;
 
-  --secondary-pop:        #E07A4F;
-  --secondary-pop-soft:   #3A2418;
+  --border:            rgba(255, 255, 255, 0.10);
+  --border-strong:     rgba(255, 255, 255, 0.16);
+  --input:             rgba(255, 255, 255, 0.18);
+  --ring:              #818CF8;
 
-  --success:              #6FAC85;
-  --success-soft:         #1F302A;
-  --warning:              #D49A56;
-  --warning-soft:         #2A1F11;
-  --danger:               #D87575;
-  --danger-soft:          #3A1F1F;
-  --destructive:          #9A2D2D;
-  --destructive-foreground: #FBF7ED;
-  --info:                 #6FA0C5;
+  --primary:               #818CF8;
+  --primary-hover:         #6366F1;
+  --primary-foreground:    #0A0C1A;
+  --primary-soft:          rgba(129, 140, 248, 0.18);
+  --primary-soft-strong:   rgba(129, 140, 248, 0.28);
+  --primary-glow:          rgba(129, 140, 248, 0.55);
 
-  --secondary:            #243029;
-  --secondary-foreground: #F4EFE4;
-  --card:                 #1A2620;
-  --card-foreground:      #F4EFE4;
-  --popover:              #1A2620;
-  --popover-foreground:   #F4EFE4;
+  --accent:                #F472B6;
+  --accent-hover:          #EC4899;
+  --accent-foreground:     #0A0C1A;
+  --accent-soft:           rgba(244, 114, 182, 0.18);
+  --accent-glow:           rgba(244, 114, 182, 0.55);
 
-  --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.2), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
-  --shadow-2: 0 2px 0 rgba(0, 0, 0, 0.3), 0 8px 20px -6px rgba(0, 0, 0, 0.5);
-  --shadow-3: 0 4px 0 rgba(0, 0, 0, 0.4), 0 20px 40px -12px rgba(0, 0, 0, 0.6);
-  --shadow-lift: 0 2px 0 var(--accent);
+  --success:               #34D399;
+  --success-soft:          rgba(52, 211, 153, 0.16);
+  --warning:               #FBBF24;
+  --warning-soft:          rgba(251, 191, 36, 0.16);
+  --danger:                #F87171;
+  --danger-soft:           rgba(248, 113, 113, 0.16);
+  --destructive:           #EF4444;
+  --destructive-foreground:#FFFFFF;
+  --info:                  #60A5FA;
+
+  --secondary:             rgba(255, 255, 255, 0.06);
+  --secondary-foreground:  #F0F2FF;
+  --card:                  var(--glass-fill);
+  --card-foreground:       #F0F2FF;
+  --popover:               var(--glass-fill-strong);
+  --popover-foreground:    #F0F2FF;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-2: 0 8px 24px -6px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-3: 0 24px 56px -12px rgba(0, 0, 0, 0.75), 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --shadow-glow: 0 0 0 6px var(--primary-glow);
 }
 
 @theme inline {
@@ -158,8 +193,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: var(--font-latin), var(--font-cyrillic), system-ui, -apple-system, sans-serif;
-  --font-serif: var(--font-serif), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
 
   --radius-xs:  var(--radius-xs);
@@ -182,63 +216,74 @@ html {
 }
 
 body {
-  font-family: var(--font-latin), var(--font-cyrillic), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   background: var(--background);
   color: var(--foreground);
   font-size: 0.9375rem;
   line-height: 1.55;
   font-weight: 500;
   letter-spacing: -0.005em;
+  min-height: 100vh;
+  position: relative;
 }
-
-/* Locale-aware font switching */
-html[data-locale="uz-latn"] body,
-html[data-locale="uz-latn"] :not(.serif):not(.serif *) {
-  font-family: var(--font-latin), system-ui, -apple-system, sans-serif;
-}
-html[data-locale="uz-cyrl"] body,
-html[data-locale="uz-cyrl"] :not(.serif):not(.serif *),
-html[data-locale="ru"] body,
-html[data-locale="ru"] :not(.serif):not(.serif *) {
-  font-family: var(--font-cyrillic), system-ui, -apple-system, sans-serif;
-}
-
-::selection { background: var(--accent); color: var(--accent-foreground); }
 
 /* =========================================================================
-   TYPOGRAPHY — bold hierarchy
+   ANIMATED AURORA BACKGROUND — the WOW
+   6 blurred radial blobs that slowly drift. Heavy saturation.
+   ========================================================================= */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -10%;
+  z-index: -2;
+  background:
+    radial-gradient(45rem 45rem at 12% 15%, var(--aurora-1), transparent 55%),
+    radial-gradient(40rem 40rem at 85% 18%, var(--aurora-2), transparent 60%),
+    radial-gradient(50rem 50rem at 78% 80%, var(--aurora-3), transparent 55%),
+    radial-gradient(40rem 40rem at 15% 78%, var(--aurora-4), transparent 60%),
+    radial-gradient(30rem 30rem at 50% 50%, var(--aurora-5), transparent 70%),
+    radial-gradient(35rem 35rem at 92% 50%, var(--aurora-6), transparent 65%);
+  filter: blur(20px);
+  opacity: 0.85;
+  animation: aurora-drift 30s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 60%);
+  pointer-events: none;
+}
+
+@keyframes aurora-drift {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%  { transform: translate3d(-2%, 1%, 0) rotate(2deg); }
+  100% { transform: translate3d(2%, -1%, 0) rotate(-2deg); }
+}
+
+::selection { background: var(--primary); color: var(--primary-foreground); }
+
+/* =========================================================================
+   TYPOGRAPHY
    ========================================================================= */
 h1, h2, h3, h4, h5, h6 {
   font-family: inherit;
   font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
   color: var(--foreground);
 }
-h1 { font-size: clamp(2.25rem, 4vw, 3.5rem); font-weight: 800; letter-spacing: -0.035em; }
-h2 { font-size: clamp(1.625rem, 3vw, 2.25rem); font-weight: 700; letter-spacing: -0.03em; }
-h3 { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
-h4 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.015em; }
-
-/* Serif italic display — editorial signature */
-.serif {
-  font-family: var(--font-serif), Georgia, serif !important;
-  font-weight: 400;
-  letter-spacing: -0.015em;
-  line-height: 1.0;
-}
-.serif-italic {
-  font-family: var(--font-serif), Georgia, serif !important;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 1.0;
-}
+h1 { font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 800; letter-spacing: -0.028em; }
+h3 { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.018em; }
+h4 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.012em; }
 
 .tabular { font-variant-numeric: tabular-nums; }
 .mono    { font-family: var(--font-mono); }
 
-/* Eyebrow — uppercase mini label */
 .eyebrow {
   font-size: 11px;
   font-weight: 700;
@@ -247,13 +292,19 @@ h4 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.015em; }
   color: var(--muted);
 }
 
-/* Display number — big bold stat */
 .display-num {
-  font-family: var(--font-latin), system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
+}
+
+/* Gradient text — premium accent */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* =========================================================================
@@ -285,66 +336,107 @@ input:not([type]), select, textarea {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 5px;
-  border: 2px solid var(--background);
+  background: rgba(14, 19, 48, 0.18);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
-::-webkit-scrollbar-thumb:hover { background: var(--subtle); }
+::-webkit-scrollbar-thumb:hover { background: rgba(14, 19, 48, 0.32); background-clip: content-box; }
 
 /* =========================================================================
-   CREATIVE TOUCHES — editorial decoration
+   GLASS UTILITIES
    ========================================================================= */
-.sticker { transform: rotate(-1.5deg); transition: transform 0.2s; }
-.sticker:hover { transform: rotate(0deg) scale(1.02); }
-.sticker-r { transform: rotate(1deg); transition: transform 0.2s; }
-.sticker-r:hover { transform: rotate(0deg) scale(1.02); }
-
-/* Underline animation for nav/links */
-.uline {
-  position: relative;
-  display: inline-block;
+.glass {
+  background: var(--glass-fill);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border-soft);
+  box-shadow:
+    0 8px 24px -6px var(--glass-shadow),
+    inset 0 1px 0 var(--glass-edge-top);
 }
-.uline::after {
-  content: "";
+
+.glass-strong {
+  background: var(--glass-fill-strong);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 16px 40px -12px var(--glass-shadow-deep),
+    inset 0 1px 0 var(--glass-edge-top);
+}
+
+.glass-soft {
+  background: var(--glass-fill-soft);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--glass-border-soft);
+}
+
+.glass-bar {
+  background: var(--glass-fill);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border-soft);
+}
+
+.glass-card {
+  background: var(--glass-fill);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 12px 32px -8px var(--glass-shadow),
+    0 2px 6px rgba(20, 25, 60, 0.04),
+    inset 0 1px 0 var(--glass-edge-top);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 20px 48px -10px var(--glass-shadow-deep),
+    0 4px 10px rgba(20, 25, 60, 0.06),
+    inset 0 1px 0 var(--glass-edge-top);
+}
+
+/* Floating gradient orb — decorative WOW element */
+.orb {
   position: absolute;
-  left: 0; right: 0; bottom: -2px;
-  height: 2px;
-  background: var(--foreground);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.uline:hover::after, .uline-active::after { transform: scaleX(1); }
-
-/* Card with editorial lift */
-.lift {
-  box-shadow: var(--shadow-2);
-  transition: transform 0.18s, box-shadow 0.18s;
-}
-.lift:hover { transform: translateY(-1px); box-shadow: var(--shadow-3); }
-
-/* Grain / texture overlay (subtle paper feel) */
-.grain {
-  position: relative;
-}
-.grain::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(21, 32, 28, 0.025) 1px, transparent 0);
-  background-size: 18px 18px;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.5;
   pointer-events: none;
-  border-radius: inherit;
 }
+.orb-primary  { background: var(--primary); }
+.orb-accent   { background: var(--accent); }
+.orb-success  { background: var(--success); }
+
+/* Pulsing dot — live status */
+@keyframes pulse-soft {
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
+  50%      { box-shadow: 0 0 0 6px transparent; }
+}
+.pulse-dot { animation: pulse-soft 2s ease-in-out infinite; }
+
+/* Specular highlight on glass cards */
+.glass-shine {
+  position: relative;
+  overflow: hidden;
+}
+.glass-shine::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%);
+  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-shine:hover::before { left: 150%; }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
-
-/* Hairline divider */
-.hairline { box-shadow: 0 0 0 1px var(--border); }
-
-/* Marker — highlight pill */
-.marker-citron {
-  background: linear-gradient(180deg, transparent 50%, var(--accent) 50%);
-  padding: 0 2px;
-}

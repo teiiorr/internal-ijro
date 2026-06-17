@@ -4,9 +4,12 @@ import { Document, Page, StyleSheet, Text, View, renderToBuffer } from "@react-p
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { departments, employeeProfiles, positionHistory, users } from "@/lib/db/schema";
+import { registerMontserrat } from "@/lib/pdf/fonts";
+
+registerMontserrat();
 
 const s = StyleSheet.create({
-  page: { padding: 36, fontSize: 11, fontFamily: "Helvetica" },
+  page: { padding: 36, fontSize: 11, fontFamily: "Montserrat" },
   h1: { fontSize: 20, marginBottom: 12 },
   h2: { fontSize: 13, marginTop: 14, marginBottom: 4, color: "#1A1A1A" },
   row: { flexDirection: "row", marginBottom: 4 },

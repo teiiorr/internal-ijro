@@ -73,19 +73,19 @@ export function NotificationBell() {
   return (
     <div ref={ref} className="relative">
       <Button variant="ghost" size="icon" aria-label={t("nav.notifications")} onClick={toggle} className="relative">
-        <Bell className="size-[18px]" />
+        <Bell className="size-[19px]" />
         {unread > 0 && (
-          <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-[10px] font-bold tabular flex items-center justify-center">
+          <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] text-white text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--background-2)] shadow-[0_2px_6px_var(--accent-glow)]">
             {unread > 99 ? "99+" : unread}
           </span>
         )}
       </Button>
       {open && (
-        <div className="absolute right-0 mt-2 w-[380px] max-w-[calc(100vw-1rem)] rounded-xl border-2 border-[var(--foreground)] bg-[var(--popover)] shadow-[var(--shadow-3)] z-50 overflow-hidden">
-          <div className="px-4 py-3 border-b-2 border-[var(--foreground)] flex items-center justify-between bg-[var(--surface-2)]">
-            <p className="font-bold text-sm uppercase tracking-wider">{t("nav.notifications")}</p>
+        <div className="absolute right-0 mt-3 w-[380px] max-w-[calc(100vw-1rem)] rounded-3xl glass-strong overflow-hidden z-50">
+          <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
+            <p className="font-bold text-base">{t("nav.notifications")}</p>
             {unread > 0 && (
-              <button onClick={readAll} className="text-xs font-bold text-[var(--foreground)] inline-flex items-center gap-1.5 uline">
+              <button onClick={readAll} className="text-xs font-bold text-[var(--primary)] inline-flex items-center gap-1.5 hover:underline">
                 <CheckCheck className="size-3.5" /> {t("notifications.markAllRead")}
               </button>
             )}
@@ -100,11 +100,11 @@ export function NotificationBell() {
                   href={n.link ?? "/notifications"}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "block px-4 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-2)] transition-colors relative",
-                    !n.isRead && "bg-[var(--accent-soft)]"
+                    "block px-5 py-3.5 border-b border-[var(--border)] last:border-0 hover:bg-[var(--glass-fill)] transition-colors relative",
+                    !n.isRead && "bg-[var(--primary-soft)]"
                   )}
                 >
-                  {!n.isRead && <span className="absolute left-1.5 top-1/2 -translate-y-1/2 size-2 bg-[var(--accent)] rounded-sm" />}
+                  {!n.isRead && <span className="absolute left-2 top-1/2 -translate-y-1/2 size-2 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-[0_0_8px_var(--primary-glow)]" />}
                   <p className="text-[14px] font-bold leading-snug pl-3">{n.title}</p>
                   {n.message && <p className="text-[12px] text-[var(--muted)] mt-1 leading-snug line-clamp-2 pl-3 font-medium">{n.message}</p>}
                   <p className="text-[11px] text-[var(--subtle)] mt-1 tabular pl-3 font-medium">{formatDateTime(n.createdAt)}</p>
@@ -112,8 +112,8 @@ export function NotificationBell() {
               ))
             )}
           </div>
-          <div className="px-4 py-3 border-t-2 border-[var(--foreground)] bg-[var(--surface-2)]">
-            <Link href="/notifications" onClick={() => setOpen(false)} className="uline text-sm text-[var(--foreground)] font-bold">
+          <div className="px-5 py-3 border-t border-[var(--border)] bg-[var(--glass-fill-soft)]">
+            <Link href="/notifications" onClick={() => setOpen(false)} className="text-sm text-[var(--primary)] font-bold hover:underline">
               {t("notifications.viewAll")}
             </Link>
           </div>

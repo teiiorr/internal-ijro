@@ -46,12 +46,6 @@ const ITEMS: Item[] = [
   { href: "/settings",          icon: Settings,        key: "settings",       allowed: ALL,                                                                section: "system" },
 ];
 
-const SECTION_LABELS: Record<"primary" | "work" | "system", string> = {
-  primary: "I",
-  work: "II",
-  system: "III",
-};
-
 export function Sidebar({ position }: { position: Position }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
@@ -60,17 +54,14 @@ export function Sidebar({ position }: { position: Position }) {
   const sections: ("primary" | "work" | "system")[] = ["primary", "work", "system"];
 
   return (
-    <aside className="hidden md:block w-64 shrink-0 border-r-2 border-[var(--foreground)]">
-      <div className="sticky top-16 py-6 px-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
-        <nav className="space-y-7">
+    <aside className="hidden md:block w-[272px] shrink-0">
+      <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass-strong max-h-[calc(100vh-110px)] overflow-y-auto">
+        <nav className="space-y-6">
           {sections.map((s) => {
             const items = visible.filter((i) => i.section === s);
             if (items.length === 0) return null;
             return (
               <div key={s} className="space-y-1">
-                <p className="serif-italic text-[var(--muted)] text-2xl pl-2 mb-2 select-none">
-                  {SECTION_LABELS[s]}
-                </p>
                 {items.map(({ href, icon: Icon, key }) => {
                   const active = pathname === href || pathname.startsWith(`${href}/`);
                   return (
@@ -78,13 +69,13 @@ export function Sidebar({ position }: { position: Position }) {
                       key={href}
                       href={href}
                       className={cn(
-                        "group flex items-center gap-3 rounded-lg px-3 h-11 text-[15px] font-bold transition-colors relative",
+                        "group flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold relative transition-all duration-200",
                         active
-                          ? "bg-[var(--foreground)] text-[var(--background)]"
-                          : "text-[var(--foreground)] hover:bg-[var(--surface-2)]"
+                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.30),0_8px_22px_-4px_var(--primary-glow)]"
+                          : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--glass-fill)]"
                       )}
                     >
-                      <Icon className={cn("size-4 shrink-0", active ? "text-[var(--accent)]" : "text-[var(--muted)]")} />
+                      <Icon className={cn("size-5 shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
                       <span>{t(key)}</span>
                     </Link>
                   );

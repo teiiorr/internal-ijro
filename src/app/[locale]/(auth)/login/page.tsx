@@ -31,13 +31,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="text-left space-y-3">
-        <span className="eyebrow">№ 01 · Login</span>
-        <h1 className="font-bold leading-[0.95] text-[2.75rem] tracking-[-0.035em]">
-          {t("auth.login.title")}
-          <span className="serif-italic block">—</span>
+    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-7 relative">
+      <div className="text-center space-y-2.5">
+        <h1 className="font-extrabold tracking-[-0.03em] text-[2.25rem] leading-tight">
+          <span className="gradient-text">{t("auth.login.title")}</span>
         </h1>
+        <p className="text-[var(--muted)] font-medium">{t("app.tagline")}</p>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-5">
@@ -61,18 +60,18 @@ export default function LoginPage() {
           />
         </div>
         {error && (
-          <div className="rounded-xl bg-[var(--danger-soft)] border-2 border-[var(--danger)] px-4 py-3">
-            <p className="text-sm font-bold text-[var(--danger)]">{error}</p>
+          <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 backdrop-blur px-4 py-3">
+            <p className="text-sm font-semibold text-[var(--danger)]">{error}</p>
           </div>
         )}
         <Button type="submit" className="w-full" size="lg" disabled={pending}>
           {t("auth.login.submit")}
         </Button>
-        <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-sm pt-3 border-t-2 border-[var(--border)]">
-          <Link href="/forgot-password" className="uline font-bold text-[var(--foreground)]">
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-sm pt-2">
+          <Link href="/forgot-password" className="text-[var(--primary)] font-bold hover:underline">
             {t("auth.login.forgot")}
           </Link>
-          <Link href="/register-contractor" className="uline font-bold text-[var(--foreground)]">
+          <Link href="/register-contractor" className="text-[var(--primary)] font-bold hover:underline">
             {t("auth.login.registerContractor")}
           </Link>
         </div>

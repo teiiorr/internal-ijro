@@ -14,8 +14,8 @@ export function MobileNav() {
     { href: "/settings", icon: User, label: t("settings") },
   ];
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-[var(--background)] border-t-2 border-[var(--foreground)]">
-      <ul className="grid grid-cols-4">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-3 pt-1">
+      <ul className="grid grid-cols-4 rounded-3xl glass-strong overflow-hidden">
         {items.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
@@ -23,13 +23,12 @@ export function MobileNav() {
               <Link
                 href={href}
                 className={cn(
-                  "relative flex flex-col items-center justify-center py-3 gap-1 transition-colors",
-                  active ? "text-[var(--foreground)]" : "text-[var(--muted)]"
+                  "flex flex-col items-center justify-center py-3 gap-1 transition-all active:scale-95",
+                  active ? "text-[var(--primary)]" : "text-[var(--muted)]"
                 )}
               >
-                {active && <span className="absolute top-0 left-1/4 right-1/4 h-1 bg-[var(--foreground)] rounded-b-md" />}
-                <Icon className="size-5" />
-                <span className="text-[11px] font-bold uppercase tracking-wider leading-none">{label}</span>
+                <Icon className={cn("size-6", active && "drop-shadow-[0_0_8px_var(--primary-glow)]")} />
+                <span className="text-[11px] font-bold leading-none">{label}</span>
               </Link>
             </li>
           );

@@ -1,12 +1,13 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ichki Ijro">
-  <rect x="6" y="6" width="52" height="52" rx="14" fill="#D2E84A"/>
-  <rect x="2" y="2" width="52" height="52" rx="14" fill="#15201C"/>
-  <g fill="#FBF7ED">
-    <rect x="10" y="14" width="14" height="3" rx="0.5"/>
-    <rect x="15.5" y="17" width="3" height="22"/>
-    <rect x="10" y="39" width="14" height="3" rx="0.5"/>
-    <rect x="32" y="14" width="14" height="3" rx="0.5"/>
-    <rect x="37.5" y="17" width="3" height="22"/>
-    <rect x="32" y="39" width="14" height="3" rx="0.5"/>
-  </g>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ichki Ijro">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#g)"/>
+  <rect x="4" y="4" width="120" height="58" rx="28" fill="white" fill-opacity="0.18"/>
+  <text x="64" y="86" text-anchor="middle"
+    font-family="Montserrat, system-ui, sans-serif" font-weight="900" font-size="48"
+    letter-spacing="-2" fill="#fff">II</text>
 </svg>

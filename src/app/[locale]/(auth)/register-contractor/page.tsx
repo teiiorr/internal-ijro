@@ -22,30 +22,20 @@ export default function RegisterContractorPage() {
 
   if (done)
     return (
-      <div className="space-y-8">
-        <div className="text-left space-y-3">
-          <span className="eyebrow">№ 05 · Contractor</span>
-          <h1 className="font-bold leading-[0.95] text-[2.5rem] tracking-[-0.035em]">
-            {t("auth.registerContractor.title")}<span className="serif-italic">.</span>
-          </h1>
+      <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-4 text-center">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight gradient-text">{t("auth.registerContractor.title")}</h1>
+        <div className="rounded-2xl bg-[var(--success-soft)] border border-[var(--success)]/20 px-4 py-4">
+          <p className="text-sm font-bold text-[var(--success)]">{t("auth.registerContractor.submitted")}</p>
         </div>
-        <div className="rounded-xl bg-[var(--accent)] text-[var(--accent-foreground)] px-5 py-5">
-          <p className="font-bold text-base">{t("auth.registerContractor.submitted")}</p>
-        </div>
-        <Link href="/login" className="uline font-bold text-[var(--foreground)] text-sm">
+        <Link href="/login" className="inline-block text-[var(--primary)] font-bold hover:underline text-sm">
           {t("auth.forgot.backToLogin")}
         </Link>
       </div>
     );
 
   return (
-    <div className="space-y-8">
-      <div className="text-left space-y-3">
-        <span className="eyebrow">№ 05 · Contractor</span>
-        <h1 className="font-bold leading-[0.95] text-[2.5rem] tracking-[-0.035em]">
-          {t("auth.registerContractor.title")}<span className="serif-italic">.</span>
-        </h1>
-      </div>
+    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-6">
+      <h1 className="text-center text-2xl sm:text-3xl font-extrabold tracking-tight gradient-text">{t("auth.registerContractor.title")}</h1>
       <form onSubmit={onSubmit} className="space-y-5">
         {(
           [
@@ -62,13 +52,13 @@ export default function RegisterContractorPage() {
           </div>
         ))}
         {error && (
-          <div className="rounded-xl bg-[var(--danger-soft)] border-2 border-[var(--danger)] px-4 py-3">
+          <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
             <p className="text-sm font-bold text-[var(--danger)]">{error}</p>
           </div>
         )}
         <Button type="submit" className="w-full" size="lg">{t("auth.registerContractor.submit")}</Button>
-        <div className="pt-3 border-t-2 border-[var(--border)]">
-          <Link className="uline font-bold text-sm text-[var(--foreground)]" href="/login">
+        <div className="text-center pt-2">
+          <Link className="text-sm text-[var(--muted)] hover:text-[var(--primary)] font-semibold transition-colors" href="/login">
             {t("auth.forgot.backToLogin")}
           </Link>
         </div>

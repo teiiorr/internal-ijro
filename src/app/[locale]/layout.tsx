@@ -3,33 +3,18 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { Montserrat, Onest, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Montserrat, JetBrains_Mono } from "next/font/google";
 
 const montserrat = Montserrat({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-latin",
-  display: "swap",
-});
-
-const onest = Onest({
-  subsets: ["latin", "cyrillic", "latin-ext"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-cyrillic",
-  display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
+  subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-sans",
   display: "swap",
 });
 
 const jbMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-mono",
   display: "swap",
 });
@@ -52,7 +37,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       data-locale={locale}
-      className={`${montserrat.variable} ${onest.variable} ${instrumentSerif.variable} ${jbMono.variable}`}
+      className={`${montserrat.variable} ${jbMono.variable}`}
       suppressHydrationWarning
     >
       <body>
@@ -61,7 +46,13 @@ export default async function LocaleLayout({
           <Toaster
             position="bottom-right"
             toastOptions={{
-              style: { fontFamily: "var(--font-sans)", borderRadius: "12px" },
+              style: {
+                fontFamily: "var(--font-sans)",
+                borderRadius: "18px",
+                backdropFilter: "blur(24px) saturate(180%)",
+                background: "rgba(255,255,255,0.7)",
+                border: "1px solid rgba(255,255,255,0.6)",
+              },
             }}
             closeButton
           />
