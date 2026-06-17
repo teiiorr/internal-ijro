@@ -10,12 +10,9 @@ import { MilestonesList } from "@/components/projects/milestones-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 
-const PROJECT_VIEW_ROLES = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
-
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!(PROJECT_VIEW_ROLES as readonly string[]).includes(session.user.position)) redirect("/dashboard");
   const t = await getTranslations();
   const { id } = await params;
   const data = await getProject(id);
@@ -28,15 +25,22 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     <div className="space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold">{data.project.name}</h1>
-          <div className="flex items-center gap-2 mt-1 flex-wrap text-sm">
-            <Badge variant="secondary">{data.project.type}</Badge>
-            <Badge variant={data.project.status === "completed" ? "success" : "default"}>{data.project.status}</Badge>
+          <h1 className="text-2xl font-bold tracking-tight">{data.project.name}</h1>
+          <div className="flex items-center gap-2 mt-2 flex-wrap text-sm">
+            <Badge variant="secondary">{t(`projects.type.${data.project.type}` as "projects.type.internal")}</Badge>
+            <Badge variant={data.project.status === "completed" ? "success" : "default"}>
+              {t(`status.${data.project.status}` as "status.planning")}
+            </Badge>
             <span className="text-[var(--muted)]">{t("common.progress")}: {data.project.progressPercentage}%</span>
             {data.company && (
-              <span className="text-[var(--muted)]">Contractor: <Link href="/contractors" className="hover:underline text-[var(--primary)]">{data.company.name}</Link></span>
+              <span className="text-[var(--muted)]">
+                {t("projects.contractorLabel")}:{" "}
+                <Link href="/contractors" className="hover:underline text-[var(--primary)] font-medium">{data.company.name}</Link>
+              </span>
             )}
-            {data.curator && <span className="text-[var(--muted)]">Curator: {data.curator.fullName}</span>}
+            {data.curator && (
+              <span className="text-[var(--muted)]">{t("projects.curatorLabel")}: <span className="font-medium text-[var(--foreground)]">{data.curator.fullName}</span></span>
+            )}
           </div>
         </div>
       </div>
@@ -80,10 +84,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <p className="text-sm text-[var(--muted)]">{t("projects.noLinkedTasks")}</p>
             ) : (
               <ul className="space-y-1 text-sm">
-                {data.tasks.map((t) => (
-                  <li key={t.id}>
-                    <Link href={`/tasks/${t.id}`} className="hover:underline">{t.title}</Link>{" "}
-                    <span className="text-[var(--muted)]">— {t.status}</span>
+                {data.tasks.map((task) => (
+                  <li key={task.id}>
+                    <Link href={`/tasks/${task.id}`} className="hover:underline font-medium">{task.title}</Link>{" "}
+                    <span className="text-[var(--muted)]">— {t(`status.${task.status}` as "status.completed")}</span>
                   </li>
                 ))}
               </ul>
