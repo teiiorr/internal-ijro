@@ -1,113 +1,134 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   EDITORIAL — DESIGN TOKENS
-   Warm neutral palette. Solid surfaces. Hairline borders. No gradients.
+   STUDIO EDITORIAL — DESIGN TOKENS
+   Warm cream base. Ink black. Citron pop. Serif italic for display.
+   Chunky radii. Editorial composition. No gradient. No glass.
    ========================================================================= */
 :root {
-  --background:           #F7F6F2;
-  --surface:              #FFFFFF;
-  --surface-2:            #F1EFE9;
-  --surface-3:            #E7E5DE;
+  /* Surfaces */
+  --background:           #F4EFE4;
+  --background-warm:      #EBE3D2;
+  --surface:              #FBF7ED;
+  --surface-2:            #EBE3D2;
+  --surface-3:            #DDD1B8;
 
-  --foreground:           #14110F;
-  --muted:                #6B6863;
-  --muted-foreground:     #6B6863;
-  --subtle:               #95918A;
+  /* Ink scale */
+  --foreground:           #15201C;
+  --muted:                #5C6661;
+  --muted-foreground:     #5C6661;
+  --subtle:               #8B938E;
 
-  --border:               #E2DFD7;
-  --border-strong:        #C9C5BB;
-  --input:                #D6D2C8;
-  --ring:                 #14110F;
+  /* Edges */
+  --border:               #D5C9B0;
+  --border-strong:        #B8A988;
+  --input:                #C7B999;
+  --ring:                 #15201C;
 
-  /* Ink — single confident accent */
-  --primary:              #14110F;
-  --primary-hover:        #2A2622;
-  --primary-foreground:   #FAF9F5;
-  --primary-soft:         #EFEDE6;
-  --primary-soft-strong:  #E2DFD7;
+  /* Primary — deep ink-green */
+  --primary:              #15201C;
+  --primary-hover:        #2A332F;
+  --primary-foreground:   #FBF7ED;
+  --primary-soft:         #E4DAC0;
+  --primary-soft-strong:  #D5C9B0;
 
-  --accent:               #B45309;
-  --accent-soft:          #FBEFD5;
-  --accent-foreground:    #14110F;
+  /* Accent — citron pop (creative, unexpected) */
+  --accent:               #D2E84A;
+  --accent-hover:         #C5DB42;
+  --accent-foreground:    #15201C;
+  --accent-soft:          #F0F4D0;
 
-  --success:              #15803D;
-  --success-soft:         #DCFCE7;
-  --warning:              #92400E;
-  --warning-soft:         #FEF3C7;
-  --danger:               #B91C1C;
-  --danger-soft:          #FCE9E9;
-  --destructive:          #B91C1C;
-  --destructive-foreground: #FFFFFF;
-  --info:                 #1D4ED8;
+  /* Secondary pop — terracotta */
+  --secondary-pop:        #C6562F;
+  --secondary-pop-soft:   #F5DDD3;
 
-  --secondary:            #EFEDE6;
-  --secondary-foreground: #14110F;
-  --card:                 #FFFFFF;
-  --card-foreground:      #14110F;
-  --popover:              #FFFFFF;
-  --popover-foreground:   #14110F;
+  /* Status */
+  --success:              #2D5A3F;
+  --success-soft:         #D8E5DC;
+  --warning:              #8B4513;
+  --warning-soft:         #F0E0D0;
+  --danger:               #9A2D2D;
+  --danger-soft:          #F0DADA;
+  --destructive:          #9A2D2D;
+  --destructive-foreground: #FBF7ED;
+  --info:                 #2D4A5A;
 
-  /* Radii — restrained, not pill */
-  --radius-xs:  3px;
-  --radius-sm:  5px;
-  --radius:     7px;
-  --radius-md:  8px;
-  --radius-lg:  10px;
-  --radius-xl:  12px;
+  --secondary:            #EBE3D2;
+  --secondary-foreground: #15201C;
+  --card:                 #FBF7ED;
+  --card-foreground:      #15201C;
+  --popover:              #FBF7ED;
+  --popover-foreground:   #15201C;
 
-  /* Shadows — hairline depth, no glow */
-  --shadow-1: 0 1px 2px rgba(20, 17, 15, 0.04), 0 0 0 1px rgba(20, 17, 15, 0.04);
-  --shadow-2: 0 2px 4px rgba(20, 17, 15, 0.05), 0 1px 2px rgba(20, 17, 15, 0.04);
-  --shadow-3: 0 8px 24px -8px rgba(20, 17, 15, 0.12), 0 2px 4px rgba(20, 17, 15, 0.05);
+  /* Chunky radii — editorial cards */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius:     10px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --radius-2xl: 24px;
+
+  /* Warm soft shadows — editorial depth */
+  --shadow-1: 0 1px 0 rgba(21, 32, 28, 0.04), 0 2px 8px -2px rgba(21, 32, 28, 0.06);
+  --shadow-2: 0 2px 0 rgba(21, 32, 28, 0.04), 0 8px 20px -6px rgba(21, 32, 28, 0.10);
+  --shadow-3: 0 4px 0 rgba(21, 32, 28, 0.04), 0 20px 40px -12px rgba(21, 32, 28, 0.16);
+  /* Lifted button — slight offset for tactile feel */
+  --shadow-lift: 0 2px 0 var(--foreground);
 }
 
 .dark {
-  --background:           #0E0C0B;
-  --surface:              #161311;
-  --surface-2:            #1F1B19;
-  --surface-3:            #2A2522;
+  --background:           #0E1814;
+  --background-warm:      #14201B;
+  --surface:              #1A2620;
+  --surface-2:            #243029;
+  --surface-3:            #2F3A33;
 
-  --foreground:           #F2EFE9;
-  --muted:                #9C9890;
-  --muted-foreground:     #9C9890;
-  --subtle:               #6F6B63;
+  --foreground:           #F4EFE4;
+  --muted:                #A09A8D;
+  --muted-foreground:     #A09A8D;
+  --subtle:               #72706B;
 
-  --border:               #2A2522;
-  --border-strong:        #3A332F;
-  --input:                #3A332F;
-  --ring:                 #F2EFE9;
+  --border:               #2F3A33;
+  --border-strong:        #45504A;
+  --input:                #3A453F;
+  --ring:                 #F4EFE4;
 
-  --primary:              #F2EFE9;
-  --primary-hover:        #E3DFD7;
-  --primary-foreground:   #0E0C0B;
-  --primary-soft:         #1F1B19;
-  --primary-soft-strong:  #2A2522;
+  --primary:              #F4EFE4;
+  --primary-hover:        #E5DFD0;
+  --primary-foreground:   #0E1814;
+  --primary-soft:         #243029;
+  --primary-soft-strong:  #2F3A33;
 
-  --accent:               #FBA94C;
-  --accent-soft:          #2A1F11;
-  --accent-foreground:    #F2EFE9;
+  --accent:               #D2E84A;
+  --accent-hover:         #B8CC3A;
+  --accent-foreground:    #15201C;
+  --accent-soft:          #2A331C;
 
-  --success:              #4ADE80;
-  --success-soft:         #14361F;
-  --warning:              #F59E0B;
+  --secondary-pop:        #E07A4F;
+  --secondary-pop-soft:   #3A2418;
+
+  --success:              #6FAC85;
+  --success-soft:         #1F302A;
+  --warning:              #D49A56;
   --warning-soft:         #2A1F11;
-  --danger:               #F87171;
-  --danger-soft:          #2C1313;
-  --destructive:          #DC2626;
-  --destructive-foreground: #FFFFFF;
-  --info:                 #93C5FD;
+  --danger:               #D87575;
+  --danger-soft:          #3A1F1F;
+  --destructive:          #9A2D2D;
+  --destructive-foreground: #FBF7ED;
+  --info:                 #6FA0C5;
 
-  --secondary:            #1F1B19;
-  --secondary-foreground: #F2EFE9;
-  --card:                 #161311;
-  --card-foreground:      #F2EFE9;
-  --popover:              #161311;
-  --popover-foreground:   #F2EFE9;
+  --secondary:            #243029;
+  --secondary-foreground: #F4EFE4;
+  --card:                 #1A2620;
+  --card-foreground:      #F4EFE4;
+  --popover:              #1A2620;
+  --popover-foreground:   #F4EFE4;
 
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.03);
-  --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-3: 0 8px 24px -8px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-1: 0 1px 0 rgba(0, 0, 0, 0.2), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 2px 0 rgba(0, 0, 0, 0.3), 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 4px 0 rgba(0, 0, 0, 0.4), 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lift: 0 2px 0 var(--accent);
 }
 
 @theme inline {
@@ -126,10 +147,10 @@
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -137,9 +158,9 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: var(--font-latin), var(--font-cyrillic), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-latin), var(--font-cyrillic), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-serif), "Iowan Old Style", Georgia, serif;
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
-  --font-display: var(--font-latin), var(--font-cyrillic), system-ui, sans-serif;
 
   --radius-xs:  var(--radius-xs);
   --radius-sm:  var(--radius-sm);
@@ -147,6 +168,7 @@
   --radius-md:  var(--radius-md);
   --radius-lg:  var(--radius-lg);
   --radius-xl:  var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
 }
 
 /* =========================================================================
@@ -163,72 +185,94 @@ body {
   font-family: var(--font-latin), var(--font-cyrillic), system-ui, -apple-system, sans-serif;
   background: var(--background);
   color: var(--foreground);
-  font-size: 0.9375rem;          /* 15px — readable, not over-large */
+  font-size: 0.9375rem;
   line-height: 1.55;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -0.005em;
 }
 
-/* Locale-aware font switching: Montserrat for Latin, Onest for Cyrillic */
+/* Locale-aware font switching */
 html[data-locale="uz-latn"] body,
-html[data-locale="uz-latn"] h1,
-html[data-locale="uz-latn"] h2,
-html[data-locale="uz-latn"] h3,
-html[data-locale="uz-latn"] h4 {
+html[data-locale="uz-latn"] :not(.serif):not(.serif *) {
   font-family: var(--font-latin), system-ui, -apple-system, sans-serif;
 }
-
 html[data-locale="uz-cyrl"] body,
-html[data-locale="uz-cyrl"] h1,
-html[data-locale="uz-cyrl"] h2,
-html[data-locale="uz-cyrl"] h3,
-html[data-locale="uz-cyrl"] h4,
+html[data-locale="uz-cyrl"] :not(.serif):not(.serif *),
 html[data-locale="ru"] body,
-html[data-locale="ru"] h1,
-html[data-locale="ru"] h2,
-html[data-locale="ru"] h3,
-html[data-locale="ru"] h4 {
+html[data-locale="ru"] :not(.serif):not(.serif *) {
   font-family: var(--font-cyrillic), system-ui, -apple-system, sans-serif;
 }
 
-::selection {
-  background: var(--primary);
-  color: var(--primary-foreground);
-}
+::selection { background: var(--accent); color: var(--accent-foreground); }
 
+/* =========================================================================
+   TYPOGRAPHY — bold hierarchy
+   ========================================================================= */
 h1, h2, h3, h4, h5, h6 {
   font-family: inherit;
-  font-weight: 600;
-  letter-spacing: -0.018em;
-  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
   color: var(--foreground);
 }
-h1 { font-size: 1.875rem; font-weight: 700; letter-spacing: -0.028em; }
-h2 { font-size: 1.5rem;   font-weight: 700; letter-spacing: -0.024em; }
-h3 { font-size: 1.25rem;  font-weight: 600; letter-spacing: -0.02em; }
-h4 { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.015em; }
+h1 { font-size: clamp(2.25rem, 4vw, 3.5rem); font-weight: 800; letter-spacing: -0.035em; }
+h2 { font-size: clamp(1.625rem, 3vw, 2.25rem); font-weight: 700; letter-spacing: -0.03em; }
+h3 { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
+h4 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.015em; }
+
+/* Serif italic display — editorial signature */
+.serif {
+  font-family: var(--font-serif), Georgia, serif !important;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.0;
+}
+.serif-italic {
+  font-family: var(--font-serif), Georgia, serif !important;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.0;
+}
 
 .tabular { font-variant-numeric: tabular-nums; }
 .mono    { font-family: var(--font-mono); }
 
+/* Eyebrow — uppercase mini label */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Display number — big bold stat */
+.display-num {
+  font-family: var(--font-latin), system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
 /* =========================================================================
-   FORM CONTROLS — 40px default. Not over-large.
+   FORM CONTROLS
    ========================================================================= */
 input, select, textarea, button {
   font-family: inherit;
   font-size: 0.9375rem;
+  font-weight: 500;
 }
 input[type="text"], input[type="email"], input[type="password"],
 input[type="tel"], input[type="number"], input[type="search"],
 input[type="date"], input[type="datetime-local"], input[type="url"],
 input:not([type]), select, textarea {
-  min-height: 40px;
+  min-height: 44px;
 }
 
-button { font-weight: 500; }
-
 /* =========================================================================
-   FOCUS — visible, restrained
+   FOCUS
    ========================================================================= */
 *:focus-visible {
   outline: 2px solid var(--ring);
@@ -242,22 +286,65 @@ button { font-weight: 500; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--border-strong);
-  border-radius: 4px;
+  border-radius: 5px;
   border: 2px solid var(--background);
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--subtle); }
 
 /* =========================================================================
-   UTILITIES
+   CREATIVE TOUCHES — editorial decoration
    ========================================================================= */
-.surface     { background: var(--surface); }
-.surface-2   { background: var(--surface-2); }
-.surface-3   { background: var(--surface-3); }
-.hairline    { box-shadow: 0 0 0 1px var(--border); }
-.shadow-1    { box-shadow: var(--shadow-1); }
-.shadow-2    { box-shadow: var(--shadow-2); }
-.shadow-3    { box-shadow: var(--shadow-3); }
+.sticker { transform: rotate(-1.5deg); transition: transform 0.2s; }
+.sticker:hover { transform: rotate(0deg) scale(1.02); }
+.sticker-r { transform: rotate(1deg); transition: transform 0.2s; }
+.sticker-r:hover { transform: rotate(0deg) scale(1.02); }
 
-/* Hide scrollbar on horizontal nav strips */
+/* Underline animation for nav/links */
+.uline {
+  position: relative;
+  display: inline-block;
+}
+.uline::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 2px;
+  background: var(--foreground);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.uline:hover::after, .uline-active::after { transform: scaleX(1); }
+
+/* Card with editorial lift */
+.lift {
+  box-shadow: var(--shadow-2);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.lift:hover { transform: translateY(-1px); box-shadow: var(--shadow-3); }
+
+/* Grain / texture overlay (subtle paper feel) */
+.grain {
+  position: relative;
+}
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(21, 32, 28, 0.025) 1px, transparent 0);
+  background-size: 18px 18px;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* Hairline divider */
+.hairline { box-shadow: 0 0 0 1px var(--border); }
+
+/* Marker — highlight pill */
+.marker-citron {
+  background: linear-gradient(180deg, transparent 50%, var(--accent) 50%);
+  padding: 0 2px;
+}

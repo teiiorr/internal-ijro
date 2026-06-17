@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { resetPassword } from "@/server/actions/auth-flow";
 
 export default function ResetPasswordPage({ params }: { params: Promise<{ token: string }> }) {
@@ -29,28 +28,29 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
   }
 
   return (
-    <Card className="p-2">
-      <CardContent className="px-7 py-8 space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.reset.title")}</h1>
+    <div className="space-y-8">
+      <div className="text-left space-y-3">
+        <span className="eyebrow">№ 03 · Reset</span>
+        <h1 className="font-bold leading-[0.95] text-[2.5rem] tracking-[-0.035em]">
+          {t("auth.reset.title")}<span className="serif-italic">.</span>
+        </h1>
+      </div>
+      <form onSubmit={onSubmit} className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="password">{t("auth.reset.password")}</Label>
+          <Input id="password" name="password" type="password" required minLength={8} />
         </div>
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="password">{t("auth.reset.password")}</Label>
-            <Input id="password" name="password" type="password" required minLength={8} />
+        <div className="space-y-2">
+          <Label htmlFor="confirm">{t("auth.reset.confirm")}</Label>
+          <Input id="confirm" name="confirm" type="password" required minLength={8} />
+        </div>
+        {error && (
+          <div className="rounded-xl bg-[var(--danger-soft)] border-2 border-[var(--danger)] px-4 py-3">
+            <p className="text-sm font-bold text-[var(--danger)]">{error}</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirm">{t("auth.reset.confirm")}</Label>
-            <Input id="confirm" name="confirm" type="password" required minLength={8} />
-          </div>
-          {error && (
-            <div className="rounded-md bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
-              <p className="text-sm font-medium text-[var(--danger)]">{error}</p>
-            </div>
-          )}
-          <Button type="submit" className="w-full" size="lg">{t("auth.reset.submit")}</Button>
-        </form>
-      </CardContent>
-    </Card>
+        )}
+        <Button type="submit" className="w-full" size="lg">{t("auth.reset.submit")}</Button>
+      </form>
+    </div>
   );
 }

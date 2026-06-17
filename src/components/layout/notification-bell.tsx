@@ -72,27 +72,27 @@ export function NotificationBell() {
 
   return (
     <div ref={ref} className="relative">
-      <Button variant="ghost" size="icon" aria-label={t("nav.notifications")} onClick={toggle}>
+      <Button variant="ghost" size="icon" aria-label={t("nav.notifications")} onClick={toggle} className="relative">
         <Bell className="size-[18px]" />
         {unread > 0 && (
-          <span className="absolute top-1 right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[var(--danger)] text-white text-[10px] font-semibold tabular flex items-center justify-center ring-2 ring-[var(--surface)]">
+          <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] text-[10px] font-bold tabular flex items-center justify-center">
             {unread > 99 ? "99+" : unread}
           </span>
         )}
       </Button>
       {open && (
-        <div className="absolute right-0 mt-2 w-[360px] max-w-[calc(100vw-1rem)] rounded-md border border-[var(--border)] bg-[var(--popover)] shadow-[var(--shadow-3)] z-50 overflow-hidden">
-          <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between">
-            <p className="font-semibold text-sm">{t("nav.notifications")}</p>
+        <div className="absolute right-0 mt-2 w-[380px] max-w-[calc(100vw-1rem)] rounded-xl border-2 border-[var(--foreground)] bg-[var(--popover)] shadow-[var(--shadow-3)] z-50 overflow-hidden">
+          <div className="px-4 py-3 border-b-2 border-[var(--foreground)] flex items-center justify-between bg-[var(--surface-2)]">
+            <p className="font-bold text-sm uppercase tracking-wider">{t("nav.notifications")}</p>
             {unread > 0 && (
-              <button onClick={readAll} className="text-xs font-medium text-[var(--foreground)] inline-flex items-center gap-1.5 hover:underline">
+              <button onClick={readAll} className="text-xs font-bold text-[var(--foreground)] inline-flex items-center gap-1.5 uline">
                 <CheckCheck className="size-3.5" /> {t("notifications.markAllRead")}
               </button>
             )}
           </div>
           <div className="max-h-[60vh] overflow-y-auto">
             {items.length === 0 ? (
-              <p className="text-center text-sm text-[var(--muted)] py-10">{t("notifications.empty")}</p>
+              <p className="text-center text-sm text-[var(--muted)] font-medium py-10">{t("notifications.empty")}</p>
             ) : (
               items.map((n) => (
                 <Link
@@ -101,19 +101,19 @@ export function NotificationBell() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "block px-4 py-3 border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-2)] transition-colors relative",
-                    !n.isRead && "bg-[var(--surface-2)]"
+                    !n.isRead && "bg-[var(--accent-soft)]"
                   )}
                 >
-                  {!n.isRead && <span className="absolute left-2 top-1/2 -translate-y-1/2 size-1.5 rounded-full bg-[var(--foreground)]" />}
-                  <p className="text-[14px] font-medium leading-snug pl-3">{n.title}</p>
-                  {n.message && <p className="text-[12px] text-[var(--muted)] mt-1 leading-snug line-clamp-2 pl-3">{n.message}</p>}
-                  <p className="text-[11px] text-[var(--subtle)] mt-1 tabular pl-3">{formatDateTime(n.createdAt)}</p>
+                  {!n.isRead && <span className="absolute left-1.5 top-1/2 -translate-y-1/2 size-2 bg-[var(--accent)] rounded-sm" />}
+                  <p className="text-[14px] font-bold leading-snug pl-3">{n.title}</p>
+                  {n.message && <p className="text-[12px] text-[var(--muted)] mt-1 leading-snug line-clamp-2 pl-3 font-medium">{n.message}</p>}
+                  <p className="text-[11px] text-[var(--subtle)] mt-1 tabular pl-3 font-medium">{formatDateTime(n.createdAt)}</p>
                 </Link>
               ))
             )}
           </div>
-          <div className="px-4 py-2.5 border-t border-[var(--border)] bg-[var(--surface-2)]">
-            <Link href="/notifications" onClick={() => setOpen(false)} className="text-sm text-[var(--foreground)] font-medium hover:underline">
+          <div className="px-4 py-3 border-t-2 border-[var(--foreground)] bg-[var(--surface-2)]">
+            <Link href="/notifications" onClick={() => setOpen(false)} className="uline text-sm text-[var(--foreground)] font-bold">
               {t("notifications.viewAll")}
             </Link>
           </div>

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export function Logo({ size = 36, className }: { size?: number; className?: string }) {
+export function Logo({ size = 40, className }: { size?: number; className?: string }) {
   return (
     <svg
       width={size}
@@ -10,16 +10,20 @@ export function Logo({ size = 36, className }: { size?: number; className?: stri
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       aria-label="Ichki Ijro"
-      className={cn("rounded-md", className)}
+      className={cn("shrink-0", className)}
     >
-      <rect width="64" height="64" rx="10" className="fill-[var(--primary)]" />
+      {/* citron pop chip behind */}
+      <rect x="6" y="6" width="52" height="52" rx="14" className="fill-[var(--accent)]" />
+      {/* ink monogram square offset */}
+      <rect x="2" y="2" width="52" height="52" rx="14" className="fill-[var(--primary)]" />
       <g className="fill-[var(--primary-foreground)]">
-        <rect x="14" y="18" width="14" height="2.6" />
-        <rect x="19.7" y="18" width="2.6" height="28" />
-        <rect x="14" y="43.4" width="14" height="2.6" />
-        <rect x="36" y="18" width="14" height="2.6" />
-        <rect x="41.7" y="18" width="2.6" height="28" />
-        <rect x="36" y="43.4" width="14" height="2.6" />
+        {/* "II" serif-style mono */}
+        <rect x="10" y="14" width="14" height="3" rx="0.5"/>
+        <rect x="15.5" y="17" width="3" height="22"/>
+        <rect x="10" y="39" width="14" height="3" rx="0.5"/>
+        <rect x="32" y="14" width="14" height="3" rx="0.5"/>
+        <rect x="37.5" y="17" width="3" height="22"/>
+        <rect x="32" y="39" width="14" height="3" rx="0.5"/>
       </g>
     </svg>
   );

@@ -1,11 +1,12 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ichki Ijro">
-  <rect width="64" height="64" rx="10" fill="#14110F"/>
-  <g fill="#FAF9F5">
-    <rect x="14" y="18" width="14" height="2.6"/>
-    <rect x="19.7" y="18" width="2.6" height="28"/>
-    <rect x="14" y="43.4" width="14" height="2.6"/>
-    <rect x="36" y="18" width="14" height="2.6"/>
-    <rect x="41.7" y="18" width="2.6" height="28"/>
-    <rect x="36" y="43.4" width="14" height="2.6"/>
+  <rect x="6" y="6" width="52" height="52" rx="14" fill="#D2E84A"/>
+  <rect x="2" y="2" width="52" height="52" rx="14" fill="#15201C"/>
+  <g fill="#FBF7ED">
+    <rect x="10" y="14" width="14" height="3" rx="0.5"/>
+    <rect x="15.5" y="17" width="3" height="22"/>
+    <rect x="10" y="39" width="14" height="3" rx="0.5"/>
+    <rect x="32" y="14" width="14" height="3" rx="0.5"/>
+    <rect x="37.5" y="17" width="3" height="22"/>
+    <rect x="32" y="39" width="14" height="3" rx="0.5"/>
   </g>
 </svg>

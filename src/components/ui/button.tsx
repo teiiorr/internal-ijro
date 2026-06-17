@@ -4,35 +4,37 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium " +
-  "transition-colors duration-150 " +
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl font-bold tracking-tight " +
+  "transition-all duration-150 " +
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] " +
-  "disabled:pointer-events-none disabled:opacity-50",
+  "disabled:pointer-events-none disabled:opacity-50 " +
+  "active:translate-y-[2px] active:shadow-none",
   {
     variants: {
       variant: {
         default:
-          "bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary-hover)]",
+          "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-lift)] hover:-translate-y-[1px] hover:bg-[var(--primary-hover)]",
+        accent:
+          "bg-[var(--accent)] text-[var(--accent-foreground)] shadow-[var(--shadow-lift)] hover:-translate-y-[1px] hover:bg-[var(--accent-hover)]",
         destructive:
-          "bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:brightness-95",
+          "bg-[var(--destructive)] text-[var(--destructive-foreground)] shadow-[var(--shadow-lift)] hover:-translate-y-[1px] hover:brightness-110",
         outline:
-          "border border-[var(--border-strong)] bg-[var(--surface)] text-[var(--foreground)] " +
-          "hover:bg-[var(--surface-2)]",
+          "border-2 border-[var(--foreground)] bg-transparent text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]",
         secondary:
-          "bg-[var(--surface-2)] text-[var(--secondary-foreground)] border border-[var(--border)] hover:bg-[var(--surface-3)]",
+          "bg-[var(--surface-2)] text-[var(--foreground)] border-2 border-[var(--border-strong)] hover:bg-[var(--surface-3)]",
         ghost:
           "text-[var(--foreground)] hover:bg-[var(--surface-2)]",
         link:
-          "text-[var(--accent)] underline-offset-4 hover:underline px-0 h-auto rounded-none",
+          "text-[var(--foreground)] underline underline-offset-4 decoration-2 hover:decoration-[var(--accent)] px-0 h-auto",
         soft:
-          "bg-[var(--primary-soft)] text-[var(--foreground)] hover:bg-[var(--surface-3)]",
+          "bg-[var(--primary-soft)] text-[var(--foreground)] hover:bg-[var(--primary-soft-strong)]",
       },
       size: {
-        default: "h-10 px-4 text-[15px]",
-        sm:      "h-9  px-3 text-sm",
-        lg:      "h-11 px-5 text-[15px]",
-        xl:      "h-12 px-6 text-base",
-        icon:    "h-10 w-10",
+        default: "h-11 px-5 text-[15px]",
+        sm:      "h-9  px-3.5 text-sm",
+        lg:      "h-12 px-6 text-base",
+        xl:      "h-14 px-8 text-lg",
+        icon:    "h-11 w-11",
         "icon-sm": "h-9 w-9",
       },
     },

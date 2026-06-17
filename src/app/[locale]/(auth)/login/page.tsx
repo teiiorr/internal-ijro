@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 
 export default function LoginPage() {
@@ -32,43 +31,52 @@ export default function LoginPage() {
   }
 
   return (
-    <Card className="p-2">
-      <CardContent className="px-7 py-8 space-y-7">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">{t("auth.login.title")}</h1>
-          <p className="text-[var(--muted)]">{t("app.tagline")}</p>
+    <div className="space-y-8">
+      <div className="text-left space-y-3">
+        <span className="eyebrow">№ 01 · Login</span>
+        <h1 className="font-bold leading-[0.95] text-[2.75rem] tracking-[-0.035em]">
+          {t("auth.login.title")}
+          <span className="serif-italic block">—</span>
+        </h1>
+      </div>
+
+      <form onSubmit={onSubmit} className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="email">{t("auth.login.email")}</Label>
+          <Input id="email" name="email" type="email" autoComplete="email" required />
         </div>
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("auth.login.email")}</Label>
-            <Input id="email" name="email" type="email" autoComplete="email" required />
+        <div className="space-y-2">
+          <Label htmlFor="password">{t("auth.login.password")}</Label>
+          <Input id="password" name="password" type="password" autoComplete="current-password" required />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="totp">{t("auth.login.totp")}</Label>
+          <Input
+            id="totp"
+            name="totp"
+            inputMode="numeric"
+            maxLength={6}
+            placeholder="000 000"
+            className="tabular text-center text-lg tracking-[0.4em] font-bold"
+          />
+        </div>
+        {error && (
+          <div className="rounded-xl bg-[var(--danger-soft)] border-2 border-[var(--danger)] px-4 py-3">
+            <p className="text-sm font-bold text-[var(--danger)]">{error}</p>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">{t("auth.login.password")}</Label>
-            <Input id="password" name="password" type="password" autoComplete="current-password" required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="totp">{t("auth.login.totp")}</Label>
-            <Input id="totp" name="totp" inputMode="numeric" maxLength={6} placeholder="123 456" className="tabular text-center text-lg tracking-[0.3em]" />
-          </div>
-          {error && (
-            <div className="rounded-md bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
-              <p className="text-sm font-medium text-[var(--danger)]">{error}</p>
-            </div>
-          )}
-          <Button type="submit" className="w-full" size="lg" disabled={pending}>
-            {t("auth.login.submit")}
-          </Button>
-          <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-sm pt-2">
-            <Link href="/forgot-password" className="text-[var(--primary)] font-semibold hover:underline">
-              {t("auth.login.forgot")}
-            </Link>
-            <Link href="/register-contractor" className="text-[var(--primary)] font-semibold hover:underline">
-              {t("auth.login.registerContractor")}
-            </Link>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        )}
+        <Button type="submit" className="w-full" size="lg" disabled={pending}>
+          {t("auth.login.submit")}
+        </Button>
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-sm pt-3 border-t-2 border-[var(--border)]">
+          <Link href="/forgot-password" className="uline font-bold text-[var(--foreground)]">
+            {t("auth.login.forgot")}
+          </Link>
+          <Link href="/register-contractor" className="uline font-bold text-[var(--foreground)]">
+            {t("auth.login.registerContractor")}
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }

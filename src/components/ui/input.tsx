@@ -7,13 +7,12 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
       type={type}
       ref={ref}
       className={cn(
-        "flex h-10 w-full rounded-md border border-[var(--input)] bg-[var(--surface)] " +
-        "px-3 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] " +
+        "flex h-11 w-full rounded-xl border-2 border-[var(--input)] bg-[var(--surface)] " +
+        "px-3.5 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] font-medium " +
         "transition-colors duration-150 " +
-        "focus-visible:outline-none focus-visible:border-[var(--foreground)] " +
-        "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] " +
+        "focus-visible:outline-none focus-visible:border-[var(--foreground)] focus-visible:ring-0 " +
         "disabled:cursor-not-allowed disabled:opacity-50 " +
-        "file:mr-3 file:h-full file:rounded-sm file:border-0 file:bg-[var(--surface-2)] file:px-3 file:text-sm file:font-medium",
+        "file:mr-3 file:h-full file:rounded-md file:border-0 file:bg-[var(--surface-2)] file:px-3 file:text-sm file:font-bold",
         className
       )}
       {...props}

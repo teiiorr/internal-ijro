@@ -9,7 +9,7 @@ export function Table({ className, ...p }: React.HTMLAttributes<HTMLTableElement
   );
 }
 export function TableHeader({ className, ...p }: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn("[&_tr]:border-b [&_tr]:border-[var(--border)] bg-[var(--surface-2)]", className)} {...p} />;
+  return <thead className={cn("[&_tr]:border-b-2 [&_tr]:border-[var(--foreground)]", className)} {...p} />;
 }
 export function TableBody({ className, ...p }: React.HTMLAttributes<HTMLTableSectionElement>) {
   return <tbody className={cn("[&_tr:last-child]:border-0", className)} {...p} />;
@@ -18,8 +18,8 @@ export function TableRow({ className, ...p }: React.HTMLAttributes<HTMLTableRowE
   return <tr className={cn("border-b border-[var(--border)] transition-colors hover:bg-[var(--surface-2)]", className)} {...p} />;
 }
 export function TableHead({ className, ...p }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th className={cn("h-10 px-4 text-left align-middle text-xs font-semibold text-[var(--muted)] uppercase tracking-wider", className)} {...p} />;
+  return <th className={cn("h-11 px-4 text-left align-middle text-[11px] font-bold text-[var(--foreground)] uppercase tracking-[0.14em]", className)} {...p} />;
 }
 export function TableCell({ className, ...p }: React.TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td className={cn("px-4 py-3 align-middle", className)} {...p} />;
+  return <td className={cn("px-4 py-3.5 align-middle", className)} {...p} />;
 }
