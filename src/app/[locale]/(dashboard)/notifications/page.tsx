@@ -37,19 +37,21 @@ export default async function NotificationsPage() {
           <Card key={n.id} className={n.isRead ? "opacity-70" : ""}>
             <CardContent className="p-4">
               <div className="flex justify-between items-start gap-3">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     {!n.isRead && <Badge variant="default" className="h-2 w-2 p-0" />}
-                    <h3 className="font-medium">{n.title}</h3>
+                    <h3 className="font-semibold">{n.title}</h3>
                   </div>
                   {n.message && <p className="text-sm text-[var(--muted)] mt-1">{n.message}</p>}
+                </div>
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  <span className="text-xs text-[var(--muted)] whitespace-nowrap tabular">{new Date(n.createdAt).toLocaleString()}</span>
                   {n.link && (
-                    <Link href={n.link} className="text-sm text-[var(--primary)] hover:underline mt-1 inline-block">
-                      {t("notifications.open")} →
-                    </Link>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={n.link}>{t("notifications.open")}</Link>
+                    </Button>
                   )}
                 </div>
-                <span className="text-xs text-[var(--muted)]">{new Date(n.createdAt).toLocaleString()}</span>
               </div>
             </CardContent>
           </Card>
