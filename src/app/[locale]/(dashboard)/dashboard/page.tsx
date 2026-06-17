@@ -16,16 +16,13 @@ export default async function DashboardPage() {
   const greet = hour < 12 ? t("dashboard.greeting.morning") : hour < 18 ? t("dashboard.greeting.afternoon") : t("dashboard.greeting.evening");
 
   return (
-    <div className="space-y-8">
-      <div className="glass-card rounded-3xl p-7 sm:p-8 relative overflow-hidden">
-        <div aria-hidden className="orb orb-accent size-72 -top-20 -right-20 opacity-30" />
-        <div className="relative">
-          <p className="text-sm text-[var(--muted)] font-semibold mb-2">{greet},</p>
-          <h1 className="font-extrabold tracking-[-0.03em] text-[clamp(1.875rem,4vw,2.75rem)] leading-[1.05]">
-            <span className="gradient-text">{user.fullName}</span>
-          </h1>
-          <p className="text-[var(--muted)] mt-2 text-sm sm:text-base font-medium">{t(`positions.${user.position}` as "positions.direktor")}</p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <p className="text-sm text-[var(--muted)] font-medium mb-1">{greet},</p>
+        <h1 className="font-bold tracking-tight text-2xl sm:text-3xl">
+          <span className="gradient-text">{user.fullName}</span>
+        </h1>
+        <p className="text-[var(--muted)] mt-1 text-sm font-medium">{t(`positions.${user.position}` as "positions.direktor")}</p>
       </div>
 
       <InboxWidget userId={user.id} />

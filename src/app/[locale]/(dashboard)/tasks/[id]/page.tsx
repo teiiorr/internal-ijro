@@ -10,7 +10,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusControl } from "@/components/tasks/status-control";
 import { CommentsSection } from "@/components/tasks/comments-section";
-import { ChecklistSection } from "@/components/tasks/checklist-section";
 import { AttachmentsSection } from "@/components/tasks/attachments-section";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
 import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-card";
@@ -53,12 +52,12 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
     .orderBy(usersTbl.fullName);
 
   return (
-    <div className="space-y-6 max-w-5xl">
-      <div className="flex items-center gap-3 flex-wrap">
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/tasks"><ArrowLeft className="size-5" /></Link>
+    <div className="space-y-5 max-w-5xl">
+      <div className="flex items-center gap-2 flex-wrap">
+        <Button asChild variant="ghost" size="icon-sm">
+          <Link href="/tasks"><ArrowLeft className="size-4" /></Link>
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight flex-1">{data.task.title}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight flex-1 min-w-0 truncate">{data.task.title}</h1>
         <Button asChild variant="outline" size="sm">
           <a href={`/api/export/task/${data.task.id}`} target="_blank">
             <Printer className="size-4" /> {t("tasks.print")}
@@ -77,6 +76,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           createdAt: data.task.createdAt,
           registrationNumber: data.task.registrationNumber,
         }}
+        projectName={data.project?.name ?? null}
       />
 
       {isAssignee && myAssignment && (
@@ -99,42 +99,35 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
       {data.task.rejectionReason && (
         <Card>
-          <CardContent className="p-6">
-            <p className="text-sm text-[var(--danger)] font-medium mb-1">{t("tasks.sections.rejectionReason")}</p>
-            <p className="text-base">{data.task.rejectionReason}</p>
+          <CardContent className="p-5">
+            <p className="text-xs font-medium text-[var(--danger)] mb-1">{t("tasks.sections.rejectionReason")}</p>
+            <p className="text-sm">{data.task.rejectionReason}</p>
           </CardContent>
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid gap-5 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-5">
           <Card>
-            <CardContent className="p-6 space-y-3">
-              <h3 className="text-lg font-semibold">{t("tasks.sections.checklist")}</h3>
-              <ChecklistSection taskId={data.task.id} items={data.checklist} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6 space-y-3">
-              <h3 className="text-lg font-semibold">{t("tasks.sections.attachments")}</h3>
+            <CardContent className="p-5 space-y-3">
+              <h3 className="text-base font-semibold">{t("tasks.sections.attachments")}</h3>
               <AttachmentsSection taskId={data.task.id} attachments={data.attachments} canEdit={canEdit} />
             </CardContent>
           </Card>
 
           <Card>
-            <CardContent className="p-6 space-y-3">
-              <h3 className="text-lg font-semibold">{t("tasks.sections.comments")}</h3>
+            <CardContent className="p-5 space-y-3">
+              <h3 className="text-base font-semibold">{t("tasks.sections.comments")}</h3>
               <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
             </CardContent>
           </Card>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           {isCreator && (
             <Card>
-              <CardContent className="p-6 space-y-3">
-                <h3 className="text-lg font-semibold">{t("tasks.sections.statusSection")}</h3>
+              <CardContent className="p-5 space-y-3">
+                <h3 className="text-base font-semibold">{t("tasks.sections.statusSection")}</h3>
                 <StatusControl taskId={data.task.id} current={data.task.status} isCreator={isCreator} />
               </CardContent>
             </Card>
@@ -142,25 +135,16 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
           {data.dependencies.length > 0 && (
             <Card>
-              <CardContent className="p-6 space-y-3">
-                <h3 className="text-lg font-semibold">{t("tasks.sections.dependencies")}</h3>
+              <CardContent className="p-5 space-y-3">
+                <h3 className="text-base font-semibold">{t("tasks.sections.dependencies")}</h3>
                 <ul className="space-y-1 text-sm">
                   {data.dependencies.map((d) => (
                     <li key={d.id}>
-                      <Link href={`/tasks/${d.dependsOnTaskId}`} className="hover:underline">{d.dependsOnTitle}</Link>{" "}
+                      <Link href={`/tasks/${d.dependsOnTaskId}`} className="hover:underline font-medium">{d.dependsOnTitle}</Link>{" "}
                       <span className="text-[var(--muted)]">— {t(`status.${d.dependsOnStatus}` as "status.completed")}</span>
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-            </Card>
-          )}
-
-          {data.project && (
-            <Card>
-              <CardContent className="p-6 space-y-2">
-                <p className="text-[var(--muted)] text-sm">{t("common.project")}</p>
-                <p className="font-medium">{data.project.name}</p>
               </CardContent>
             </Card>
           )}
