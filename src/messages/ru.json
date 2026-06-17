@@ -86,7 +86,8 @@
       "success": "Скопировано",
       "failed": "Не удалось скопировать"
     },
-    "registrationLabel": "Номер"
+    "registrationLabel": "Номер",
+    "apply": "Применить"
   },
   "nav": {
     "dashboard": "Главная",
@@ -391,6 +392,42 @@
         "archive": "Архив",
         "other": "Другое"
       }
+    },
+    "derivedStatus": {
+      "not_started": "Не начат",
+      "in_progress": "В процессе",
+      "completed": "Завершён",
+      "on_hold": "Приостановлен"
+    },
+    "atRisk": "Просрочен",
+    "pause": "Приостановить",
+    "resume": "Возобновить",
+    "stages": {
+      "overall": "Общее выполнение",
+      "zeroCaption": "Процент рассчитается автоматически после добавления этапов.",
+      "computedCaption": "Рассчитано как среднее по {count} этапам",
+      "empty": "Этапов пока нет. Добавьте первый этап — процент рассчитается автоматически.",
+      "weight": "Вес",
+      "markDone": "Готово",
+      "addBtn": "Добавить этап",
+      "newTitle": "Название нового этапа",
+      "newPlaceholder": "Например: Сценарий",
+      "moveUp": "Вверх",
+      "moveDown": "Вниз"
+    },
+    "documents": {
+      "title": "Документы"
+    },
+    "details": {
+      "title": "Детали",
+      "startDate": "Дата начала",
+      "dueDate": "Срок"
+    },
+    "sort": {
+      "created": "По дате",
+      "name": "По названию",
+      "deadline": "По сроку",
+      "progress": "По прогрессу"
     }
   },
   "employees": {

@@ -9,7 +9,7 @@
     "save": "Saqlash",
     "saved": "Saqlandi",
     "cancel": "Bekor qilish",
-    "delete": "O'chirish",
+    "delete": "O‘chirish",
     "edit": "Tahrirlash",
     "add": "Qo'shish",
     "create": "Yaratish",
@@ -86,7 +86,8 @@
       "success": "Nusxa olindi",
       "failed": "Nusxa olib bo'lmadi"
     },
-    "registrationLabel": "Raqam"
+    "registrationLabel": "Raqam",
+    "apply": "Qoʻllash"
   },
   "nav": {
     "dashboard": "Bosh sahifa",
@@ -391,6 +392,42 @@
         "archive": "Arxiv",
         "other": "Boshqa"
       }
+    },
+    "derivedStatus": {
+      "not_started": "Boshlanmagan",
+      "in_progress": "Jarayonda",
+      "completed": "Yakunlangan",
+      "on_hold": "Toʻxtatilgan"
+    },
+    "atRisk": "Muddati o‘tgan",
+    "pause": "Toʻxtatish",
+    "resume": "Davom etish",
+    "stages": {
+      "overall": "Umumiy bajarilish",
+      "zeroCaption": "Bosqich qo‘shilishi bilan foiz avtomatik hisoblanadi.",
+      "computedCaption": "{count} ta bosqich o‘rtachasi bo‘yicha hisoblangan",
+      "empty": "Hali bosqich yo‘q. Birinchi bosqichni qo‘shing — foiz avtomatik hisoblanadi.",
+      "weight": "Vazn",
+      "markDone": "Yakunlandi",
+      "addBtn": "Bosqich qo‘shish",
+      "newTitle": "Yangi bosqich nomi",
+      "newPlaceholder": "Masalan: Ssenariy",
+      "moveUp": "Yuqoriga",
+      "moveDown": "Pastga"
+    },
+    "documents": {
+      "title": "Hujjatlar"
+    },
+    "details": {
+      "title": "Tafsilotlar",
+      "startDate": "Boshlanish sanasi",
+      "dueDate": "Tugash muddati"
+    },
+    "sort": {
+      "created": "Sanadan bo‘yicha",
+      "name": "Nom bo‘yicha",
+      "deadline": "Muddati bo‘yicha",
+      "progress": "Bajarilish bo‘yicha"
     }
   },
   "employees": {

@@ -86,7 +86,8 @@
       "success": "Нусха олинди",
       "failed": "Нусха олиб бўлмади"
     },
-    "registrationLabel": "Рақам"
+    "registrationLabel": "Рақам",
+    "apply": "Қўллаш"
   },
   "nav": {
     "dashboard": "Бош саҳифа",
@@ -391,6 +392,42 @@
         "archive": "Архив",
         "other": "Бошқа"
       }
+    },
+    "derivedStatus": {
+      "not_started": "Бошланмаган",
+      "in_progress": "Жараёнда",
+      "completed": "Якунланган",
+      "on_hold": "Тўхтатилган"
+    },
+    "atRisk": "Муддати ўтган",
+    "pause": "Тўхтатиш",
+    "resume": "Давом этиш",
+    "stages": {
+      "overall": "Умумий бажарилиш",
+      "zeroCaption": "Босқич қўшилиши билан фоиз автоматик ҳисобланади.",
+      "computedCaption": "{count} та босқич ўртачаси бўйича ҳисобланган",
+      "empty": "Ҳали босқич йўқ. Биринчи босқични қўшинг — фоиз автоматик ҳисобланади.",
+      "weight": "Вазн",
+      "markDone": "Якунланди",
+      "addBtn": "Босқич қўшиш",
+      "newTitle": "Янги босқич номи",
+      "newPlaceholder": "Масалан: Сценарий",
+      "moveUp": "Юқорига",
+      "moveDown": "Пастга"
+    },
+    "documents": {
+      "title": "Ҳужжатлар"
+    },
+    "details": {
+      "title": "Тафсилотлар",
+      "startDate": "Бошланиш санаси",
+      "dueDate": "Тугаш муддати"
+    },
+    "sort": {
+      "created": "Санадан бўйича",
+      "name": "Ном бўйича",
+      "deadline": "Муддати бўйича",
+      "progress": "Бажарилиш бўйича"
     }
   },
   "employees": {

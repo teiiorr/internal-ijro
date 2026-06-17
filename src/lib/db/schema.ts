@@ -204,6 +204,8 @@ export const projects = pgTable(
     budget: decimal("budget", { precision: 15, scale: 2 }),
     budgetCurrency: varchar("budget_currency", { length: 10 }).default("UZS").notNull(),
     progressPercentage: integer("progress_percentage").default(0).notNull(),
+    /** Manual override — currently only "on_hold". Derived status takes precedence when null. */
+    statusOverride: varchar("status_override", { length: 20 }),
     createdByUserId: uuid("created_by_user_id").references(() => users.id, {
       onDelete: "set null",
     }),
@@ -218,7 +220,7 @@ export const projects = pgTable(
   })
 );
 
-// ---------- 5.9 milestones ----------
+// ---------- 5.9 milestones (stages) ----------
 export const milestones = pgTable("milestones", {
   id: uuid("id").primaryKey().defaultRandom(),
   projectId: uuid("project_id")
@@ -229,6 +231,8 @@ export const milestones = pgTable("milestones", {
   orderIndex: integer("order_index").default(0).notNull(),
   deadline: date("deadline"),
   weight: integer("weight").default(1).notNull(),
+  /** Stage completion 0..100. Source of truth for project progress derivation. */
+  progress: integer("progress").default(0).notNull(),
   paymentAmount: decimal("payment_amount", { precision: 15, scale: 2 }),
   paymentStatus: varchar("payment_status", { length: 20 }).default("pending").notNull(),
   status: varchar("status", { length: 20 }).default("pending").notNull(),

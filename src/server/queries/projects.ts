@@ -36,8 +36,10 @@ export async function listProjects(f: ProjectFilters) {
       name: projects.name,
       type: projects.type,
       status: projects.status,
+      statusOverride: projects.statusOverride,
       progressPercentage: projects.progressPercentage,
       deadline: projects.deadline,
+      startDate: projects.startDate,
       curatorName: users.fullName,
       companyName: externalCompanies.name,
     })

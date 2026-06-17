@@ -16,6 +16,7 @@ import { requireUser, requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { storeFile } from "@/lib/upload";
+import { overallProgress } from "@/lib/projects/progress";
 
 const projectSchema = z.object({
   name: z.string().min(2).max(255),
@@ -126,16 +127,134 @@ export async function setMilestonePaymentStatus(milestoneId: string, paymentStat
   revalidatePath(`/projects/${row[0].projectId}`);
 }
 
+/**
+ * Recompute and persist the project's progress from its stages.
+ * Uses the pure `overallProgress` function — same logic as the unit tests.
+ * Single source of truth lives in src/lib/projects/progress.ts.
+ */
 async function recalcProjectProgress(projectId: string) {
-  const mls = await db.select().from(milestones).where(eq(milestones.projectId, projectId));
-  if (mls.length === 0) {
-    await db.update(projects).set({ progressPercentage: 0 }).where(eq(projects.id, projectId));
-    return;
-  }
-  const totalWeight = mls.reduce((s, m) => s + m.weight, 0);
-  const completedWeight = mls.filter((m) => m.status === "completed").reduce((s, m) => s + m.weight, 0);
-  const pct = totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0;
-  await db.update(projects).set({ progressPercentage: pct, updatedAt: new Date() }).where(eq(projects.id, projectId));
+  const mls = await db
+    .select({ progress: milestones.progress, weight: milestones.weight })
+    .from(milestones)
+    .where(eq(milestones.projectId, projectId));
+  const pct = overallProgress(mls);
+  await db
+    .update(projects)
+    .set({ progressPercentage: pct, updatedAt: new Date() })
+    .where(eq(projects.id, projectId));
+}
+
+/** Set a stage's progress (0..100). Server clamps; never trust client. */
+export async function setMilestoneProgress(milestoneId: string, progress: number) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const value = Math.max(0, Math.min(100, Math.round(Number(progress) || 0)));
+  const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
+  if (row.length === 0) throw new Error("not_found");
+  // Keep legacy `status` in sync so other parts of the app that still read it stay coherent.
+  const status = value >= 100 ? "completed" : value > 0 ? "in_progress" : "pending";
+  await db
+    .update(milestones)
+    .set({
+      progress: value,
+      status,
+      completedAt: value >= 100 ? new Date() : null,
+    })
+    .where(eq(milestones.id, milestoneId));
+  await recalcProjectProgress(row[0].projectId);
+  await logActivity({
+    userId: me.id,
+    action: "milestone.progress_changed",
+    entityType: "milestone",
+    entityId: milestoneId,
+    newValue: { progress: value },
+  });
+  revalidatePath(`/projects/${row[0].projectId}`);
+}
+
+const updateMilestoneSchema = z.object({
+  title: z.string().min(1).max(255).optional(),
+  weight: z.number().int().positive().optional(),
+  deadline: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+});
+export async function updateMilestone(
+  milestoneId: string,
+  input: z.infer<typeof updateMilestoneSchema>
+) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const parsed = updateMilestoneSchema.parse(input);
+  const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
+  if (row.length === 0) throw new Error("not_found");
+  await db
+    .update(milestones)
+    .set({
+      ...(parsed.title !== undefined && { title: parsed.title }),
+      ...(parsed.weight !== undefined && { weight: parsed.weight }),
+      ...(parsed.deadline !== undefined && { deadline: parsed.deadline }),
+      ...(parsed.description !== undefined && { description: parsed.description }),
+    })
+    .where(eq(milestones.id, milestoneId));
+  if (parsed.weight !== undefined) await recalcProjectProgress(row[0].projectId);
+  await logActivity({
+    userId: me.id,
+    action: "milestone.updated",
+    entityType: "milestone",
+    entityId: milestoneId,
+    newValue: parsed,
+  });
+  revalidatePath(`/projects/${row[0].projectId}`);
+}
+
+export async function deleteMilestone(milestoneId: string) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
+  if (row.length === 0) return;
+  await db.delete(milestones).where(eq(milestones.id, milestoneId));
+  await recalcProjectProgress(row[0].projectId);
+  await logActivity({
+    userId: me.id,
+    action: "milestone.deleted",
+    entityType: "milestone",
+    entityId: milestoneId,
+  });
+  revalidatePath(`/projects/${row[0].projectId}`);
+}
+
+/** Apply a new ordering to the project's stages. orderedIds must be a full list. */
+export async function reorderMilestones(projectId: string, orderedIds: string[]) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  await db.transaction(async (tx) => {
+    for (let i = 0; i < orderedIds.length; i++) {
+      await tx
+        .update(milestones)
+        .set({ orderIndex: i })
+        .where(and(eq(milestones.id, orderedIds[i]), eq(milestones.projectId, projectId)));
+    }
+  });
+  await logActivity({
+    userId: me.id,
+    action: "milestone.reordered",
+    entityType: "project",
+    entityId: projectId,
+    newValue: { count: orderedIds.length },
+  });
+  revalidatePath(`/projects/${projectId}`);
+}
+
+/** Toggle the manual on-hold override for a project. */
+export async function setProjectOnHold(projectId: string, onHold: boolean) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  await db
+    .update(projects)
+    .set({ statusOverride: onHold ? "on_hold" : null, updatedAt: new Date() })
+    .where(eq(projects.id, projectId));
+  await logActivity({
+    userId: me.id,
+    action: onHold ? "project.on_hold" : "project.resumed",
+    entityType: "project",
+    entityId: projectId,
+  });
+  revalidatePath(`/projects/${projectId}`);
 }
 
 // Project messages (chat)
