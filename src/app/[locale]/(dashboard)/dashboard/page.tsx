@@ -19,7 +19,7 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div>
         <p className="text-sm text-[var(--muted)] font-medium mb-1">{greet},</p>
-        <h1 className="font-bold tracking-tight text-2xl sm:text-3xl">
+        <h1 className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl break-words">
           <span className="gradient-text">{user.fullName}</span>
         </h1>
         <p className="text-[var(--muted)] mt-1 text-sm font-medium">{t(`positions.${user.position}` as "positions.direktor")}</p>

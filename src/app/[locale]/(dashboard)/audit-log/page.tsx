@@ -31,9 +31,9 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">{t("audit.pageTitle")}</h1>
-        <Button asChild variant="outline">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("audit.pageTitle")}</h1>
+        <Button asChild variant="outline" size="default" className="shrink-0">
           <Link href={`/api/export/audit?${new URLSearchParams(sp as Record<string, string>).toString()}`}>
             <Download className="size-4" /> XLSX
           </Link>

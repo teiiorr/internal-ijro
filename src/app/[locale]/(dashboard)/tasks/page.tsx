@@ -92,16 +92,14 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="flex items-start justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
-        </div>
-        <div className="flex gap-2">
-          <Button asChild variant="outline" size="lg" className="hidden sm:inline-flex">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
+        <div className="flex gap-2 shrink-0">
+          <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
             <a href={`/api/export/tasks?scope=${scope}`}><Download className="size-4" /> XLSX</a>
           </Button>
           {canCreate && (
-            <Button asChild size="lg">
+            <Button asChild size="default">
               <Link href="/tasks/new"><Plus className="size-4" /> <span className="hidden sm:inline">{t("tasks.newTitle")}</span><span className="sm:hidden">{t("common.create")}</span></Link>
             </Button>
           )}

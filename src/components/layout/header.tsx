@@ -44,9 +44,10 @@ export function Header({ userName }: { userName: string }) {
 
   return (
     <header className="sticky top-0 z-30 glass-bar">
-      <div className="h-[68px] flex items-center gap-3 px-4 md:px-8 max-w-[1500px] mx-auto">
-        <Link href="/dashboard" className="flex items-center gap-2.5 mr-3 shrink-0">
-          <Logo size={48} />
+      <div className="h-[60px] sm:h-[68px] flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 max-w-[1500px] mx-auto">
+        <Link href="/dashboard" className="flex items-center gap-2 sm:gap-2.5 mr-1 sm:mr-3 shrink-0">
+          <div className="sm:hidden"><Logo size={40} /></div>
+          <div className="hidden sm:block"><Logo size={48} /></div>
           <span className="hidden sm:inline font-extrabold text-[17px] tracking-tight text-[var(--foreground)]">
             {t("app.name")}
           </span>
@@ -64,16 +65,16 @@ export function Header({ userName }: { userName: string }) {
           </div>
         </form>
 
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
           <NotificationBell />
           <LanguageSwitcher />
           <ThemeToggle />
 
-          <div ref={menuRef} className="relative ml-1">
+          <div ref={menuRef} className="relative ml-0.5 sm:ml-1">
             <button
               onClick={() => setMenuOpen((v) => !v)}
               className={cn(
-                "flex items-center gap-2.5 rounded-2xl pl-1 pr-3 py-1 transition-colors",
+                "flex items-center gap-2.5 rounded-2xl pl-1 pr-1 sm:pr-3 py-1 transition-colors",
                 menuOpen ? "bg-[var(--glass-fill-strong)]" : "hover:bg-[var(--glass-fill)]"
               )}
             >

@@ -91,21 +91,21 @@ export default async function ProjectsPage({
   return (
     <div className="space-y-5 sm:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
-        <div className="flex gap-2">
-          <Button asChild variant="outline" size="default">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
+        <div className="flex gap-2 shrink-0">
+          <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
             <a href="/api/export/projects"><Download className="size-4" /> XLSX</a>
           </Button>
           {canCreate && (
             <Button asChild size="default">
-              <Link href="/projects/new"><Plus className="size-4" /> {t("projects.newTitle")}</Link>
+              <Link href="/projects/new"><Plus className="size-4" /> <span className="hidden sm:inline">{t("projects.newTitle")}</span><span className="sm:hidden">{t("common.create")}</span></Link>
             </Button>
           )}
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto no-scrollbar">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+        <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-1">
           <FilterTab value="all"         label={t("common.all")} count={counts.all} />
           <FilterTab value="not_started" label={t("projects.derivedStatus.not_started")} count={counts.not_started} />
           <FilterTab value="in_progress" label={t("projects.derivedStatus.in_progress")} count={counts.in_progress} />
@@ -114,27 +114,69 @@ export default async function ProjectsPage({
           <FilterTab value="at_risk"     label={t("projects.atRisk")} count={counts.at_risk} />
         </div>
 
-        <form className="ml-auto" action="/projects">
+        <form className="sm:ml-auto flex items-center gap-2" action="/projects">
           <input type="hidden" name="status" value={statusFilter} />
           <select
             name="sort"
             defaultValue={sort}
-            className="h-10 rounded-md border border-[var(--input)] bg-[var(--surface)] px-3 text-sm font-medium"
-            // Form auto-submits on change via reflected URL (use a controlled approach client-side normally)
+            className="h-10 flex-1 sm:flex-initial rounded-md border border-[var(--input)] bg-[var(--surface)] px-3 text-sm font-medium"
           >
             <option value="created">{t("projects.sort.created")}</option>
             <option value="name">{t("projects.sort.name")}</option>
             <option value="deadline">{t("projects.sort.deadline")}</option>
             <option value="progress">{t("projects.sort.progress")}</option>
           </select>
-          <noscript><Button type="submit" size="sm" className="ml-2">{t("common.apply")}</Button></noscript>
-          <Button type="submit" size="sm" variant="ghost" className="ml-1">
+          <Button type="submit" size="sm" variant="ghost">
             {t("common.apply")}
           </Button>
         </form>
       </div>
 
-      <Card>
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-2">
+        {filtered.map((p) => {
+          const variant: "default" | "secondary" | "warning" | "success" =
+            p.derived === "completed" ? "success"
+            : p.derived === "on_hold" ? "warning"
+            : p.derived === "in_progress" ? "default"
+            : "secondary";
+          return (
+            <Link
+              key={p.id}
+              href={`/projects/${p.id}`}
+              className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 active:scale-[0.99] transition-transform"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-[15px] leading-snug inline-flex items-center gap-2 break-words">
+                    {p.name}
+                    {p.atRisk && <AlertTriangle className="size-3.5 text-[var(--danger)] shrink-0" />}
+                  </p>
+                  <p className="text-xs text-[var(--muted)] mt-1">
+                    {t(`projects.type.${p.type}` as "projects.type.internal")} · {p.curatorName ?? t("common.emptyValue")}
+                  </p>
+                </div>
+                <Badge variant={variant}>{t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}</Badge>
+              </div>
+              <div className="flex items-center gap-3 mt-3">
+                <div className="flex-1 h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
+                  <div className="h-full rounded-full bg-[var(--foreground)]" style={{ width: `${p.progressPercentage}%` }} />
+                </div>
+                <span className="text-xs font-semibold tabular w-8 text-right">{p.progressPercentage}%</span>
+              </div>
+              {p.deadline && (
+                <p className="text-xs text-[var(--muted)] mt-2">{t("projects.headers.deadline")}: {formatDate(p.deadline)}</p>
+              )}
+            </Link>
+          );
+        })}
+        {filtered.length === 0 && (
+          <Card><CardContent className="text-center py-10 text-[var(--muted)] text-sm">{t("projects.empty")}</CardContent></Card>
+        )}
+      </div>
+
+      {/* Desktop table view */}
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
