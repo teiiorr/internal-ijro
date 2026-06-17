@@ -8,12 +8,7 @@ import { Logo } from "@/components/logo";
 export default function LandingPage() {
   const t = useTranslations();
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* Decorative floating orbs */}
-      <div aria-hidden className="orb orb-primary size-[420px] -top-32 -left-32" />
-      <div aria-hidden className="orb orb-accent size-[380px] -bottom-24 -right-20" />
-      <div aria-hidden className="orb orb-success size-[260px] top-1/3 right-1/4 opacity-30" />
-
+    <div className="min-h-screen flex flex-col">
       {/* Floating glass header */}
       <header className="mx-3 sm:mx-6 mt-3 sm:mt-4 rounded-3xl glass-strong">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 px-5 sm:px-7 py-3">
