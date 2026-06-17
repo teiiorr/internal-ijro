@@ -99,7 +99,7 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
         </div>
       </div>
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-      <Button type="submit" disabled={pending}>{t("projects.new")}</Button>
+      <Button type="submit" disabled={pending}>{t("projects.newTitle")}</Button>
     </form>
   );
 }

@@ -98,7 +98,7 @@ export default async function ProjectsPage({
           </Button>
           {canCreate && (
             <Button asChild size="default">
-              <Link href="/projects/new"><Plus className="size-4" /> {t("projects.new")}</Link>
+              <Link href="/projects/new"><Plus className="size-4" /> {t("projects.newTitle")}</Link>
             </Button>
           )}
         </div>

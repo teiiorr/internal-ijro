@@ -102,7 +102,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
           </Button>
           {canCreate && (
             <Button asChild size="lg">
-              <Link href="/tasks/new"><Plus className="size-4" /> <span className="hidden sm:inline">{t("tasks.new")}</span><span className="sm:hidden">Yangi</span></Link>
+              <Link href="/tasks/new"><Plus className="size-4" /> <span className="hidden sm:inline">{t("tasks.newTitle")}</span><span className="sm:hidden">{t("common.create")}</span></Link>
             </Button>
           )}
         </div>

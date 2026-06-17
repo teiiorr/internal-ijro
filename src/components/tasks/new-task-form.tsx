@@ -168,7 +168,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
       </div>
 
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-      <Button type="submit" disabled={pending} size="lg">{t("tasks.new")}</Button>
+      <Button type="submit" disabled={pending} size="lg">{t("tasks.newTitle")}</Button>
     </form>
   );
 }
