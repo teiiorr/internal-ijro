@@ -32,7 +32,7 @@ export function LeavesCalendar({ items }: { items: Item[] }) {
       </div>
       <div className="grid grid-cols-7 gap-px bg-[var(--border)] rounded-lg overflow-hidden text-sm">
         {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d) => (
-          <div key={d} className="bg-[var(--secondary)] px-2 py-1 text-xs uppercase text-[var(--muted)]">{d}</div>
+          <div key={d} className="bg-[var(--secondary)] px-2 py-1 text-xs font-semibold text-[var(--muted)]">{d}</div>
         ))}
         {days.map((d) => {
           const dayItems = items.filter((it) => {

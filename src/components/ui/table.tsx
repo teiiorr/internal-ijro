@@ -18,7 +18,7 @@ export function TableRow({ className, ...p }: React.HTMLAttributes<HTMLTableRowE
   return <tr className={cn("border-b border-[var(--border)] transition-colors hover:bg-[var(--glass-fill-soft)]", className)} {...p} />;
 }
 export function TableHead({ className, ...p }: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  return <th className={cn("h-11 px-4 text-left align-middle text-[11px] font-bold text-[var(--muted)] uppercase tracking-[0.14em]", className)} {...p} />;
+  return <th className={cn("h-11 px-4 text-left align-middle text-[13px] font-semibold text-[var(--muted)]", className)} {...p} />;
 }
 export function TableCell({ className, ...p }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return <td className={cn("px-4 py-3 align-middle", className)} {...p} />;

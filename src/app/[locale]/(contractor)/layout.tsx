@@ -53,7 +53,7 @@ export default async function ContractorLayout({ children }: { children: React.R
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <aside className="hidden md:block w-[272px] shrink-0">
             <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass-strong">
-              <p className="px-3 py-2 text-[11px] uppercase tracking-widest text-[var(--muted)] font-bold">{t("contractor.portalLabel")}</p>
+              <p className="px-3 py-2 text-xs text-[var(--muted)] font-semibold">{t("contractor.portalLabel")}</p>
               <nav className="space-y-1">
                 {NAV.map(({ href, icon: Icon, label }) => (
                   <Link key={href} href={href} className="flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--glass-fill)] transition-colors">
