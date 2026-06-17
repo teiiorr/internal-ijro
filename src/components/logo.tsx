@@ -1,33 +1,23 @@
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * BKRM logo on a dark gradient backdrop so the white logo stays visible
- * regardless of theme. Drop the source file at `public/bkrm-logo.png`
- * (PNG with transparent background, white artwork).
+ * Ichki Ijro mark — bold "II" monogram on a dark indigo→violet gradient.
+ * Works in both themes without depending on any external image file.
  */
 export function Logo({ size = 56, className }: { size?: number; className?: string }) {
-  const padding = Math.round(size * 0.14);
   return (
     <div
       className={cn(
         "relative shrink-0 grid place-items-center rounded-2xl overflow-hidden",
         "bg-gradient-to-br from-[#0E1330] via-[#1B2050] to-[#3A2F7A]",
-        "shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_6px_18px_-4px_rgba(14,19,48,0.35)]",
+        "shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_22px_-6px_rgba(14,19,48,0.45)]",
+        "text-white font-extrabold tracking-[-0.04em] leading-none select-none",
         className
       )}
-      style={{ width: size, height: size, padding }}
-      aria-label="Bolalar Kontentini Rivojlantirish Markazi"
+      style={{ width: size, height: size, fontSize: size * 0.45 }}
+      aria-label="Ichki Ijro"
     >
-      <Image
-        src="/bkrm-logo.png"
-        alt="BKRM"
-        width={size}
-        height={size}
-        priority
-        sizes={`${size}px`}
-        className="h-full w-full object-contain"
-      />
+      <span>II</span>
     </div>
   );
 }
