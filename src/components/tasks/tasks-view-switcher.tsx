@@ -8,6 +8,7 @@ import Link from "next/link";
 import { List, Calendar as CalendarIcon, Inbox, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { deadlineRelative } from "@/lib/dates";
+import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { EmptyState } from "@/components/empty-state";
 
 type T = {
@@ -21,18 +22,8 @@ type T = {
 };
 
 function DeadlinePill({ deadline, completed }: { deadline: Date | string | null; completed: boolean }) {
-  const rel = deadlineRelative(deadline, { completed });
   if (!deadline) return <span className="text-[var(--subtle)] text-sm">—</span>;
-  return (
-    <span className={cn(
-      "inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap tabular",
-      rel.tone === "overdue" ? "bg-[var(--danger-soft)] text-[var(--danger)]" :
-      rel.tone === "soon" || rel.tone === "today" ? "bg-[var(--warning-soft)] text-[var(--warning)]" :
-      "bg-[var(--surface-3)] text-[var(--muted)]"
-    )}>
-      {rel.text}
-    </span>
-  );
+  return <DeadlineCountdown deadline={deadline} completed={completed} />;
 }
 
 export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {

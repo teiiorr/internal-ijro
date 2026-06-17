@@ -3,19 +3,9 @@ import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { Inbox, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
 import { inboxAwaitingMyApproval, inboxMyActive, type InboxItem } from "@/server/queries/inbox";
-import { deadlineRelative } from "@/lib/dates";
-
-function Pill({ tone, children }: { tone: "overdue" | "soon" | "today" | "default"; children: React.ReactNode }) {
-  const cls =
-    tone === "overdue" ? "bg-[var(--danger-soft)] text-[var(--danger)]"
-    : tone === "today" ? "bg-[var(--warning-soft)] text-[var(--warning)]"
-    : tone === "soon" ? "bg-[var(--warning-soft)] text-[var(--warning)]"
-    : "bg-[var(--surface-3)] text-[var(--muted)]";
-  return <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full ${cls} tabular`}>{children}</span>;
-}
+import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 
 function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
-  const rel = deadlineRelative(item.deadline);
   return (
     <Link
       href={`/tasks/${item.id}`}
@@ -28,7 +18,7 @@ function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
           {prefix && <span>· {prefix} {item.responseFromName ?? item.creatorName}</span>}
         </div>
       </div>
-      {item.deadline && <Pill tone={rel.tone}>{rel.text}</Pill>}
+      <DeadlineCountdown deadline={item.deadline} />
       <ChevronRight className="size-4 text-[var(--subtle)] group-hover:translate-x-0.5 transition-transform" />
     </Link>
   );
