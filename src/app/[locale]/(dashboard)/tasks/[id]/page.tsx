@@ -57,7 +57,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
           <Link href="/tasks"><ArrowLeft className="size-4" /></Link>
         </Button>
-        <h1 className="text-lg sm:text-xl font-bold tracking-tight leading-snug flex-1 min-w-0 break-words">
+        <h1 className="text-base sm:text-lg font-semibold tracking-tight leading-snug flex-1 min-w-0 break-words">
           {data.task.title}
         </h1>
         <Button asChild variant="outline" size="sm" className="shrink-0">
@@ -108,24 +108,8 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         </Card>
       )}
 
-      <div className="grid gap-5 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-5">
-          <Card>
-            <CardContent className="p-5 space-y-3">
-              <h3 className="text-base font-semibold">{t("tasks.sections.attachments")}</h3>
-              <AttachmentsSection taskId={data.task.id} attachments={data.attachments} canEdit={canEdit} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-5 space-y-3">
-              <h3 className="text-base font-semibold">{t("tasks.sections.comments")}</h3>
-              <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-5">
+      {(isCreator || data.dependencies.length > 0) && (
+        <div className="grid gap-5 md:grid-cols-2">
           {isCreator && (
             <Card>
               <CardContent className="p-5 space-y-3">
@@ -151,6 +135,22 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
             </Card>
           )}
         </div>
+      )}
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <Card>
+          <CardContent className="p-5 space-y-3">
+            <h3 className="text-base font-semibold">{t("tasks.sections.attachments")}</h3>
+            <AttachmentsSection taskId={data.task.id} attachments={data.attachments} canEdit={canEdit} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-5 space-y-3">
+            <h3 className="text-base font-semibold">{t("tasks.sections.comments")}</h3>
+            <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
