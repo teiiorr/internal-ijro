@@ -244,13 +244,9 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Gradient text — kept for selective hero accents */
-.gradient-text {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+/* gradient-text deprecated — flat foreground colour everywhere now.
+   Class kept to avoid touching every call-site; emits no gradient. */
+.gradient-text { color: var(--foreground); }
 
 /* =========================================================================
    FORM CONTROLS

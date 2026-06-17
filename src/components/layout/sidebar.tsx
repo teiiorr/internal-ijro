@@ -69,7 +69,7 @@ export function Sidebar({ position }: { position: Position }) {
                       className={cn(
                         "group flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold relative transition-all duration-200",
                         active
-                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.30),0_8px_22px_-4px_var(--primary-glow)]"
+                          ? "bg-[var(--primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.20)]"
                           : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--glass-fill)]"
                       )}
                     >

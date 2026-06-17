@@ -9,8 +9,8 @@ export function Logo({ size = 56, className }: { size?: number; className?: stri
     <div
       className={cn(
         "relative shrink-0 grid place-items-center rounded-2xl overflow-hidden",
-        "bg-gradient-to-br from-[#0E1330] via-[#1B2050] to-[#3A2F7A]",
-        "shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_8px_22px_-6px_rgba(14,19,48,0.45)]",
+        "bg-[#15172D]",
+        "shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_6px_18px_-6px_rgba(14,19,48,0.4)]",
         "text-white font-extrabold tracking-[-0.04em] leading-none select-none",
         className
       )}

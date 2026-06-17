@@ -15,7 +15,7 @@ function Avatar({ name }: { name: string }) {
   const parts = name.trim().split(/\s+/).slice(0, 2);
   const initials = parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
   return (
-    <div className="size-9 rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] text-white flex items-center justify-center text-[12px] font-extrabold shadow-[inset_0_1px_0_rgba(255,255,255,0.30),0_4px_12px_-2px_var(--primary-glow)]">
+    <div className="size-9 rounded-2xl bg-[var(--primary)] text-white flex items-center justify-center text-[12px] font-extrabold shadow-[inset_0_1px_0_rgba(255,255,255,0.20)]">
       {initials}
     </div>
   );

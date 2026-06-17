@@ -75,7 +75,7 @@ export function NotificationBell() {
       <Button variant="ghost" size="icon" aria-label={t("nav.notifications")} onClick={toggle} className="relative">
         <Bell className="size-[19px]" />
         {unread > 0 && (
-          <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-hover)] text-white text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--background-2)] shadow-[0_2px_6px_var(--accent-glow)]">
+          <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--background-2)]">
             {unread > 99 ? "99+" : unread}
           </span>
         )}
@@ -104,7 +104,7 @@ export function NotificationBell() {
                     !n.isRead && "bg-[var(--primary-soft)]"
                   )}
                 >
-                  {!n.isRead && <span className="absolute left-2 top-1/2 -translate-y-1/2 size-2 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-[0_0_8px_var(--primary-glow)]" />}
+                  {!n.isRead && <span className="absolute left-2 top-1/2 -translate-y-1/2 size-2 rounded-full bg-[var(--primary)]" />}
                   <p className="text-[14px] font-bold leading-snug pl-3">{n.title}</p>
                   {n.message && <p className="text-[12px] text-[var(--muted)] mt-1 leading-snug line-clamp-2 pl-3 font-medium">{n.message}</p>}
                   <p className="text-[11px] text-[var(--subtle)] mt-1 tabular pl-3 font-medium">{formatDateTime(n.createdAt)}</p>
