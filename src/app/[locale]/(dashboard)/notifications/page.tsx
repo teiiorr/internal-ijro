@@ -7,7 +7,6 @@ import { db } from "@/lib/db";
 import { notifications } from "@/lib/db/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { markAllRead } from "@/server/actions/notifications";
 import { CheckCheck } from "lucide-react";
 
@@ -39,7 +38,7 @@ export default async function NotificationsPage() {
               <div className="flex justify-between items-start gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    {!n.isRead && <Badge variant="default" className="h-2 w-2 p-0" />}
+                    {!n.isRead && <span className="size-2 rounded-full bg-[var(--primary)] shrink-0" />}
                     <h3 className="font-semibold">{n.title}</h3>
                   </div>
                   {n.message && <p className="text-sm text-[var(--muted)] mt-1">{n.message}</p>}
