@@ -53,12 +53,14 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="space-y-5 max-w-5xl">
-      <div className="flex items-center gap-2 flex-wrap">
-        <Button asChild variant="ghost" size="icon-sm">
+      <div className="flex items-start gap-2 flex-wrap">
+        <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
           <Link href="/tasks"><ArrowLeft className="size-4" /></Link>
         </Button>
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight flex-1 min-w-0 truncate">{data.task.title}</h1>
-        <Button asChild variant="outline" size="sm">
+        <h1 className="text-lg sm:text-xl font-bold tracking-tight leading-snug flex-1 min-w-0 break-words">
+          {data.task.title}
+        </h1>
+        <Button asChild variant="outline" size="sm" className="shrink-0">
           <a href={`/api/export/task/${data.task.id}`} target="_blank">
             <Printer className="size-4" /> {t("tasks.print")}
           </a>
