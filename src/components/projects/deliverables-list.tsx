@@ -64,7 +64,7 @@ export function DeliverablesList({
     <div className="space-y-3">
       <div className="space-y-2">
         {items.map((d) => (
-          <div key={d.id} className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 space-y-3">
+          <div key={d.id} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
                 <a href={d.fileUrl} className="font-semibold hover:underline">{d.fileName}</a>
@@ -93,7 +93,7 @@ export function DeliverablesList({
                   <Button
                     key={s}
                     size="sm"
-                    variant={s === "approved" ? "default" : s === "rejected" ? "destructive" : "glass"}
+                    variant={s === "approved" ? "default" : s === "rejected" ? "destructive" : "outline"}
                     disabled={pending}
                     onClick={() => start(async () => { await reviewDeliverable(d.id, s, feedback[d.id]); })}
                   >
@@ -108,7 +108,7 @@ export function DeliverablesList({
       </div>
 
       {canSubmit && (
-        <form onSubmit={onSubmit} className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 space-y-3">
+        <form onSubmit={onSubmit} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
           <h4 className="font-semibold">{t("projects.deliverables.submit")}</h4>
           <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-2">

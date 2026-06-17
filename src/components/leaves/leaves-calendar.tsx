@@ -41,7 +41,7 @@ export function LeavesCalendar({ items }: { items: Item[] }) {
             return isWithinInterval(d, { start: s, end: e });
           });
           return (
-            <div key={d.toISOString()} className="bg-[var(--background-elevated)] min-h-[80px] p-1.5 space-y-0.5">
+            <div key={d.toISOString()} className="bg-[var(--surface)] min-h-[80px] p-1.5 space-y-0.5">
               <div className="text-xs text-[var(--muted)]">{format(d, "d")}</div>
               {dayItems.slice(0, 3).map((it) => (
                 <div key={`${it.id}-${d.toISOString()}`} className={cn("truncate text-xs rounded px-1.5 py-0.5", STATUS_BG[it.status] ?? "bg-[var(--accent)]")}>

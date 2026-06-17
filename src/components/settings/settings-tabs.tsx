@@ -31,7 +31,7 @@ type Init = {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Card className="p-7">
-      <h2 className="font-display text-lg font-bold tracking-tight mb-5">{title}</h2>
+      <h2 className="text-lg font-bold tracking-tight mb-5">{title}</h2>
       {children}
     </Card>
   );

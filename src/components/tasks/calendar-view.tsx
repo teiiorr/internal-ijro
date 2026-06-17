@@ -35,7 +35,7 @@ export function CalendarView({ tasks }: { tasks: Item[] }) {
             <div
               key={d.toISOString()}
               className={cn(
-                "bg-[var(--background-elevated)] min-h-[100px] p-2 space-y-1",
+                "bg-[var(--surface)] min-h-[100px] p-2 space-y-1",
                 !isSameMonth(d, cursor) && "opacity-50",
                 isSameDay(d, new Date()) && "ring-2 ring-inset ring-[var(--primary)]"
               )}

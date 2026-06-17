@@ -23,9 +23,9 @@ export default async function ProjectsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="font-display text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
         <div className="flex gap-2">
-          <Button asChild variant="glass" size="default">
+          <Button asChild variant="outline" size="default">
             <a href="/api/export/projects"><Download className="size-4" /> XLSX</a>
           </Button>
           {canCreate && (
@@ -52,7 +52,7 @@ export default async function ProjectsPage() {
                   <TableCell>
                     <div className="flex items-center gap-3 min-w-[140px]">
                       <div className="flex-1 h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                        <div className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]" style={{ width: `${p.progressPercentage}%` }} />
+                        <div className="h-full rounded-full bg-[var(--foreground)]" style={{ width: `${p.progressPercentage}%` }} />
                       </div>
                       <span className="text-xs font-semibold tabular w-8 text-right">{p.progressPercentage}%</span>
                     </div>

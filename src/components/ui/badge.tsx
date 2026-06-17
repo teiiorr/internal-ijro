@@ -2,24 +2,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold tracking-tight whitespace-nowrap",
+  "inline-flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-[11.5px] font-medium leading-5 whitespace-nowrap",
   {
     variants: {
       variant: {
-        default:
-          "bg-[var(--primary-soft)] text-[var(--primary)] backdrop-blur-md",
-        secondary:
-          "bg-[var(--surface-3)] text-[var(--foreground)] backdrop-blur-md",
-        outline:
-          "border border-[var(--border-strong)] text-[var(--foreground)] backdrop-blur-md",
-        success:
-          "bg-[var(--success-soft)] text-[var(--success)] backdrop-blur-md",
-        warning:
-          "bg-[var(--warning-soft)] text-[var(--warning)] backdrop-blur-md",
-        danger:
-          "bg-[var(--danger-soft)] text-[var(--danger)] backdrop-blur-md",
-        solid:
-          "bg-[var(--foreground)] text-[var(--background)]",
+        default: "bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--border)]",
+        secondary: "bg-[var(--surface-2)] text-[var(--muted)] border border-[var(--border)]",
+        outline: "border border-[var(--border-strong)] text-[var(--foreground)]",
+        success: "bg-[var(--success-soft)] text-[var(--success)] border border-[var(--success)]/20",
+        warning: "bg-[var(--warning-soft)] text-[var(--warning)] border border-[var(--warning)]/20",
+        danger: "bg-[var(--danger-soft)] text-[var(--danger)] border border-[var(--danger)]/20",
+        solid: "bg-[var(--foreground)] text-[var(--background)]",
       },
     },
     defaultVariants: { variant: "default" },

@@ -22,7 +22,7 @@ export function ThemeToggle() {
     >
       <span
         className={cn(
-          "inline-flex size-7 items-center justify-center rounded-full bg-[var(--background-elevated)] shadow-soft transition-transform",
+          "inline-flex size-7 items-center justify-center rounded-full bg-[var(--surface)] shadow-[var(--shadow-1)] transition-transform",
           isDark ? "translate-x-[32px]" : "translate-x-0"
         )}
       >

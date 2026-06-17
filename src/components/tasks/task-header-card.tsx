@@ -24,7 +24,7 @@ function Initials({ name }: { name: string }) {
   const parts = name.trim().split(/\s+/).slice(0, 2);
   const initials = parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
   return (
-    <div className="size-14 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--primary-hover)] flex items-center justify-center font-semibold text-lg text-[var(--primary-foreground)] shadow-soft">
+    <div className="size-12 rounded-md bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center font-semibold text-base">
       {initials}
     </div>
   );
@@ -76,7 +76,7 @@ export async function TaskHeaderCard({ creator, task }: Props) {
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <Initials name={creator?.fullName ?? "—"} />
           <div className="min-w-0">
-            <h2 className="font-display text-[20px] font-bold tracking-tight truncate">{creator?.fullName ?? "—"}</h2>
+            <h2 className="text-[20px] font-bold tracking-tight truncate">{creator?.fullName ?? "—"}</h2>
             <p className="text-[14px] text-[var(--muted)] truncate">
               {creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : ""}
               {creatorDept ? <span> · {creatorDept}</span> : null}
@@ -86,7 +86,7 @@ export async function TaskHeaderCard({ creator, task }: Props) {
         {task.deadline && (
           <div className={`shrink-0 rounded-xl px-5 py-3 border ${overdue ? "bg-[var(--danger-soft)] border-[var(--danger)]/30" : soon ? "bg-[var(--warning-soft)] border-[var(--warning)]/30" : "bg-[var(--surface-2)] border-[var(--border)]"}`}>
             <p className="eyebrow mb-1">{t("tasks.fields.deadline")}</p>
-            <p className={`font-display text-xl font-bold tracking-tight tabular ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--foreground)]"}`}>
+            <p className={`text-xl font-bold tracking-tight tabular ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--foreground)]"}`}>
               {formatDate(task.deadline)}
             </p>
             <p className={`text-xs font-semibold mt-0.5 ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--muted)]"}`}>

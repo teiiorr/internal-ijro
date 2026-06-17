@@ -50,11 +50,11 @@ export async function InboxWidget({ userId }: { userId: string }) {
               <Inbox className="size-5 text-[var(--warning)]" />
             </div>
             <div>
-              <h3 className="font-display text-base font-bold tracking-tight">{t("inbox.awaitingApproval")}</h3>
+              <h3 className="text-base font-bold tracking-tight">{t("inbox.awaitingApproval")}</h3>
               <p className="text-xs text-[var(--muted)]">{t("inbox.approvalDescription")}</p>
             </div>
           </div>
-          <span className="text-xl font-display font-bold tabular">{pendingApproval.length}</span>
+          <span className="text-xl font-bold tabular">{pendingApproval.length}</span>
         </div>
         <div className="px-2 py-2 space-y-0.5">
           {pendingApproval.length === 0 ? (
@@ -77,11 +77,11 @@ export async function InboxWidget({ userId }: { userId: string }) {
               <AlertCircle className="size-5 text-[var(--primary)]" />
             </div>
             <div>
-              <h3 className="font-display text-base font-bold tracking-tight">{t("inbox.myTasks")}</h3>
+              <h3 className="text-base font-bold tracking-tight">{t("inbox.myTasks")}</h3>
               <p className="text-xs text-[var(--muted)]">{t("inbox.myTasksDescription")}</p>
             </div>
           </div>
-          <span className="text-xl font-display font-bold tabular">{myActive.length}</span>
+          <span className="text-xl font-bold tabular">{myActive.length}</span>
         </div>
         <div className="px-2 py-2 space-y-0.5">
           {myActive.length === 0 ? (

@@ -27,7 +27,7 @@ export default async function NdaPage() {
     <div className="min-h-screen flex items-center justify-center p-6">
       <Card className="max-w-2xl w-full">
         <CardHeader className="px-7 pt-8">
-          <CardTitle className="font-display text-2xl tracking-tight">{t("contractor.nda.title")}</CardTitle>
+          <CardTitle className="text-2xl tracking-tight">{t("contractor.nda.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 px-7 pb-8 text-base leading-relaxed">
           <p>{t("contractor.nda.description1")}</p>

@@ -8,7 +8,6 @@ import {
   Users,
   Building2,
   Briefcase,
-  FileText,
   Bell,
   ScrollText,
   Settings,
@@ -55,14 +54,14 @@ export function Sidebar({ position }: { position: Position }) {
   const sections: ("primary" | "work" | "system")[] = ["primary", "work", "system"];
 
   return (
-    <aside className="hidden md:block w-[272px] shrink-0">
-      <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass max-h-[calc(100vh-110px)] overflow-y-auto">
-        <nav className="space-y-6">
+    <aside className="hidden md:block w-60 shrink-0 border-r border-[var(--border)]">
+      <div className="sticky top-14 py-5 px-3 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+        <nav className="space-y-5">
           {sections.map((s) => {
             const items = visible.filter((i) => i.section === s);
             if (items.length === 0) return null;
             return (
-              <div key={s} className="space-y-1">
+              <div key={s} className="space-y-0.5">
                 {items.map(({ href, icon: Icon, key }) => {
                   const active = pathname === href || pathname.startsWith(`${href}/`);
                   return (
@@ -70,13 +69,13 @@ export function Sidebar({ position }: { position: Position }) {
                       key={href}
                       href={href}
                       className={cn(
-                        "group flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold relative transition-all",
+                        "group flex items-center gap-3 rounded-md px-3 h-9 text-sm font-medium transition-colors",
                         active
-                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--primary-hover)] text-[var(--primary-foreground)] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_14px_-2px_rgba(94,99,224,0.45)]"
-                          : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-3)]"
+                          ? "bg-[var(--surface-2)] text-[var(--foreground)]"
+                          : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-2)]"
                       )}
                     >
-                      <Icon className={cn("size-5 shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
+                      <Icon className={cn("size-4 shrink-0", active ? "text-[var(--foreground)]" : "text-[var(--muted)]")} />
                       <span>{t(key)}</span>
                     </Link>
                   );

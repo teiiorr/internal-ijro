@@ -25,8 +25,8 @@ export default function RegisterContractorPage() {
     return (
       <Card className="p-2">
         <CardContent className="px-7 py-8 space-y-4 text-center">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.registerContractor.title")}</h1>
-          <div className="rounded-2xl bg-[var(--success-soft)] border border-[var(--success)]/20 px-4 py-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.registerContractor.title")}</h1>
+          <div className="rounded-md bg-[var(--success-soft)] border border-[var(--success)]/20 px-4 py-4">
             <p className="text-sm font-medium text-[var(--success)]">{t("auth.registerContractor.submitted")}</p>
           </div>
           <Link href="/login" className="inline-block text-[var(--primary)] font-semibold hover:underline text-sm">
@@ -40,7 +40,7 @@ export default function RegisterContractorPage() {
     <Card className="p-2">
       <CardContent className="px-7 py-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.registerContractor.title")}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.registerContractor.title")}</h1>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           {(
@@ -58,7 +58,7 @@ export default function RegisterContractorPage() {
             </div>
           ))}
           {error && (
-            <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
+            <div className="rounded-md bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
               <p className="text-sm font-medium text-[var(--danger)]">{error}</p>
             </div>
           )}

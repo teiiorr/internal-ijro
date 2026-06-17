@@ -22,11 +22,11 @@ export default function ForgotPasswordPage() {
     <Card className="p-2">
       <CardContent className="px-7 py-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.forgot.title")}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.forgot.title")}</h1>
         </div>
         {done ? (
           <div className="space-y-4 text-center">
-            <div className="rounded-2xl bg-[var(--success-soft)] border border-[var(--success)]/20 px-4 py-4">
+            <div className="rounded-md bg-[var(--success-soft)] border border-[var(--success)]/20 px-4 py-4">
               <p className="text-sm font-medium text-[var(--success)]">{t("auth.forgot.sent")}</p>
             </div>
             <Link className="inline-block text-[var(--primary)] font-semibold hover:underline text-sm" href="/login">

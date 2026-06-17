@@ -85,7 +85,7 @@ export function AssigneesCard({
   return (
     <Card className="overflow-hidden">
       <div className="px-7 pt-6 pb-4 flex items-center justify-between gap-3 flex-wrap">
-        <h3 className="font-display text-lg font-bold tracking-tight">{t("tasks.sections.people")}</h3>
+        <h3 className="text-lg font-bold tracking-tight">{t("tasks.sections.people")}</h3>
         <span className="text-sm text-[var(--muted)] tabular">{items.length}</span>
       </div>
 
@@ -111,7 +111,7 @@ export function AssigneesCard({
               className={cn(
                 "px-4 py-1.5 rounded-[8px] text-sm font-semibold transition-all",
                 filter === k
-                  ? `bg-[var(--background-elevated)] shadow-soft ${color}`
+                  ? `bg-[var(--surface)] shadow-[var(--shadow-1)] ${color}`
                   : "text-[var(--muted)] hover:text-[var(--foreground)]"
               )}
             >

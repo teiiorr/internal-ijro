@@ -15,22 +15,22 @@ export default async function ContractorDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{company?.name ?? session.user.fullName}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{company?.name ?? session.user.fullName}</h1>
         {company?.rating && <p className="text-sm text-[var(--muted)] mt-1">{t("contractor.dashboard.averageRating")}: ⭐ {company.rating}</p>}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.activeProjects")}</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-display font-bold tabular">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>
+          <CardContent><p className="text-4xl font-bold tabular">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>
         </Card>
         <Card>
           <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.completed")}</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-display font-bold tabular">{projects.filter((p) => p.status === "completed").length}</p></CardContent>
+          <CardContent><p className="text-4xl font-bold tabular">{projects.filter((p) => p.status === "completed").length}</p></CardContent>
         </Card>
         <Card>
           <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.total")}</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-display font-bold tabular">{projects.length}</p></CardContent>
+          <CardContent><p className="text-4xl font-bold tabular">{projects.length}</p></CardContent>
         </Card>
       </div>
 
@@ -39,7 +39,7 @@ export default async function ContractorDashboardPage() {
         <CardContent>
           <div className="space-y-2">
             {projects.map((p) => (
-              <Link key={p.id} href={`/contractor/projects/${p.id}`} className="block rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 hover:bg-[var(--surface-2)] transition-colors">
+              <Link key={p.id} href={`/contractor/projects/${p.id}`} className="block rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 hover:bg-[var(--surface-2)] transition-colors">
                 <div className="flex justify-between items-start flex-wrap gap-2">
                   <div>
                     <p className="font-semibold">{p.name}</p>

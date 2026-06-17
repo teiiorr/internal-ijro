@@ -53,7 +53,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
       className={cn(
         "px-3 sm:px-4 py-2 rounded-[8px] text-[13px] sm:text-[14px] font-semibold transition-all flex items-center gap-2 shrink-0",
         tab === value
-          ? `bg-[var(--background-elevated)] shadow-soft ${color}`
+          ? `bg-[var(--surface)] shadow-[var(--shadow-1)] ${color}`
           : "text-[var(--muted)] hover:text-[var(--foreground)]"
       )}
     >
@@ -75,7 +75,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
       className={cn(
         "flex-1 sm:flex-initial px-4 py-2.5 rounded-[10px] text-[14px] font-semibold transition-all flex items-center justify-center gap-2",
         scope === value
-          ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-soft"
+          ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-1)]"
           : "bg-[var(--surface-3)] text-[var(--muted)] hover:text-[var(--foreground)]"
       )}
     >
@@ -83,7 +83,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
       <span>{label}</span>
       <span className={cn(
         "text-[11px] rounded-full px-1.5 py-0 tabular font-bold",
-        scope === value ? "bg-white/20 text-white" : "bg-[var(--background-elevated)] text-[var(--muted)]"
+        scope === value ? "bg-white/20 text-white" : "bg-[var(--surface)] text-[var(--muted)]"
       )}>
         {count}
       </span>
@@ -95,7 +95,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <p className="eyebrow mb-1.5 sm:mb-2">{t("app.name")}</p>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline" size="lg" className="hidden sm:inline-flex">

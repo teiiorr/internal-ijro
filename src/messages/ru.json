@@ -535,7 +535,7 @@
     "markAllRead": "Отметить все прочитанными",
     "open": "Открыть",
     "empty": "Нет уведомлений.",
-    "viewAll": "Показать все →"
+    "viewAll": "Показать все"
   },
   "audit": {
     "pageTitle": "Журнал действий",
@@ -692,10 +692,10 @@
     "signOut": "Выйти"
   },
   "landing": {
-    "hero": "Ichki Ijro — корпоративная система управления",
+    "hero": "Bolalar Kontentini Rivojlantirish Markazi — система внутреннего исполнения",
     "cta": "Войти",
     "tagline": "Управление задачами, проектами и кадрами",
-    "copyright": "Все права защищены"
+    "copyright": "© Bolalar Kontentini Rivojlantirish Markazi. Все права защищены."
   },
   "theme": {
     "toggleLabel": "Переключить тему",

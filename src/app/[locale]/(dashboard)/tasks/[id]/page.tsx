@@ -58,7 +58,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         <Button asChild variant="ghost" size="icon">
           <Link href="/tasks"><ArrowLeft className="size-5" /></Link>
         </Button>
-        <h1 className="font-display text-2xl font-bold tracking-tight flex-1">{data.task.title}</h1>
+        <h1 className="text-2xl font-bold tracking-tight flex-1">{data.task.title}</h1>
         <Button asChild variant="outline" size="sm">
           <a href={`/api/export/task/${data.task.id}`} target="_blank">
             <Printer className="size-4" /> {t("tasks.print")}

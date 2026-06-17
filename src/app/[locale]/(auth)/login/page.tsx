@@ -35,7 +35,7 @@ export default function LoginPage() {
     <Card className="p-2">
       <CardContent className="px-7 py-8 space-y-7">
         <div className="text-center space-y-2">
-          <h1 className="font-display text-3xl font-bold tracking-tight">{t("auth.login.title")}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("auth.login.title")}</h1>
           <p className="text-[var(--muted)]">{t("app.tagline")}</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
@@ -52,7 +52,7 @@ export default function LoginPage() {
             <Input id="totp" name="totp" inputMode="numeric" maxLength={6} placeholder="123 456" className="tabular text-center text-lg tracking-[0.3em]" />
           </div>
           {error && (
-            <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
+            <div className="rounded-md bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
               <p className="text-sm font-medium text-[var(--danger)]">{error}</p>
             </div>
           )}

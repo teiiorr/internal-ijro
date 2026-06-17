@@ -535,7 +535,7 @@
     "markAllRead": "Ҳаммасини ўқилган деб белгилаш",
     "open": "Очиш",
     "empty": "Билдиришномалар йўқ.",
-    "viewAll": "Ҳаммасини кўриш →"
+    "viewAll": "Ҳаммасини кўриш"
   },
   "audit": {
     "pageTitle": "Фаолият журнали",
@@ -692,10 +692,10 @@
     "signOut": "Чиқиш"
   },
   "landing": {
-    "hero": "Ички Ижро — компаниянинг ички ижросини бошқариш тизими",
+    "hero": "Bolalar Kontentini Rivojlantirish Markazi — ички ижро бошқарув тизими",
     "cta": "Тизимга кириш",
     "tagline": "Вазифалар, лойиҳалар ва кадрларни бошқариш",
-    "copyright": "Барча ҳуқуқлар ҳимояланган"
+    "copyright": "© Bolalar Kontentini Rivojlantirish Markazi. Барча ҳуқуқлар ҳимояланган."
   },
   "theme": {
     "toggleLabel": "Мавзуни алмаштириш",

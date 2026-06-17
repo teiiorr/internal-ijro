@@ -12,11 +12,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <SessionProvider>
-      <div className="min-h-screen flex flex-col pb-24 md:pb-0">
+      <div className="min-h-screen flex flex-col bg-[var(--background)] pb-20 md:pb-0">
         <Header userName={session.user.fullName} />
-        <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
+        <div className="flex flex-1 w-full">
           <Sidebar position={session.user.position} />
-          <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 min-w-0">{children}</main>
+          <main className="flex-1 px-5 md:px-8 lg:px-10 py-6 md:py-8 min-w-0 max-w-[1280px] mx-auto w-full">{children}</main>
         </div>
         <MobileNav />
       </div>

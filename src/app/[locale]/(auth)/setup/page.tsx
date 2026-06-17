@@ -17,7 +17,7 @@ function SetupForm() {
     <Card className="p-2">
       <CardContent className="px-7 py-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.setup.title")}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.setup.title")}</h1>
           <p className="text-[var(--muted)]">{t("auth.setup.subtitle")}</p>
         </div>
         <form action={setupDirektor} className="space-y-4">

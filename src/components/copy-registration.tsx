@@ -20,7 +20,7 @@ export function CopyRegistration({ regNum }: { regNum: string }) {
           toast.error(t("common.copy.failed"));
         }
       }}
-      className="inline-flex items-center gap-2 rounded-full bg-[var(--primary-soft)] text-[var(--primary)] px-3 py-1 text-xs font-bold tabular tracking-tight hover:bg-[var(--primary-soft-strong)] transition-colors"
+      className="inline-flex items-center gap-2 rounded-sm bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--border)] px-2.5 py-1 text-xs font-medium tabular hover:bg-[var(--surface-3)] transition-colors"
     >
       № {regNum}
       {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5 opacity-70" />}

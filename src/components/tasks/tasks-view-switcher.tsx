@@ -52,7 +52,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
             className={cn(
               "px-3.5 py-1.5 rounded-[8px] text-sm font-semibold transition-all flex items-center gap-2",
               view === v
-                ? "bg-[var(--background-elevated)] shadow-soft text-[var(--foreground)]"
+                ? "bg-[var(--surface)] shadow-[var(--shadow-1)] text-[var(--foreground)]"
                 : "text-[var(--muted)] hover:text-[var(--foreground)]"
             )}
           >

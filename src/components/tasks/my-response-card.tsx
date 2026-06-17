@@ -48,7 +48,7 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
   return (
     <Card className="overflow-hidden">
       <div className="px-7 pt-6 pb-4 flex items-center justify-between">
-        <h3 className="font-display text-lg font-bold tracking-tight">{t("tasks.response.title")}</h3>
+        <h3 className="text-lg font-bold tracking-tight">{t("tasks.response.title")}</h3>
         {myStatus === "completed" && (
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--success)]">
             <BadgeCheck className="size-4" /> {t("tasks.response.approved")}

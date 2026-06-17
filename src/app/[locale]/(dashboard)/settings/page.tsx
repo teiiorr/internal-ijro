@@ -23,7 +23,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-bold tracking-tight">{t("settings.pageTitle")}</h1>
+      <h1 className="text-3xl font-bold tracking-tight">{t("settings.pageTitle")}</h1>
       <SettingsTabs
         init={{
           languagePreference: me.languagePreference,

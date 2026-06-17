@@ -7,15 +7,13 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
       type={type}
       ref={ref}
       className={cn(
-        "flex h-12 w-full rounded-2xl border border-[var(--border-strong)] " +
-        "bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 " +
-        "px-4 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] " +
-        "shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_1px_2px_rgba(15,17,28,0.03)] " +
-        "transition-[border-color,box-shadow,background-color] duration-200 " +
-        "focus-visible:outline-none focus-visible:border-[var(--primary)] " +
-        "focus-visible:shadow-[0_0_0_4px_var(--primary-soft),inset_0_1px_0_rgba(255,255,255,0.7)] " +
+        "flex h-10 w-full rounded-md border border-[var(--input)] bg-[var(--surface)] " +
+        "px-3 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] " +
+        "transition-colors duration-150 " +
+        "focus-visible:outline-none focus-visible:border-[var(--foreground)] " +
+        "focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] " +
         "disabled:cursor-not-allowed disabled:opacity-50 " +
-        "file:mr-3 file:h-full file:rounded-xl file:border-0 file:bg-[var(--surface-3)] file:px-4 file:text-sm file:font-semibold",
+        "file:mr-3 file:h-full file:rounded-sm file:border-0 file:bg-[var(--surface-2)] file:px-3 file:text-sm file:font-medium",
         className
       )}
       {...props}

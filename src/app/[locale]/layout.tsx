@@ -3,25 +3,26 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { Manrope, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Montserrat, Onest, JetBrains_Mono } from "next/font/google";
 
-const manrope = Manrope({
+const montserrat = Montserrat({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-latin",
+  display: "swap",
+});
+
+const onest = Onest({
   subsets: ["latin", "cyrillic", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-manrope",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-cyrillic",
   display: "swap",
 });
 
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin", "cyrillic-ext", "latin-ext"],
-  weight: ["500", "600", "700", "800"],
-  variable: "--font-jakarta",
-  display: "swap",
-});
-
-const mono = JetBrains_Mono({
+const jbMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-jetbrains",
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -40,15 +41,19 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
 
   return (
-    <html lang={locale} className={`${manrope.variable} ${jakarta.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      data-locale={locale}
+      className={`${montserrat.variable} ${onest.variable} ${jbMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <ThemeProvider initial="system">
           <NextIntlClientProvider>{children}</NextIntlClientProvider>
           <Toaster
             position="bottom-right"
             toastOptions={{
-              style: { fontFamily: "var(--font-sans)", borderRadius: "12px" },
-              className: "shadow-lifted",
+              style: { fontFamily: "var(--font-sans)", borderRadius: "8px" },
             }}
             closeButton
           />

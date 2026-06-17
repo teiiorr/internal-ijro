@@ -84,15 +84,15 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
 
       <div className="space-y-2">
         <Label>{t("tasks.fields.assignees")}</Label>
-        <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-xl backdrop-saturate-180 p-4 space-y-3">
+        <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
           {selectedPeople.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {selectedPeople.map((p, i) => (
                 <div key={p.id} className={cn(
-                  "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-semibold",
+                  "inline-flex items-center gap-2 rounded-sm px-2.5 py-1 text-sm font-medium",
                   i === 0
-                    ? "bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-[var(--primary-foreground)] shadow-[0_4px_12px_-2px_rgba(94,99,224,0.4)]"
-                    : "bg-[var(--primary-soft)] text-[var(--primary)] border border-[var(--primary)]/15"
+                    ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
+                    : "bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--border)]"
                 )}>
                   {p.fullName}
                   <button type="button" onClick={() => toggle(p.id)} className="opacity-70 hover:opacity-100">
@@ -105,7 +105,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
             <p className="text-sm text-[var(--muted)]">{t("tasks.new.noAssignees")}</p>
           )}
           <div className="flex gap-2">
-            <Button type="button" variant="glass" size="sm" onClick={() => setPickerOpen((v) => !v)}>
+            <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen((v) => !v)}>
               <Plus className="size-4" /> {t("tasks.new.addAssigneeBtn")}
             </Button>
           </div>
@@ -117,10 +117,10 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
                   placeholder={t("common.search")}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="h-11 w-full rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-2)] pl-10 pr-3 text-[15px] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:ring-4 focus-visible:ring-[var(--primary)]/15"
+                  className="h-11 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] pl-10 pr-3 text-[15px] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:ring-4 focus-visible:ring-[var(--primary)]/15"
                 />
               </div>
-              <div className="max-h-56 overflow-y-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--surface)]/70 backdrop-blur-md divide-y divide-[var(--border)]/60">
+              <div className="max-h-56 overflow-y-auto rounded-md border border-[var(--border)] bg-[var(--surface)]/70 divide-y divide-[var(--border)]/60">
                 {filteredCandidates.map((p) => (
                   <button
                     key={p.id}

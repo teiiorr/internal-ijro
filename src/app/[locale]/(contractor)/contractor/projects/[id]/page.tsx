@@ -26,7 +26,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{data.project.name}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{data.project.name}</h1>
         <div className="flex items-center gap-2 mt-2 text-sm">
           <Badge variant={data.project.status === "completed" ? "success" : "default"}>{t(`status.${data.project.status}` as "status.planning")}</Badge>
           <span className="text-[var(--muted)]">{t("projects.headers.progress")}: {data.project.progressPercentage}%</span>

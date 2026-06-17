@@ -17,7 +17,7 @@ export function TaskStatusChart({ data }: { data: Record<string, number> }) {
         <BarChart data={rows}>
           <XAxis dataKey="status" stroke="var(--muted)" tick={{ fontSize: 11 }} />
           <YAxis stroke="var(--muted)" tick={{ fontSize: 11 }} allowDecimals={false} />
-          <Tooltip contentStyle={{ background: "var(--background-elevated)", border: "1px solid var(--border)" }} />
+          <Tooltip contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
           <Bar dataKey="count" radius={[8, 8, 0, 0]}>
             {rows.map((r) => (
               <Cell key={r.status} fill={COLORS[r.status] ?? "#3B82F6"} />

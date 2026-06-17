@@ -47,7 +47,7 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment }
     <div className="space-y-3">
       <div className="space-y-2">
         {items.map((m) => (
-          <div key={m.id} className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 space-y-3">
+          <div key={m.id} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
                 <h4 className="font-semibold">{m.title}</h4>
@@ -89,7 +89,7 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment }
       </div>
       {canManage && (
         adding ? (
-          <form onSubmit={onAdd} className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-fill)] backdrop-blur-md p-4 space-y-3">
+          <form onSubmit={onAdd} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
             <div className="grid gap-3 md:grid-cols-4">
               <div className="space-y-2 md:col-span-2"><Label>{t("projects.milestones.title")}</Label><Input name="title" required /></div>
               <div className="space-y-2"><Label>{t("projects.milestones.deadline")}</Label><Input name="deadline" type="date" /></div>
@@ -102,7 +102,7 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment }
             </div>
           </form>
         ) : (
-          <Button variant="glass" onClick={() => setAdding(true)}>{t("projects.milestones.addBtn")}</Button>
+          <Button variant="outline" onClick={() => setAdding(true)}>{t("projects.milestones.addBtn")}</Button>
         )
       )}
     </div>

@@ -32,7 +32,7 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
     <Card className="p-2">
       <CardContent className="px-7 py-8 space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.reset.title")}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("auth.reset.title")}</h1>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -44,7 +44,7 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ token:
             <Input id="confirm" name="confirm" type="password" required minLength={8} />
           </div>
           {error && (
-            <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
+            <div className="rounded-md bg-[var(--danger-soft)] border border-[var(--danger)]/20 px-4 py-3">
               <p className="text-sm font-medium text-[var(--danger)]">{error}</p>
             </div>
           )}
