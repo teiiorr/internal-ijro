@@ -46,7 +46,7 @@ export function Header({ userName }: { userName: string }) {
     <header className="sticky top-0 z-30 glass-bar">
       <div className="h-[68px] flex items-center gap-3 px-4 md:px-8 max-w-[1500px] mx-auto">
         <Link href="/dashboard" className="flex items-center gap-2.5 mr-3 shrink-0">
-          <Logo size={36} />
+          <Logo size={48} />
           <span className="hidden sm:inline font-extrabold text-[17px] tracking-tight text-[var(--foreground)]">
             {t("app.name")}
           </span>

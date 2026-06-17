@@ -11,7 +11,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <header className="mx-3 sm:mx-6 mt-3 sm:mt-4 rounded-3xl glass-strong relative z-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 px-5 sm:px-7 py-3">
           <Link href="/" className="flex items-center gap-3">
-            <Logo size={36} />
+            <Logo size={52} />
             <span className="font-extrabold text-[16px] tracking-tight text-[var(--foreground)]">{t("app.name")}</span>
           </Link>
           <div className="flex items-center gap-1.5">

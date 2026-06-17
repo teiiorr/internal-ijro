@@ -13,7 +13,7 @@ export default function LandingPage() {
       <header className="mx-3 sm:mx-6 mt-3 sm:mt-4 rounded-3xl glass-strong">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 px-5 sm:px-7 py-3">
           <div className="flex items-center gap-3">
-            <Logo size={38} />
+            <Logo size={56} />
             <span className="font-extrabold text-[17px] tracking-tight">{t("app.name")}</span>
           </div>
           <div className="flex items-center gap-1.5">
