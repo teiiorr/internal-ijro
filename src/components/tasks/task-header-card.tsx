@@ -85,7 +85,7 @@ export async function TaskHeaderCard({ creator, task }: Props) {
         </div>
         {task.deadline && (
           <div className={`shrink-0 rounded-xl px-5 py-3 border ${overdue ? "bg-[var(--danger-soft)] border-[var(--danger)]/30" : soon ? "bg-[var(--warning-soft)] border-[var(--warning)]/30" : "bg-[var(--surface-2)] border-[var(--border)]"}`}>
-            <p className="eyebrow mb-1">{t("tasks.fields.deadline")}</p>
+            <p className="text-xs font-medium text-[var(--muted)] mb-1">{t("tasks.fields.deadline")}</p>
             <p className={`text-xl font-bold tracking-tight tabular ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--foreground)]"}`}>
               {formatDate(task.deadline)}
             </p>
@@ -98,21 +98,21 @@ export async function TaskHeaderCard({ creator, task }: Props) {
 
       <div className="px-7 py-6 grid gap-6 sm:grid-cols-3 text-sm border-b border-[var(--border)]">
         <div>
-          <p className="eyebrow mb-1.5">{t("common.created")}</p>
+          <p className="text-xs font-medium text-[var(--muted)] mb-1.5">{t("common.created")}</p>
           <p className="font-medium tabular">{formatDate(task.createdAt)}</p>
         </div>
         <div>
-          <p className="eyebrow mb-1.5">{t("common.priority")}</p>
+          <p className="text-xs font-medium text-[var(--muted)] mb-1.5">{t("common.priority")}</p>
           <Badge variant={PRIORITY_VARIANT[task.priority] ?? "default"}>{t(`tasks.priority.${task.priority}` as "tasks.priority.low")}</Badge>
         </div>
         <div>
-          <p className="eyebrow mb-1.5">{t("common.status")}</p>
+          <p className="text-xs font-medium text-[var(--muted)] mb-1.5">{t("common.status")}</p>
           <Badge variant={STATUS_VARIANT[task.status] ?? "secondary"}>{t(`tasks.status.${task.status}` as "tasks.status.todo")}</Badge>
         </div>
       </div>
 
       <div className="px-7 py-6">
-        <p className="eyebrow mb-3">{t("tasks.sections.description")}</p>
+        <p className="text-xs font-medium text-[var(--muted)] mb-3">{t("tasks.sections.description")}</p>
         <p className="text-[15px] whitespace-pre-wrap leading-relaxed text-pretty">
           {task.description || <span className="text-[var(--muted)]">{t("tasks.sections.noDescription")}</span>}
         </p>

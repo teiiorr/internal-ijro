@@ -156,7 +156,7 @@ export function AssigneesCard({
                 <div className="px-4 pb-4 pt-1 border-t border-[var(--border)] mt-1 space-y-3">
                   {a.responseSubmittedAt ? (
                     <div className="space-y-2">
-                      <p className="eyebrow">{t("tasks.review.responseLabel")}</p>
+                      <p className="text-xs font-medium text-[var(--muted)]">{t("tasks.review.responseLabel")}</p>
                       <p className="text-[14px] whitespace-pre-wrap leading-relaxed">{a.responseText}</p>
                       {a.responseFileUrl && (
                         <a

@@ -284,11 +284,7 @@ h4 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.012em; }
 .tabular { font-variant-numeric: tabular-nums; }
 .mono    { font-family: var(--font-mono); }
 
-.eyebrow {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-}
+/* .eyebrow removed — use plain Montserrat (Tailwind: text-xs font-medium text-[var(--muted)]) */
 
 .display-num {
   font-weight: 800;

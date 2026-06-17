@@ -62,15 +62,15 @@ export default function LandingPage() {
           <div className="grid grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto pt-12">
             <div className="glass-card rounded-2xl px-4 py-5 sm:py-6">
               <p className="display-num text-3xl sm:text-4xl gradient-text">26</p>
-              <p className="eyebrow mt-2">{t("nav.employees")}</p>
+              <p className="text-xs font-medium text-[var(--muted)] mt-2">{t("nav.employees")}</p>
             </div>
             <div className="glass-card rounded-2xl px-4 py-5 sm:py-6">
               <p className="display-num text-3xl sm:text-4xl gradient-text">3</p>
-              <p className="eyebrow mt-2">{t("nav.contractors")}</p>
+              <p className="text-xs font-medium text-[var(--muted)] mt-2">{t("nav.contractors")}</p>
             </div>
             <div className="glass-card rounded-2xl px-4 py-5 sm:py-6">
               <p className="display-num text-3xl sm:text-4xl gradient-text">∞</p>
-              <p className="eyebrow mt-2">{t("nav.projects")}</p>
+              <p className="text-xs font-medium text-[var(--muted)] mt-2">{t("nav.projects")}</p>
             </div>
           </div>
         </div>
