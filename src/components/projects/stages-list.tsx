@@ -28,9 +28,11 @@ type Props = {
   projectId: string;
   items: Stage[];
   canManage: boolean;
+  /** Bo'lim boshlig'i can edit but not delete — keep these split. */
+  canDelete?: boolean;
 };
 
-export function StagesList({ projectId, items: initialItems, canManage }: Props) {
+export function StagesList({ projectId, items: initialItems, canManage, canDelete = canManage }: Props) {
   const t = useTranslations();
   const [stages, setStages] = useState<Stage[]>(
     [...initialItems].sort((a, b) => a.orderIndex - b.orderIndex)
@@ -236,15 +238,17 @@ export function StagesList({ projectId, items: initialItems, canManage }: Props)
                             <CheckCircle2 className="size-3.5" /> {t("projects.stages.markDone")}
                           </Button>
                         )}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => remove(s.id)}
-                          className="text-[var(--danger)] hover:bg-[var(--danger-soft)]"
-                          aria-label={t("common.delete")}
-                        >
-                          <Trash2 className="size-3.5" />
-                        </Button>
+                        {canDelete && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => remove(s.id)}
+                            className="text-[var(--danger)] hover:bg-[var(--danger-soft)]"
+                            aria-label={t("common.delete")}
+                          >
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        )}
                       </div>
                     )}
                   </div>

@@ -11,7 +11,7 @@ export default async function NewProjectPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
-  if (!["direktor", "orinbosar", "koordinator"].includes(session.user.position)) redirect("/projects");
+  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position)) redirect("/projects");
   const [companies, curators] = await Promise.all([
     db.select({ id: externalCompanies.id, name: externalCompanies.name }).from(externalCompanies).where(eq(externalCompanies.status, "approved")).orderBy(externalCompanies.name),
     db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} in ('direktor','orinbosar','koordinator','bolim_boshligi')`).orderBy(users.fullName),

@@ -22,7 +22,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const data = await getProject(id);
   if (!data) notFound();
   const me = session.user;
-  const canManage = ["direktor", "orinbosar", "koordinator"].includes(me.position) || data.project.curatorUserId === me.id;
+  const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(me.position) || data.project.curatorUserId === me.id;
+  // Bo'lim boshlig'i can create / edit / update but NOT delete stages or projects.
+  const canDelete = ["direktor", "orinbosar", "koordinator"].includes(me.position);
   const canTogglePayment = ["direktor", "orinbosar"].includes(me.position);
 
   const stages = data.milestones.map((m) => ({
@@ -84,7 +86,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       {/* 1. Umumiy bajarilish + Bosqichlar */}
       <Card>
         <CardContent className="p-5 sm:p-6">
-          <StagesList projectId={data.project.id} items={stages} canManage={canManage} />
+          <StagesList projectId={data.project.id} items={stages} canManage={canManage} canDelete={canDelete} />
         </CardContent>
       </Card>
 

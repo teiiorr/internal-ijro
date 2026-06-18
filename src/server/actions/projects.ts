@@ -31,7 +31,7 @@ const projectSchema = z.object({
 });
 
 export async function createProject(input: z.infer<typeof projectSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
   const parsed = projectSchema.parse(input);
   if (parsed.type === "external" && !parsed.externalCompanyId) throw new Error("company_required");
 
@@ -73,7 +73,7 @@ const milestoneSchema = z.object({
 });
 
 export async function createMilestone(input: z.infer<typeof milestoneSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
   const parsed = milestoneSchema.parse(input);
   await db.insert(milestones).values({
     projectId: parsed.projectId,
@@ -206,7 +206,8 @@ export async function updateMilestone(
 }
 
 export async function deleteMilestone(milestoneId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  // Bo'lim boshlig'i can create + edit + reorder stages but NOT delete.
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) return;
   await db.delete(milestones).where(eq(milestones.id, milestoneId));
@@ -243,7 +244,7 @@ export async function reorderMilestones(projectId: string, orderedIds: string[])
 
 /** Toggle the manual on-hold override for a project. */
 export async function setProjectOnHold(projectId: string, onHold: boolean) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
   await db
     .update(projects)
     .set({ statusOverride: onHold ? "on_hold" : null, updatedAt: new Date() })

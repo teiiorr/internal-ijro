@@ -34,7 +34,7 @@ export function can(position: Position, cap: Capability): boolean {
     case "employees.view_all":
       return position !== "kontragent";
     case "projects.create":
-      return ["direktor", "orinbosar", "koordinator"].includes(position);
+      return ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(position);
     case "contractors.approve":
       return ["direktor", "orinbosar", "koordinator"].includes(position);
     case "tasks.assign":
