@@ -5,6 +5,12 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // standalone copies only what's needed into .next/standalone for prod.
+  // Pair with `cp -r .next/static .next/standalone/.next/static && cp -r public .next/standalone/public`
+  // in the deploy script so node .next/standalone/server.js boots cleanly.
+  output: "standalone",
+  // App stays behind nginx; trust the X-Forwarded-* headers it sets.
+  poweredByHeader: false,
   async headers() {
     return [
       {

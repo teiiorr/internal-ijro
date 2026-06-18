@@ -3,6 +3,12 @@ node_modules/
 .env
 .env.local
 .env.*.local
+.env.production
+.env.staging
 uploads/
 *.log
 .DS_Store
+
+# Backups
+*.dump
+/var/backups/

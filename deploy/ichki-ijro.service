@@ -1,0 +1,28 @@
+[Unit]
+Description=Ichki Ijro (Next.js)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=ichki-ijro
+Group=ichki-ijro
+WorkingDirectory=/srv/ichki-ijro/current
+EnvironmentFile=/srv/ichki-ijro/shared/.env.production
+ExecStart=/usr/bin/node .next/standalone/server.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+KillSignal=SIGINT
+TimeoutStopSec=20
+
+# Sandbox the service — only writable paths it actually needs.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/ichki-ijro /srv/ichki-ijro/current/.next
+
+[Install]
+WantedBy=multi-user.target
