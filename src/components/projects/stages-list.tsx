@@ -77,16 +77,18 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
   }
 
   function move(id: string, dir: -1 | 1) {
-    setStages((s) => {
-      const idx = s.findIndex((x) => x.id === id);
-      const target = idx + dir;
-      if (idx === -1 || target < 0 || target >= s.length) return s;
-      const next = [...s];
-      [next[idx], next[target]] = [next[target], next[idx]];
-      const ordered = next.map((x, i) => ({ ...x, orderIndex: i }));
-      startTransition(() => reorderMilestones(projectId, ordered.map((x) => x.id)).catch(() => {}));
-      return ordered;
-    });
+    const idx = stages.findIndex((x) => x.id === id);
+    const target = idx + dir;
+    if (idx === -1 || target < 0 || target >= stages.length) return;
+    const next = [...stages];
+    [next[idx], next[target]] = [next[target], next[idx]];
+    const ordered = next.map((x, i) => ({ ...x, orderIndex: i }));
+    setStages(ordered);
+    // Server reconciliation outside of the updater so React doesn't see
+    // a Router update mid-render.
+    startTransition(() =>
+      reorderMilestones(projectId, ordered.map((x) => x.id)).catch(() => {})
+    );
   }
 
   function add(e: React.FormEvent<HTMLFormElement>) {
