@@ -1,23 +1,26 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
- * Ichki Ijro mark — bold "II" monogram on a dark indigo→violet gradient.
- * Works in both themes without depending on any external image file.
+ * BKRM brand mark — the arabesque emblem from the official logo.
+ * Rendered from /public/brand-mark.svg so we only ship the asset once.
  */
 export function Logo({ size = 56, className }: { size?: number; className?: string }) {
   return (
-    <div
-      className={cn(
-        "relative shrink-0 grid place-items-center rounded-2xl overflow-hidden",
-        "bg-[#15172D]",
-        "shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_6px_18px_-6px_rgba(14,19,48,0.4)]",
-        "text-white font-extrabold tracking-[-0.04em] leading-none select-none",
-        className
-      )}
-      style={{ width: size, height: size, fontSize: size * 0.45 }}
-      aria-label="Ichki Ijro"
+    <span
+      className={cn("relative inline-grid place-items-center shrink-0", className)}
+      style={{ width: size, height: size }}
+      aria-label="BKRM"
     >
-      <span>II</span>
-    </div>
+      <Image
+        src="/brand-mark.svg"
+        alt=""
+        width={size}
+        height={size}
+        priority
+        unoptimized
+        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+      />
+    </span>
   );
 }

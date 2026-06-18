@@ -1,4 +1,12 @@
-import "dotenv/config";
+// dotenv is a dev convenience. In production the caller (deploy.sh) sources
+// .env.production into the shell before running this script, so a missing
+// dotenv install should not abort migration.
+import { createRequire } from "node:module";
+try {
+  createRequire(import.meta.url)("dotenv/config");
+} catch {
+  /* not installed in this environment — env already loaded by caller */
+}
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";

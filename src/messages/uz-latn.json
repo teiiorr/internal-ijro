@@ -4,6 +4,12 @@
     "tagline": "Vazifalar, loyihalar va kadrlarni boshqarish",
     "organizationName": "Bolalar Kontentini Rivojlantirish Markazi"
   },
+  "offline": {
+    "title": "Internet aloqasi yo'q",
+    "subtitle": "Tarmoq ulanishi yo'qoldi. Wi-Fi yoki mobil internetni tekshirib, qayta urinib ko'ring.",
+    "retry": "Qayta urinish",
+    "hint": "Ulanish qaytarilganda sahifa avtomatik yangilanadi."
+  },
   "common": {
     "loading": "Yuklanmoqda...",
     "save": "Saqlash",

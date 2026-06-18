@@ -23,27 +23,23 @@ pnpm install --frozen-lockfile
 pnpm test
 pnpm build
 
-# Bundle standalone server + the assets Next expects next to it.
+# Bundle the standalone server + everything Next/migrate/backup need at runtime.
+# We stage into a tmp dir with rsync (preserves symlinks correctly, unlike cp -r
+# which dereferences and chokes on pnpm's symlink graph), then tar once.
 echo "▸ Preparing release tarball…"
 TMP="$(mktemp -d)"
-mkdir -p "${TMP}/release"
+STAGE="${TMP}/release"
+mkdir -p "${STAGE}/.next" "${STAGE}/scripts"
 
-# standalone server (server.js + minimal node_modules)
-cp -r .next/standalone/. "${TMP}/release/"
-# static assets — Next expects them at .next/static/
-mkdir -p "${TMP}/release/.next"
-cp -r .next/static "${TMP}/release/.next/static"
-# public/ for fonts, logo, icon.svg, robots.txt etc
-cp -r public "${TMP}/release/public"
-# drizzle migration files for the migrate script
-cp -r drizzle "${TMP}/release/drizzle"
-mkdir -p "${TMP}/release/scripts"
-cp scripts/migrate.ts "${TMP}/release/scripts/migrate.ts" 2>/dev/null || true
-# carry deploy scripts so backup.sh / setup live with the release
-cp -r deploy "${TMP}/release/deploy"
+rsync -a .next/standalone/ "${STAGE}/"
+rsync -a .next/static "${STAGE}/.next/"
+rsync -a public "${STAGE}/"
+rsync -a drizzle "${STAGE}/"
+rsync -a deploy "${STAGE}/"
+[ -f scripts/migrate.ts ] && cp scripts/migrate.ts "${STAGE}/scripts/" || true
 
-# Tarball it.
-tar -czf "${TMP}/release.tgz" -C "${TMP}/release" .
+TARBALL="${TMP}/release.tgz"
+tar -czf "${TARBALL}" -C "${STAGE}" .
 echo "▸ Uploading $(du -h "${TMP}/release.tgz" | cut -f1)…"
 scp -q "${TMP}/release.tgz" "${DEPLOY_HOST}:/tmp/ichki-ijro-${RELEASE}.tgz"
 
@@ -59,17 +55,21 @@ rm "/tmp/ichki-ijro-${RELEASE}.tgz"
 # still resolves: /srv/ichki-ijro/current/.env.production -> shared/.env.production
 ln -sf "${DEPLOY_PATH}/shared/.env.production" "\${RELEASE_DIR}/.env.production"
 
-# Run migrations against the prod DB.
+# Run migrations against the prod DB. Migrator needs deps that standalone
+# tree-shakes (drizzle-orm/migrator, postgres). Install them globally once;
+# subsequent deploys reuse the cache.
 echo "▸ Running migrations…"
 cd "\${RELEASE_DIR}"
-# tsx is needed by scripts/migrate.ts — install lightly if missing.
 if ! command -v tsx >/dev/null; then
-  npm i -g tsx >/dev/null
+  npm i -g tsx drizzle-orm postgres dotenv >/dev/null 2>&1
+else
+  # Ensure migrator deps are present even if tsx already was.
+  npm ls -g drizzle-orm >/dev/null 2>&1 || npm i -g drizzle-orm postgres dotenv >/dev/null 2>&1
 fi
 set -a
 . "${DEPLOY_PATH}/shared/.env.production"
 set +a
-tsx scripts/migrate.ts
+NODE_PATH="\$(npm root -g)" tsx scripts/migrate.ts
 
 # Atomic swap of the "current" symlink.
 ln -sfn "\${RELEASE_DIR}" "${DEPLOY_PATH}/current"

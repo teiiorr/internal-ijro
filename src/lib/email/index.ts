@@ -44,9 +44,9 @@ export function renderInvitationEmail(fullName: string, link: string, locale: st
   const greeting = bodies[locale] ?? bodies["en"];
   const html = `
     <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;padding:24px;">
-      <h2 style="color:#2563EB;">Ichki Ijro</h2>
+      <h2 style="color:#005392;">Ichki Ijro</h2>
       <p>${greeting}</p>
-      <p><a href="${link}" style="display:inline-block;background:#2563EB;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">Accept invitation</a></p>
+      <p><a href="${link}" style="display:inline-block;background:#005392;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">Accept invitation</a></p>
       <p style="color:#6B7280;font-size:13px;">If the button does not work, open this link: <br/>${link}</p>
     </div>`;
   return { subject, html };
@@ -62,10 +62,10 @@ export function renderPasswordResetEmail(fullName: string, link: string, locale:
   const subject = subjects[locale] ?? subjects["en"];
   const html = `
     <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;padding:24px;">
-      <h2 style="color:#2563EB;">Ichki Ijro</h2>
+      <h2 style="color:#005392;">Ichki Ijro</h2>
       <p>${fullName},</p>
       <p>${subject}:</p>
-      <p><a href="${link}" style="display:inline-block;background:#2563EB;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">${subject}</a></p>
+      <p><a href="${link}" style="display:inline-block;background:#005392;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">${subject}</a></p>
       <p style="color:#6B7280;font-size:13px;">${link}</p>
     </div>`;
   return { subject, html };
@@ -81,7 +81,7 @@ export function renderNewDeviceLoginEmail(fullName: string, ip: string | null, u
   const subject = subjects[locale] ?? subjects["en"];
   const html = `
     <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:auto;padding:24px;">
-      <h2 style="color:#2563EB;">${subject}</h2>
+      <h2 style="color:#005392;">${subject}</h2>
       <p>${fullName},</p>
       <p>IP: ${ip ?? "-"}<br/>User agent: ${ua ?? "-"}</p>
     </div>`;
