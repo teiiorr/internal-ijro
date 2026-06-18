@@ -63,7 +63,9 @@ export function CommentsSection({ taskId, comments }: { taskId: string; comments
           placeholder={t("tasks.sections.writeComment")}
           rows={3}
         />
-        <Button onClick={send} disabled={pending || !text.trim()}>{t("tasks.sections.send")}</Button>
+        <div className="flex justify-end">
+          <Button onClick={send} disabled={pending || !text.trim()}>{t("tasks.sections.send")}</Button>
+        </div>
       </div>
     </div>
   );

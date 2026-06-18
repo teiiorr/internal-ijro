@@ -83,9 +83,9 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
         <Label htmlFor="education">{t("employees.profile.education")}</Label>
         <Textarea id="education" name="education" rows={2} defaultValue={p.education ?? ""} />
       </div>
-      <div className="flex items-center gap-3">
-        <Button type="submit" disabled={pending}>{t("common.save")}</Button>
+      <div className="flex items-center justify-end gap-3 pt-2">
         {ok && <span className="text-sm text-[var(--success)]">{t("common.saved")}</span>}
+        <Button type="submit" disabled={pending}>{t("common.save")}</Button>
       </div>
     </form>
   );

@@ -104,7 +104,9 @@ export function SettingsTabs({ init }: { init: Init }) {
         >
           <Input name="current" type="password" placeholder={t("settings.security.current")} required />
           <Input name="next" type="password" placeholder={t("settings.security.newPass")} required minLength={8} />
-          <Button type="submit" disabled={pending}>{t("settings.security.change")}</Button>
+          <div className="flex justify-end">
+            <Button type="submit" disabled={pending}>{t("settings.security.change")}</Button>
+          </div>
           {msg && <p className="text-sm text-[var(--muted)]">{msg}</p>}
         </form>
       </Section>

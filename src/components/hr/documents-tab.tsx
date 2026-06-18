@@ -66,10 +66,10 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
           </div>
           <div className="space-y-1.5 md:col-span-2">
             <Label>{t("employees.docs.file")}</Label>
-            <div className="flex gap-2">
-              <FileInput ref={fileRef} required />
-              <Button type="submit" disabled={pending}>{t("employees.docs.upload")}</Button>
-            </div>
+            <FileInput ref={fileRef} required />
+          </div>
+          <div className="md:col-span-2 flex justify-end">
+            <Button type="submit" disabled={pending}>{t("employees.docs.upload")}</Button>
           </div>
         </form>
       )}

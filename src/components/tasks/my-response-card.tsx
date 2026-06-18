@@ -89,9 +89,11 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
               rows={4}
             />
             <FileInput ref={fileRef} />
-            <Button type="submit" disabled={pending || !text.trim()} size="lg">
-              {t("common.send")}
-            </Button>
+            <div className="flex justify-end pt-1">
+              <Button type="submit" disabled={pending || !text.trim()} size="lg">
+                {t("common.send")}
+              </Button>
+            </div>
           </form>
         )}
       </div>

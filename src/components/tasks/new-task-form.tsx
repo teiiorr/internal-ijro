@@ -168,7 +168,9 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
       </div>
 
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-      <Button type="submit" disabled={pending} size="lg">{t("tasks.newTitle")}</Button>
+      <div className="flex justify-end pt-2">
+        <Button type="submit" disabled={pending} size="lg">{t("tasks.newTitle")}</Button>
+      </div>
     </form>
   );
 }

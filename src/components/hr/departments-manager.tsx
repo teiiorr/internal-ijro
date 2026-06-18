@@ -99,9 +99,9 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
             <Label>{t("departments.fields.description")}</Label>
             <Textarea name="description" rows={2} />
           </div>
-          <div className="md:col-span-2 flex gap-2">
-            <Button type="submit" disabled={pending}>{t("common.save")}</Button>
+          <div className="md:col-span-2 flex justify-end gap-2">
             <Button type="button" variant="ghost" onClick={() => setEditing(null)}><X className="size-4" /> {t("common.cancel")}</Button>
+            <Button type="submit" disabled={pending}>{t("common.save")}</Button>
           </div>
         </form>
       </CardContent>

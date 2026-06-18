@@ -62,9 +62,9 @@ export function LeavesPageClient({
             <div className="space-y-1.5"><Label>{t("leaves.fields.start")}</Label><Input name="startDate" type="date" required /></div>
             <div className="space-y-1.5"><Label>{t("leaves.fields.end")}</Label><Input name="endDate" type="date" required /></div>
             <div className="space-y-1.5 md:col-span-4"><Label>{t("leaves.fields.reason")}</Label><Textarea name="reason" rows={2} /></div>
-            <div className="md:col-span-4 flex gap-2">
-              <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
+            <div className="md:col-span-4 flex justify-end gap-2">
               <Button type="button" variant="ghost" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+              <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
             </div>
           </form>
         </CardContent></Card>

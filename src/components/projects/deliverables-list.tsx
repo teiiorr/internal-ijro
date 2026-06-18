@@ -137,7 +137,9 @@ export function DeliverablesList({
             <Label>{t("projects.deliverables.message")}</Label>
             <Textarea name="message" rows={2} />
           </div>
-          <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
+          <div className="flex justify-end pt-1">
+            <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
+          </div>
         </form>
       )}
     </div>

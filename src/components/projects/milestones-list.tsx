@@ -96,9 +96,9 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment }
               <div className="space-y-2"><Label>{t("projects.milestones.weight")}</Label><Input name="weight" type="number" defaultValue={1} min={1} /></div>
               <div className="space-y-2"><Label>{t("projects.milestones.paymentAmount")}</Label><Input name="paymentAmount" type="number" step="0.01" /></div>
             </div>
-            <div className="flex gap-2">
-              <Button type="submit" disabled={pending}>{t("projects.milestones.addBtn")}</Button>
+            <div className="flex justify-end gap-2">
               <Button type="button" variant="ghost" onClick={() => setAdding(false)}>{t("common.cancel")}</Button>
+              <Button type="submit" disabled={pending}>{t("projects.milestones.addBtn")}</Button>
             </div>
           </form>
         ) : (

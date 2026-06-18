@@ -271,12 +271,12 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
               <Label htmlFor="stage-title">{t("projects.stages.newTitle")}</Label>
               <Input ref={newNameRef} id="stage-title" name="title" required placeholder={t("projects.stages.newPlaceholder")} />
             </div>
-            <div className="flex gap-2">
-              <Button type="submit" size="sm">
-                {t("projects.stages.addBtn")}
-              </Button>
+            <div className="flex justify-end gap-2">
               <Button type="button" variant="ghost" size="sm" onClick={() => setAdding(false)}>
                 {t("common.cancel")}
+              </Button>
+              <Button type="submit" size="sm">
+                {t("projects.stages.addBtn")}
               </Button>
             </div>
           </form>

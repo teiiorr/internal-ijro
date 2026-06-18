@@ -82,7 +82,9 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
         </Select>
       </div>
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-      <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
+      <div className="flex justify-end pt-2">
+        <Button type="submit" disabled={pending}>{t("common.submit")}</Button>
+      </div>
     </form>
   );
 }

@@ -36,7 +36,9 @@ export function ProjectChat({ projectId, messages }: { projectId: string; messag
         {messages.length === 0 && <p className="text-sm text-[var(--muted)]">{t("projects.chat.noMessages")}</p>}
       </div>
       <Textarea value={text} onChange={(e) => setText(e.target.value)} placeholder={t("projects.chat.placeholder")} rows={2} />
-      <Button onClick={send} disabled={pending || !text.trim()}>{t("common.send")}</Button>
+      <div className="flex justify-end">
+        <Button onClick={send} disabled={pending || !text.trim()}>{t("common.send")}</Button>
+      </div>
     </div>
   );
 }
