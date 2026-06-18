@@ -726,7 +726,8 @@
   "header": {
     "searchPlaceholder": "Vazifalarni qidirish...",
     "accountSettings": "Sozlamalar",
-    "signOut": "Chiqish"
+    "signOut": "Chiqish",
+    "signedInAs": "Tizimga kirgan"
   },
   "landing": {
     "hero": "Bolalar Kontentini Rivojlantirish Markazi — ichki ijro boshqaruv tizimi",

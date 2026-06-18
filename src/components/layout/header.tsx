@@ -84,7 +84,7 @@ export function Header({ userName }: { userName: string }) {
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-64 rounded-2xl glass-strong p-1.5 z-50">
                 <div className="px-3 py-3 border-b border-[var(--border)] mb-1.5">
-                  <p className="text-xs font-medium text-[var(--muted)]">{t("header.signedInAs") ?? "Signed in"}</p>
+                  <p className="text-xs font-medium text-[var(--muted)]">{t("header.signedInAs")}</p>
                   <p className="text-sm font-bold mt-1">{userName}</p>
                 </div>
                 <Link

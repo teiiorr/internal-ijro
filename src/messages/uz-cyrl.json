@@ -726,7 +726,8 @@
   "header": {
     "searchPlaceholder": "Вазифаларни қидириш...",
     "accountSettings": "Созламалар",
-    "signOut": "Чиқиш"
+    "signOut": "Чиқиш",
+    "signedInAs": "Тизимга кирган"
   },
   "landing": {
     "hero": "Bolalar Kontentini Rivojlantirish Markazi — ички ижро бошқарув тизими",

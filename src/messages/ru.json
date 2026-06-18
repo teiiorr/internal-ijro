@@ -726,7 +726,8 @@
   "header": {
     "searchPlaceholder": "Поиск задач...",
     "accountSettings": "Настройки",
-    "signOut": "Выйти"
+    "signOut": "Выйти",
+    "signedInAs": "Вы вошли как"
   },
   "landing": {
     "hero": "Bolalar Kontentini Rivojlantirish Markazi — система внутреннего исполнения",
