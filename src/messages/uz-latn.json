@@ -426,7 +426,7 @@
       "dueDate": "Tugash muddati"
     },
     "sort": {
-      "created": "Sanadan bo‘yicha",
+      "created": "Sana bo‘yicha",
       "name": "Nom bo‘yicha",
       "deadline": "Muddati bo‘yicha",
       "progress": "Bajarilish bo‘yicha"
