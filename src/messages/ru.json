@@ -89,7 +89,8 @@
     "registrationLabel": "Номер",
     "apply": "Применить",
     "chooseFile": "Выбрать файл",
-    "noFileChosen": "Файл не выбран"
+    "orDropHere": "или перетащите сюда",
+    "replaceFile": "Выбрать другой"
   },
   "nav": {
     "dashboard": "Главная",

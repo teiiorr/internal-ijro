@@ -89,7 +89,8 @@
     "registrationLabel": "Рақам",
     "apply": "Қўллаш",
     "chooseFile": "Файлни танланг",
-    "noFileChosen": "Файл танланмаган"
+    "orDropHere": "ёки бу ерга олиб келинг",
+    "replaceFile": "Бошқасини танлаш"
   },
   "nav": {
     "dashboard": "Бош саҳифа",

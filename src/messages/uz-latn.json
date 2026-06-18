@@ -89,7 +89,8 @@
     "registrationLabel": "Raqam",
     "apply": "Qoʻllash",
     "chooseFile": "Faylni tanlang",
-    "noFileChosen": "Fayl tanlanmagan"
+    "orDropHere": "yoki bu yerga olib keling",
+    "replaceFile": "Boshqasini tanlash"
   },
   "nav": {
     "dashboard": "Bosh sahifa",
