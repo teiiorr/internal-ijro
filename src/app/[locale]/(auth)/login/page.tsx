@@ -2,11 +2,10 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "@/i18n/navigation";
 
 export default function LoginPage() {
   const t = useTranslations();
