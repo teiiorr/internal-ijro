@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import { FileInput } from "@/components/ui/file-input";
 import { Button } from "@/components/ui/button";
 import { BadgeCheck, FileText } from "lucide-react";
 import { submitTaskResponse } from "@/server/actions/tasks";
@@ -88,7 +88,7 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
               onChange={(e) => setText(e.target.value)}
               rows={4}
             />
-            <Input type="file" ref={fileRef} />
+            <FileInput ref={fileRef} />
             <Button type="submit" disabled={pending || !text.trim()} size="lg">
               {t("common.send")}
             </Button>

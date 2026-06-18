@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FileInput } from "@/components/ui/file-input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -66,7 +67,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
           <div className="space-y-1.5 md:col-span-2">
             <Label>{t("employees.docs.file")}</Label>
             <div className="flex gap-2">
-              <Input type="file" ref={fileRef} required />
+              <FileInput ref={fileRef} required />
               <Button type="submit" disabled={pending}>{t("employees.docs.upload")}</Button>
             </div>
           </div>

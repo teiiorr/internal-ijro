@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FileInput } from "@/components/ui/file-input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -129,7 +130,7 @@ export function DeliverablesList({
             </div>
             <div className="space-y-2">
               <Label>{t("projects.deliverables.file")}</Label>
-              <Input type="file" ref={fileRef} required />
+              <FileInput ref={fileRef} required />
             </div>
           </div>
           <div className="space-y-2">

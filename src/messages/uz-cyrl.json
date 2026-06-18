@@ -87,7 +87,9 @@
       "failed": "Нусха олиб бўлмади"
     },
     "registrationLabel": "Рақам",
-    "apply": "Қўллаш"
+    "apply": "Қўллаш",
+    "chooseFile": "Файлни танланг",
+    "noFileChosen": "Файл танланмаган"
   },
   "nav": {
     "dashboard": "Бош саҳифа",

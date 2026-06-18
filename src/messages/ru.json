@@ -87,7 +87,9 @@
       "failed": "Не удалось скопировать"
     },
     "registrationLabel": "Номер",
-    "apply": "Применить"
+    "apply": "Применить",
+    "chooseFile": "Выбрать файл",
+    "noFileChosen": "Файл не выбран"
   },
   "nav": {
     "dashboard": "Главная",

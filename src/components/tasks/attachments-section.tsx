@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import { useRef, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FileInput } from "@/components/ui/file-input";
 import { Download, Trash2 } from "lucide-react";
 import { attachFileToTask, removeAttachment } from "@/server/actions/tasks";
 
@@ -40,7 +40,7 @@ export function AttachmentsSection({ taskId, attachments, canEdit }: { taskId: s
         {attachments.length === 0 && <li className="text-sm text-[var(--muted)]">{t("tasks.sections.noAttachments")}</li>}
       </ul>
       {canEdit && (
-        <Input type="file" ref={fileRef} onChange={onPick} disabled={pending} />
+        <FileInput ref={fileRef} onChange={onPick} disabled={pending} />
       )}
     </div>
   );

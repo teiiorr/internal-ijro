@@ -87,7 +87,9 @@
       "failed": "Nusxa olib bo'lmadi"
     },
     "registrationLabel": "Raqam",
-    "apply": "Qoʻllash"
+    "apply": "Qoʻllash",
+    "chooseFile": "Faylni tanlang",
+    "noFileChosen": "Fayl tanlanmagan"
   },
   "nav": {
     "dashboard": "Bosh sahifa",
