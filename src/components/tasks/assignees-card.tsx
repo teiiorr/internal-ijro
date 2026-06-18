@@ -171,15 +171,15 @@ export function AssigneesCard({
                       )}
                       <p className="text-[12px] text-[var(--muted)] tabular">{fmt(a.responseSubmittedAt)}</p>
                       {isCreator && a.status === "under_review" && (
-                        <div className="pt-3 space-y-2 border-t border-[var(--border)]">
+                        <div className="pt-3 space-y-3 border-t border-[var(--border)]">
                           <Input
                             placeholder={t("tasks.review.feedbackPlaceholder")}
                             value={feedback[a.userId] ?? ""}
                             onChange={(e) => setFeedback((f) => ({ ...f, [a.userId]: e.target.value }))}
                           />
-                          <div className="flex gap-2">
-                            <Button size="sm" onClick={() => review(a.userId, "completed")}>{t("common.approve")}</Button>
+                          <div className="flex justify-end gap-2">
                             <Button size="sm" variant="destructive" onClick={() => review(a.userId, "rejected")}>{t("common.reject")}</Button>
+                            <Button size="sm" variant="success" onClick={() => review(a.userId, "completed")}>{t("common.approve")}</Button>
                           </div>
                         </div>
                       )}

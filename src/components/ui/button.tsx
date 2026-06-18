@@ -25,6 +25,9 @@ const buttonVariants = cva(
         destructive:
           "bg-[var(--destructive)] text-[var(--destructive-foreground)] " +
           "shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_8px_22px_-4px_rgba(239,68,68,0.45)] hover:brightness-110",
+        success:
+          "bg-[var(--success)] text-white " +
+          "shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_8px_22px_-4px_rgba(16,185,129,0.45)] hover:brightness-110",
         outline:
           "border border-[var(--border-strong)] glass text-[var(--foreground)] " +
           "hover:bg-[var(--glass-fill-strong)]",

@@ -83,24 +83,25 @@ export function DeliverablesList({
               <p className="text-sm rounded-xl bg-[var(--surface-2)] p-3"><span className="text-[var(--muted)] font-medium">{t("projects.deliverables.feedback")}:</span> {d.adminFeedback}</p>
             )}
             {canReview && d.status === "submitted" && (
-              <div className="flex gap-2 flex-wrap">
+              <div className="space-y-3 pt-2 border-t border-[var(--border)]">
                 <Input
                   placeholder={t("projects.deliverables.feedback")}
                   value={feedback[d.id] ?? ""}
                   onChange={(e) => setFeedback((f) => ({ ...f, [d.id]: e.target.value }))}
-                  className="flex-1 min-w-[200px]"
                 />
-                {REVIEW.map((s) => (
-                  <Button
-                    key={s}
-                    size="sm"
-                    variant={s === "approved" ? "default" : s === "rejected" ? "destructive" : "outline"}
-                    disabled={pending}
-                    onClick={() => start(async () => { await reviewDeliverable(d.id, s, feedback[d.id]); })}
-                  >
-                    {t(`status.${s}` as "status.approved")}
-                  </Button>
-                ))}
+                <div className="flex justify-end gap-2 flex-wrap">
+                  {REVIEW.map((s) => (
+                    <Button
+                      key={s}
+                      size="sm"
+                      variant={s === "approved" ? "success" : s === "rejected" ? "destructive" : "outline"}
+                      disabled={pending}
+                      onClick={() => start(async () => { await reviewDeliverable(d.id, s, feedback[d.id]); })}
+                    >
+                      {t(`status.${s}` as "status.approved")}
+                    </Button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
