@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
-import { Search, Download } from "lucide-react";
+import { Search, Download, Building2, Briefcase, Activity } from "lucide-react";
 
 type Dept = { id: string; name: string };
 const POSITIONS = [
@@ -41,18 +41,28 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
         />
       </div>
       <Select defaultValue={sp.get("departmentId") ?? "all"} onValueChange={(v) => update("departmentId", v)}>
-        <SelectTrigger><SelectValue placeholder={t("nav.departments")} /></SelectTrigger>
+        <SelectTrigger>
+          <span className="flex min-w-0 items-center gap-2">
+            <Building2 className="size-4 shrink-0 text-[var(--muted)]" />
+            <SelectValue placeholder={t("nav.departments")} />
+          </span>
+        </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{t("nav.departments")}: {t("common.all")}</SelectItem>
+          <SelectItem value="all">{t("common.all")}</SelectItem>
           {departments.map((d) => (
             <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>
       <Select defaultValue={sp.get("position") ?? "all"} onValueChange={(v) => update("position", v)}>
-        <SelectTrigger><SelectValue /></SelectTrigger>
+        <SelectTrigger>
+          <span className="flex min-w-0 items-center gap-2">
+            <Briefcase className="size-4 shrink-0 text-[var(--muted)]" />
+            <SelectValue placeholder={t("common.position")} />
+          </span>
+        </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">—</SelectItem>
+          <SelectItem value="all">{t("common.all")}</SelectItem>
           {POSITIONS.map((p) => (
             <SelectItem key={p} value={p}>{t(`positions.${p}`)}</SelectItem>
           ))}
@@ -60,11 +70,16 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
       </Select>
       <div className="flex gap-2">
         <Select defaultValue={sp.get("status") ?? "all"} onValueChange={(v) => update("status", v)}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectTrigger>
+            <span className="flex min-w-0 items-center gap-2">
+              <Activity className="size-4 shrink-0 text-[var(--muted)]" />
+              <SelectValue placeholder={t("common.status")} />
+            </span>
+          </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">—</SelectItem>
+            <SelectItem value="all">{t("common.all")}</SelectItem>
             {STATUSES.map((s) => (
-              <SelectItem key={s} value={s}>{s}</SelectItem>
+              <SelectItem key={s} value={s}>{t(`status.${s}`)}</SelectItem>
             ))}
           </SelectContent>
         </Select>
