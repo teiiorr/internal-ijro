@@ -8,7 +8,6 @@ import { users as usersTbl } from "@/lib/db/schema";
 import { getTask } from "@/server/queries/tasks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { StatusControl } from "@/components/tasks/status-control";
 import { CommentsSection } from "@/components/tasks/comments-section";
 import { AttachmentsSection } from "@/components/tasks/attachments-section";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
@@ -108,33 +107,20 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         </Card>
       )}
 
-      {(isCreator || data.dependencies.length > 0) && (
-        <div className="grid gap-5 md:grid-cols-2">
-          {isCreator && (
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <h3 className="text-base font-semibold">{t("tasks.sections.statusSection")}</h3>
-                <StatusControl taskId={data.task.id} current={data.task.status} isCreator={isCreator} />
-              </CardContent>
-            </Card>
-          )}
-
-          {data.dependencies.length > 0 && (
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <h3 className="text-base font-semibold">{t("tasks.sections.dependencies")}</h3>
-                <ul className="space-y-1 text-sm">
-                  {data.dependencies.map((d) => (
-                    <li key={d.id}>
-                      <Link href={`/tasks/${d.dependsOnTaskId}`} className="hover:underline font-medium">{d.dependsOnTitle}</Link>{" "}
-                      <span className="text-[var(--muted)]">— {t(`status.${d.dependsOnStatus}` as "status.completed")}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+      {data.dependencies.length > 0 && (
+        <Card>
+          <CardContent className="p-5 space-y-3">
+            <h3 className="text-base font-semibold">{t("tasks.sections.dependencies")}</h3>
+            <ul className="space-y-1 text-sm">
+              {data.dependencies.map((d) => (
+                <li key={d.id}>
+                  <Link href={`/tasks/${d.dependsOnTaskId}`} className="hover:underline font-medium">{d.dependsOnTitle}</Link>{" "}
+                  <span className="text-[var(--muted)]">— {t(`status.${d.dependsOnStatus}` as "status.completed")}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       )}
 
       <div className="grid gap-5 md:grid-cols-2">

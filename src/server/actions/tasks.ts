@@ -65,10 +65,14 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
         parentTaskId: parsed.parentTaskId ?? null,
         priority: parsed.priority,
         deadline: parsed.deadline ? new Date(parsed.deadline) : null,
+        // Skip the manual "Boshlash" step — tasks open in_progress right away.
+        status: "in_progress",
       })
       .returning({ id: tasks.id });
     const id = ins[0].id;
-    await tx.insert(taskAssignees).values(allAssigneeIds.map((uid) => ({ taskId: id, userId: uid })));
+    await tx.insert(taskAssignees).values(
+      allAssigneeIds.map((uid) => ({ taskId: id, userId: uid, status: "in_progress" as const }))
+    );
     return id;
   });
 
@@ -291,6 +295,14 @@ export async function submitTaskResponse(input: z.infer<typeof responseSchema>, 
     })
     .where(and(eq(taskAssignees.taskId, parsed.taskId), eq(taskAssignees.userId, me.id)));
 
+  // Skip the explicit "Tekshiruvga yuborish" step: parent task moves to
+  // under_review on the very first javob so the creator sees it in their
+  // inbox without anyone touching the Holat panel.
+  await db
+    .update(tasks)
+    .set({ status: "under_review", updatedAt: new Date() })
+    .where(eq(tasks.id, parsed.taskId));
+
   await logActivity({
     userId: me.id,
     action: "task.response_submitted",
@@ -335,6 +347,31 @@ export async function reviewAssigneeResponse(
       updatedAt: new Date(),
     })
     .where(and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, assigneeUserId)));
+
+  // Auto-sync the parent task: if all assignees are completed, mark the
+  // whole task completed; if anyone got rejected, push the task back to
+  // in_progress so the rejected assignee can re-submit without a manual
+  // status nudge from the creator.
+  const all = await db
+    .select({ status: taskAssignees.status })
+    .from(taskAssignees)
+    .where(eq(taskAssignees.taskId, taskId));
+  if (all.length > 0 && all.every((a) => a.status === "completed")) {
+    await db
+      .update(tasks)
+      .set({ status: "completed", completedAt: new Date(), updatedAt: new Date() })
+      .where(eq(tasks.id, taskId));
+  } else if (decision === "rejected") {
+    await db
+      .update(tasks)
+      .set({ status: "in_progress", updatedAt: new Date() })
+      .where(eq(tasks.id, taskId));
+    // The rejected assignee is reactivated so they can write a new javob.
+    await db
+      .update(taskAssignees)
+      .set({ status: "in_progress", updatedAt: new Date() })
+      .where(and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, assigneeUserId)));
+  }
 
   await logActivity({
     userId: me.id,
