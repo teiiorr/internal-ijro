@@ -192,11 +192,11 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
                       onTouchEnd={(e) => commitProgress(s.id, Number((e.target as HTMLInputElement).value))}
                       onKeyUp={(e) => commitProgress(s.id, Number((e.target as HTMLInputElement).value))}
                       className={cn(
-                        "flex-1 h-2 rounded-full bg-[var(--surface-3)] appearance-none",
-                        "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-4",
+                        "flex-1 h-2 rounded-full bg-[var(--surface-3)] appearance-none touch-none",
+                        "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:size-5",
                         "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--primary)]",
-                        "[&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[var(--shadow-1)]",
-                        "[&::-moz-range-thumb]:size-4 [&::-moz-range-thumb]:rounded-full",
+                        "[&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[var(--shadow-2)]",
+                        "[&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full",
                         "[&::-moz-range-thumb]:bg-[var(--primary)] [&::-moz-range-thumb]:border-0",
                         "disabled:opacity-50"
                       )}

@@ -66,7 +66,7 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
           <div className="space-y-1.5">
             <Label>{t("projects.fields.contractor")}</Label>
             <Select name="externalCompanyId">
-              <SelectTrigger><SelectValue placeholder="Pick approved contractor" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={t("projects.new.contractorPlaceholder")} /></SelectTrigger>
               <SelectContent>
                 {companies.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
               </SelectContent>
@@ -76,7 +76,7 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
         <div className="space-y-1.5">
           <Label>{t("projects.fields.curator")}</Label>
           <Select name="curatorUserId">
-            <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
             <SelectContent>
               {curators.map((c) => <SelectItem key={c.id} value={c.id}>{c.fullName}</SelectItem>)}
             </SelectContent>
@@ -90,11 +90,11 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
           <Label htmlFor="deadline">{t("projects.fields.deadline")}</Label>
           <Input id="deadline" name="deadline" type="date" />
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 md:col-span-2">
           <Label htmlFor="budget">{t("projects.fields.budget")}</Label>
           <div className="flex gap-2">
-            <Input id="budget" name="budget" type="number" step="0.01" />
-            <Input name="budgetCurrency" defaultValue="UZS" className="w-24" />
+            <Input id="budget" name="budget" type="number" step="0.01" className="flex-1 min-w-0" />
+            <Input name="budgetCurrency" defaultValue="UZS" className="w-20 shrink-0" />
           </div>
         </div>
       </div>
