@@ -67,13 +67,13 @@ export function Sidebar({ position }: { position: Position }) {
                       key={href}
                       href={href}
                       className={cn(
-                        "group flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold relative transition-all duration-200",
+                        "group flex items-center gap-3 rounded-2xl px-4 h-[52px] text-[16px] font-semibold relative transition-all duration-200",
                         active
                           ? "bg-[var(--primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.20)]"
                           : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--glass-fill)]"
                       )}
                     >
-                      <Icon className={cn("size-5 shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
+                      <Icon className={cn("size-[22px] shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
                       <span>{t(key)}</span>
                     </Link>
                   );

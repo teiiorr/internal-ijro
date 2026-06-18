@@ -9,11 +9,11 @@ function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
   return (
     <Link
       href={`/tasks/${item.id}`}
-      className="group flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-[var(--surface-3)] transition-colors"
+      className="group flex items-center gap-3 rounded-xl px-3 py-3 hover:bg-[var(--surface-3)] transition-colors"
     >
       <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-medium truncate">{item.title}</p>
-        <div className="flex items-center gap-2 mt-0.5 text-xs text-[var(--muted)]">
+        <p className="text-[15px] font-semibold truncate">{item.title}</p>
+        <div className="flex items-center gap-2 mt-1 text-[13px] text-[var(--muted)]">
           {item.registrationNumber && <span className="tabular">№ {item.registrationNumber}</span>}
           {prefix && <span>· {prefix} {item.responseFromName ?? item.creatorName}</span>}
         </div>
@@ -40,8 +40,8 @@ export async function InboxWidget({ userId }: { userId: string }) {
               <Inbox className="size-5 text-[var(--warning)]" />
             </div>
             <div>
-              <h3 className="text-base font-bold tracking-tight">{t("inbox.awaitingApproval")}</h3>
-              <p className="text-xs text-[var(--muted)]">{t("inbox.approvalDescription")}</p>
+              <h3 className="text-lg font-bold tracking-tight">{t("inbox.awaitingApproval")}</h3>
+              <p className="text-sm text-[var(--muted)]">{t("inbox.approvalDescription")}</p>
             </div>
           </div>
           <span className="text-xl font-bold tabular">{pendingApproval.length}</span>
@@ -67,8 +67,8 @@ export async function InboxWidget({ userId }: { userId: string }) {
               <AlertCircle className="size-5 text-[var(--primary)]" />
             </div>
             <div>
-              <h3 className="text-base font-bold tracking-tight">{t("inbox.myTasks")}</h3>
-              <p className="text-xs text-[var(--muted)]">{t("inbox.myTasksDescription")}</p>
+              <h3 className="text-lg font-bold tracking-tight">{t("inbox.myTasks")}</h3>
+              <p className="text-sm text-[var(--muted)]">{t("inbox.myTasksDescription")}</p>
             </div>
           </div>
           <span className="text-xl font-bold tabular">{myActive.length}</span>

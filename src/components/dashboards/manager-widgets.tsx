@@ -26,11 +26,11 @@ export async function ManagerWidgets() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card><CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("dashboard.manager.tasks30")}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold">{totalTasks}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("dashboard.manager.inProgress")}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold">{counts.in_progress}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("dashboard.manager.overdue")}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold text-[var(--danger)]">{overdue}</p></CardContent></Card>
-        <Card><CardHeader><CardTitle className="text-sm text-[var(--muted)]">{t("dashboard.manager.activeProjects")}</CardTitle></CardHeader><CardContent><p className="text-3xl font-semibold">{projectsActive}</p></CardContent></Card>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card><CardHeader><CardTitle className="text-base font-semibold text-[var(--muted)]">{t("dashboard.manager.tasks30")}</CardTitle></CardHeader><CardContent><p className="text-4xl font-bold tabular">{totalTasks}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-base font-semibold text-[var(--muted)]">{t("dashboard.manager.inProgress")}</CardTitle></CardHeader><CardContent><p className="text-4xl font-bold tabular">{counts.in_progress}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-base font-semibold text-[var(--muted)]">{t("dashboard.manager.overdue")}</CardTitle></CardHeader><CardContent><p className="text-4xl font-bold tabular text-[var(--danger)]">{overdue}</p></CardContent></Card>
+        <Card><CardHeader><CardTitle className="text-base font-semibold text-[var(--muted)]">{t("dashboard.manager.activeProjects")}</CardTitle></CardHeader><CardContent><p className="text-4xl font-bold tabular">{projectsActive}</p></CardContent></Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">

@@ -194,7 +194,7 @@
    BASE
    ========================================================================= */
 html {
-  font-size: 16px;
+  font-size: 17px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -206,7 +206,7 @@ body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   background: var(--background);
   color: var(--foreground);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.55;
   font-weight: 500;
   letter-spacing: -0.005em;
@@ -226,10 +226,10 @@ body {
     line-height: 1.2;
     color: var(--foreground);
   }
-  h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1.15; }
-  h2 { font-size: 1.5rem;  font-weight: 700; letter-spacing: -0.02em; }
-  h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.015em; }
-  h4 { font-size: 1rem;    font-weight: 600; letter-spacing: -0.01em; }
+  h1 { font-size: 2rem;    font-weight: 800; letter-spacing: -0.028em; line-height: 1.15; }
+  h2 { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.022em; }
+  h3 { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.018em; }
+  h4 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.012em; }
 }
 
 .tabular { font-variant-numeric: tabular-nums; }
@@ -253,14 +253,14 @@ body {
    ========================================================================= */
 input, select, textarea, button {
   font-family: inherit;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 input[type="text"], input[type="email"], input[type="password"],
 input[type="tel"], input[type="number"], input[type="search"],
 input[type="date"], input[type="datetime-local"], input[type="url"],
 input:not([type]), select, textarea {
-  min-height: 44px;
+  min-height: 46px;
 }
 
 *:focus-visible {
