@@ -12,6 +12,18 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
+/**
+ * Live countdown chip with verbose Uzbek units that collapse as time runs out:
+ *   23 kun 4 soat 12 minut    — many days remain
+ *   4 soat 12 minut           — under a day (kun dropped)
+ *   12:45                     — under an hour (now ticking by second)
+ *   45 son.                   — under a minute
+ *   Kechikti                  — deadline passed
+ *
+ * The component re-renders every second so the seconds tick visibly when it
+ * matters (last hour) without thrashing render the rest of the time —
+ * setInterval is a 1Hz tick either way; React skips no-op renders cheaply.
+ */
 export function DeadlineCountdown({ deadline, completed = false, className }: Props) {
   const [now, setNow] = useState<number>(() => Date.now());
 
@@ -46,9 +58,9 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
   const mins = Math.floor((totalSec % 3_600) / 60);
   const secs = totalSec % 60;
 
-  // Tone: red if < 24h, amber if < 3 days, neutral otherwise
+  // Tone: red if < 6h, amber if < 3 days, primary otherwise
   const urgent = days === 0 && hours < 6;
-  const soon = days < 1 || (days < 3);
+  const soon = days < 3;
 
   const toneClass = urgent
     ? "bg-[var(--danger)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
@@ -56,10 +68,20 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
       ? "bg-[var(--warning)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
       : "bg-[var(--primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]";
 
-  const text =
-    days > 0
-      ? `${days}k ${pad(hours)}:${pad(mins)}:${pad(secs)}`
-      : `${pad(hours)}:${pad(mins)}:${pad(secs)}`;
+  let text: string;
+  if (days > 0) {
+    // "23 kun 4 soat 12 minut"
+    text = `${days} kun ${hours} soat ${mins} minut`;
+  } else if (hours > 0) {
+    // "4 soat 12 minut" — kun dropped
+    text = `${hours} soat ${mins} minut`;
+  } else if (mins > 0) {
+    // "12:45" — last hour, real-time MM:SS ticker
+    text = `${pad(mins)}:${pad(secs)}`;
+  } else {
+    // "45 son." — last minute, count seconds
+    text = `${secs} son.`;
+  }
 
   return (
     <span
