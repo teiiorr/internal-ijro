@@ -65,6 +65,10 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
   const rel = deadlineRelative(task.deadline, { completed: isCompleted });
   const overdue = rel.tone === "overdue";
   const soon = rel.tone === "soon" || rel.tone === "today";
+  // deadlineRelative falls back to formatDate(d) for deadlines >14d away —
+  // suppress the duplicate "11-sentabr 2026 · 11-sentabr 2026" tail.
+  const formattedDeadline = task.deadline ? formatDate(task.deadline) : "";
+  const relIsSameAsDate = rel.text === formattedDeadline;
 
   return (
     <Card className="overflow-hidden">
@@ -83,7 +87,7 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
         )}
         {task.deadline && (
           <span className={`ml-auto text-xs font-semibold ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--muted)]"}`}>
-            {formatDate(task.deadline)} · {rel.text}
+            {formattedDeadline}{relIsSameAsDate ? "" : ` · ${rel.text}`}
           </span>
         )}
       </div>
