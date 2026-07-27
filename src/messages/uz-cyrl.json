@@ -457,7 +457,12 @@
     },
     "stageDocs": {
       "title": "Ҳужжатлар",
-      "empty": "Ҳужжатлар йўқ"
+      "empty": "Ҳужжатлар йўқ",
+      "folder": "Папка",
+      "folderPlaceholder": "Папка номи (масалан, Ҳисоботлар)",
+      "folderHint": "Файл «{folder}» папкасига жойланади",
+      "uncategorized": "Бошқа",
+      "move": "Бошқа папкага кўчириш"
     },
     "stagePayments": {
       "title": "Тўловлар",

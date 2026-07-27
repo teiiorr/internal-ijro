@@ -156,7 +156,7 @@ export async function getStage(stageId: string, locale: string) {
   if (rows.length === 0) return null;
   const s = rows[0];
 
-  const [documents, payments, siblings] = await Promise.all([
+  const [documents, payments, siblings, categoryRows] = await Promise.all([
     db
       .select({
         id: stageDocuments.id,
@@ -164,6 +164,7 @@ export async function getStage(stageId: string, locale: string) {
         fileName: stageDocuments.fileName,
         fileSize: stageDocuments.fileSize,
         fileMimeType: stageDocuments.fileMimeType,
+        category: stageDocuments.category,
         uploadedAt: stageDocuments.uploadedAt,
         uploadedByUserId: stageDocuments.uploadedByUserId,
         uploaderName: users.fullName,
@@ -178,7 +179,18 @@ export async function getStage(stageId: string, locale: string) {
       .from(projectStages)
       .where(eq(projectStages.projectId, s.projectId))
       .orderBy(asc(projectStages.orderIndex)),
+    // Distinct folder names used anywhere in this project → autocomplete suggestions.
+    db
+      .selectDistinct({ category: stageDocuments.category })
+      .from(stageDocuments)
+      .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
+      .where(and(eq(projectStages.projectId, s.projectId), sql`${stageDocuments.category} is not null`)),
   ]);
+
+  const categorySuggestions = categoryRows
+    .map((r) => r.category)
+    .filter((c): c is string => !!c)
+    .sort((a, b) => a.localeCompare(b));
 
   const paid = sum(payments.filter((p) => p.status === "paid").map((p) => num(p.amount)));
   const pending = sum(payments.filter((p) => p.status !== "paid").map((p) => num(p.amount)));
@@ -203,6 +215,7 @@ export async function getStage(stageId: string, locale: string) {
     payments,
     totals: { paid, pending },
     siblings,
+    categorySuggestions,
   };
 }
 

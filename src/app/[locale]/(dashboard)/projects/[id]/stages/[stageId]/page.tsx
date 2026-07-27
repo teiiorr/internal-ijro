@@ -76,7 +76,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-4">
             <h3 className="text-base font-semibold">{t("projects.stageDocs.title")}</h3>
-            <StageDocuments stageId={s.id} documents={data.documents} canManage={canManage} />
+            <StageDocuments stageId={s.id} documents={data.documents} canManage={canManage} suggestions={data.categorySuggestions} />
           </CardContent>
         </Card>
 

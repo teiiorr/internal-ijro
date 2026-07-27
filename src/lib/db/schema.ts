@@ -671,6 +671,8 @@ export const stageDocuments = pgTable(
     fileName: varchar("file_name", { length: 255 }).notNull(),
     fileSize: integer("file_size"),
     fileMimeType: varchar("file_mime_type", { length: 120 }),
+    /** User-defined folder/label (e.g. "Hisobotlar", "To'lovlar"). NULL = uncategorized. */
+    category: varchar("category", { length: 120 }),
     uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id, {
       onDelete: "set null",
     }),
@@ -678,6 +680,7 @@ export const stageDocuments = pgTable(
   },
   (t) => ({
     stageIdx: index("stage_documents_stage_idx").on(t.stageId),
+    categoryIdx: index("stage_documents_category_idx").on(t.stageId, t.category),
   })
 );
 

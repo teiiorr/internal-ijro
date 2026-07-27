@@ -214,6 +214,9 @@ export default async function ProjectsPage({
                     <span className="select-none text-5xl font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span>
                   </div>
                 )}
+                <span className="absolute left-2 top-2 rounded-md bg-black/40 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
+                  {p.progressPercentage}%
+                </span>
                 {p.atRisk && (
                   <span className="absolute right-2 top-2 grid size-7 place-items-center rounded-lg bg-[var(--danger)] text-white shadow-sm" title={t("projects.atRisk")}>
                     <AlertTriangle className="size-4" />
@@ -223,13 +226,10 @@ export default async function ProjectsPage({
                   <div className="h-full bg-[var(--success)]" style={{ width: `${p.progressPercentage}%` }} />
                 </div>
               </div>
-              <div className="mt-2.5">
-                <p className="line-clamp-2 font-semibold leading-snug transition-colors group-hover:text-[var(--primary)]">{p.name}</p>
-                <div className="mt-1.5 flex items-center justify-between gap-2">
-                  <StatusTag tone={STATUS_TONE[p.derived]}>{t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}</StatusTag>
-                  <span className="text-xs font-semibold tabular-nums text-[var(--muted)]">{p.progressPercentage}%</span>
-                </div>
-                <p className="mt-1 truncate text-xs text-[var(--muted)]">{p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal")}</p>
+              <div className="mt-2.5 space-y-1.5">
+                <p className="line-clamp-2 min-h-[2.75em] text-sm font-semibold leading-snug">{p.name}</p>
+                <StatusTag tone={STATUS_TONE[p.derived]}>{t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}</StatusTag>
+                <p className="truncate text-xs text-[var(--muted)]">{p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal")}</p>
               </div>
             </Link>
           ))}

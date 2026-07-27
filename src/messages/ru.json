@@ -457,7 +457,12 @@
     },
     "stageDocs": {
       "title": "Документы",
-      "empty": "Нет документов"
+      "empty": "Нет документов",
+      "folder": "Папка",
+      "folderPlaceholder": "Название папки (например, Отчёты)",
+      "folderHint": "Файл будет помещён в «{folder}»",
+      "uncategorized": "Прочее",
+      "move": "Переместить в другую папку"
     },
     "stagePayments": {
       "title": "Оплаты",

@@ -457,7 +457,12 @@
     },
     "stageDocs": {
       "title": "Hujjatlar",
-      "empty": "Hujjatlar yo'q"
+      "empty": "Hujjatlar yo'q",
+      "folder": "Papka",
+      "folderPlaceholder": "Papka nomi (masalan, Hisobotlar)",
+      "folderHint": "Fayl «{folder}» papkasiga joylanadi",
+      "uncategorized": "Boshqa",
+      "move": "Boshqa papkaga ko'chirish"
     },
     "stagePayments": {
       "title": "To'lovlar",

@@ -243,8 +243,15 @@ async function stageProjectId(stageId: string): Promise<string> {
   return row.projectId;
 }
 
-/** Attach a document (any format) to a stage. Next 16: takes a Web File directly. */
-export async function attachStageDocument(stageId: string, file: File) {
+/** Normalize a user-typed folder name: trim, collapse spaces, cap length; empty → null. */
+function normalizeCategory(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const v = raw.replace(/\s+/g, " ").trim().slice(0, 120);
+  return v.length > 0 ? v : null;
+}
+
+/** Attach a document (any format) to a stage, filed under an optional folder. Next 16: takes a Web File directly. */
+export async function attachStageDocument(stageId: string, file: File, category?: string | null) {
   const me = await requirePosition([...MANAGERS]);
   const projectId = await stageProjectId(stageId);
   const stored = await storeFile(file, `stage-docs/${stageId}`);
@@ -254,11 +261,23 @@ export async function attachStageDocument(stageId: string, file: File) {
     fileName: stored.originalName,
     fileSize: stored.size,
     fileMimeType: stored.mimeType,
+    category: normalizeCategory(category),
     uploadedByUserId: me.id,
   });
   await db.update(projectStages).set({ updatedAt: new Date() }).where(eq(projectStages.id, stageId));
   await logActivity({ userId: me.id, action: "stage.document_added", entityType: "project_stage", entityId: stageId, newValue: { fileName: stored.originalName } });
   stageLinks(projectId, stageId);
+}
+
+/** Move a document to another folder (or clear it). Powers drag-free re-filing from the stage page. */
+export async function setStageDocumentCategory(documentId: string, category: string | null) {
+  const me = await requirePosition([...MANAGERS]);
+  const [doc] = await db.select().from(stageDocuments).where(eq(stageDocuments.id, documentId)).limit(1);
+  if (!doc) return;
+  const projectId = await stageProjectId(doc.stageId);
+  await db.update(stageDocuments).set({ category: normalizeCategory(category) }).where(eq(stageDocuments.id, documentId));
+  await logActivity({ userId: me.id, action: "stage.document_recategorized", entityType: "project_stage", entityId: doc.stageId, newValue: { category: normalizeCategory(category) } });
+  stageLinks(projectId, doc.stageId);
 }
 
 export async function removeStageDocument(documentId: string) {
