@@ -820,7 +820,7 @@
     "lightOn": "Светлая тема"
   },
   "inbox": {
-    "awaitingApproval": "Ожидают моего одобрения",
+    "awaitingApproval": "Ожидают одобрения",
     "approvalDescription": "Проверьте, одобрите или отклоните",
     "noResponses": "Нет ожидающих проверки ответов",
     "responsePrefix": "Ответ:",

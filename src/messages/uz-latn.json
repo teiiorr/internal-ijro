@@ -820,7 +820,7 @@
     "lightOn": "Yorug' mavzu"
   },
   "inbox": {
-    "awaitingApproval": "Mening tasdig'imni kutmoqda",
+    "awaitingApproval": "Tasdig'imni kutmoqda",
     "approvalDescription": "Tekshirib, qabul yoki rad etishingiz kerak",
     "noResponses": "Tekshirish uchun javoblar yo'q",
     "responsePrefix": "Javob:",
