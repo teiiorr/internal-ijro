@@ -81,7 +81,7 @@ export function NotificationBell() {
         )}
       </Button>
       {open && (
-        <div className="absolute right-0 mt-3 w-[380px] max-w-[calc(100vw-1rem)] rounded-3xl glass-strong overflow-hidden z-50">
+        <div className="fixed left-2 right-2 top-[64px] z-50 rounded-3xl glass-strong overflow-hidden sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[380px] sm:max-w-[calc(100vw-1rem)]">
           <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
             <p className="font-bold text-base">{t("nav.notifications")}</p>
             {unread > 0 && (
