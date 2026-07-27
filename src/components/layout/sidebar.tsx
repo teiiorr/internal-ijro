@@ -11,6 +11,8 @@ import {
   Bell,
   ScrollText,
   Settings,
+  Gavel,
+  Calculator,
 } from "lucide-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
@@ -25,6 +27,7 @@ type Item = {
 type IntlNav = {
   dashboard: string; tasks: string; projects: string; employees: string; departments: string;
   contractors: string; notifications: string; auditLog: string; settings: string;
+  ekspertKengash: string; smetaKengash: string;
 };
 
 const ALL: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"];
@@ -36,6 +39,8 @@ const ITEMS: Item[] = [
   { href: "/dashboard",         icon: LayoutDashboard, key: "dashboard",      allowed: ALL,                                                                section: "primary" },
   { href: "/tasks",             icon: CheckSquare,     key: "tasks",          allowed: STAFF,                                                              section: "primary" },
   { href: "/projects",          icon: FolderKanban,    key: "projects",       allowed: ALL,                                                                section: "primary" },
+  { href: "/kengashlar/ekspert", icon: Gavel,          key: "ekspertKengash", allowed: STAFF,                                                              section: "work" },
+  { href: "/kengashlar/smeta",   icon: Calculator,     key: "smetaKengash",   allowed: STAFF,                                                              section: "work" },
   { href: "/employees",         icon: Users,           key: "employees",      allowed: HR_ROLES,                                                           section: "work" },
   { href: "/departments",       icon: Building2,       key: "departments",    allowed: ADMIN,                                                              section: "work" },
   { href: "/contractors",       icon: Briefcase,       key: "contractors",    allowed: ADMIN.concat("koordinator"),                                        section: "work" },

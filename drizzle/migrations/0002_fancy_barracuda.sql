@@ -1,0 +1,1 @@
+ALTER TABLE "users" ALTER COLUMN "language_preference" SET DEFAULT 'uz-cyrl';

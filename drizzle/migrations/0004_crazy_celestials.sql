@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "poster_url" text;

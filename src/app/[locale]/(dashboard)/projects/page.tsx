@@ -1,19 +1,51 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { listProjects } from "@/server/queries/projects";
+import { listProjectTypes, listStageNameOptions } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Download, AlertTriangle } from "lucide-react";
+import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Plus, Download, AlertTriangle, ChevronDown } from "lucide-react";
 import { can } from "@/lib/permissions";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
-import { formatDate } from "@/lib/dates";
 
 type Sort = "created" | "name" | "deadline" | "progress";
 type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_hold" | "at_risk";
+
+// Airy filter control: dashed border, no fill — same language as the file dropzone.
+const FILTER_FIELD =
+  "h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3.5 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none";
+
+// Native <select> with the browser arrow removed and a custom chevron that keeps
+// clear space from the border — fixes the arrow/text colliding with the edge.
+function FilterSelect({
+  name,
+  defaultValue,
+  children,
+}: {
+  name: string;
+  defaultValue: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative">
+      <select name={name} defaultValue={defaultValue} className={`${FILTER_FIELD} appearance-none pr-10`}>
+        {children}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
+    </div>
+  );
+}
+
+// Status tone: green done, amber ongoing, red paused, muted not-started.
+const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
+  completed: "green",
+  in_progress: "amber",
+  on_hold: "red",
+  not_started: "muted",
+};
 
 export default async function ProjectsPage({
   searchParams,
@@ -23,12 +55,21 @@ export default async function ProjectsPage({
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
   const sp = await searchParams;
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
   const sort: Sort = ((get("sort") as Sort | undefined) ?? "created");
   const statusFilter: StatusFilter = ((get("status") as StatusFilter | undefined) ?? "all");
+  const projectTypeId = get("typeId") || null;
+  const payment = (get("payment") as "paid" | "unpaid" | undefined) ?? null;
+  const overdue = get("overdue") === "1";
+  const stage = get("stage") || null;
 
-  const rows = await listProjects({});
+  const [rows, projectTypeOptions, stageOptions] = await Promise.all([
+    listProjects({ projectTypeId, payment, overdue: overdue || null, stage }, locale),
+    listProjectTypes(locale),
+    listStageNameOptions(locale),
+  ]);
   const canCreate = can(session.user.position, "projects.create");
 
   const today = new Date();
@@ -70,9 +111,16 @@ export default async function ProjectsPage({
     at_risk: decorated.filter((p) => p.atRisk).length,
   };
 
+  const extra = new URLSearchParams();
+  if (projectTypeId) extra.set("typeId", projectTypeId);
+  if (payment) extra.set("payment", payment);
+  if (overdue) extra.set("overdue", "1");
+  if (stage) extra.set("stage", stage);
+  const extraQs = extra.toString() ? `&${extra.toString()}` : "";
+
   const FilterTab = ({ value, label, count }: { value: StatusFilter; label: string; count: number }) => (
     <Link
-      href={`/projects?status=${value}&sort=${sort}`}
+      href={`/projects?status=${value}&sort=${sort}${extraQs}`}
       replace
       className={
         "px-3 sm:px-4 py-2 rounded-[8px] text-[13px] sm:text-[14px] font-semibold transition-all flex items-center gap-2 shrink-0 " +
@@ -104,8 +152,8 @@ export default async function ProjectsPage({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
-        <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-1">
+      <div className="space-y-3">
+        <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto no-scrollbar">
           <FilterTab value="all"         label={t("common.all")} count={counts.all} />
           <FilterTab value="not_started" label={t("projects.derivedStatus.not_started")} count={counts.not_started} />
           <FilterTab value="in_progress" label={t("projects.derivedStatus.in_progress")} count={counts.in_progress} />
@@ -114,124 +162,79 @@ export default async function ProjectsPage({
           <FilterTab value="at_risk"     label={t("projects.atRisk")} count={counts.at_risk} />
         </div>
 
-        <form className="sm:ml-auto flex items-center gap-2" action="/projects">
+        {/* even grid — dashed, airy controls (full-width on mobile so labels never clip) */}
+        <form className="grid grid-cols-1 gap-2 sm:grid-cols-3" action="/projects">
           <input type="hidden" name="status" value={statusFilter} />
-          <select
-            name="sort"
-            defaultValue={sort}
-            className="h-10 flex-1 sm:flex-initial rounded-md border border-[var(--input)] bg-[var(--surface)] px-3 text-sm font-medium"
-          >
+          <FilterSelect name="typeId" defaultValue={projectTypeId ?? ""}>
+            <option value="">{t("projects.filters.allTypes")}</option>
+            {projectTypeOptions.map((pt) => (
+              <option key={pt.id} value={pt.id}>{pt.name}</option>
+            ))}
+          </FilterSelect>
+          <FilterSelect name="stage" defaultValue={stage ?? ""}>
+            <option value="">{t("projects.filters.allStages")}</option>
+            {stageOptions.map((s) => (
+              <option key={s.value} value={s.value}>{s.name}</option>
+            ))}
+          </FilterSelect>
+          <FilterSelect name="payment" defaultValue={payment ?? ""}>
+            <option value="">{t("projects.filters.payment")}</option>
+            <option value="paid">{t("projects.filters.paid")}</option>
+            <option value="unpaid">{t("projects.filters.unpaid")}</option>
+          </FilterSelect>
+          <FilterSelect name="sort" defaultValue={sort}>
             <option value="created">{t("projects.sort.created")}</option>
             <option value="name">{t("projects.sort.name")}</option>
             <option value="deadline">{t("projects.sort.deadline")}</option>
             <option value="progress">{t("projects.sort.progress")}</option>
-          </select>
-          <Button type="submit" size="sm" variant="ghost">
+          </FilterSelect>
+          <label className={`${FILTER_FIELD} inline-flex items-center gap-2 cursor-pointer`}>
+            <input type="checkbox" name="overdue" value="1" defaultChecked={overdue} className="accent-[var(--warning)]" />
+            {t("projects.filters.overdue")}
+          </label>
+          <Button type="submit" variant="outline" className="h-11 w-full">
             {t("common.apply")}
           </Button>
         </form>
       </div>
 
-      {/* Mobile card view */}
-      <div className="md:hidden space-y-2">
-        {filtered.map((p) => {
-          const variant: "default" | "secondary" | "warning" | "success" =
-            p.derived === "completed" ? "success"
-            : p.derived === "on_hold" ? "warning"
-            : p.derived === "in_progress" ? "default"
-            : "secondary";
-          return (
-            <Link
-              key={p.id}
-              href={`/projects/${p.id}`}
-              className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 active:scale-[0.99] transition-transform"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-[15px] leading-snug inline-flex items-center gap-2 break-words">
-                    {p.name}
-                    {p.atRisk && <AlertTriangle className="size-3.5 text-[var(--danger)] shrink-0" />}
-                  </p>
-                  <p className="text-xs text-[var(--muted)] mt-1">
-                    {t(`projects.type.${p.type}` as "projects.type.internal")} · {p.curatorName ?? t("common.emptyValue")}
-                  </p>
+      {/* Poster grid — big square covers */}
+      {filtered.length === 0 ? (
+        <Card><CardContent className="py-16 text-center text-sm text-[var(--muted)]">{t("projects.empty")}</CardContent></Card>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+          {filtered.map((p) => (
+            <Link key={p.id} href={`/projects/${p.id}`} className="group block">
+              <div className="relative aspect-square overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] shadow-[var(--shadow-1)] transition-shadow group-hover:shadow-[var(--shadow-2)]">
+                {p.posterUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.posterUrl} alt={p.name} className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+                ) : (
+                  <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
+                    <span className="select-none text-5xl font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span>
+                  </div>
+                )}
+                {p.atRisk && (
+                  <span className="absolute right-2 top-2 grid size-7 place-items-center rounded-lg bg-[var(--danger)] text-white shadow-sm" title={t("projects.atRisk")}>
+                    <AlertTriangle className="size-4" />
+                  </span>
+                )}
+                <div className="absolute inset-x-0 bottom-0 h-1.5 bg-black/15">
+                  <div className="h-full bg-[var(--success)]" style={{ width: `${p.progressPercentage}%` }} />
                 </div>
-                <Badge variant={variant}>{t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}</Badge>
               </div>
-              <div className="flex items-center gap-3 mt-3">
-                <div className="flex-1 h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                  <div className="h-full rounded-full bg-[var(--foreground)]" style={{ width: `${p.progressPercentage}%` }} />
+              <div className="mt-2.5">
+                <p className="line-clamp-2 font-semibold leading-snug transition-colors group-hover:text-[var(--primary)]">{p.name}</p>
+                <div className="mt-1.5 flex items-center justify-between gap-2">
+                  <StatusTag tone={STATUS_TONE[p.derived]}>{t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}</StatusTag>
+                  <span className="text-xs font-semibold tabular-nums text-[var(--muted)]">{p.progressPercentage}%</span>
                 </div>
-                <span className="text-xs font-semibold tabular w-8 text-right">{p.progressPercentage}%</span>
+                <p className="mt-1 truncate text-xs text-[var(--muted)]">{p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal")}</p>
               </div>
-              {p.deadline && (
-                <p className="text-xs text-[var(--muted)] mt-2">{t("projects.headers.deadline")}: {formatDate(p.deadline)}</p>
-              )}
             </Link>
-          );
-        })}
-        {filtered.length === 0 && (
-          <Card><CardContent className="text-center py-10 text-[var(--muted)] text-sm">{t("projects.empty")}</CardContent></Card>
-        )}
-      </div>
-
-      {/* Desktop table view */}
-      <Card className="hidden md:block">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t("projects.headers.name")}</TableHead>
-                <TableHead>{t("projects.headers.type")}</TableHead>
-                <TableHead>{t("projects.headers.curator")}</TableHead>
-                <TableHead>{t("projects.headers.progress")}</TableHead>
-                <TableHead>{t("projects.headers.deadline")}</TableHead>
-                <TableHead>{t("projects.headers.status")}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtered.map((p) => {
-                const variant: "default" | "secondary" | "warning" | "success" =
-                  p.derived === "completed" ? "success"
-                  : p.derived === "on_hold" ? "warning"
-                  : p.derived === "in_progress" ? "default"
-                  : "secondary";
-                return (
-                  <TableRow key={p.id}>
-                    <TableCell>
-                      <Link href={`/projects/${p.id}`} className="font-semibold hover:text-[var(--primary)] transition-colors inline-flex items-center gap-2">
-                        {p.name}
-                        {p.atRisk && (
-                          <span title={t("projects.atRisk")} aria-label={t("projects.atRisk")}>
-                            <AlertTriangle className="size-3.5 text-[var(--danger)]" />
-                          </span>
-                        )}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{t(`projects.type.${p.type}` as "projects.type.internal")}</TableCell>
-                    <TableCell>{p.curatorName ?? t("common.emptyValue")}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3 min-w-[140px]">
-                        <div className="flex-1 h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                          <div className="h-full rounded-full bg-[var(--foreground)]" style={{ width: `${p.progressPercentage}%` }} />
-                        </div>
-                        <span className="text-xs font-semibold tabular w-8 text-right">{p.progressPercentage}%</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{p.deadline ? formatDate(p.deadline) : t("common.emptyValue")}</TableCell>
-                    <TableCell>
-                      <Badge variant={variant}>{t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}</Badge>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {filtered.length === 0 && (
-                <TableRow><TableCell colSpan={6} className="text-center py-12 text-[var(--muted)]">{t("projects.empty")}</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

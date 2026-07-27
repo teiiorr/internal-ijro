@@ -1,5 +1,23 @@
 import { describe, it, expect } from "vitest";
-import { overallProgress, derivedStatus } from "./progress";
+import { overallProgress, derivedStatus, stageProgress } from "./progress";
+
+describe("stageProgress", () => {
+  it("returns 0 for empty list", () => {
+    expect(stageProgress([])).toBe(0);
+  });
+
+  it("counts completed / total (unweighted)", () => {
+    const s = (status: string) => ({ status });
+    // 1 of 4 completed → 25%
+    expect(stageProgress([s("completed"), s("active"), s("locked"), s("locked")])).toBe(25);
+    // 1 of 6 completed → 17% (rounded)
+    expect(stageProgress([s("completed"), s("active"), s("locked"), s("locked"), s("locked"), s("locked")])).toBe(17);
+    // all completed → 100%
+    expect(stageProgress([s("completed"), s("completed"), s("completed")])).toBe(100);
+    // none completed → 0%
+    expect(stageProgress([s("active"), s("locked")])).toBe(0);
+  });
+});
 
 describe("overallProgress", () => {
   it("returns 0 for empty list", () => {

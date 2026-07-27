@@ -11,19 +11,26 @@ import {
   ratings,
   externalCompanies,
   users,
+  projectTypes,
+  projectStages,
+  stageTemplateItems,
 } from "@/lib/db/schema";
 import { requireUser, requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
-import { storeFile } from "@/lib/upload";
-import { overallProgress } from "@/lib/projects/progress";
+import { storeFile, deleteFileByUrl } from "@/lib/upload";
+import { recalcProjectProgress } from "@/lib/projects/recalc";
 
 const projectSchema = z.object({
   name: z.string().min(2).max(255),
   description: z.string().nullable().optional(),
   type: z.enum(["internal", "external"]),
+  /** One of the 9 seeded project_types. Non-null → auto-build the stage pipeline. */
+  projectTypeId: z.string().uuid().nullable().optional(),
   externalCompanyId: z.string().uuid().nullable().optional(),
   curatorUserId: z.string().uuid().nullable().optional(),
+  /** mas'ul — applied to every generated stage (editable per stage later). */
+  responsibleUserId: z.string().uuid().nullable().optional(),
   startDate: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
   budget: z.number().nullable().optional(),
@@ -35,31 +42,105 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
   const parsed = projectSchema.parse(input);
   if (parsed.type === "external" && !parsed.externalCompanyId) throw new Error("company_required");
 
-  const inserted = await db
-    .insert(projects)
-    .values({
-      name: parsed.name,
-      description: parsed.description ?? null,
-      type: parsed.type,
-      externalCompanyId: parsed.externalCompanyId ?? null,
-      curatorUserId: parsed.curatorUserId ?? me.id,
-      startDate: parsed.startDate ?? null,
-      deadline: parsed.deadline ?? null,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      budget: parsed.budget != null ? (parsed.budget as any) : null,
-      budgetCurrency: parsed.budgetCurrency,
-      createdByUserId: me.id,
-    })
-    .returning({ id: projects.id });
+  const { projectId, firstStage } = await db.transaction(async (tx) => {
+    const inserted = await tx
+      .insert(projects)
+      .values({
+        name: parsed.name,
+        description: parsed.description ?? null,
+        type: parsed.type,
+        projectTypeId: parsed.projectTypeId ?? null,
+        externalCompanyId: parsed.externalCompanyId ?? null,
+        curatorUserId: parsed.curatorUserId ?? me.id,
+        startDate: parsed.startDate ?? null,
+        deadline: parsed.deadline ?? null,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        budget: parsed.budget != null ? (parsed.budget as any) : null,
+        budgetCurrency: parsed.budgetCurrency,
+        createdByUserId: me.id,
+      })
+      .returning({ id: projects.id });
+    const pid = inserted[0].id;
+
+    let first: { id: string; name: string; responsibleUserId: string | null } | null = null;
+
+    // Auto-build the ordered stage pipeline from the type's template.
+    if (parsed.projectTypeId) {
+      const type = await tx
+        .select({ stageTemplateId: projectTypes.stageTemplateId })
+        .from(projectTypes)
+        .where(eq(projectTypes.id, parsed.projectTypeId))
+        .limit(1);
+      if (type.length === 0) throw new Error("invalid_project_type");
+
+      const items = await tx
+        .select()
+        .from(stageTemplateItems)
+        .where(eq(stageTemplateItems.templateId, type[0].stageTemplateId))
+        .orderBy(stageTemplateItems.orderIndex);
+
+      const responsible = parsed.responsibleUserId ?? parsed.curatorUserId ?? me.id;
+      const now = new Date();
+      // Cumulative planned deadlines from startDate + each item's default duration (when defined).
+      let cursor = parsed.startDate ? new Date(parsed.startDate) : null;
+      const rows = items.map((it, i) => {
+        let plannedDeadline: string | null = null;
+        if (cursor && it.defaultDurationDays) {
+          cursor = new Date(cursor);
+          cursor.setDate(cursor.getDate() + it.defaultDurationDays);
+          plannedDeadline = cursor.toISOString().slice(0, 10);
+        }
+        return {
+          projectId: pid,
+          templateItemId: it.id,
+          orderIndex: i,
+          name: it.nameUzLatn,
+          status: i === 0 ? "active" : "locked",
+          startedAt: i === 0 ? now : null,
+          responsibleUserId: responsible,
+          plannedDeadline,
+        };
+      });
+      if (rows.length > 0) {
+        const insertedStages = await tx
+          .insert(projectStages)
+          .values(rows)
+          .returning({
+            id: projectStages.id,
+            name: projectStages.name,
+            orderIndex: projectStages.orderIndex,
+            responsibleUserId: projectStages.responsibleUserId,
+          });
+        first = insertedStages.find((s) => s.orderIndex === 0) ?? null;
+      }
+    }
+
+    return { projectId: pid, firstStage: first };
+  });
+
   await logActivity({
     userId: me.id,
     action: "project.created",
     entityType: "project",
-    entityId: inserted[0].id,
-    newValue: { name: parsed.name, type: parsed.type },
+    entityId: projectId,
+    newValue: { name: parsed.name, type: parsed.type, projectTypeId: parsed.projectTypeId ?? null },
   });
+
+  // Notify the responsible of the first (already active) stage.
+  if (firstStage?.responsibleUserId) {
+    await notify({
+      userIds: [firstStage.responsibleUserId],
+      type: "stage.started",
+      title: `${parsed.name}: ${firstStage.name}`,
+      message: "Yangi bosqich boshlandi / Начат новый этап",
+      link: `/projects/${projectId}/stages/${firstStage.id}`,
+      entityType: "project_stage",
+      entityId: firstStage.id,
+    });
+  }
+
   revalidatePath("/projects");
-  return { id: inserted[0].id };
+  return { id: projectId };
 }
 
 const milestoneSchema = z.object({
@@ -127,22 +208,6 @@ export async function setMilestonePaymentStatus(milestoneId: string, paymentStat
   revalidatePath(`/projects/${row[0].projectId}`);
 }
 
-/**
- * Recompute and persist the project's progress from its stages.
- * Uses the pure `overallProgress` function — same logic as the unit tests.
- * Single source of truth lives in src/lib/projects/progress.ts.
- */
-async function recalcProjectProgress(projectId: string) {
-  const mls = await db
-    .select({ progress: milestones.progress, weight: milestones.weight })
-    .from(milestones)
-    .where(eq(milestones.projectId, projectId));
-  const pct = overallProgress(mls);
-  await db
-    .update(projects)
-    .set({ progressPercentage: pct, updatedAt: new Date() })
-    .where(eq(projects.id, projectId));
-}
 
 /** Set a stage's progress (0..100). Server clamps; never trust client. */
 export async function setMilestoneProgress(milestoneId: string, progress: number) {
@@ -255,6 +320,29 @@ export async function setProjectOnHold(projectId: string, onHold: boolean) {
     entityType: "project",
     entityId: projectId,
   });
+  revalidatePath(`/projects/${projectId}`);
+}
+
+// Project poster (square cover image)
+export async function setProjectPoster(projectId: string, file: File) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  if (!file.type.startsWith("image/")) throw new Error("image_required");
+  const [prev] = await db.select({ posterUrl: projects.posterUrl }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  const stored = await storeFile(file, `project-posters/${projectId}`);
+  await db.update(projects).set({ posterUrl: stored.url, updatedAt: new Date() }).where(eq(projects.id, projectId));
+  if (prev?.posterUrl) await deleteFileByUrl(prev.posterUrl);
+  await logActivity({ userId: me.id, action: "project.poster_set", entityType: "project", entityId: projectId });
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${projectId}`);
+}
+
+export async function removeProjectPoster(projectId: string) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const [prev] = await db.select({ posterUrl: projects.posterUrl }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (prev?.posterUrl) await deleteFileByUrl(prev.posterUrl);
+  await db.update(projects).set({ posterUrl: null, updatedAt: new Date() }).where(eq(projects.id, projectId));
+  await logActivity({ userId: me.id, action: "project.poster_removed", entityType: "project", entityId: projectId });
+  revalidatePath("/projects");
   revalidatePath(`/projects/${projectId}`);
 }
 

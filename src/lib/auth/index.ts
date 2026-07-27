@@ -132,7 +132,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.position = token.position as Position;
         session.user.departmentId = (token.departmentId as string | null) ?? null;
         session.user.status = token.status as UserStatus;
-        session.user.languagePreference = (token.languagePreference as string) ?? "uz-latn";
+        session.user.languagePreference = (token.languagePreference as string) ?? "uz-cyrl";
         session.user.themePreference = (token.themePreference as string) ?? "system";
         session.user.twoFactorEnabled = Boolean(token.twoFactorEnabled);
       }

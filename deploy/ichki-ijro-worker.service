@@ -1,0 +1,20 @@
+[Unit]
+Description=Ichki Ijro — stage deadline reminders (worker)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+# One-shot: runs a single pass and exits. The systemd timer schedules it.
+Type=oneshot
+User=ichki-ijro
+Group=ichki-ijro
+WorkingDirectory=/srv/ichki-ijro/current
+EnvironmentFile=/srv/ichki-ijro/shared/.env.production
+# Requires tsx (installed with the app's dependencies, same as `pnpm db:migrate`).
+ExecStart=/usr/bin/env pnpm worker
+
+# Sandbox — the worker only reads/writes the database.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true

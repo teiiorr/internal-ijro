@@ -36,6 +36,18 @@ export function overallProgress(stages: StageInput[]): number {
   return clamp(Math.round(weightedSum / totalWeight), 0, 100);
 }
 
+/**
+ * Progress for a typed (template-driven) project = share of completed stages.
+ * Unweighted, per spec: 1 of 4 stages done = 25%. Empty list → 0.
+ */
+export type StageStatusInput = { status: "locked" | "active" | "completed" | string };
+
+export function stageProgress(stages: StageStatusInput[]): number {
+  if (!stages || stages.length === 0) return 0;
+  const done = stages.filter((s) => s.status === "completed").length;
+  return clamp(Math.round((100 * done) / stages.length), 0, 100);
+}
+
 export type DerivedStatus = "on_hold" | "not_started" | "in_progress" | "completed";
 
 /** Derived status used to drive the badge so it can never contradict the bar. */

@@ -6,23 +6,14 @@ import { randomUUID } from "node:crypto";
 const UPLOAD_DIR = process.env.UPLOAD_DIR ?? "./uploads";
 const MAX_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 52428800);
 
-const FORBIDDEN_EXT = new Set([".exe", ".bat", ".sh", ".cmd", ".com", ".js", ".jar", ".msi", ".vbs", ".ps1"]);
-const ALLOWED_MIME = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "application/zip",
-  "application/x-zip-compressed",
-  "image/png",
-  "image/jpeg",
-  "image/gif",
-  "image/webp",
-  "video/mp4",
-  "video/quicktime",
-  "text/plain",
-  "text/csv",
+// Stage documents accept ANY format. Security floor = an executable/active-content
+// blocklist (files are served with `Content-Disposition: inline`, so markup that can
+// run script — .html/.svg/etc. — is blocked to prevent stored XSS on the app origin).
+const FORBIDDEN_EXT = new Set([
+  ".exe", ".bat", ".sh", ".cmd", ".com", ".js", ".mjs", ".cjs", ".jar", ".msi",
+  ".vbs", ".ps1", ".scr", ".app", ".dll",
+  // active markup — dangerous under inline disposition
+  ".html", ".htm", ".xhtml", ".svg", ".svgz", ".xml", ".xsl", ".mht", ".mhtml",
 ]);
 
 export type StoredFile = {
@@ -37,8 +28,8 @@ export type StoredFile = {
 export async function storeFile(file: File, subdir: string): Promise<StoredFile> {
   if (file.size > MAX_BYTES) throw new Error("file_too_large");
   if (file.size === 0) throw new Error("file_empty");
-  if (!ALLOWED_MIME.has(file.type)) throw new Error("mime_not_allowed");
   const ext = extname(file.name).toLowerCase();
+  // Allow-by-default: any format except the executable/active-content blocklist.
   if (FORBIDDEN_EXT.has(ext)) throw new Error("ext_forbidden");
 
   const targetDir = join(UPLOAD_DIR, subdir);

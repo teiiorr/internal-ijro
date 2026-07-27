@@ -35,9 +35,12 @@ export function LanguageSwitcher() {
     if (next === locale) return;
     const qs = searchParams?.toString();
     const href = qs ? `${pathname}?${qs}` : pathname;
+    // NOTE: do NOT call router.refresh() here. next-intl performs the locale
+    // switch as a soft navigation via router.replace(); a refresh() fired in
+    // the same transition re-fetches the CURRENT url and cancels the pending
+    // locale navigation, so the language never actually changes.
     startTransition(() => {
       router.replace(href, { locale: next });
-      router.refresh();
     });
   }
 

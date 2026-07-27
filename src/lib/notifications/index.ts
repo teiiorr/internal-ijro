@@ -1,70 +1,19 @@
 import "server-only";
-import { eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { notifications, notificationSettings, users } from "@/lib/db/schema";
+import { notifications } from "@/lib/db/schema";
 import { sendMail } from "@/lib/email";
+import { deliverNotification, type DeliverArgs } from "./deliver";
 
-export type NotifyArgs = {
-  userIds: string[];
-  type: string;
-  title: string;
-  message?: string;
-  link?: string;
-  entityType?: string;
-  entityId?: string;
-};
+export type NotifyArgs = DeliverArgs;
 
+/**
+ * App-side notify: delivers in-app + email + Telegram via the shared core,
+ * using the request-scoped db singleton and the SMTP mailer. The cron worker
+ * calls deliverNotification() directly with its own db (see scripts/worker.ts).
+ */
 export async function notify(args: NotifyArgs): Promise<void> {
-  if (args.userIds.length === 0) return;
-
-  const uniq = Array.from(new Set(args.userIds));
-  const settings = await db
-    .select({
-      userId: notificationSettings.userId,
-      inApp: notificationSettings.inAppEnabled,
-      email: notificationSettings.emailEnabled,
-    })
-    .from(notificationSettings)
-    .where(inArray(notificationSettings.userId, uniq));
-  const map = new Map(settings.map((s) => [s.userId, s]));
-
-  // 1) In-app
-  const toInsert: { userId: string; type: string; title: string; message: string | null; link: string | null; relatedEntityType: string | null; relatedEntityId: string | null }[] = [];
-  for (const uid of uniq) {
-    const s = map.get(uid);
-    if (!s || s.inApp) {
-      toInsert.push({
-        userId: uid,
-        type: args.type,
-        title: args.title,
-        message: args.message ?? null,
-        link: args.link ?? null,
-        relatedEntityType: args.entityType ?? null,
-        relatedEntityId: args.entityId ?? null,
-      });
-    }
-  }
-  if (toInsert.length > 0) await db.insert(notifications).values(toInsert);
-
-  // 2) Emails (opt-in: email_enabled must be true)
-  const emailUserIds = uniq.filter((id) => map.get(id)?.email === true);
-  if (emailUserIds.length > 0) {
-    const recipients = await db
-      .select({ email: users.email, fullName: users.fullName })
-      .from(users)
-      .where(inArray(users.id, emailUserIds));
-    await Promise.allSettled(
-      recipients.map((r) =>
-        sendMail({
-          to: r.email,
-          subject: args.title,
-          html: `<p>${r.fullName},</p><p>${args.message ?? args.title}</p>${
-            args.link ? `<p><a href="${process.env.APP_URL ?? "http://localhost:3000"}${args.link}">Open</a></p>` : ""
-          }`,
-        })
-      )
-    );
-  }
+  await deliverNotification(db, args, (opts) => sendMail(opts));
 }
 
 export async function markAllAsRead(userId: string): Promise<void> {

@@ -112,7 +112,10 @@
     "settings": "Настройки",
     "profile": "Профиль",
     "logout": "Выйти",
-    "contractorPortal": "Портал подрядчика"
+    "contractorPortal": "Портал подрядчика",
+    "ekspertKengash": "Экспертный совет",
+    "smetaKengash": "Сметный совет",
+    "more": "Ещё"
   },
   "positions": {
     "direktor": "Директор",
@@ -322,7 +325,12 @@
       "startDate": "Дата начала",
       "deadline": "Срок завершения",
       "budget": "Бюджет",
-      "progress": "Прогресс"
+      "progress": "Прогресс",
+      "projectType": "Тип проекта",
+      "projectTypePlaceholder": "Выберите тип (этапы создадутся автоматически)",
+      "projectTypeHint": "При выборе типа соответствующие этапы добавляются автоматически.",
+      "responsible": "Ответственный",
+      "responsibleHint": "Применяется ко всем этапам (позже можно изменить индивидуально)."
     },
     "type": {
       "internal": "Внутренний",
@@ -437,6 +445,57 @@
       "name": "По названию",
       "deadline": "По сроку",
       "progress": "По прогрессу"
+    },
+    "stagePath": {
+      "title": "Этапы",
+      "active": "Активен",
+      "done": "Завершён",
+      "locked": "Заблокирован",
+      "currentStage": "Текущий этап",
+      "stageOf": "Этап {n} из {total}",
+      "lockedHint": "Этап ещё не открыт. Он активируется после завершения предыдущего."
+    },
+    "stageDocs": {
+      "title": "Документы",
+      "empty": "Нет документов"
+    },
+    "stagePayments": {
+      "title": "Оплаты",
+      "projectTotal": "Оплаты по проекту",
+      "planned": "Запланировано",
+      "paid": "Оплачено",
+      "pending": "Ожидается",
+      "add": "Добавить",
+      "amount": "Сумма",
+      "note": "Примечание",
+      "markPaid": "Отметить оплаченным",
+      "markPending": "Отметить ожидающим",
+      "empty": "Нет оплат",
+      "invalidAmount": "Введите корректную сумму"
+    },
+    "stageActions": {
+      "complete": "Завершить этап",
+      "completed": "Этап завершён",
+      "projectCompleted": "Проект завершён!",
+      "notActive": "Этот этап не активен"
+    },
+    "filters": {
+      "title": "Фильтры",
+      "type": "Тип",
+      "allTypes": "Все типы",
+      "responsible": "Ответственный",
+      "allResponsible": "Все ответственные",
+      "payment": "Оплата",
+      "paid": "Оплачено",
+      "unpaid": "Не оплачено",
+      "overdue": "Просроченные",
+      "reset": "Сбросить",
+      "typedOnly": "Производственные проекты",
+      "stage": "Этап",
+      "allStages": "Все этапы"
+    },
+    "poster": {
+      "change": "Изменить постер"
     }
   },
   "employees": {
@@ -769,5 +828,24 @@
     "myTasks": "Нужно выполнить",
     "myTasksDescription": "Назначенные вам задачи",
     "allComplete": "Всё выполнено"
+  },
+  "kengash": {
+    "ekspertHeading": "Повестка предстоящего заседания Экспертного совета",
+    "smetaHeading": "Повестка предстоящего заседания Сметного совета",
+    "agenda": "Повестка дня",
+    "noUpcoming": "Предстоящих заседаний нет",
+    "createMeeting": "Добавить заседание",
+    "meetingDate": "Дата и время",
+    "meetingTitle": "Заголовок (необязательно)",
+    "save": "Сохранить",
+    "topic": "Тема",
+    "project": "Проект",
+    "presenter": "Докладчик",
+    "addItem": "Добавить",
+    "noItems": "Повестка пуста",
+    "history": "История заседаний",
+    "selectProject": "Выберите проект",
+    "selectPresenter": "Выберите докладчика",
+    "newTopic": "Новая тема"
   }
 }

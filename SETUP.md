@@ -34,30 +34,36 @@ Copy `.env.example` to `.env.local` and adjust:
 ```bash
 pnpm install
 pnpm db:migrate
-pnpm db:seed          # optional demo data
+pnpm db:seed            # optional demo data (users/projects) — aborts if users already exist
+pnpm db:seed:templates  # the 9 project types + 7 stage templates (idempotent; safe to re-run anytime)
 pnpm dev
 ```
 
 Open http://localhost:3000. If you skipped the seed, `/setup` will appear and prompt you to create the first Direktor.
 
-## Cron worker
+> `db:seed:templates` is required for the typed **Loyihalar** (project-stage) system — creating a project of one of the 9 types auto-builds its stage pipeline from these templates. Run it once after every migration; re-running only upserts names.
 
-Reminders + weekly PDF mailing run inside a separate worker process so the web server isn't blocked:
+## Cron worker (stage deadline reminders)
+
+`scripts/worker.ts` runs a single pass and exits: it notifies the responsible/curator of stages whose deadline is approaching, overdue, or stale (per-stage dedupe columns prevent repeat alerts). Run it on a schedule.
 
 ```bash
-pnpm tsx scripts/worker.ts
+pnpm worker                      # one pass (dev)
+# tuning (optional): WORKER_APPROACHING_DAYS=3 WORKER_STALE_DAYS=7
 ```
 
-Schedule:
-- every hour — task deadline reminders (24h ahead)
-- 17:00 daily — standup reminders
-- Monday 09:00 — weekly PDF report mailed to Direktors
+Production (systemd timer — daily 08:00 Asia/Tashkent):
 
-## Telegram
+```bash
+# copy deploy/ichki-ijro-worker.{service,timer} into /etc/systemd/system/
+systemctl enable --now ichki-ijro-worker.timer
+```
 
-1. Create bot via @BotFather, set `TELEGRAM_BOT_TOKEN`.
-2. Set the webhook (must be HTTPS in production):
-   ```bash
-   curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook?url=https://your-domain/api/telegram/webhook&secret_token=$TELEGRAM_WEBHOOK_SECRET"
-   ```
-3. In the app, go to Settings → Telegram, generate a code, then send it to the bot.
+## Telegram (Phase 2 — deferred)
+
+Telegram delivery is wired as a dormant seam: `notify()` sends through Telegram only when `TELEGRAM_BOT_TOKEN` is set **and** the recipient has a linked `notificationSettings.telegramChatId`. The bot/webhook and the user-linking flow that captures each chat id are not built yet.
+
+To enable later:
+1. Create a bot via @BotFather, set `TELEGRAM_BOT_TOKEN`.
+2. Build the linking flow (webhook capturing `chat_id`, or a Settings → Telegram code) that writes `notificationSettings.telegramChatId` and sets `telegramEnabled`.
+   The delivery seam then activates automatically — see `src/lib/telegram/index.ts` and `src/lib/notifications/deliver.ts`.

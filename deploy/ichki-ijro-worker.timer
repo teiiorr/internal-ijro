@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Ichki Ijro stage deadline reminders daily
+
+[Timer]
+# Every day at 08:00 Tashkent time. Persistent=true catches up a missed run
+# (e.g. the machine was off at 08:00) on next boot.
+OnCalendar=*-*-* 08:00:00 Asia/Tashkent
+Persistent=true
+
+[Install]
+WantedBy=timers.target

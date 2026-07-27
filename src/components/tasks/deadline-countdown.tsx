@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { StatusTag } from "@/components/ui/status-tag";
 
 type Props = {
   deadline: Date | string | null | undefined;
@@ -41,14 +42,9 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
 
   if (diffMs <= 0) {
     return (
-      <span
-        className={cn(
-          "inline-flex items-center h-6 px-2.5 rounded-[6px] text-[11.5px] font-bold leading-none whitespace-nowrap bg-[var(--danger)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]",
-          className
-        )}
-      >
+      <StatusTag tone="red" className={cn("tabular-nums", className)}>
         Kechikti
-      </span>
+      </StatusTag>
     );
   }
 
@@ -58,15 +54,10 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
   const mins = Math.floor((totalSec % 3_600) / 60);
   const secs = totalSec % 60;
 
-  // Tone: red if < 6h, amber if < 3 days, primary otherwise
+  // Traffic-light tone: red if < 6h, amber if < 3 days, green otherwise.
   const urgent = days === 0 && hours < 6;
   const soon = days < 3;
-
-  const toneClass = urgent
-    ? "bg-[var(--danger)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
-    : soon
-      ? "bg-[var(--warning)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]"
-      : "bg-[var(--primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]";
+  const tone = urgent ? "red" : soon ? "amber" : "green";
 
   let text: string;
   if (days > 0) {
@@ -84,14 +75,8 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
   }
 
   return (
-    <span
-      className={cn(
-        "inline-flex items-center h-6 px-2.5 rounded-[6px] text-[11.5px] font-bold leading-none whitespace-nowrap tabular",
-        toneClass,
-        className
-      )}
-    >
+    <StatusTag tone={tone} className={cn("tabular-nums", className)}>
       {text}
-    </span>
+    </StatusTag>
   );
 }

@@ -69,7 +69,7 @@ export const users = pgTable(
     status: varchar("status", { length: 20 }).default("pending").notNull().$type<UserStatus>(),
     hireDate: date("hire_date"),
     terminationDate: date("termination_date"),
-    languagePreference: varchar("language_preference", { length: 10 }).default("uz-latn").notNull(),
+    languagePreference: varchar("language_preference", { length: 10 }).default("uz-cyrl").notNull(),
     themePreference: varchar("theme_preference", { length: 10 }).default("system").notNull(),
     timezone: varchar("timezone", { length: 50 }).default("Asia/Tashkent").notNull(),
     twoFactorEnabled: boolean("two_factor_enabled").default(false).notNull(),
@@ -193,7 +193,17 @@ export const projects = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
+    /** Square poster/cover image shown in the project grid (nullable → placeholder). */
+    posterUrl: text("poster_url"),
     type: varchar("type", { length: 20 }).notNull(),
+    /**
+     * Production type (one of the 9 seeded `project_types`). NULL = legacy
+     * project that uses the free-form `milestones` UI. A non-null value is the
+     * sole discriminator for the template-driven stage system.
+     */
+    projectTypeId: uuid("project_type_id").references((): AnyPgColumn => projectTypes.id, {
+      onDelete: "set null",
+    }),
     externalCompanyId: uuid("external_company_id").references(() => externalCompanies.id, {
       onDelete: "set null",
     }),
@@ -550,8 +560,199 @@ export const ratings = pgTable("ratings", {
   scoreCheck: check("ratings_score_chk", sql`${t.score} BETWEEN 1 AND 5`),
 }));
 
+// ---------- 5.19 stage_templates ----------
+// Ordered stage blueprints. A template is reused by several project types
+// (types 1&2 share one, 4&5 share another) → 7 templates for 9 types.
+export const stageTemplates = pgTable(
+  "stage_templates",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    code: varchar("code", { length: 40 }).notNull(),
+    nameUzLatn: varchar("name_uz_latn", { length: 255 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    codeUniq: uniqueIndex("stage_templates_code_uniq").on(t.code),
+  })
+);
+
+// ---------- 5.20 stage_template_items ----------
+export const stageTemplateItems = pgTable(
+  "stage_template_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    templateId: uuid("template_id")
+      .notNull()
+      .references(() => stageTemplates.id, { onDelete: "cascade" }),
+    orderIndex: integer("order_index").notNull(),
+    nameUzLatn: varchar("name_uz_latn", { length: 255 }).notNull(),
+    nameUzCyrl: varchar("name_uz_cyrl", { length: 255 }).notNull(),
+    nameRu: varchar("name_ru", { length: 255 }).notNull(),
+    defaultDurationDays: integer("default_duration_days"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    orderUniq: uniqueIndex("stage_template_items_order_uniq").on(t.templateId, t.orderIndex),
+  })
+);
+
+// ---------- 5.21 project_types ----------
+// The 9 production types. `code` is the stable slug; localized names for the UI.
+export const projectTypes = pgTable(
+  "project_types",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    code: varchar("code", { length: 40 }).notNull(),
+    nameUzLatn: varchar("name_uz_latn", { length: 255 }).notNull(),
+    nameUzCyrl: varchar("name_uz_cyrl", { length: 255 }).notNull(),
+    nameRu: varchar("name_ru", { length: 255 }).notNull(),
+    stageTemplateId: uuid("stage_template_id")
+      .notNull()
+      .references(() => stageTemplates.id, { onDelete: "restrict" }),
+    orderIndex: integer("order_index").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    codeUniq: uniqueIndex("project_types_code_uniq").on(t.code),
+  })
+);
+
+// ---------- 5.22 project_stages ----------
+// One row per stage of a typed project. Strict sequential state machine:
+// exactly one 'active' stage at a time; 'locked' stages unlock in order.
+export const projectStages = pgTable(
+  "project_stages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    templateItemId: uuid("template_item_id").references(() => stageTemplateItems.id, {
+      onDelete: "set null",
+    }),
+    orderIndex: integer("order_index").notNull(),
+    /** Snapshot of the template item name at creation — survives template edits. */
+    name: varchar("name", { length: 255 }).notNull(),
+    /** 'locked' | 'active' | 'completed' */
+    status: varchar("status", { length: 20 }).default("locked").notNull(),
+    plannedDeadline: date("planned_deadline"),
+    plannedAmount: decimal("planned_amount", { precision: 15, scale: 2 }),
+    responsibleUserId: uuid("responsible_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    // Cron dedupe: one reminder of each kind per active stage; cleared on transition.
+    reminderApproachingSentAt: timestamp("reminder_approaching_sent_at", { withTimezone: true }),
+    reminderOverdueSentAt: timestamp("reminder_overdue_sent_at", { withTimezone: true }),
+    reminderStaleSentAt: timestamp("reminder_stale_sent_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    projectIdx: index("project_stages_project_idx").on(t.projectId),
+    orderUniq: uniqueIndex("project_stages_order_uniq").on(t.projectId, t.orderIndex),
+    statusIdx: index("project_stages_status_idx").on(t.status),
+    responsibleIdx: index("project_stages_responsible_idx").on(t.responsibleUserId),
+  })
+);
+
+// ---------- 5.23 stage_documents ----------
+// Attachments per stage — any format. Mirrors task_attachments.
+export const stageDocuments = pgTable(
+  "stage_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    stageId: uuid("stage_id")
+      .notNull()
+      .references(() => projectStages.id, { onDelete: "cascade" }),
+    fileUrl: text("file_url").notNull(),
+    fileName: varchar("file_name", { length: 255 }).notNull(),
+    fileSize: integer("file_size"),
+    fileMimeType: varchar("file_mime_type", { length: 120 }),
+    uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    stageIdx: index("stage_documents_stage_idx").on(t.stageId),
+  })
+);
+
+// ---------- 5.24 stage_payments ----------
+// Multiple payments per stage. Project total = Σ across all its stages.
+export const stagePayments = pgTable(
+  "stage_payments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    stageId: uuid("stage_id")
+      .notNull()
+      .references(() => projectStages.id, { onDelete: "cascade" }),
+    amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 10 }).default("UZS").notNull(),
+    /** 'pending' | 'paid' */
+    status: varchar("status", { length: 20 }).default("pending").notNull(),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    note: varchar("note", { length: 500 }),
+    createdByUserId: uuid("created_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    stageIdx: index("stage_payments_stage_idx").on(t.stageId),
+  })
+);
+
+// ---------- 5.25 council_meetings (Ekspertlar / Smeta Kengashi) ----------
+export const councilMeetings = pgTable(
+  "council_meetings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** 'ekspert' = Ekspertlar Kengashi · 'smeta' = Smeta Kengashi */
+    kind: varchar("kind", { length: 10 }).notNull(),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
+    title: varchar("title", { length: 255 }),
+    createdByUserId: uuid("created_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    kindIdx: index("council_meetings_kind_idx").on(t.kind, t.scheduledAt),
+  })
+);
+
+// ---------- 5.26 council_agenda_items (Kun tartibi) ----------
+export const councilAgendaItems = pgTable(
+  "council_agenda_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    meetingId: uuid("meeting_id")
+      .notNull()
+      .references(() => councilMeetings.id, { onDelete: "cascade" }),
+    orderIndex: integer("order_index").default(0).notNull(),
+    topic: varchar("topic", { length: 500 }).notNull(), // Mavzu
+    projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }), // Loyiha
+    presenterUserId: uuid("presenter_user_id").references(() => users.id, { onDelete: "set null" }), // Ma'ruzachi
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    meetingIdx: index("council_agenda_items_meeting_idx").on(t.meetingId),
+  })
+);
+
 // Re-export inferred types for convenience
 export type User = typeof users.$inferSelect;
+export type CouncilMeeting = typeof councilMeetings.$inferSelect;
+export type CouncilAgendaItem = typeof councilAgendaItems.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Department = typeof departments.$inferSelect;
 export type Invitation = typeof invitations.$inferSelect;
+export type ProjectType = typeof projectTypes.$inferSelect;
+export type StageTemplate = typeof stageTemplates.$inferSelect;
+export type StageTemplateItem = typeof stageTemplateItems.$inferSelect;
+export type ProjectStage = typeof projectStages.$inferSelect;
+export type NewProjectStage = typeof projectStages.$inferInsert;
+export type StageDocument = typeof stageDocuments.$inferSelect;
+export type StagePayment = typeof stagePayments.$inferSelect;

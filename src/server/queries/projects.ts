@@ -1,8 +1,9 @@
 import "server-only";
-import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   projects,
+  projectTypes,
   milestones,
   deliverables,
   projectMessages,
@@ -17,20 +18,49 @@ export type ProjectFilters = {
   status?: string | null;
   type?: "internal" | "external" | null;
   externalCompanyId?: string | null;
+  // production-type / stage filters (only match typed projects)
+  projectTypeId?: string | null;
+  responsibleUserId?: string | null;
+  payment?: "paid" | "unpaid" | null;
+  overdue?: boolean | null;
+  from?: string | null;
+  to?: string | null;
+  /** current-state filter: snapshot name (nameUzLatn) of the project's ACTIVE stage */
+  stage?: string | null;
 };
 
-export async function listProjects(f: ProjectFilters) {
-  const conds = [] as ReturnType<typeof eq>[];
+function typeLabel(row: { typeUz: string | null; typeCy: string | null; typeRu: string | null }, locale?: string): string | null {
+  if (!row.typeUz && !row.typeCy && !row.typeRu) return null;
+  if (locale === "ru") return row.typeRu;
+  if (locale === "uz-cyrl") return row.typeCy;
+  return row.typeUz;
+}
+
+export async function listProjects(f: ProjectFilters, locale?: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const conds = [] as any[];
   if (f.search) {
     const s = `%${f.search.toLowerCase()}%`;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    conds.push(or(ilike(projects.name, s), ilike(projects.description, s)) as any);
+    conds.push(or(ilike(projects.name, s), ilike(projects.description, s)));
   }
   if (f.status) conds.push(eq(projects.status, f.status));
   if (f.type) conds.push(eq(projects.type, f.type));
   if (f.externalCompanyId) conds.push(eq(projects.externalCompanyId, f.externalCompanyId));
+  if (f.projectTypeId) conds.push(eq(projects.projectTypeId, f.projectTypeId));
+  if (f.from) conds.push(gte(projects.deadline, f.from));
+  if (f.to) conds.push(lte(projects.deadline, f.to));
+  if (f.responsibleUserId)
+    conds.push(sql`exists (select 1 from project_stages s where s.project_id = ${projects.id} and s.responsible_user_id = ${f.responsibleUserId})`);
+  if (f.payment === "unpaid")
+    conds.push(sql`exists (select 1 from stage_payments sp join project_stages s on s.id = sp.stage_id where s.project_id = ${projects.id} and sp.status <> 'paid')`);
+  if (f.payment === "paid")
+    conds.push(sql`exists (select 1 from stage_payments sp join project_stages s on s.id = sp.stage_id where s.project_id = ${projects.id}) and not exists (select 1 from stage_payments sp join project_stages s on s.id = sp.stage_id where s.project_id = ${projects.id} and sp.status <> 'paid')`);
+  if (f.overdue)
+    conds.push(sql`exists (select 1 from project_stages s where s.project_id = ${projects.id} and s.status = 'active' and s.planned_deadline < now()::date)`);
+  if (f.stage)
+    conds.push(sql`exists (select 1 from project_stages s where s.project_id = ${projects.id} and s.status = 'active' and s.name = ${f.stage})`);
   const where = conds.length > 0 ? and(...conds) : undefined;
-  return db
+  const rows = await db
     .select({
       id: projects.id,
       name: projects.name,
@@ -40,15 +70,22 @@ export async function listProjects(f: ProjectFilters) {
       progressPercentage: projects.progressPercentage,
       deadline: projects.deadline,
       startDate: projects.startDate,
+      posterUrl: projects.posterUrl,
       curatorName: users.fullName,
       companyName: externalCompanies.name,
+      projectTypeId: projects.projectTypeId,
+      typeUz: projectTypes.nameUzLatn,
+      typeCy: projectTypes.nameUzCyrl,
+      typeRu: projectTypes.nameRu,
     })
     .from(projects)
     .leftJoin(users, eq(users.id, projects.curatorUserId))
     .leftJoin(externalCompanies, eq(externalCompanies.id, projects.externalCompanyId))
+    .leftJoin(projectTypes, eq(projectTypes.id, projects.projectTypeId))
     .where(where)
     .orderBy(desc(projects.createdAt))
     .limit(200);
+  return rows.map((r) => ({ ...r, projectTypeName: typeLabel(r, locale) }));
 }
 
 export async function getProject(id: string) {

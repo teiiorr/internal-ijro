@@ -1,0 +1,104 @@
+import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { CalendarClock } from "lucide-react";
+import { sql } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { projects, users } from "@/lib/db/schema";
+import { getCouncilPage } from "@/server/queries/councils";
+import { Card, CardContent } from "@/components/ui/card";
+import { CouncilAgenda } from "@/components/councils/council-agenda";
+import { CouncilMeetingForm } from "@/components/councils/council-meeting-form";
+import { formatDate } from "@/lib/dates";
+
+const KINDS = ["ekspert", "smeta"] as const;
+type Kind = (typeof KINDS)[number];
+
+function dateTime(d: Date | string): string {
+  const date = new Date(d);
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  return `${formatDate(date)} · ${hh}:${mm}`;
+}
+
+export default async function CouncilPage({ params }: { params: Promise<{ kind: string }> }) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  const { kind } = await params;
+  if (!KINDS.includes(kind as Kind)) notFound();
+  const t = await getTranslations();
+
+  const me = session.user;
+  const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(me.position);
+
+  const [{ upcoming, agenda, meetings }, projectOpts, employeeOpts] = await Promise.all([
+    getCouncilPage(kind),
+    db.select({ id: projects.id, name: projects.name }).from(projects).orderBy(projects.name),
+    db
+      .select({ id: users.id, name: users.fullName })
+      .from(users)
+      .where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`)
+      .orderBy(users.fullName),
+  ]);
+
+  const heading = kind === "ekspert" ? t("kengash.ekspertHeading") : t("kengash.smetaHeading");
+  const pastMeetings = meetings.filter((m) => !upcoming || m.id !== upcoming.id);
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{heading}</h1>
+
+      {/* upcoming meeting + its agenda */}
+      {upcoming ? (
+        <Card>
+          <CardContent className="p-5 sm:p-6 space-y-5">
+            <div className="flex items-center gap-2 text-sm">
+              <CalendarClock className="size-4 text-[var(--primary)]" />
+              <span className="font-semibold">{upcoming.title || t("kengash.agenda")}</span>
+              <span className="text-[var(--muted)]">· {dateTime(upcoming.scheduledAt)}</span>
+            </div>
+            <CouncilAgenda
+              meetingId={upcoming.id}
+              items={agenda}
+              projects={projectOpts}
+              employees={employeeOpts}
+              canManage={canManage}
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="py-12 text-center text-sm text-[var(--muted)]">{t("kengash.noUpcoming")}</CardContent>
+        </Card>
+      )}
+
+      {/* schedule a new meeting */}
+      {canManage && (
+        <Card>
+          <CardContent className="p-5 sm:p-6 space-y-3">
+            <h3 className="text-base font-semibold">{t("kengash.createMeeting")}</h3>
+            <CouncilMeetingForm kind={kind as Kind} />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* history */}
+      {pastMeetings.length > 0 && (
+        <Card>
+          <CardContent className="p-5 sm:p-6 space-y-3">
+            <h3 className="text-base font-semibold">{t("kengash.history")}</h3>
+            <ul className="divide-y divide-[var(--border)]">
+              {pastMeetings.map((m) => (
+                <li key={m.id} className="flex items-center gap-3 py-2.5 text-sm">
+                  <CalendarClock className="size-4 shrink-0 text-[var(--subtle)]" />
+                  <span className="font-medium">{m.title || t("kengash.agenda")}</span>
+                  <span className="ml-auto text-[var(--muted)]">{dateTime(m.scheduledAt)}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

@@ -11,12 +11,25 @@ import { createProject } from "@/server/actions/projects";
 
 type Company = { id: string; name: string };
 type User = { id: string; fullName: string };
+type ProjectTypeOption = { id: string; name: string };
 
-export function NewProjectForm({ companies, curators }: { companies: Company[]; curators: User[] }) {
+export function NewProjectForm({
+  companies,
+  curators,
+  responsibles,
+  types,
+}: {
+  companies: Company[];
+  curators: User[];
+  responsibles: User[];
+  types: ProjectTypeOption[];
+}) {
   const t = useTranslations();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [type, setType] = useState<"internal" | "external">("internal");
+  const [projectTypeId, setProjectTypeId] = useState<string>("");
+  const [responsibleUserId, setResponsibleUserId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -29,8 +42,10 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
           name: String(fd.get("name") ?? ""),
           description: (fd.get("description") as string) || null,
           type,
+          projectTypeId: projectTypeId || null,
           externalCompanyId: type === "external" ? ((fd.get("externalCompanyId") as string) || null) : null,
           curatorUserId: (fd.get("curatorUserId") as string) || null,
+          responsibleUserId: responsibleUserId || null,
           startDate: (fd.get("startDate") as string) || null,
           deadline: (fd.get("deadline") as string) || null,
           budget: fd.get("budget") ? Number(fd.get("budget")) : null,
@@ -43,6 +58,16 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 max-w-2xl">
+      <div className="space-y-1.5">
+        <Label>{t("projects.fields.projectType")}</Label>
+        <Select value={projectTypeId} onValueChange={setProjectTypeId}>
+          <SelectTrigger><SelectValue placeholder={t("projects.fields.projectTypePlaceholder")} /></SelectTrigger>
+          <SelectContent>
+            {types.map((pt) => <SelectItem key={pt.id} value={pt.id}>{pt.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-[var(--muted)]">{t("projects.fields.projectTypeHint")}</p>
+      </div>
       <div className="space-y-1.5">
         <Label htmlFor="name">{t("projects.fields.name")}</Label>
         <Input id="name" name="name" required minLength={2} />
@@ -82,6 +107,18 @@ export function NewProjectForm({ companies, curators }: { companies: Company[]; 
             </SelectContent>
           </Select>
         </div>
+        {projectTypeId && (
+          <div className="space-y-1.5">
+            <Label>{t("projects.fields.responsible")}</Label>
+            <Select value={responsibleUserId} onValueChange={setResponsibleUserId}>
+              <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
+              <SelectContent>
+                {responsibles.map((c) => <SelectItem key={c.id} value={c.id}>{c.fullName}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-[var(--muted)]">{t("projects.fields.responsibleHint")}</p>
+          </div>
+        )}
         <div className="space-y-1.5">
           <Label htmlFor="startDate">{t("projects.fields.startDate")}</Label>
           <Input id="startDate" name="startDate" type="date" />

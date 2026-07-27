@@ -1,23 +1,30 @@
 import { notFound, redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getProject } from "@/server/queries/projects";
+import { getStageProject } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StagesList } from "@/components/projects/stages-list";
+import { StagePath } from "@/components/projects/stage-path";
+import { ProjectPoster } from "@/components/projects/project-poster";
+import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { OnHoldToggle } from "@/components/projects/on-hold-toggle";
 import { derivedStatus } from "@/lib/projects/progress";
 import { formatDate } from "@/lib/dates";
 
+const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
+
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
   const { id } = await params;
   const data = await getProject(id);
   if (!data) notFound();
@@ -26,6 +33,87 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   // Bo'lim boshlig'i can create / edit / update but NOT delete stages or projects.
   const canDelete = ["direktor", "orinbosar", "koordinator"].includes(me.position);
   const canTogglePayment = ["direktor", "orinbosar"].includes(me.position);
+
+  // ---- Typed (template-driven) project → serpentine stage view ----
+  if (data.project.projectTypeId) {
+    const sp = await getStageProject(id, locale);
+    if (!sp) notFound();
+    const status = derivedStatus(sp.project.progressPercentage, sp.project.statusOverride);
+    const statusTone: StatusTone =
+      status === "completed" ? "green"
+      : status === "in_progress" ? "amber"
+      : status === "on_hold" ? "red"
+      : "muted";
+    const activeStage = sp.stages.find((s) => s.status === "active");
+    const currency = sp.project.budgetCurrency ?? "UZS";
+
+    return (
+      <div className="space-y-6">
+        {/* header (full width) */}
+        <div className="flex items-start gap-3">
+          <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
+            <Link href="/projects"><ArrowLeft className="size-4" /></Link>
+          </Button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
+            <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
+              <StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag>
+              {sp.type && <span className="font-medium text-[var(--muted)]">{sp.type.name}</span>}
+              <span className="font-semibold tabular-nums text-[var(--muted)]">{sp.project.progressPercentage}%</span>
+              {sp.curator && (
+                <span className="text-[var(--muted)]">
+                  {t("projects.curatorLabel")}: <span className="font-medium text-[var(--foreground)]">{sp.curator.fullName}</span>
+                </span>
+              )}
+            </div>
+          </div>
+          {canManage && <OnHoldToggle projectId={sp.project.id} onHold={sp.project.statusOverride === "on_hold"} />}
+        </div>
+
+        {sp.project.description && (
+          <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
+        )}
+
+        {/* stage list (main) + payment rollup (sidebar) — fills the full width */}
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
+          <Card>
+            <CardContent className="p-5 sm:p-6">
+              <h3 className="text-base font-semibold mb-4">{t("projects.stagePath.title")}</h3>
+              <StagePath projectId={sp.project.id} stages={sp.stages} />
+            </CardContent>
+          </Card>
+
+          <div className="space-y-6">
+            <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={canManage} />
+            <Card>
+            <CardContent className="p-5 space-y-3">
+              <h3 className="text-base font-semibold">{t("projects.stagePayments.projectTotal")}</h3>
+              <dl className="space-y-2.5 text-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
+                  <dd className="font-semibold tabular-nums">{money(sp.totals.planned, currency)}</dd>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</dt>
+                  <dd className="font-semibold tabular-nums text-[var(--success)]">{money(sp.totals.paid, currency)}</dd>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-[var(--muted)]">{t("projects.stagePayments.pending")}</dt>
+                  <dd className="font-semibold tabular-nums text-[var(--warning)]">{money(sp.totals.pending, currency)}</dd>
+                </div>
+              </dl>
+              {activeStage && (
+                <p className="border-t border-[var(--border)] pt-3 text-sm text-[var(--muted)]">
+                  {t("projects.stagePath.currentStage")}: <span className="font-medium text-[var(--foreground)]">{activeStage.name}</span>
+                </p>
+              )}
+            </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const stages = data.milestones.map((m) => ({
     id: m.id,

@@ -112,7 +112,10 @@
     "settings": "Созламалар",
     "profile": "Профил",
     "logout": "Чиқиш",
-    "contractorPortal": "Пудратчи портали"
+    "contractorPortal": "Пудратчи портали",
+    "ekspertKengash": "Экспертлар Кенгаши",
+    "smetaKengash": "Смета Кенгаши",
+    "more": "Кўпроқ"
   },
   "positions": {
     "direktor": "Директор",
@@ -322,7 +325,12 @@
       "startDate": "Бошланиш санаси",
       "deadline": "Тугатиш муддати",
       "budget": "Бюджет",
-      "progress": "Бажарилиш"
+      "progress": "Бажарилиш",
+      "projectType": "Лойиҳа тури",
+      "projectTypePlaceholder": "Турини танланг (босқичлар автоматик яратилади)",
+      "projectTypeHint": "Тур танланса, ушбу турга мос босқичлар автоматик қўшилади.",
+      "responsible": "Масъул",
+      "responsibleHint": "Барча босқичларга қўлланади (кейин алоҳида ўзгартириш мумкин)."
     },
     "type": {
       "internal": "Ички",
@@ -437,6 +445,57 @@
       "name": "Ном бўйича",
       "deadline": "Муддати бўйича",
       "progress": "Бажарилиш бўйича"
+    },
+    "stagePath": {
+      "title": "Босқичлар",
+      "active": "Фаол",
+      "done": "Якунланган",
+      "locked": "Ёпиқ",
+      "currentStage": "Жорий босқич",
+      "stageOf": "{n}/{total}-босқич",
+      "lockedHint": "Бу босқич ҳали очилмаган. Олдинги босқич якунлангач фаоллашади."
+    },
+    "stageDocs": {
+      "title": "Ҳужжатлар",
+      "empty": "Ҳужжатлар йўқ"
+    },
+    "stagePayments": {
+      "title": "Тўловлар",
+      "projectTotal": "Лойиҳа бўйича тўловлар",
+      "planned": "Режалаштирилган",
+      "paid": "Тўланган",
+      "pending": "Кутилмоқда",
+      "add": "Қўшиш",
+      "amount": "Сумма",
+      "note": "Изоҳ",
+      "markPaid": "Тўланди деб белгилаш",
+      "markPending": "Кутилмоқда деб белгилаш",
+      "empty": "Тўловлар йўқ",
+      "invalidAmount": "Суммани тўғри киритинг"
+    },
+    "stageActions": {
+      "complete": "Босқични якунлаш",
+      "completed": "Босқич якунланди",
+      "projectCompleted": "Лойиҳа якунланди!",
+      "notActive": "Бу босқич фаол эмас"
+    },
+    "filters": {
+      "title": "Филтрлар",
+      "type": "Тур",
+      "allTypes": "Барча турлар",
+      "responsible": "Масъул",
+      "allResponsible": "Барча масъуллар",
+      "payment": "Тўлов",
+      "paid": "Тўланган",
+      "unpaid": "Тўланмаган",
+      "overdue": "Муддати ўтган",
+      "reset": "Тозалаш",
+      "typedOnly": "Ишлаб чиқариш лойиҳалари",
+      "stage": "Босқич",
+      "allStages": "Барча босқичлар"
+    },
+    "poster": {
+      "change": "Постерни ўзгартириш"
     }
   },
   "employees": {
@@ -769,5 +828,24 @@
     "myTasks": "Бажариш керак",
     "myTasksDescription": "Сизга юклатилган топшириқлар",
     "allComplete": "Ҳаммаси бажарилган"
+  },
+  "kengash": {
+    "ekspertHeading": "Келаётган Экспертлар Кенгашининг кун тартиби",
+    "smetaHeading": "Келаётган Смета Кенгашининг кун тартиби",
+    "agenda": "Кун тартиби",
+    "noUpcoming": "Келаётган мажлис режалаштирилмаган",
+    "createMeeting": "Мажлис қўшиш",
+    "meetingDate": "Сана ва вақт",
+    "meetingTitle": "Сарлавҳа (ихтиёрий)",
+    "save": "Сақлаш",
+    "topic": "Мавзу",
+    "project": "Лойиҳа",
+    "presenter": "Маърузачи",
+    "addItem": "Қўшиш",
+    "noItems": "Кун тартиби бўш",
+    "history": "Мажлислар тарихи",
+    "selectProject": "Лойиҳани танланг",
+    "selectPresenter": "Маърузачини танланг",
+    "newTopic": "Янги мавзу"
   }
 }
