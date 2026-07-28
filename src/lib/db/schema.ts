@@ -736,8 +736,12 @@ export const councilAgendaItems = pgTable(
       .references(() => councilMeetings.id, { onDelete: "cascade" }),
     orderIndex: integer("order_index").default(0).notNull(),
     topic: varchar("topic", { length: 500 }).notNull(), // Mavzu
-    projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }), // Loyiha
-    presenterUserId: uuid("presenter_user_id").references(() => users.id, { onDelete: "set null" }), // Ma'ruzachi
+    projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }), // Loyiha (tizimdagi)
+    /** Free-text project name when it isn't a registered project (projectId null). */
+    projectName: varchar("project_name", { length: 255 }),
+    presenterUserId: uuid("presenter_user_id").references(() => users.id, { onDelete: "set null" }), // Ma'ruzachi (tizimdagi)
+    /** Free-text presenter name when they aren't a registered user (presenterUserId null). */
+    presenterName: varchar("presenter_name", { length: 255 }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => ({

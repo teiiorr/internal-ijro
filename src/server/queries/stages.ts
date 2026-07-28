@@ -8,6 +8,7 @@ import {
   stageTemplateItems,
   stageDocuments,
   stagePayments,
+  externalCompanies,
   users,
 } from "@/lib/db/schema";
 
@@ -61,6 +62,19 @@ export async function getStageProject(projectId: string, locale: string) {
 
   const curator = p[0].curatorUserId
     ? (await db.select({ id: users.id, fullName: users.fullName }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1))[0] ?? null
+    : null;
+
+  const company = p[0].externalCompanyId
+    ? (await db
+        .select({
+          id: externalCompanies.id,
+          name: externalCompanies.name,
+          contactPerson: externalCompanies.contactPerson,
+          contactPhone: externalCompanies.contactPhone,
+        })
+        .from(externalCompanies)
+        .where(eq(externalCompanies.id, p[0].externalCompanyId))
+        .limit(1))[0] ?? null
     : null;
 
   const stageRows = await db
@@ -120,6 +134,7 @@ export async function getStageProject(projectId: string, locale: string) {
     project: p[0],
     type: typeRow ? { ...typeRow, name: localizedTypeName(typeRow, locale) } : null,
     curator,
+    company,
     stages,
     totals,
   };

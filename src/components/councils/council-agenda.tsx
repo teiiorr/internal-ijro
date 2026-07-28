@@ -30,8 +30,8 @@ export function CouncilAgenda({
   const t = useTranslations();
   const [pending, start] = useTransition();
   const [topic, setTopic] = useState("");
-  const [projectId, setProjectId] = useState("");
-  const [presenterUserId, setPresenterUserId] = useState("");
+  const [projectText, setProjectText] = useState("");
+  const [presenterText, setPresenterText] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const field =
@@ -40,10 +40,21 @@ export function CouncilAgenda({
   function add() {
     setError(null);
     if (!topic.trim()) { setError(t("kengash.newTopic")); return; }
+    // A typed value that matches a registered project/employee gets linked by id;
+    // otherwise it is stored as a free-text name.
+    const proj = projects.find((p) => p.name.trim().toLowerCase() === projectText.trim().toLowerCase());
+    const pres = employees.find((u) => u.name.trim().toLowerCase() === presenterText.trim().toLowerCase());
     start(async () => {
       try {
-        await addAgendaItem({ meetingId, topic: topic.trim(), projectId: projectId || null, presenterUserId: presenterUserId || null });
-        setTopic(""); setProjectId(""); setPresenterUserId("");
+        await addAgendaItem({
+          meetingId,
+          topic: topic.trim(),
+          projectId: proj?.id ?? null,
+          projectName: proj ? null : projectText.trim() || null,
+          presenterUserId: pres?.id ?? null,
+          presenterName: pres ? null : presenterText.trim() || null,
+        });
+        setTopic(""); setProjectText(""); setPresenterText("");
       } catch (e) { setError((e as Error).message); }
     });
   }
@@ -115,16 +126,30 @@ export function CouncilAgenda({
 
       {/* add row */}
       {canManage && (
-        <div className="grid gap-2 sm:grid-cols-[1fr_180px_180px_auto] sm:items-center">
+        <div className="grid gap-2 sm:grid-cols-[1fr_200px_200px_auto] sm:items-center">
           <Input placeholder={t("kengash.topic")} value={topic} onChange={(e) => setTopic(e.target.value)} />
-          <select className={field} value={projectId} onChange={(e) => setProjectId(e.target.value)}>
-            <option value="">{t("kengash.selectProject")}</option>
-            {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-          <select className={field} value={presenterUserId} onChange={(e) => setPresenterUserId(e.target.value)}>
-            <option value="">{t("kengash.selectPresenter")}</option>
-            {employees.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-          </select>
+          <input
+            list={`proj-${meetingId}`}
+            className={field}
+            placeholder={t("kengash.projectField")}
+            value={projectText}
+            onChange={(e) => setProjectText(e.target.value)}
+            maxLength={255}
+          />
+          <datalist id={`proj-${meetingId}`}>
+            {projects.map((p) => <option key={p.id} value={p.name} />)}
+          </datalist>
+          <input
+            list={`pres-${meetingId}`}
+            className={field}
+            placeholder={t("kengash.presenterField")}
+            value={presenterText}
+            onChange={(e) => setPresenterText(e.target.value)}
+            maxLength={255}
+          />
+          <datalist id={`pres-${meetingId}`}>
+            {employees.map((u) => <option key={u.id} value={u.name} />)}
+          </datalist>
           <Button onClick={add} disabled={pending}><Plus className="size-4" />{t("kengash.addItem")}</Button>
         </div>
       )}

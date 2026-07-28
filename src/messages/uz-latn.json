@@ -401,6 +401,16 @@
     },
     "empty": "Loyihalar yo'q",
     "contractorLabel": "Pudratchi",
+    "contractor": {
+      "none": "Pudratchi tayinlanmagan",
+      "namePlaceholder": "Pudratchi nomi — tanlang yoki yozing",
+      "person": "Aloqa shaxsi (ixtiyoriy)",
+      "phone": "Telefon (ixtiyoriy)",
+      "remove": "Olib tashlash",
+      "saved": "Pudratchi saqlandi",
+      "removed": "Pudratchi olib tashlandi",
+      "hint": "Ro'yxatdan o'tmagan pudratchini ham qo'lda qo'shishingiz mumkin"
+    },
     "curatorLabel": "Kurator",
     "deliverable": {
       "types": {
@@ -873,6 +883,8 @@
     "history": "Majlislar tarixi",
     "selectProject": "Loyihani tanlang",
     "selectPresenter": "Ma'ruzachini tanlang",
+    "projectField": "Loyiha — tanlang yoki yozing",
+    "presenterField": "Ma'ruzachi — tanlang yoki yozing",
     "newTopic": "Yangi mavzu"
   }
 }

@@ -439,6 +439,49 @@ export async function reviewDeliverable(deliverableId: string, status: "approved
   revalidatePath(`/contractor/projects`);
 }
 
+const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
+
+// Create a contractor directly (no self-registration / account) and auto-approve it.
+const contractorSchema = z.object({
+  name: z.string().min(2).max(255),
+  contactPerson: z.string().max(255).nullable().optional(),
+  contactPhone: z.string().max(50).nullable().optional(),
+  contactEmail: z.string().max(255).nullable().optional(),
+  specialization: z.string().max(500).nullable().optional(),
+});
+export async function createContractor(input: z.infer<typeof contractorSchema>) {
+  const me = await requirePosition([...MANAGERS]);
+  const parsed = contractorSchema.parse(input);
+  const ins = await db
+    .insert(externalCompanies)
+    .values({
+      name: parsed.name.trim(),
+      contactPerson: parsed.contactPerson?.trim() || null,
+      contactPhone: parsed.contactPhone?.trim() || null,
+      contactEmail: parsed.contactEmail?.trim() || null,
+      specialization: parsed.specialization?.trim() || null,
+      status: "approved",
+      approvedByUserId: me.id,
+      approvedAt: new Date(),
+    })
+    .returning({ id: externalCompanies.id, name: externalCompanies.name });
+  await logActivity({ userId: me.id, action: "contractor.created", entityType: "external_company", entityId: ins[0].id, newValue: { name: parsed.name } });
+  revalidatePath("/contractors");
+  return ins[0];
+}
+
+// Assign, change or clear the contractor on a project (managers or the curator).
+export async function setProjectContractor(projectId: string, companyId: string | null) {
+  const me = await requireUser();
+  const [prj] = await db.select({ id: projects.id, curatorUserId: projects.curatorUserId }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (!prj) throw new Error("not_found");
+  const isManager = (MANAGERS as readonly string[]).includes(me.position);
+  if (!isManager && prj.curatorUserId !== me.id) throw new Error("forbidden");
+  await db.update(projects).set({ externalCompanyId: companyId, updatedAt: new Date() }).where(eq(projects.id, projectId));
+  await logActivity({ userId: me.id, action: "project.contractor_changed", entityType: "project", entityId: projectId, newValue: { externalCompanyId: companyId } });
+  revalidatePath(`/projects/${projectId}`);
+}
+
 // Approve/reject contractor (external_companies + user activation)
 export async function approveContractor(companyId: string) {
   const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);

@@ -49,8 +49,12 @@ export async function deleteCouncilMeeting(meetingId: string) {
 const agendaSchema = z.object({
   meetingId: z.string().uuid(),
   topic: z.string().min(1).max(500),
+  // Project: either a registered project (projectId) OR a free-text name.
   projectId: z.string().uuid().nullable().optional(),
+  projectName: z.string().max(255).nullable().optional(),
+  // Presenter: either a registered user (presenterUserId) OR a free-text name.
   presenterUserId: z.string().uuid().nullable().optional(),
+  presenterName: z.string().max(255).nullable().optional(),
 });
 
 async function meetingKind(meetingId: string): Promise<string> {
@@ -71,8 +75,11 @@ export async function addAgendaItem(input: z.infer<typeof agendaSchema>) {
     meetingId: parsed.meetingId,
     orderIndex: Number(next) || 0,
     topic: parsed.topic,
+    // A registered id wins; otherwise keep the typed-in name.
     projectId: parsed.projectId || null,
+    projectName: parsed.projectId ? null : parsed.projectName?.trim() || null,
     presenterUserId: parsed.presenterUserId || null,
+    presenterName: parsed.presenterUserId ? null : parsed.presenterName?.trim() || null,
   });
   await logActivity({ userId: me.id, action: "council.agenda_added", entityType: "council_meeting", entityId: parsed.meetingId });
   revalidate(kind);

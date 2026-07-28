@@ -50,6 +50,13 @@
       "when": 1785160679888,
       "tag": "0006_silky_landau",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1785223751748,
+      "tag": "0007_first_rockslide",
+      "breakpoints": true
     }
   ]
 }

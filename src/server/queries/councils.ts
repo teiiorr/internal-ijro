@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, gte } from "drizzle-orm";
+import { and, asc, desc, eq, gte, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { councilMeetings, councilAgendaItems, projects, users } from "@/lib/db/schema";
 
@@ -39,9 +39,9 @@ export async function getCouncilPage(kind: string) {
         orderIndex: councilAgendaItems.orderIndex,
         topic: councilAgendaItems.topic,
         projectId: councilAgendaItems.projectId,
-        projectName: projects.name,
+        projectName: sql<string | null>`coalesce(${projects.name}, ${councilAgendaItems.projectName})`,
         presenterUserId: councilAgendaItems.presenterUserId,
-        presenterName: users.fullName,
+        presenterName: sql<string | null>`coalesce(${users.fullName}, ${councilAgendaItems.presenterName})`,
       })
       .from(councilAgendaItems)
       .leftJoin(projects, eq(projects.id, councilAgendaItems.projectId))

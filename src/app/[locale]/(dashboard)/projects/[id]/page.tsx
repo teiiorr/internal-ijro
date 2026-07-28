@@ -4,8 +4,9 @@ import Link from "next/link";
 import { ArrowLeft, CalendarClock } from "lucide-react";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
-import { getProject } from "@/server/queries/projects";
+import { getProject, listContractors } from "@/server/queries/projects";
 import { getStageProject } from "@/server/queries/stages";
+import { ProjectContractor } from "@/components/projects/project-contractor";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   if (data.project.projectTypeId) {
     const sp = await getStageProject(id, locale);
     if (!sp) notFound();
+    const contractors = await listContractors("approved");
+    const canManageContractor = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(me.position);
     const status = derivedStatus(sp.project.progressPercentage, sp.project.statusOverride);
     const statusTone: StatusTone =
       status === "completed" ? "green"
@@ -86,6 +89,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
           <div className="space-y-6">
             <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={canManage} />
+            <Card>
+              <CardContent className="p-5">
+                <ProjectContractor
+                  projectId={sp.project.id}
+                  company={sp.company}
+                  contractors={contractors.map((c) => ({ id: c.id, name: c.name }))}
+                  canManage={canManageContractor}
+                />
+              </CardContent>
+            </Card>
             <Card>
             <CardContent className="p-5 space-y-3">
               <h3 className="text-base font-semibold">{t("projects.stagePayments.projectTotal")}</h3>
