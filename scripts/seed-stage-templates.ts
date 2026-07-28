@@ -92,21 +92,16 @@ const TEMPLATES: Template[] = [
   },
   {
     code: "tmpl_theatre4",
-    nameUzLatn: "Spektakl (4 bosqich)",
+    nameUzLatn: "Spektakl (1 bosqich)",
     items: [
-      { uz: "Pyesa yozish", cy: "Пьеса ёзиш", ru: "Написание пьесы" },
-      { uz: "Tayyorgarlik va repetitsiya", cy: "Тайёргарлик ва репетиция", ru: "Подготовка и репетиции" },
-      { uz: "Sahnalashtirish", cy: "Саҳналаштириш", ru: "Постановка на сцене" },
-      { uz: "Topshirish", cy: "Топшириш", ru: "Сдача" },
+      { uz: "Pyesa yozish va sahnalashtirish", cy: "Пьеса ёзиш ва саҳналаштириш", ru: "Написание пьесы и постановка" },
     ],
   },
   {
     code: "tmpl_exclusive3",
-    nameUzLatn: "Eksklyuziv loyiha (3 bosqich)",
+    nameUzLatn: "Eksklyuziv loyiha (1 bosqich)",
     items: [
-      { uz: "Tayyorgarlik", cy: "Тайёргарлик", ru: "Подготовка" },
       { uz: "Ishlab chiqarish", cy: "Ишлаб чиқариш", ru: "Производство" },
-      { uz: "Topshirish", cy: "Топшириш", ru: "Сдача" },
     ],
   },
 ];
@@ -121,8 +116,8 @@ const TYPES: TypeDef[] = [
   { code: "digital_game", uz: "Raqamli o'yinlar va platformalar", cy: "Рақамли ўйинлар ва платформалар", ru: "Цифровые игры и платформы", template: "tmpl_game4" },
   { code: "book", uz: "Kitoblar", cy: "Китоблар", ru: "Книги", template: "tmpl_book3" },
   { code: "dubbing", uz: "Dublyaj qilinayotgan loyihalar", cy: "Дубляж қилинаётган лойиҳалар", ru: "Проекты дубляжа", template: "tmpl_dub1" },
-  { code: "theatre_play", uz: "Spektakllar (Pyesa yozish va sahnalashtirish)", cy: "Спектакллар (Пьеса ёзиш ва саҳналаштириш)", ru: "Спектакли (написание пьесы и постановка)", template: "tmpl_theatre4" },
-  { code: "exclusive_project", uz: "Eksklyuziv loyihalar (Ishlab chiqarish)", cy: "Эксклюзив лойиҳалар (Ишлаб чиқариш)", ru: "Эксклюзивные проекты (производство)", template: "tmpl_exclusive3" },
+  { code: "theatre_play", uz: "Spektakllar", cy: "Спектакллар", ru: "Спектакли", template: "tmpl_theatre4" },
+  { code: "exclusive_project", uz: "Eksklyuziv loyihalar", cy: "Эксклюзив лойиҳалар", ru: "Эксклюзивные проекты", template: "tmpl_exclusive3" },
 ];
 
 async function main() {
