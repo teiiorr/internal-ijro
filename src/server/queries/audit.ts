@@ -13,7 +13,7 @@ export type AuditFilters = {
   scope?: "all" | "hr";
 };
 
-export async function listAudit(f: AuditFilters) {
+export async function listAudit(f: AuditFilters, limit = 500) {
   const conds = [] as ReturnType<typeof eq>[];
   if (f.userId) conds.push(eq(activityLog.userId, f.userId));
   if (f.action) conds.push(ilike(activityLog.action, `${f.action}%`));
@@ -46,5 +46,5 @@ export async function listAudit(f: AuditFilters) {
     .leftJoin(users, eq(users.id, activityLog.userId))
     .where(where)
     .orderBy(desc(activityLog.createdAt))
-    .limit(500);
+    .limit(limit);
 }

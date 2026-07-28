@@ -13,6 +13,7 @@ import {
   Settings,
   Presentation,
   Coins,
+  ShieldCheck,
 } from "lucide-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
@@ -23,11 +24,13 @@ type Item = {
   key: keyof IntlNav;
   allowed: Position[];
   section: "primary" | "work" | "system";
+  /** Shown only to the platform owner (by email), regardless of position. */
+  ownerOnly?: boolean;
 };
 type IntlNav = {
   dashboard: string; tasks: string; projects: string; employees: string; departments: string;
   contractors: string; notifications: string; auditLog: string; settings: string;
-  ekspertKengash: string; smetaKengash: string;
+  ekspertKengash: string; smetaKengash: string; owner: string;
 };
 
 const ALL: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"];
@@ -47,12 +50,13 @@ const ITEMS: Item[] = [
   { href: "/notifications",     icon: Bell,            key: "notifications",  allowed: ALL,                                                                section: "system" },
   { href: "/audit-log",         icon: ScrollText,      key: "auditLog",       allowed: ADMIN.concat("hr"),                                                 section: "system" },
   { href: "/settings",          icon: Settings,        key: "settings",       allowed: ALL,                                                                section: "system" },
+  { href: "/owner",             icon: ShieldCheck,     key: "owner",          allowed: [],                                                                 section: "system", ownerOnly: true },
 ];
 
-export function Sidebar({ position }: { position: Position }) {
+export function Sidebar({ position, isOwner }: { position: Position; isOwner?: boolean }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const visible = ITEMS.filter((i) => i.allowed.includes(position));
+  const visible = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position)));
 
   const sections: ("primary" | "work" | "system")[] = ["primary", "work", "system"];
 

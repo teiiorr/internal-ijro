@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import { auth } from "@/lib/auth";
 import { listAudit } from "@/server/queries/audit";
+import { isOwner } from "@/lib/permissions/owner";
 import { applyMontserrat } from "@/lib/excel";
 
 export const runtime = "nodejs";
@@ -9,18 +10,23 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user) return new NextResponse("unauthorized", { status: 401 });
-  if (!["direktor", "orinbosar", "hr"].includes(session.user.position)) return new NextResponse("forbidden", { status: 403 });
+  const owner = isOwner(session.user.email);
+  if (!owner && !["direktor", "orinbosar", "hr"].includes(session.user.position)) return new NextResponse("forbidden", { status: 403 });
 
   const sp = req.nextUrl.searchParams;
-  const rows = await listAudit({
-    userId: sp.get("userId"),
-    action: sp.get("action"),
-    entityType: sp.get("entityType"),
-    from: sp.get("from"),
-    to: sp.get("to"),
-    search: sp.get("q"),
-    scope: session.user.position === "hr" ? "hr" : "all",
-  });
+  // Owner/managers get the full log; export is not capped at the on-page 500.
+  const rows = await listAudit(
+    {
+      userId: sp.get("userId"),
+      action: sp.get("action"),
+      entityType: sp.get("entityType"),
+      from: sp.get("from"),
+      to: sp.get("to"),
+      search: sp.get("q"),
+      scope: session.user.position === "hr" ? "hr" : "all",
+    },
+    100000
+  );
 
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet("Audit");

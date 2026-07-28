@@ -115,7 +115,8 @@
     "contractorPortal": "Портал студии",
     "ekspertKengash": "Экспертный совет",
     "smetaKengash": "Сметная комиссия",
-    "more": "Ещё"
+    "more": "Ещё",
+    "owner": "Панель владельца"
   },
   "positions": {
     "direktor": "Директор",
@@ -918,5 +919,56 @@
     "projectField": "Проект — выберите или впишите",
     "presenterField": "Докладчик — выберите или впишите",
     "newTopic": "Новая тема"
+  },
+  "owner": {
+    "title": "Панель владельца",
+    "statsTitle": "Статистика системы",
+    "stats": {
+      "users": "Пользователи",
+      "projects": "Проекты",
+      "tasks": "Задачи",
+      "stages": "Этапы",
+      "documents": "Документы",
+      "paid": "Оплачено",
+      "companies": "Студии",
+      "departments": "Отделы",
+      "notifications": "Уведомления",
+      "logs": "Записи логов",
+      "dbSize": "Размер базы",
+      "connections": "Подключения",
+      "activeSuffix": "активных",
+      "pending": "Ожидает оплаты"
+    },
+    "changes": {
+      "title": "Последние изменения",
+      "add": "Добавлено",
+      "delete": "Удалено",
+      "update": "Изменено",
+      "empty": "Изменений пока нет"
+    },
+    "logs": {
+      "title": "Все логи",
+      "latest": "Показаны последние 500 — полный список в XLSX"
+    },
+    "system": {
+      "title": "Dev-инструменты и система",
+      "runtime": "Среда выполнения",
+      "appVersion": "Версия",
+      "uptime": "Время работы",
+      "platform": "Платформа",
+      "memory": "Память",
+      "database": "База данных",
+      "connections": "Подключения",
+      "topTables": "Крупнейшие таблицы",
+      "backup": "Резервная копия",
+      "backupLatest": "Последняя копия",
+      "backupSize": "Размер",
+      "backupCount": "Число копий",
+      "backupTotal": "Общий размер",
+      "backupNone": "Резервных копий нет",
+      "backupUnavailable": "Недоступно (вне пути сервера)",
+      "env": "Переменные окружения",
+      "secrets": "Секретные ключи"
+    }
   }
 }

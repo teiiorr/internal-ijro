@@ -14,13 +14,14 @@ import {
   Settings,
   Presentation,
   Coins,
+  ShieldCheck,
   Menu,
   X,
 } from "lucide-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 
-type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string; allowed: Position[] };
+type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string; allowed: Position[]; ownerOnly?: boolean };
 
 const ALL: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"];
 const STAFF: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis"];
@@ -40,18 +41,19 @@ const ITEMS: NavItem[] = [
   { href: "/notifications", icon: Bell, key: "notifications", allowed: ALL },
   { href: "/audit-log", icon: ScrollText, key: "auditLog", allowed: ADMIN.concat("hr") },
   { href: "/settings", icon: Settings, key: "settings", allowed: ALL },
+  { href: "/owner", icon: ShieldCheck, key: "owner", allowed: [], ownerOnly: true },
 ];
 
 // The three destinations that stay pinned in the bar (+ a More button).
 const PINNED = ["/dashboard", "/tasks", "/projects"];
 
-export function MobileNav({ position }: { position: Position }) {
+export function MobileNav({ position, isOwner }: { position: Position; isOwner?: boolean }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-  const allowed = ITEMS.filter((i) => i.allowed.includes(position));
+  const allowed = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position)));
   const pinned = PINNED.map((h) => allowed.find((i) => i.href === h)).filter(Boolean) as NavItem[];
   const moreActive = allowed.some((i) => !PINNED.includes(i.href) && isActive(i.href));
 

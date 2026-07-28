@@ -115,7 +115,8 @@
     "contractorPortal": "Студия портали",
     "ekspertKengash": "Экспертлар Кенгаши",
     "smetaKengash": "Смета Комиссияси",
-    "more": "Кўпроқ"
+    "more": "Кўпроқ",
+    "owner": "Эгаси панели"
   },
   "positions": {
     "direktor": "Директор",
@@ -918,5 +919,56 @@
     "projectField": "Лойиҳа — танланг ёки ёзинг",
     "presenterField": "Маърузачи — танланг ёки ёзинг",
     "newTopic": "Янги мавзу"
+  },
+  "owner": {
+    "title": "Эгаси панели",
+    "statsTitle": "Тизим статистикаси",
+    "stats": {
+      "users": "Фойдаланувчилар",
+      "projects": "Лойиҳалар",
+      "tasks": "Вазифалар",
+      "stages": "Босқичлар",
+      "documents": "Ҳужжатлар",
+      "paid": "Тўланган",
+      "companies": "Студиялар",
+      "departments": "Бўлимлар",
+      "notifications": "Билдиришномалар",
+      "logs": "Лог ёзувлари",
+      "dbSize": "База ҳажми",
+      "connections": "Уланишлар",
+      "activeSuffix": "фаол",
+      "pending": "Кутилаётган тўлов"
+    },
+    "changes": {
+      "title": "Сўнгги ўзгаришлар",
+      "add": "Қўшилди",
+      "delete": "Ўчирилди",
+      "update": "Ўзгартирилди",
+      "empty": "Ҳозирча ўзгаришлар йўқ"
+    },
+    "logs": {
+      "title": "Барча логлар",
+      "latest": "Сўнгги 500 та кўрсатилмоқда — тўлиқ рўйхат XLSX'да"
+    },
+    "system": {
+      "title": "Dev воситалар ва тизим",
+      "runtime": "Иш муҳити",
+      "appVersion": "Версия",
+      "uptime": "Ишлаш вақти",
+      "platform": "Платформа",
+      "memory": "Хотира",
+      "database": "Маълумотлар базаси",
+      "connections": "Уланишлар",
+      "topTables": "Энг катта жадваллар",
+      "backup": "Захира нусха",
+      "backupLatest": "Сўнгги захира",
+      "backupSize": "Ҳажми",
+      "backupCount": "Нусхалар сони",
+      "backupTotal": "Жами ҳажми",
+      "backupNone": "Захира нусха йўқ",
+      "backupUnavailable": "Маълумот йўқ (сервер йўлидан ташқарида)",
+      "env": "Муҳит созламалари",
+      "secrets": "Махфий калитлар"
+    }
   }
 }

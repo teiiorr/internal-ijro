@@ -115,7 +115,8 @@
     "contractorPortal": "Studiya portali",
     "ekspertKengash": "Ekspertlar Kengashi",
     "smetaKengash": "Smeta Komissiyasi",
-    "more": "Ko'proq"
+    "more": "Ko'proq",
+    "owner": "Egasi paneli"
   },
   "positions": {
     "direktor": "Direktor",
@@ -918,5 +919,56 @@
     "projectField": "Loyiha — tanlang yoki yozing",
     "presenterField": "Ma'ruzachi — tanlang yoki yozing",
     "newTopic": "Yangi mavzu"
+  },
+  "owner": {
+    "title": "Egasi paneli",
+    "statsTitle": "Tizim statistikasi",
+    "stats": {
+      "users": "Foydalanuvchilar",
+      "projects": "Loyihalar",
+      "tasks": "Vazifalar",
+      "stages": "Bosqichlar",
+      "documents": "Hujjatlar",
+      "paid": "To'langan",
+      "companies": "Studiyalar",
+      "departments": "Bo'limlar",
+      "notifications": "Bildirishnomalar",
+      "logs": "Log yozuvlari",
+      "dbSize": "Baza hajmi",
+      "connections": "Ulanishlar",
+      "activeSuffix": "faol",
+      "pending": "Kutilayotgan to'lov"
+    },
+    "changes": {
+      "title": "So'nggi o'zgarishlar",
+      "add": "Qo'shildi",
+      "delete": "O'chirildi",
+      "update": "O'zgartirildi",
+      "empty": "Hozircha o'zgarishlar yo'q"
+    },
+    "logs": {
+      "title": "Barcha loglar",
+      "latest": "So'nggi 500 ta ko'rsatilmoqda — to'liq ro'yxat XLSX'da"
+    },
+    "system": {
+      "title": "Dev vositalar va tizim",
+      "runtime": "Ish muhiti",
+      "appVersion": "Versiya",
+      "uptime": "Ishlash vaqti",
+      "platform": "Platforma",
+      "memory": "Xotira",
+      "database": "Ma'lumotlar bazasi",
+      "connections": "Ulanishlar",
+      "topTables": "Eng katta jadvallar",
+      "backup": "Zaxira nusxa",
+      "backupLatest": "So'nggi zaxira",
+      "backupSize": "Hajmi",
+      "backupCount": "Nusxalar soni",
+      "backupTotal": "Jami hajmi",
+      "backupNone": "Zaxira nusxa yo'q",
+      "backupUnavailable": "Ma'lumot yo'q (server yo'lidan tashqarida)",
+      "env": "Muhit sozlamalari",
+      "secrets": "Maxfiy kalitlar"
+    }
   }
 }
