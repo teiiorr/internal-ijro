@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // App stays behind nginx; trust the X-Forwarded-* headers it sets.
   poweredByHeader: false,
+  experimental: {
+    // File uploads (stage docs, posters, attachments) go through Server Actions,
+    // whose request body defaults to 1MB. Raise it to match nginx (30M) so
+    // multi-MB PDFs upload instead of failing. App still caps files at MAX_UPLOAD_BYTES.
+    serverActions: {
+      bodySizeLimit: "30mb",
+    },
+  },
   async headers() {
     return [
       {
