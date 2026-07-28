@@ -10,7 +10,7 @@ import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
 
-const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
+const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 
 function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/projects/${projectId}`);
@@ -151,7 +151,7 @@ export async function completeStage(stageId: string) {
  * that was unlocked by its completion back to locked.
  */
 export async function reopenStage(stageId: string) {
-  const me = await requirePosition(["direktor", "orinbosar"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
 
   const projectId = await db.transaction(async (tx) => {
     const rows = await tx.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
@@ -223,7 +223,7 @@ export async function setStageDeadline(stageId: string, date: string | null) {
 }
 
 export async function setStagePlannedAmount(stageId: string, amount: number | null) {
-  const me = await requirePosition(["direktor", "orinbosar"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
   if (!row) throw new Error("not_found");
   await db
@@ -302,7 +302,7 @@ const paymentSchema = z.object({
 });
 
 export async function addStagePayment(input: z.infer<typeof paymentSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const parsed = paymentSchema.parse(input);
   const projectId = await stageProjectId(parsed.stageId);
   await db.insert(stagePayments).values({
@@ -320,7 +320,7 @@ export async function addStagePayment(input: z.infer<typeof paymentSchema>) {
 }
 
 export async function setStagePaymentStatus(paymentId: string, status: "pending" | "paid") {
-  const me = await requirePosition(["direktor", "orinbosar"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const [row] = await db.select().from(stagePayments).where(eq(stagePayments.id, paymentId)).limit(1);
   if (!row) return;
   const projectId = await stageProjectId(row.stageId);
@@ -333,7 +333,7 @@ export async function setStagePaymentStatus(paymentId: string, status: "pending"
 }
 
 export async function deleteStagePayment(paymentId: string) {
-  const me = await requirePosition(["direktor", "orinbosar"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const [row] = await db.select().from(stagePayments).where(eq(stagePayments.id, paymentId)).limit(1);
   if (!row) return;
   const projectId = await stageProjectId(row.stageId);

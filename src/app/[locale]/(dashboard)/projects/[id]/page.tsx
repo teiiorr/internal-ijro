@@ -31,17 +31,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const data = await getProject(id);
   if (!data) notFound();
   const me = session.user;
-  const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(me.position) || data.project.curatorUserId === me.id;
+  const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position) || data.project.curatorUserId === me.id;
   // Bo'lim boshlig'i can create / edit / update but NOT delete stages or projects.
-  const canDelete = ["direktor", "orinbosar", "koordinator"].includes(me.position);
-  const canTogglePayment = ["direktor", "orinbosar"].includes(me.position);
+  const canDelete = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
+  const canTogglePayment = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
 
   // ---- Typed (template-driven) project → serpentine stage view ----
   if (data.project.projectTypeId) {
     const sp = await getStageProject(id, locale);
     if (!sp) notFound();
     const contractors = await listContractors("approved");
-    const canManageContractor = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(me.position);
+    const canManageContractor = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
     const status = derivedStatus(sp.project.progressPercentage, sp.project.statusOverride);
     const statusTone: StatusTone =
       status === "completed" ? "green"

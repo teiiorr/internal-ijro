@@ -29,7 +29,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
   const t = await getTranslations();
 
   const me = session.user;
-  const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(me.position);
+  const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
 
   const [{ upcoming, agenda, meetings }, projectOpts, employeeOpts] = await Promise.all([
     getCouncilPage(kind),

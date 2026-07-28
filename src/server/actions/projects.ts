@@ -38,7 +38,7 @@ const projectSchema = z.object({
 });
 
 export async function createProject(input: z.infer<typeof projectSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const parsed = projectSchema.parse(input);
   if (parsed.type === "external" && !parsed.externalCompanyId) throw new Error("company_required");
 
@@ -154,7 +154,7 @@ const milestoneSchema = z.object({
 });
 
 export async function createMilestone(input: z.infer<typeof milestoneSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const parsed = milestoneSchema.parse(input);
   await db.insert(milestones).values({
     projectId: parsed.projectId,
@@ -194,7 +194,7 @@ export async function setMilestoneStatus(milestoneId: string, status: string) {
 }
 
 export async function setMilestonePaymentStatus(milestoneId: string, paymentStatus: string) {
-  const me = await requirePosition(["direktor", "orinbosar"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) return;
   await db.update(milestones).set({ paymentStatus }).where(eq(milestones.id, milestoneId));
@@ -211,7 +211,7 @@ export async function setMilestonePaymentStatus(milestoneId: string, paymentStat
 
 /** Set a stage's progress (0..100). Server clamps; never trust client. */
 export async function setMilestoneProgress(milestoneId: string, progress: number) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const value = Math.max(0, Math.min(100, Math.round(Number(progress) || 0)));
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) throw new Error("not_found");
@@ -246,7 +246,7 @@ export async function updateMilestone(
   milestoneId: string,
   input: z.infer<typeof updateMilestoneSchema>
 ) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const parsed = updateMilestoneSchema.parse(input);
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) throw new Error("not_found");
@@ -272,7 +272,7 @@ export async function updateMilestone(
 
 export async function deleteMilestone(milestoneId: string) {
   // Bo'lim boshlig'i can create + edit + reorder stages but NOT delete.
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) return;
   await db.delete(milestones).where(eq(milestones.id, milestoneId));
@@ -288,7 +288,7 @@ export async function deleteMilestone(milestoneId: string) {
 
 /** Apply a new ordering to the project's stages. orderedIds must be a full list. */
 export async function reorderMilestones(projectId: string, orderedIds: string[]) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   await db.transaction(async (tx) => {
     for (let i = 0; i < orderedIds.length; i++) {
       await tx
@@ -309,7 +309,7 @@ export async function reorderMilestones(projectId: string, orderedIds: string[])
 
 /** Toggle the manual on-hold override for a project. */
 export async function setProjectOnHold(projectId: string, onHold: boolean) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   await db
     .update(projects)
     .set({ statusOverride: onHold ? "on_hold" : null, updatedAt: new Date() })
@@ -325,7 +325,7 @@ export async function setProjectOnHold(projectId: string, onHold: boolean) {
 
 // Project poster (square cover image)
 export async function setProjectPoster(projectId: string, file: File) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   if (!file.type.startsWith("image/")) throw new Error("image_required");
   const [prev] = await db.select({ posterUrl: projects.posterUrl }).from(projects).where(eq(projects.id, projectId)).limit(1);
   const stored = await storeFile(file, `project-posters/${projectId}`);
@@ -337,7 +337,7 @@ export async function setProjectPoster(projectId: string, file: File) {
 }
 
 export async function removeProjectPoster(projectId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const [prev] = await db.select({ posterUrl: projects.posterUrl }).from(projects).where(eq(projects.id, projectId)).limit(1);
   if (prev?.posterUrl) await deleteFileByUrl(prev.posterUrl);
   await db.update(projects).set({ posterUrl: null, updatedAt: new Date() }).where(eq(projects.id, projectId));
@@ -406,7 +406,7 @@ export async function submitDeliverable(opts: {
 
 export async function reviewDeliverable(deliverableId: string, status: "approved" | "revision_requested" | "rejected", adminFeedback?: string) {
   const me = await requireUser();
-  if (!["direktor", "orinbosar", "koordinator"].includes(me.position)) throw new Error("forbidden");
+  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position)) throw new Error("forbidden");
   await db
     .update(deliverables)
     .set({
@@ -439,7 +439,7 @@ export async function reviewDeliverable(deliverableId: string, status: "approved
   revalidatePath(`/contractor/projects`);
 }
 
-const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
+const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 
 // Create a contractor directly (no self-registration / account) and auto-approve it.
 const contractorSchema = z.object({
@@ -484,7 +484,7 @@ export async function setProjectContractor(projectId: string, companyId: string 
 
 // Approve/reject contractor (external_companies + user activation)
 export async function approveContractor(companyId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const company = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
   if (company.length === 0) return;
   await db.transaction(async (tx) => {
@@ -504,7 +504,7 @@ export async function approveContractor(companyId: string) {
 }
 
 export async function rejectContractor(companyId: string, reason: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   await db
     .update(externalCompanies)
     .set({ status: "rejected", rejectionReason: reason })
@@ -527,7 +527,7 @@ const ratingSchema = z.object({
   notes: z.string().nullable().optional(),
 });
 export async function completeProjectWithRating(input: z.infer<typeof ratingSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const parsed = ratingSchema.parse(input);
   await db.transaction(async (tx) => {
     await tx

@@ -57,6 +57,13 @@
       "when": 1785223751748,
       "tag": "0007_first_rockslide",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1785232372615,
+      "tag": "0008_bizarre_lady_vermin",
+      "breakpoints": true
     }
   ]
 }

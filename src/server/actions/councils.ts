@@ -7,7 +7,7 @@ import { councilMeetings, councilAgendaItems } from "@/lib/db/schema";
 import { requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 
-const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] as const;
+const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 const KINDS = ["ekspert", "smeta"] as const;
 
 function revalidate(kind: string) {
@@ -38,7 +38,7 @@ export async function createCouncilMeeting(input: z.infer<typeof meetingSchema>)
 }
 
 export async function deleteCouncilMeeting(meetingId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
   const [m] = await db.select({ kind: councilMeetings.kind }).from(councilMeetings).where(eq(councilMeetings.id, meetingId)).limit(1);
   if (!m) return;
   await db.delete(councilMeetings).where(eq(councilMeetings.id, meetingId));

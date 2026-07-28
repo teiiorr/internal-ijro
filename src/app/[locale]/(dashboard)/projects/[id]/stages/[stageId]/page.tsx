@@ -23,9 +23,9 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
 
   const me = session.user;
   const canManage =
-    ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(me.position) ||
+    ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position) ||
     data.stage.projectCuratorUserId === me.id;
-  const canManagePayments = ["direktor", "orinbosar"].includes(me.position);
+  const canManagePayments = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
 
   const s = data.stage;
   const total = data.siblings.length;

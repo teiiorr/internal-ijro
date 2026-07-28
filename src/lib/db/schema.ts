@@ -69,7 +69,7 @@ export const users = pgTable(
     status: varchar("status", { length: 20 }).default("pending").notNull().$type<UserStatus>(),
     hireDate: date("hire_date"),
     terminationDate: date("termination_date"),
-    languagePreference: varchar("language_preference", { length: 10 }).default("uz-cyrl").notNull(),
+    languagePreference: varchar("language_preference", { length: 10 }).default("uz-latn").notNull(),
     themePreference: varchar("theme_preference", { length: 10 }).default("system").notNull(),
     timezone: varchar("timezone", { length: 50 }).default("Asia/Tashkent").notNull(),
     twoFactorEnabled: boolean("two_factor_enabled").default(false).notNull(),
