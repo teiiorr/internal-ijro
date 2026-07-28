@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { localizeName } from "@/lib/names";
 import { HrWidgets } from "@/components/dashboards/hr-widgets";
 import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
@@ -8,6 +9,7 @@ import { InboxWidget } from "@/components/dashboards/inbox-widget";
 export default async function DashboardPage() {
   const session = await auth();
   const t = await getTranslations();
+  const locale = await getLocale();
   const user = session!.user;
   const isManager = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(user.position);
   const isHr = user.position === "hr";
@@ -20,7 +22,7 @@ export default async function DashboardPage() {
       <div>
         <p className="text-sm text-[var(--muted)] font-medium mb-1">{greet},</p>
         <h1 className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl break-words">
-          <span className="gradient-text">{user.fullName}</span>
+          <span className="gradient-text">{localizeName(user.fullName, locale)}</span>
         </h1>
         <p className="text-[var(--muted)] mt-1 text-sm font-medium">{t(`positions.${user.position}` as "positions.direktor")}</p>
       </div>

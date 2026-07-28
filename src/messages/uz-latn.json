@@ -104,7 +104,7 @@
     "projects": "Loyihalar",
     "employees": "Xodimlar",
     "departments": "Bo'limlar",
-    "contractors": "Pudratchilar",
+    "contractors": "Studiyalar",
     "reports": "Hisobotlar",
     "leaves": "Tatillar",
     "notifications": "Bildirishnomalar",
@@ -112,7 +112,7 @@
     "settings": "Sozlamalar",
     "profile": "Profil",
     "logout": "Chiqish",
-    "contractorPortal": "Pudratchi portali",
+    "contractorPortal": "Studiya portali",
     "ekspertKengash": "Ekspertlar Kengashi",
     "smetaKengash": "Smeta Kengashi",
     "more": "Ko'proq"
@@ -126,7 +126,7 @@
     "yetakchi_mutaxassis": "Yetakchi mutaxassis",
     "mutaxassis": "Mutaxassis",
     "hr": "HR",
-    "kontragent": "Pudratchi"
+    "kontragent": "Studiya"
   },
   "status": {
     "active": "Faol",
@@ -153,7 +153,7 @@
       "totp": "2FA kodi",
       "submit": "Kirish",
       "forgot": "Parolni unutdingizmi?",
-      "registerContractor": "Pudratchi sifatida ro'yxatdan o'tish",
+      "registerContractor": "Studiya sifatida ro'yxatdan o'tish",
       "invalid": "Email yoki parol noto'g'ri",
       "locked": "Hisob qulflangan. Keyinroq qayta urinib ko'ring."
     },
@@ -190,7 +190,7 @@
       "invalid": "Taklif yaroqsiz yoki muddati o'tgan"
     },
     "registerContractor": {
-      "title": "Pudratchi sifatida ro'yxatdan o'tish",
+      "title": "Studiya sifatida ro'yxatdan o'tish",
       "companyName": "Kompaniya nomi",
       "contactPerson": "Aloqa shaxsi",
       "contactEmail": "Email",
@@ -313,7 +313,7 @@
     "pageTitle": "Loyihalar",
     "searchPlaceholder": "Loyihalarni qidirish...",
     "new": {
-      "contractorPlaceholder": "Tasdiqlangan pudratchini tanlang",
+      "contractorPlaceholder": "Tasdiqlangan studiyani tanlang",
       "defaultCurrency": "UZS"
     },
     "newTitle": "Loyiha yaratish",
@@ -322,7 +322,7 @@
       "description": "Tavsif",
       "type": "Turi",
       "curator": "Kurator",
-      "contractor": "Pudratchi",
+      "contractor": "Studiya",
       "startDate": "Boshlanish sanasi",
       "deadline": "Tugatish muddati",
       "budget": "Byudjet",
@@ -384,7 +384,7 @@
     "complete": {
       "btn": "Yakunlash va baholash",
       "title": "Loyihani yakunlash",
-      "ratePrompt": "Pudratchini baholang:",
+      "ratePrompt": "Studiyani baholang:",
       "notesPlaceholder": "Izohlar (ixtiyoriy)",
       "confirm": "Yakunlash"
     },
@@ -400,16 +400,16 @@
       "status": "Holat"
     },
     "empty": "Loyihalar yo'q",
-    "contractorLabel": "Pudratchi",
+    "contractorLabel": "Studiya",
     "contractor": {
-      "none": "Pudratchi tayinlanmagan",
-      "namePlaceholder": "Pudratchi nomi — tanlang yoki yozing",
+      "none": "Studiya tayinlanmagan",
+      "namePlaceholder": "Studiya nomi — tanlang yoki yozing",
       "person": "Aloqa shaxsi (ixtiyoriy)",
       "phone": "Telefon (ixtiyoriy)",
       "remove": "Olib tashlash",
-      "saved": "Pudratchi saqlandi",
-      "removed": "Pudratchi olib tashlandi",
-      "hint": "Ro'yxatdan o'tmagan pudratchini ham qo'lda qo'shishingiz mumkin"
+      "saved": "Studiya saqlandi",
+      "removed": "Studiya olib tashlandi",
+      "hint": "Ro'yxatdan o'tmagan studiyani ham qo'lda qo'shishingiz mumkin"
     },
     "curatorLabel": "Kurator",
     "deliverable": {
@@ -618,9 +618,9 @@
     "empty": "Bo'limlar yo'q"
   },
   "contractors": {
-    "pageTitle": "Pudratchilar",
+    "pageTitle": "Studiyalar",
     "pendingTitle": "Tasdiqlash kutilmoqda",
-    "allTitle": "Barcha pudratchilar",
+    "allTitle": "Barcha studiyalar",
     "none": "Yo'q.",
     "reason": "Sababi"
   },
@@ -738,9 +738,9 @@
   },
   "contractor": {
     "accountUnderReview": "Hisob tekshiruvda",
-    "applicationStatus": "Sizning pudratchi arizangiz holati",
+    "applicationStatus": "Sizning studiya arizangiz holati",
     "reason": "Sababi",
-    "statusLabel": "Sizning pudratchi arizangiz holati:",
+    "statusLabel": "Sizning studiya arizangiz holati:",
     "nda": {
       "title": "Maxfiylik kelishuvi",
       "body1": "Ushbu kelishuvni qabul qilish orqali siz ushbu portal orqali ulashilgan barcha ma'lumotlar, hujjatlar va aloqalarni qat'iy maxfiy saqlashga rozilik bildirasiz.",
@@ -768,7 +768,7 @@
       "specialization": "Mutaxassisligi",
       "noCompany": "Bog'langan kompaniya yo'q."
     },
-    "portalLabel": "Pudratchi portali"
+    "portalLabel": "Studiya portali"
   },
   "dashboard": {
     "title": "Bosh sahifa",

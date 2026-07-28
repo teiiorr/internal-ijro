@@ -104,7 +104,7 @@
     "projects": "Проекты",
     "employees": "Сотрудники",
     "departments": "Отделы",
-    "contractors": "Подрядчики",
+    "contractors": "Студии",
     "reports": "Отчёты",
     "leaves": "Отпуска",
     "notifications": "Уведомления",
@@ -112,7 +112,7 @@
     "settings": "Настройки",
     "profile": "Профиль",
     "logout": "Выйти",
-    "contractorPortal": "Портал подрядчика",
+    "contractorPortal": "Портал студии",
     "ekspertKengash": "Экспертный совет",
     "smetaKengash": "Сметный совет",
     "more": "Ещё"
@@ -126,7 +126,7 @@
     "yetakchi_mutaxassis": "Ведущий специалист",
     "mutaxassis": "Специалист",
     "hr": "HR",
-    "kontragent": "Подрядчик"
+    "kontragent": "Студия"
   },
   "status": {
     "active": "Активный",
@@ -153,7 +153,7 @@
       "totp": "Код 2FA",
       "submit": "Войти",
       "forgot": "Забыли пароль?",
-      "registerContractor": "Регистрация подрядчика",
+      "registerContractor": "Регистрация студии",
       "invalid": "Неверный email или пароль",
       "locked": "Аккаунт заблокирован. Попробуйте позже."
     },
@@ -190,7 +190,7 @@
       "invalid": "Приглашение недействительно или просрочено"
     },
     "registerContractor": {
-      "title": "Регистрация подрядчика",
+      "title": "Регистрация студии",
       "companyName": "Название компании",
       "contactPerson": "Контактное лицо",
       "contactEmail": "Email",
@@ -313,7 +313,7 @@
     "pageTitle": "Проекты",
     "searchPlaceholder": "Поиск проектов...",
     "new": {
-      "contractorPlaceholder": "Выберите утверждённого подрядчика",
+      "contractorPlaceholder": "Выберите утверждённую студию",
       "defaultCurrency": "UZS"
     },
     "newTitle": "Создать проект",
@@ -322,7 +322,7 @@
       "description": "Описание",
       "type": "Тип",
       "curator": "Куратор",
-      "contractor": "Подрядчик",
+      "contractor": "Студия",
       "startDate": "Дата начала",
       "deadline": "Срок завершения",
       "budget": "Бюджет",
@@ -384,7 +384,7 @@
     "complete": {
       "btn": "Завершить и оценить",
       "title": "Завершение проекта",
-      "ratePrompt": "Оцените подрядчика:",
+      "ratePrompt": "Оцените студию:",
       "notesPlaceholder": "Комментарий (опционально)",
       "confirm": "Завершить"
     },
@@ -400,16 +400,16 @@
       "status": "Статус"
     },
     "empty": "Проектов нет",
-    "contractorLabel": "Подрядчик",
+    "contractorLabel": "Студия",
     "contractor": {
-      "none": "Подрядчик не назначен",
-      "namePlaceholder": "Название подрядчика — выберите или впишите",
+      "none": "Студия не назначен",
+      "namePlaceholder": "Название студии — выберите или впишите",
       "person": "Контактное лицо (необязательно)",
       "phone": "Телефон (необязательно)",
       "remove": "Убрать",
-      "saved": "Подрядчик сохранён",
-      "removed": "Подрядчик убран",
-      "hint": "Можно вручную добавить и незарегистрированного подрядчика"
+      "saved": "Студия сохранён",
+      "removed": "Студия убран",
+      "hint": "Можно вручную добавить и незарегистрированную студию"
     },
     "curatorLabel": "Куратор",
     "deliverable": {
@@ -618,9 +618,9 @@
     "empty": "Отделов нет"
   },
   "contractors": {
-    "pageTitle": "Подрядчики",
+    "pageTitle": "Студии",
     "pendingTitle": "Ожидают одобрения",
-    "allTitle": "Все подрядчики",
+    "allTitle": "Все студии",
     "none": "Нет.",
     "reason": "Причина"
   },
@@ -738,9 +738,9 @@
   },
   "contractor": {
     "accountUnderReview": "Аккаунт на проверке",
-    "applicationStatus": "Статус вашей заявки подрядчика",
+    "applicationStatus": "Статус вашей заявки студии",
     "reason": "Причина",
-    "statusLabel": "Статус вашей заявки подрядчика:",
+    "statusLabel": "Статус вашей заявки студии:",
     "nda": {
       "title": "Соглашение о конфиденциальности",
       "body1": "Принимая это соглашение, вы обязуетесь хранить в строгой тайне всю информацию, документы и переписку, переданные через этот портал.",
@@ -768,7 +768,7 @@
       "specialization": "Специализация",
       "noCompany": "Компания не подключена."
     },
-    "portalLabel": "Портал подрядчика"
+    "portalLabel": "Портал студии"
   },
   "dashboard": {
     "title": "Главная",

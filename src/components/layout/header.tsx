@@ -8,7 +8,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { Logo } from "@/components/logo";
 import { signOut } from "next-auth/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { localizeName } from "@/lib/names";
 import { cn } from "@/lib/utils";
 
 function Avatar({ name }: { name: string }) {
@@ -23,6 +24,8 @@ function Avatar({ name }: { name: string }) {
 
 export function Header({ userName }: { userName: string }) {
   const t = useTranslations();
+  const locale = useLocale();
+  const displayName = localizeName(userName, locale);
   const [menuOpen, setMenuOpen] = useState(false);
   const [q, setQ] = useState("");
   const router = useRouter();
@@ -78,14 +81,14 @@ export function Header({ userName }: { userName: string }) {
                 menuOpen ? "bg-[var(--glass-fill-strong)]" : "hover:bg-[var(--glass-fill)]"
               )}
             >
-              <Avatar name={userName} />
-              <span className="hidden md:inline text-sm font-bold">{userName}</span>
+              <Avatar name={displayName} />
+              <span className="hidden md:inline text-sm font-bold">{displayName}</span>
             </button>
             {menuOpen && (
               <div className="absolute right-0 mt-2 w-64 rounded-2xl glass-strong p-1.5 z-50">
                 <div className="px-3 py-3 border-b border-[var(--border)] mb-1.5">
                   <p className="text-xs font-medium text-[var(--muted)]">{t("header.signedInAs")}</p>
-                  <p className="text-sm font-bold mt-1">{userName}</p>
+                  <p className="text-sm font-bold mt-1">{displayName}</p>
                 </div>
                 <Link
                   href="/settings"
