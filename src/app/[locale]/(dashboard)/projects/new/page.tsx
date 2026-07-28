@@ -13,10 +13,11 @@ export default async function NewProjectPage() {
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
   const locale = await getLocale();
-  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position)) redirect("/projects");
+  // Open to all internal staff (temporary — refine later). Only external contractors are blocked.
+  if (session.user.position === "kontragent") redirect("/projects");
   const [companies, curators, responsibles, typeRows] = await Promise.all([
     db.select({ id: externalCompanies.id, name: externalCompanies.name }).from(externalCompanies).where(eq(externalCompanies.status, "approved")).orderBy(externalCompanies.name),
-    db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} in ('direktor','orinbosar','koordinator','bolim_boshligi')`).orderBy(users.fullName),
+    db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`).orderBy(users.fullName),
     // mas'ul can be any active internal employee (not external contractors)
     db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`).orderBy(users.fullName),
     db.select().from(projectTypes).where(eq(projectTypes.isActive, true)).orderBy(projectTypes.orderIndex),

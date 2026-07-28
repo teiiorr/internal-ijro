@@ -14,10 +14,10 @@ const RU: Record<string, string> = { ...UZ, h: "х", q: "к" };
 
 // digraphs (apostrophes already normalized to '); order matters
 const UZ_DI: [string, string][] = [
-  ["o'", "ў"], ["g'", "ғ"], ["yo", "ё"], ["yu", "ю"], ["ya", "я"], ["sh", "ш"], ["ch", "ч"], ["ts", "ц"],
+  ["o'", "ў"], ["g'", "ғ"], ["yo", "ё"], ["yu", "ю"], ["ya", "я"], ["ye", "е"], ["sh", "ш"], ["ch", "ч"], ["ts", "ц"],
 ];
 const RU_DI: [string, string][] = [
-  ["o'", "у"], ["g'", "г"], ["yo", "ё"], ["yu", "ю"], ["ya", "я"], ["sh", "ш"], ["ch", "ч"], ["ts", "ц"],
+  ["o'", "у"], ["g'", "г"], ["yo", "ё"], ["yu", "ю"], ["ya", "я"], ["ye", "е"], ["sh", "ш"], ["ch", "ч"], ["ts", "ц"],
 ];
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
