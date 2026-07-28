@@ -15,10 +15,11 @@ const KINDS = ["ekspert", "smeta"] as const;
 type Kind = (typeof KINDS)[number];
 
 function dateTime(d: Date | string): string {
-  const date = new Date(d);
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mm = String(date.getMinutes()).padStart(2, "0");
-  return `${formatDate(date)} · ${hh}:${mm}`;
+  // Toshkent vaqti (UTC+5) — server UTC'da ishlaydi.
+  const date = new Date(new Date(d).getTime() + 5 * 60 * 60 * 1000);
+  const hh = String(date.getUTCHours()).padStart(2, "0");
+  const mm = String(date.getUTCMinutes()).padStart(2, "0");
+  return `${formatDate(d)} · ${hh}:${mm}`;
 }
 
 export default async function CouncilPage({ params }: { params: Promise<{ kind: string }> }) {
