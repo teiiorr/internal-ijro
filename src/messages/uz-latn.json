@@ -858,10 +858,12 @@
       "submitStandup": "Standup topshirish"
     },
     "greeting": {
-      "morning": "Xayrli tong",
-      "afternoon": "Xayrli kun",
-      "evening": "Xayrli kech"
-    }
+      "morning": "Hayrli tong",
+      "afternoon": "Hayrli kun",
+      "evening": "Hayrli kech",
+      "night": "Hayrli tun"
+    },
+    "ownerRole": "Platforma egasi"
   },
   "commandPalette": {
     "placeholder": "Buyruq yoki sahifa nomini kiriting...",

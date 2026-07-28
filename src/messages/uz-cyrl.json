@@ -858,10 +858,12 @@
       "submitStandup": "Стендап топшириш"
     },
     "greeting": {
-      "morning": "Хайрли тонг",
-      "afternoon": "Хайрли кун",
-      "evening": "Хайрли кеч"
-    }
+      "morning": "Ҳайрли тонг",
+      "afternoon": "Ҳайрли кун",
+      "evening": "Ҳайрли кеч",
+      "night": "Ҳайрли тун"
+    },
+    "ownerRole": "Платформа эгаси"
   },
   "commandPalette": {
     "placeholder": "Буйруқ ёки саҳифа номини киритинг...",
