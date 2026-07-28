@@ -310,6 +310,11 @@
     }
   },
   "projects": {
+    "delete": {
+      "button": "O'chirish",
+      "confirm": "Loyiha butunlay o'chirilsinmi? Bu amalni ortga qaytarib bo'lmaydi.",
+      "yes": "Ha, o'chirish"
+    },
     "pageTitle": "Loyihalar",
     "searchPlaceholder": "Loyihalarni qidirish...",
     "new": {

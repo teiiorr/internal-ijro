@@ -13,6 +13,7 @@ import {
   users,
   projectTypes,
   projectStages,
+  stageDocuments,
   stageTemplateItems,
 } from "@/lib/db/schema";
 import { requireUser, requirePosition } from "@/lib/session";
@@ -440,6 +441,37 @@ export async function reviewDeliverable(deliverableId: string, status: "approved
 }
 
 const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
+
+// Permanently delete a project. Irreversible → limited to senior management.
+// FK cascade removes stages/documents/payments/milestones/messages/ratings;
+// tasks & council-agenda references are set null (they survive). Uploaded files
+// (stage docs + poster) are cleaned off disk best-effort before the row is dropped.
+export async function deleteProject(projectId: string) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  const [prj] = await db
+    .select({ id: projects.id, name: projects.name, posterUrl: projects.posterUrl })
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+  if (!prj) return;
+
+  // Best-effort file cleanup (never blocks the delete).
+  const docs = await db
+    .select({ fileUrl: stageDocuments.fileUrl })
+    .from(stageDocuments)
+    .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
+    .where(eq(projectStages.projectId, projectId));
+  for (const d of docs) {
+    try { await deleteFileByUrl(d.fileUrl); } catch { /* orphan file — ignore */ }
+  }
+  if (prj.posterUrl) {
+    try { await deleteFileByUrl(prj.posterUrl); } catch { /* ignore */ }
+  }
+
+  await db.delete(projects).where(eq(projects.id, projectId));
+  await logActivity({ userId: me.id, action: "project.deleted", entityType: "project", entityId: projectId, oldValue: { name: prj.name } });
+  revalidatePath("/projects");
+}
 
 // Create a contractor directly (no self-registration / account) and auto-approve it.
 const contractorSchema = z.object({

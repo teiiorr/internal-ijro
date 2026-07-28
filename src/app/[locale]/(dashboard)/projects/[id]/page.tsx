@@ -17,6 +17,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { OnHoldToggle } from "@/components/projects/on-hold-toggle";
+import { DeleteProjectButton } from "@/components/projects/delete-project-button";
 import { derivedStatus } from "@/lib/projects/progress";
 import { formatDate } from "@/lib/dates";
 
@@ -34,6 +35,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position) || data.project.curatorUserId === me.id;
   // Bo'lim boshlig'i can create / edit / update but NOT delete stages or projects.
   const canDelete = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
+  // Deleting a whole project is irreversible → senior management only.
+  const canDeleteProject = ["direktor", "orinbosar", "koordinator"].includes(me.position);
   const canTogglePayment = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
 
   // ---- Typed (template-driven) project → serpentine stage view ----
@@ -71,7 +74,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               )}
             </div>
           </div>
-          {canManage && <OnHoldToggle projectId={sp.project.id} onHold={sp.project.statusOverride === "on_hold"} />}
+          {(canManage || canDeleteProject) && (
+            <div className="flex flex-col items-end gap-2 shrink-0">
+              {canManage && <OnHoldToggle projectId={sp.project.id} onHold={sp.project.statusOverride === "on_hold"} />}
+              {canDeleteProject && <DeleteProjectButton projectId={sp.project.id} />}
+            </div>
+          )}
         </div>
 
         {sp.project.description && (
@@ -178,11 +186,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             )}
           </div>
         </div>
-        {canManage && (
-          <OnHoldToggle
-            projectId={data.project.id}
-            onHold={data.project.statusOverride === "on_hold"}
-          />
+        {(canManage || canDeleteProject) && (
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            {canManage && (
+              <OnHoldToggle
+                projectId={data.project.id}
+                onHold={data.project.statusOverride === "on_hold"}
+              />
+            )}
+            {canDeleteProject && <DeleteProjectButton projectId={data.project.id} />}
+          </div>
         )}
       </div>
 
