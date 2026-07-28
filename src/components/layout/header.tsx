@@ -6,7 +6,7 @@ import { Search, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
-import { Logo } from "@/components/logo";
+import { BrandLogo } from "@/components/brand-logo";
 import { signOut } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { localizeName } from "@/lib/names";
@@ -48,12 +48,8 @@ export function Header({ userName }: { userName: string }) {
   return (
     <header className="sticky top-0 z-30 glass-bar">
       <div className="h-[60px] sm:h-[68px] flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 max-w-[1500px] mx-auto">
-        <Link href="/dashboard" className="flex items-center gap-2 sm:gap-2.5 mr-1 sm:mr-3 shrink-0">
-          <div className="sm:hidden"><Logo size={40} /></div>
-          <div className="hidden sm:block"><Logo size={48} /></div>
-          <span className="hidden sm:inline font-extrabold text-[17px] tracking-tight text-[var(--foreground)]">
-            {t("app.name")}
-          </span>
+        <Link href="/dashboard" className="flex items-center mr-1 sm:mr-3 shrink-0">
+          <BrandLogo className="h-10 sm:h-14" />
         </Link>
 
         <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-md ml-4">

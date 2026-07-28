@@ -194,18 +194,19 @@ export async function ManagerWidgets() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-3 gap-3">
-            <div>
+          {/* stacked label→value rows on mobile (long sums never overlap); 3 columns from sm up */}
+          <div className="space-y-2.5 sm:grid sm:grid-cols-3 sm:gap-3 sm:space-y-0">
+            <div className="flex items-baseline justify-between gap-3 sm:block">
               <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.planned")}</p>
-              <p className="mt-1 text-lg font-bold tabular-nums sm:text-xl">{money(pay.planned)}</p>
+              <p className="text-lg font-bold tabular-nums sm:mt-1 sm:text-xl">{money(pay.planned)}</p>
             </div>
-            <div>
+            <div className="flex items-baseline justify-between gap-3 sm:block">
               <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.paid")}</p>
-              <p className="mt-1 text-lg font-bold tabular-nums text-[var(--success)] sm:text-xl">{money(pay.paid)}</p>
+              <p className="text-lg font-bold tabular-nums text-[var(--success)] sm:mt-1 sm:text-xl">{money(pay.paid)}</p>
             </div>
-            <div>
+            <div className="flex items-baseline justify-between gap-3 sm:block">
               <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.pending")}</p>
-              <p className="mt-1 text-lg font-bold tabular-nums text-[var(--warning)] sm:text-xl">{money(pay.pending)}</p>
+              <p className="text-lg font-bold tabular-nums text-[var(--warning)] sm:mt-1 sm:text-xl">{money(pay.pending)}</p>
             </div>
           </div>
           <div className="flex h-3 overflow-hidden rounded-full bg-[var(--surface-3)]">

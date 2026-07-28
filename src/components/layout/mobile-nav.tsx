@@ -92,12 +92,12 @@ export function MobileNav({ position }: { position: Position }) {
                 href={href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-2xl px-2 py-3.5 text-center transition-colors",
+                  "flex min-h-[86px] flex-col items-center justify-center gap-1.5 rounded-2xl px-1 py-3 text-center transition-colors",
                   active ? "bg-[var(--primary)] text-white" : "text-[var(--foreground)] hover:bg-[var(--glass-fill)]"
                 )}
               >
                 <Icon className="size-6 shrink-0" />
-                <span className="text-[11px] font-semibold leading-tight">{t(key)}</span>
+                <span className="line-clamp-2 text-[11px] font-semibold leading-tight">{t(key)}</span>
               </Link>
             );
           })}

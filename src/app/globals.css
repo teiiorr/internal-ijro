@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Make `dark:` utilities follow the .dark class (toggled by ThemeProvider),
+   not the OS media query. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================================================================
    SOLID GLASS — flat backgrounds, no gradients, clean light + dark modes
