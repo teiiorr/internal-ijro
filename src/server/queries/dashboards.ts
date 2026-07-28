@@ -1,7 +1,18 @@
 import "server-only";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { tasks, users, projects, departments, externalCompanies, type Position } from "@/lib/db/schema";
+import {
+  tasks,
+  users,
+  projects,
+  externalCompanies,
+  projectStages,
+  projectTypes,
+  stagePayments,
+  stageTemplateItems,
+  type Position,
+} from "@/lib/db/schema";
+import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 
 export type Period = "day" | "week" | "month" | "quarter" | "year";
 
@@ -185,6 +196,104 @@ export async function getActiveProjectsHealth(limit = 6) {
     const atRisk = !!p.deadline && new Date(p.deadline) < today && p.statusOverride !== "on_hold";
     return { ...p, atRisk };
   });
+}
+
+// ---------------------------------------------------------------------------
+// Projects & stages analytics (manager dashboard)
+// ---------------------------------------------------------------------------
+
+/** Headline counters for the projects dashboard — every one is a clickable KPI. */
+export async function getProjectStageKpis() {
+  const [active, overdueStages, dueSoonStages, overdueTasks] = await Promise.all([
+    db.select({ c: sql<number>`count(*)::int` }).from(projects).where(sql`${projects.status} not in ('completed','cancelled')`),
+    db.select({ c: sql<number>`count(*)::int` }).from(projectStages).where(sql`${projectStages.status} = 'active' AND ${projectStages.plannedDeadline} < now()::date`),
+    db.select({ c: sql<number>`count(*)::int` }).from(projectStages).where(sql`${projectStages.status} = 'active' AND ${projectStages.plannedDeadline} between now()::date AND (now() + interval '7 days')::date`),
+    db.select({ c: sql<number>`count(*)::int` }).from(tasks).where(sql`${tasks.deadline} < now() AND ${tasks.status} not in ('completed','rejected')`),
+  ]);
+  return {
+    activeProjects: Number(active[0]?.c ?? 0),
+    overdueStages: Number(overdueStages[0]?.c ?? 0),
+    dueSoonStages: Number(dueSoonStages[0]?.c ?? 0),
+    overdueTasks: Number(overdueTasks[0]?.c ?? 0),
+  };
+}
+
+/** Project counts by derived status (progress + on-hold override) — powers the donut. */
+export async function getProjectStatusBreakdown() {
+  const rows = await db
+    .select({ progressPercentage: projects.progressPercentage, statusOverride: projects.statusOverride })
+    .from(projects);
+  const out: Record<DerivedStatus, number> = { not_started: 0, in_progress: 0, completed: 0, on_hold: 0 };
+  for (const r of rows) out[derivedStatus(r.progressPercentage, r.statusOverride)] += 1;
+  return out;
+}
+
+/** Typed-project counts per production type — powers the horizontal bar. */
+export async function getProjectTypeBreakdown(locale: string) {
+  const rows = await db
+    .select({
+      uz: projectTypes.nameUzLatn,
+      cy: projectTypes.nameUzCyrl,
+      ru: projectTypes.nameRu,
+      order: projectTypes.orderIndex,
+      c: sql<number>`count(${projects.id})::int`,
+    })
+    .from(projectTypes)
+    .leftJoin(projects, eq(projects.projectTypeId, projectTypes.id))
+    .groupBy(projectTypes.id, projectTypes.nameUzLatn, projectTypes.nameUzCyrl, projectTypes.nameRu, projectTypes.orderIndex)
+    .orderBy(desc(sql`count(${projects.id})`));
+  return rows
+    .map((r) => ({ name: locale === "ru" ? r.ru : locale === "uz-cyrl" ? r.cy : r.uz, count: Number(r.c) }))
+    .filter((r) => r.count > 0);
+}
+
+/** Active stages that have a deadline, most urgent first (overdue → soonest). */
+export async function getStageDeadlineBoard(locale: string, limit = 8) {
+  const rows = await db
+    .select({
+      stageId: projectStages.id,
+      projectId: projectStages.projectId,
+      projectName: projects.name,
+      snapshot: projectStages.name,
+      plannedDeadline: projectStages.plannedDeadline,
+      tiUz: stageTemplateItems.nameUzLatn,
+      tiCy: stageTemplateItems.nameUzCyrl,
+      tiRu: stageTemplateItems.nameRu,
+      responsibleName: users.fullName,
+    })
+    .from(projectStages)
+    .innerJoin(projects, eq(projects.id, projectStages.projectId))
+    .leftJoin(stageTemplateItems, eq(stageTemplateItems.id, projectStages.templateItemId))
+    .leftJoin(users, eq(users.id, projectStages.responsibleUserId))
+    .where(sql`${projectStages.status} = 'active' AND ${projectStages.plannedDeadline} is not null`)
+    .orderBy(asc(projectStages.plannedDeadline))
+    .limit(limit);
+  return rows.map((r) => ({
+    stageId: r.stageId,
+    projectId: r.projectId,
+    projectName: r.projectName,
+    stageName: (locale === "ru" ? r.tiRu : locale === "uz-cyrl" ? r.tiCy : r.tiUz) ?? r.snapshot,
+    plannedDeadline: r.plannedDeadline,
+    responsibleName: r.responsibleName,
+  }));
+}
+
+/** Money rollup across every stage: planned target vs paid vs pending. */
+export async function getProjectPaymentsSummary() {
+  const [plannedRow, payRow] = await Promise.all([
+    db.select({ s: sql<string>`coalesce(sum(${projectStages.plannedAmount}),0)` }).from(projectStages),
+    db
+      .select({
+        paid: sql<string>`coalesce(sum(case when ${stagePayments.status}='paid' then ${stagePayments.amount} else 0 end),0)`,
+        pending: sql<string>`coalesce(sum(case when ${stagePayments.status}<>'paid' then ${stagePayments.amount} else 0 end),0)`,
+      })
+      .from(stagePayments),
+  ]);
+  return {
+    planned: Number(plannedRow[0]?.s ?? 0),
+    paid: Number(payRow[0]?.paid ?? 0),
+    pending: Number(payRow[0]?.pending ?? 0),
+  };
 }
 
 void and; void asc;

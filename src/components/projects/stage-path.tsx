@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Check, Lock, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
 
 export type StagePathItem = {
@@ -73,6 +74,7 @@ export function StagePath({ projectId, stages }: { projectId: string; stages: St
                 </div>
                 <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
                   <StatusTag tone={tone}>{label}</StatusTag>
+                  {isActive && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
                   {meta && <span className="text-sm leading-5 text-[var(--muted)]">{meta}</span>}
                 </div>
               </div>

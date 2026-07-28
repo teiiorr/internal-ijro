@@ -4,16 +4,16 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
-  CheckSquare,
+  ListTodo,
   FolderKanban,
   Users,
   Building2,
-  Briefcase,
+  Handshake,
   Bell,
   ScrollText,
   Settings,
-  Gavel,
-  Calculator,
+  Presentation,
+  Coins,
   Menu,
   X,
 } from "lucide-react";
@@ -30,13 +30,13 @@ const HR_ROLES: Position[] = ["direktor", "orinbosar", "hr"];
 // Full menu (same as the desktop sidebar).
 const ITEMS: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, key: "dashboard", allowed: ALL },
-  { href: "/tasks", icon: CheckSquare, key: "tasks", allowed: STAFF },
+  { href: "/tasks", icon: ListTodo, key: "tasks", allowed: STAFF },
   { href: "/projects", icon: FolderKanban, key: "projects", allowed: ALL },
-  { href: "/kengashlar/ekspert", icon: Gavel, key: "ekspertKengash", allowed: STAFF },
-  { href: "/kengashlar/smeta", icon: Calculator, key: "smetaKengash", allowed: STAFF },
+  { href: "/kengashlar/ekspert", icon: Presentation, key: "ekspertKengash", allowed: STAFF },
+  { href: "/kengashlar/smeta", icon: Coins, key: "smetaKengash", allowed: STAFF },
   { href: "/employees", icon: Users, key: "employees", allowed: HR_ROLES },
   { href: "/departments", icon: Building2, key: "departments", allowed: ADMIN },
-  { href: "/contractors", icon: Briefcase, key: "contractors", allowed: ADMIN.concat("koordinator") },
+  { href: "/contractors", icon: Handshake, key: "contractors", allowed: ADMIN.concat("koordinator") },
   { href: "/notifications", icon: Bell, key: "notifications", allowed: ALL },
   { href: "/audit-log", icon: ScrollText, key: "auditLog", allowed: ADMIN.concat("hr") },
   { href: "/settings", icon: Settings, key: "settings", allowed: ALL },

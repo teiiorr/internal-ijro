@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CalendarClock } from "lucide-react";
+import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
 import { getProject } from "@/server/queries/projects";
 import { getStageProject } from "@/server/queries/stages";
@@ -103,9 +104,18 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 </div>
               </dl>
               {activeStage && (
-                <p className="border-t border-[var(--border)] pt-3 text-sm text-[var(--muted)]">
-                  {t("projects.stagePath.currentStage")}: <span className="font-medium text-[var(--foreground)]">{activeStage.name}</span>
-                </p>
+                <div className="space-y-2 border-t border-[var(--border)] pt-3">
+                  <p className="text-sm text-[var(--muted)]">
+                    {t("projects.stagePath.currentStage")}: <span className="font-medium text-[var(--foreground)]">{activeStage.name}</span>
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <CalendarClock className="size-3.5 shrink-0 text-[var(--muted)]" />
+                    <span className={`font-medium ${activeStage.plannedDeadline ? "" : "text-[var(--muted)]"}`}>
+                      {activeStage.plannedDeadline ? formatDate(activeStage.plannedDeadline) : t("projects.stageDeadline.notSet")}
+                    </span>
+                    {activeStage.plannedDeadline && <DeadlineCountdown deadline={activeStage.plannedDeadline} />}
+                  </div>
+                </div>
               )}
             </CardContent>
             </Card>

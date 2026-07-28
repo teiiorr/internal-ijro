@@ -485,6 +485,13 @@
       "projectCompleted": "Проект завершён!",
       "notActive": "Этот этап не активен"
     },
+    "stageDeadline": {
+      "title": "Срок этапа",
+      "notSet": "Срок не задан",
+      "saved": "Срок сохранён",
+      "clear": "Очистить",
+      "hint": "Укажите, когда этап должен быть завершён"
+    },
     "filters": {
       "title": "Фильтры",
       "type": "Тип",
@@ -786,7 +793,21 @@
       "projectsHealthDesc": "Прогресс активных проектов и признаки риска",
       "projectsEmpty": "Активных проектов нет.",
       "noCompletions": "Завершений пока нет.",
-      "allOnTrack": "Всё в графике."
+      "allOnTrack": "Всё в графике.",
+      "kpiActiveProjects": "Активные проекты",
+      "kpiOverdueStages": "Просроченные этапы",
+      "kpiDueSoon": "Срок на этой неделе",
+      "kpiOverdueTasks": "Просроченные задачи",
+      "projectsByStatus": "Проекты по статусу",
+      "projectsByStatusDesc": "Текущий статус всех проектов",
+      "projectsByType": "Проекты по типам",
+      "projectsByTypeDesc": "Количество по каждому типу производства",
+      "projectsTotal": "Всего",
+      "stageBoard": "Сроки этапов",
+      "stageBoardDesc": "Активные этапы — от самых срочных",
+      "stageBoardEmpty": "Нет активных этапов со сроком.",
+      "paymentsTitle": "Обзор платежей",
+      "paymentsDesc": "План и платежи по всем проектам"
     },
     "specialist": {
       "dueToday": "На сегодня",

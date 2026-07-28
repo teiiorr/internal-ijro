@@ -3,16 +3,16 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
-  CheckSquare,
+  ListTodo,
   FolderKanban,
   Users,
   Building2,
-  Briefcase,
+  Handshake,
   Bell,
   ScrollText,
   Settings,
-  Gavel,
-  Calculator,
+  Presentation,
+  Coins,
 } from "lucide-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
@@ -37,13 +37,13 @@ const HR_ROLES: Position[] = ["direktor", "orinbosar", "hr"];
 
 const ITEMS: Item[] = [
   { href: "/dashboard",         icon: LayoutDashboard, key: "dashboard",      allowed: ALL,                                                                section: "primary" },
-  { href: "/tasks",             icon: CheckSquare,     key: "tasks",          allowed: STAFF,                                                              section: "primary" },
+  { href: "/tasks",             icon: ListTodo,        key: "tasks",          allowed: STAFF,                                                              section: "primary" },
   { href: "/projects",          icon: FolderKanban,    key: "projects",       allowed: ALL,                                                                section: "primary" },
-  { href: "/kengashlar/ekspert", icon: Gavel,          key: "ekspertKengash", allowed: STAFF,                                                              section: "work" },
-  { href: "/kengashlar/smeta",   icon: Calculator,     key: "smetaKengash",   allowed: STAFF,                                                              section: "work" },
+  { href: "/kengashlar/ekspert", icon: Presentation,   key: "ekspertKengash", allowed: STAFF,                                                              section: "work" },
+  { href: "/kengashlar/smeta",   icon: Coins,          key: "smetaKengash",   allowed: STAFF,                                                              section: "work" },
   { href: "/employees",         icon: Users,           key: "employees",      allowed: HR_ROLES,                                                           section: "work" },
   { href: "/departments",       icon: Building2,       key: "departments",    allowed: ADMIN,                                                              section: "work" },
-  { href: "/contractors",       icon: Briefcase,       key: "contractors",    allowed: ADMIN.concat("koordinator"),                                        section: "work" },
+  { href: "/contractors",       icon: Handshake,       key: "contractors",    allowed: ADMIN.concat("koordinator"),                                        section: "work" },
   { href: "/notifications",     icon: Bell,            key: "notifications",  allowed: ALL,                                                                section: "system" },
   { href: "/audit-log",         icon: ScrollText,      key: "auditLog",       allowed: ADMIN.concat("hr"),                                                 section: "system" },
   { href: "/settings",          icon: Settings,        key: "settings",       allowed: ALL,                                                                section: "system" },

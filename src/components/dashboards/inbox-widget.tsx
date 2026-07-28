@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
-import { Inbox, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
+import { ClipboardCheck, CheckCircle2, ListTodo, ChevronRight } from "lucide-react";
 import { inboxAwaitingMyApproval, inboxMyActive, type InboxItem } from "@/server/queries/inbox";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 
@@ -37,7 +37,7 @@ export async function InboxWidget({ userId }: { userId: string }) {
         <div className="px-6 pt-5 pb-3 flex items-center justify-between border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
             <div className="size-9 rounded-xl bg-[var(--warning-soft)] flex items-center justify-center">
-              <Inbox className="size-5 text-[var(--warning)]" />
+              <ClipboardCheck className="size-5 text-[var(--warning)]" />
             </div>
             <div>
               <h3 className="text-lg font-bold tracking-tight">{t("inbox.awaitingApproval")}</h3>
@@ -64,7 +64,7 @@ export async function InboxWidget({ userId }: { userId: string }) {
         <div className="px-6 pt-5 pb-3 flex items-center justify-between border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
             <div className="size-9 rounded-xl bg-[var(--primary-soft)] flex items-center justify-center">
-              <AlertCircle className="size-5 text-[var(--primary)]" />
+              <ListTodo className="size-5 text-[var(--primary)]" />
             </div>
             <div>
               <h3 className="text-lg font-bold tracking-tight">{t("inbox.myTasks")}</h3>

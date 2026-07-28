@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { ArrowLeft, Lock, Loader2, CheckCircle2, CalendarClock, User } from "lucide-react";
+import { ArrowLeft, Lock, Loader2, CheckCircle2, User } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getStage } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { StagePayments } from "@/components/projects/stage-payments";
 import { CompleteStageButton } from "@/components/projects/complete-stage-button";
-import { formatDate } from "@/lib/dates";
+import { SetStageDeadline } from "@/components/projects/set-stage-deadline";
 
 export default async function StageDetailPage({ params }: { params: Promise<{ id: string; stageId: string }> }) {
   const session = await auth();
@@ -55,12 +55,17 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
             {s.responsibleName && (
               <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{s.responsibleName}</span>
             )}
-            {s.plannedDeadline && (
-              <span className="text-[var(--muted)] inline-flex items-center gap-1"><CalendarClock className="size-3.5" />{formatDate(s.plannedDeadline)}</span>
-            )}
           </div>
         </div>
       </div>
+
+      {/* Stage deadline — set by us; the current (active) stage shows a live countdown */}
+      <Card>
+        <CardContent className="p-5 sm:p-6 space-y-3">
+          <h3 className="text-base font-semibold">{t("projects.stageDeadline.title")}</h3>
+          <SetStageDeadline stageId={s.id} deadline={s.plannedDeadline} canManage={canManage} active={s.status === "active"} />
+        </CardContent>
+      </Card>
 
       {s.status === "locked" && (
         <Card>

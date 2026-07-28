@@ -485,6 +485,13 @@
       "projectCompleted": "Лойиҳа якунланди!",
       "notActive": "Бу босқич фаол эмас"
     },
+    "stageDeadline": {
+      "title": "Босқич муддати",
+      "notSet": "Муддат белгиланмаган",
+      "saved": "Муддат сақланди",
+      "clear": "Тозалаш",
+      "hint": "Бу босқич қачон якунланиши кераклигини белгиланг"
+    },
     "filters": {
       "title": "Филтрлар",
       "type": "Тур",
@@ -786,7 +793,21 @@
       "projectsHealthDesc": "Фаол лойиҳалар прогресси ва хатар белгилари",
       "projectsEmpty": "Фаол лойиҳа йўқ.",
       "noCompletions": "Ҳали якунлаш йўқ.",
-      "allOnTrack": "Ҳаммаси муддатида."
+      "allOnTrack": "Ҳаммаси муддатида.",
+      "kpiActiveProjects": "Фаол лойиҳалар",
+      "kpiOverdueStages": "Муддати ўтган босқичлар",
+      "kpiDueSoon": "Бу ҳафта муддати",
+      "kpiOverdueTasks": "Муддати ўтган вазифалар",
+      "projectsByStatus": "Лойиҳалар ҳолати бўйича",
+      "projectsByStatusDesc": "Барча лойиҳаларнинг жорий ҳолати",
+      "projectsByType": "Турлар бўйича лойиҳалар",
+      "projectsByTypeDesc": "Ҳар бир ишлаб чиқариш тури сони",
+      "projectsTotal": "Жами",
+      "stageBoard": "Босқич муддатлари",
+      "stageBoardDesc": "Фаол босқичлар — энг шошилинчидан бошлаб",
+      "stageBoardEmpty": "Муддати белгиланган фаол босқич йўқ.",
+      "paymentsTitle": "Тўловлар кўриниши",
+      "paymentsDesc": "Барча лойиҳалар бўйича режа ва тўловлар"
     },
     "specialist": {
       "dueToday": "Бугун муддат",

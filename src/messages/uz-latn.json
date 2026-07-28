@@ -485,6 +485,13 @@
       "projectCompleted": "Loyiha yakunlandi!",
       "notActive": "Bu bosqich faol emas"
     },
+    "stageDeadline": {
+      "title": "Bosqich muddati",
+      "notSet": "Muddat belgilanmagan",
+      "saved": "Muddat saqlandi",
+      "clear": "Tozalash",
+      "hint": "Bu bosqich qachon yakunlanishi kerakligini belgilang"
+    },
     "filters": {
       "title": "Filtrlar",
       "type": "Tur",
@@ -786,7 +793,21 @@
       "projectsHealthDesc": "Faol loyihalar progressi va xatar belgilari",
       "projectsEmpty": "Faol loyiha yo'q.",
       "noCompletions": "Hali yakunlash yo'q.",
-      "allOnTrack": "Hammasi muddatida."
+      "allOnTrack": "Hammasi muddatida.",
+      "kpiActiveProjects": "Faol loyihalar",
+      "kpiOverdueStages": "Muddati o'tgan bosqichlar",
+      "kpiDueSoon": "Bu hafta muddati",
+      "kpiOverdueTasks": "Muddati o'tgan vazifalar",
+      "projectsByStatus": "Loyihalar holati bo'yicha",
+      "projectsByStatusDesc": "Barcha loyihalarning joriy holati",
+      "projectsByType": "Turlar bo'yicha loyihalar",
+      "projectsByTypeDesc": "Har bir ishlab chiqarish turi soni",
+      "projectsTotal": "Jami",
+      "stageBoard": "Bosqich muddatlari",
+      "stageBoardDesc": "Faol bosqichlar — eng shoshilinchidan boshlab",
+      "stageBoardEmpty": "Muddati belgilangan faol bosqich yo'q.",
+      "paymentsTitle": "To'lovlar ko'rinishi",
+      "paymentsDesc": "Barcha loyihalar bo'yicha reja va to'lovlar"
     },
     "specialist": {
       "dueToday": "Bugun muddat",
