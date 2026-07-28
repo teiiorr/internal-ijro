@@ -114,7 +114,7 @@
     "logout": "Chiqish",
     "contractorPortal": "Studiya portali",
     "ekspertKengash": "Ekspertlar Kengashi",
-    "smetaKengash": "Smeta Kengashi",
+    "smetaKengash": "Smeta Komissiyasi",
     "more": "Ko'proq"
   },
   "positions": {
@@ -897,7 +897,7 @@
   },
   "kengash": {
     "ekspertHeading": "Kelayotgan Ekspertlar Kengashining kun tartibi",
-    "smetaHeading": "Kelayotgan Smeta Kengashining kun tartibi",
+    "smetaHeading": "Kelayotgan Smeta Komissiyasining kun tartibi",
     "agenda": "Kun tartibi",
     "noUpcoming": "Kelayotgan majlis rejalashtirilmagan",
     "createMeeting": "Majlis qo'shish",
