@@ -507,7 +507,8 @@
       "reopenYes": "Ha, ochish",
       "reopened": "Bosqich qayta ochildi",
       "reopenNotLast": "Faqat oxirgi yakunlangan bosqichni bekor qilish mumkin",
-      "reopenNotCompleted": "Bu bosqich yakunlanmagan"
+      "reopenNotCompleted": "Bu bosqich yakunlanmagan",
+      "mergeHint": "Bu bosqichni yakunlasangiz, keyingi bosqich ham birga yakunlanadi."
     },
     "stageDeadline": {
       "title": "Bosqich muddati",

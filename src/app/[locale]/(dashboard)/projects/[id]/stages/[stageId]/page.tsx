@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { ArrowLeft, Lock, Loader2, CheckCircle2, User } from "lucide-react";
+import { ArrowLeft, Lock, Loader2, CheckCircle2, User, Info } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getStage } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
@@ -124,7 +124,13 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
 
       {/* primary action — bottom right */}
       {canManage && s.status === "active" && (
-        <div className="flex justify-end pt-1">
+        <div className="flex flex-col items-end gap-2 pt-1">
+          {s.mergeWithNext && (
+            <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
+              <Info className="size-3.5 shrink-0" />
+              {t("projects.stageActions.mergeHint")}
+            </p>
+          )}
           <CompleteStageButton stageId={s.id} />
         </div>
       )}

@@ -1,0 +1,1 @@
+ALTER TABLE "project_stages" ADD COLUMN "merge_with_next" boolean DEFAULT false NOT NULL;

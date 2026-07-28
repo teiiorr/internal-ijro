@@ -52,10 +52,37 @@ export async function completeStage(stageId: string) {
       })
       .where(eq(projectStages.id, stageId));
 
+    // Merged block: a stage flagged mergeWithNext is completed together with the
+    // stage(s) that follow it — one click finishes the whole "common phase".
+    let last = stage;
+    while (last.mergeWithNext) {
+      const followRows = await tx
+        .select()
+        .from(projectStages)
+        .where(and(eq(projectStages.projectId, stage.projectId), eq(projectStages.orderIndex, last.orderIndex + 1)))
+        .limit(1);
+      if (followRows.length === 0) break;
+      const follow = followRows[0];
+      await tx
+        .update(projectStages)
+        .set({
+          status: "completed",
+          startedAt: follow.startedAt ?? now,
+          completedAt: now,
+          updatedAt: now,
+          reminderApproachingSentAt: null,
+          reminderOverdueSentAt: null,
+          reminderStaleSentAt: null,
+        })
+        .where(eq(projectStages.id, follow.id));
+      last = follow;
+    }
+
+    // Activate the stage after the (possibly merged) block, else complete the project.
     const nextRows = await tx
       .select()
       .from(projectStages)
-      .where(and(eq(projectStages.projectId, stage.projectId), eq(projectStages.orderIndex, stage.orderIndex + 1)))
+      .where(and(eq(projectStages.projectId, stage.projectId), eq(projectStages.orderIndex, last.orderIndex + 1)))
       .limit(1);
 
     let next: typeof stage | null = null;
@@ -160,7 +187,7 @@ export async function reopenStage(stageId: string) {
     if (stage.status !== "completed") throw new Error("stage_not_completed");
 
     const all = await tx
-      .select({ id: projectStages.id, orderIndex: projectStages.orderIndex, status: projectStages.status })
+      .select({ id: projectStages.id, orderIndex: projectStages.orderIndex, status: projectStages.status, mergeWithNext: projectStages.mergeWithNext })
       .from(projectStages)
       .where(eq(projectStages.projectId, stage.projectId))
       .orderBy(projectStages.orderIndex);
@@ -171,12 +198,31 @@ export async function reopenStage(stageId: string) {
     if (!lastCompleted || lastCompleted.id !== stageId) throw new Error("not_last_completed");
 
     const now = new Date();
+
+    // If this stage was auto-completed as part of a merged block (a preceding stage
+    // flagged mergeWithNext), undo the WHOLE block: walk back to the block start.
+    let start = all.find((s) => s.orderIndex === stage.orderIndex)!;
+    for (;;) {
+      const prev = all.find((s) => s.orderIndex === start.orderIndex - 1);
+      if (prev && prev.mergeWithNext) start = prev;
+      else break;
+    }
+
+    // Block start → active again; every later stage in the block → locked.
     await tx
       .update(projectStages)
       .set({ status: "active", completedAt: null, updatedAt: now })
-      .where(eq(projectStages.id, stageId));
+      .where(eq(projectStages.id, start.id));
+    for (const s of all) {
+      if (s.orderIndex > start.orderIndex && s.orderIndex <= stage.orderIndex) {
+        await tx
+          .update(projectStages)
+          .set({ status: "locked", startedAt: null, completedAt: null, updatedAt: now })
+          .where(eq(projectStages.id, s.id));
+      }
+    }
 
-    // Demote the immediate next stage (if it had been unlocked) back to locked.
+    // Demote the stage after the block (if it had been unlocked) back to locked.
     const next = all.find((s) => s.orderIndex === stage.orderIndex + 1);
     if (next && next.status === "active") {
       await tx

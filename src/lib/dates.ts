@@ -4,7 +4,7 @@
  *   "Ertaga"           — tomorrow
  *   "3 kun qoldi"      — 2..14 days ahead
  *   "27-may"           — > 14 days
- *   "Kechikti 2 kun"   — past, not completed
+ *   "Kechikdi 2 kun"   — past, not completed
  */
 export function deadlineRelative(deadline: Date | string | null | undefined, opts?: { completed?: boolean }): { text: string; tone: "default" | "soon" | "today" | "overdue" } {
   if (!deadline) return { text: "—", tone: "default" };
@@ -20,7 +20,7 @@ export function deadlineRelative(deadline: Date | string | null | undefined, opt
     return { text: formatDate(d), tone: "default" };
   }
 
-  if (diffDays < 0) return { text: `Kechikti ${-diffDays} kun`, tone: "overdue" };
+  if (diffDays < 0) return { text: `Kechikdi ${-diffDays} kun`, tone: "overdue" };
   if (diffDays === 0) return { text: "Bugun", tone: "today" };
   if (diffDays === 1) return { text: "Ertaga", tone: "soon" };
   if (diffDays <= 3) return { text: `${diffDays} kun qoldi`, tone: "soon" };

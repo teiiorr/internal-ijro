@@ -19,7 +19,7 @@ function pad(n: number) {
  *   4 soat 12 minut           — under a day (kun dropped)
  *   12:45                     — under an hour (now ticking by second)
  *   45 son.                   — under a minute
- *   Kechikti                  — deadline passed
+ *   Kechikdi                  — deadline passed
  *
  * The component re-renders every second so the seconds tick visibly when it
  * matters (last hour) without thrashing render the rest of the time —
@@ -43,7 +43,7 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
   if (diffMs <= 0) {
     return (
       <StatusTag tone="red" className={cn("tabular-nums", className)}>
-        Kechikti
+        Kechikdi
       </StatusTag>
     );
   }

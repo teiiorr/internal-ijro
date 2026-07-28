@@ -639,6 +639,9 @@ export const projectStages = pgTable(
     plannedStartDate: date("planned_start_date"),
     plannedDeadline: date("planned_deadline"),
     plannedAmount: decimal("planned_amount", { precision: 15, scale: 2 }),
+    /** When true, completing this stage also auto-completes the following stage
+     *  in the same click (merged "one common phase" — e.g. prep + filming). */
+    mergeWithNext: boolean("merge_with_next").default(false).notNull(),
     responsibleUserId: uuid("responsible_user_id").references(() => users.id, {
       onDelete: "set null",
     }),
