@@ -530,7 +530,8 @@
       "reset": "Tozalash",
       "typedOnly": "Ishlab chiqarish loyihalari",
       "stage": "Bosqich",
-      "allStages": "Barcha bosqichlar"
+      "allStages": "Barcha bosqichlar",
+      "selectTypeFirst": "Avval turni tanlang"
     },
     "poster": {
       "change": "Poster o'zgartirish"

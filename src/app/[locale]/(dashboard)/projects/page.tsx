@@ -3,41 +3,17 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { listProjects } from "@/server/queries/projects";
-import { listProjectTypes, listStageNameOptions } from "@/server/queries/stages";
+import { listProjectTypes, listStageOptionsByType } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
-import { Plus, Download, AlertTriangle, ChevronDown, Search } from "lucide-react";
+import { ProjectsFilters } from "@/components/projects/projects-filters";
+import { Plus, Download, AlertTriangle } from "lucide-react";
 import { can } from "@/lib/permissions";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 
 type Sort = "created" | "name" | "deadline" | "progress";
 type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_hold" | "at_risk";
-
-// Airy filter control: dashed border, no fill — same language as the file dropzone.
-const FILTER_FIELD =
-  "h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3.5 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none";
-
-// Native <select> with the browser arrow removed and a custom chevron that keeps
-// clear space from the border — fixes the arrow/text colliding with the edge.
-function FilterSelect({
-  name,
-  defaultValue,
-  children,
-}: {
-  name: string;
-  defaultValue: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="relative">
-      <select name={name} defaultValue={defaultValue} className={`${FILTER_FIELD} appearance-none pr-10`}>
-        {children}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
-    </div>
-  );
-}
 
 // Status tone: green done, amber ongoing, red paused, muted not-started.
 const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
@@ -66,10 +42,10 @@ export default async function ProjectsPage({
   const stage = get("stage") || null;
   const search = get("search")?.trim() || null;
 
-  const [rows, projectTypeOptions, stageOptions] = await Promise.all([
+  const [rows, projectTypeOptions, stagesByType] = await Promise.all([
     listProjects({ search, projectTypeId, payment, overdue: overdue || null, stage }, locale),
     listProjectTypes(locale),
-    listStageNameOptions(locale),
+    listStageOptionsByType(locale),
   ]);
   const canCreate = can(session.user.position, "projects.create");
 
@@ -164,51 +140,8 @@ export default async function ProjectsPage({
           <FilterTab value="at_risk"     label={t("projects.atRisk")} count={counts.at_risk} />
         </div>
 
-        {/* even grid — dashed, airy controls (full-width on mobile so labels never clip) */}
-        <form className="grid grid-cols-1 gap-2 sm:grid-cols-3" action="/projects">
-          <input type="hidden" name="status" value={statusFilter} />
-          {/* search — full width, dashed like the other controls */}
-          <div className="relative sm:col-span-3">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
-            <input
-              type="search"
-              name="search"
-              defaultValue={search ?? ""}
-              placeholder={t("projects.searchPlaceholder")}
-              className="h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent pl-10 pr-3.5 text-sm font-medium text-[var(--foreground)] transition-colors placeholder:text-[var(--muted)] focus:border-[var(--primary)] focus:outline-none"
-            />
-          </div>
-          <FilterSelect name="typeId" defaultValue={projectTypeId ?? ""}>
-            <option value="">{t("projects.filters.allTypes")}</option>
-            {projectTypeOptions.map((pt) => (
-              <option key={pt.id} value={pt.id}>{pt.name}</option>
-            ))}
-          </FilterSelect>
-          <FilterSelect name="stage" defaultValue={stage ?? ""}>
-            <option value="">{t("projects.filters.allStages")}</option>
-            {stageOptions.map((s) => (
-              <option key={s.value} value={s.value}>{s.name}</option>
-            ))}
-          </FilterSelect>
-          <FilterSelect name="payment" defaultValue={payment ?? ""}>
-            <option value="">{t("projects.filters.payment")}</option>
-            <option value="paid">{t("projects.filters.paid")}</option>
-            <option value="unpaid">{t("projects.filters.unpaid")}</option>
-          </FilterSelect>
-          <FilterSelect name="sort" defaultValue={sort}>
-            <option value="created">{t("projects.sort.created")}</option>
-            <option value="name">{t("projects.sort.name")}</option>
-            <option value="deadline">{t("projects.sort.deadline")}</option>
-            <option value="progress">{t("projects.sort.progress")}</option>
-          </FilterSelect>
-          <label className={`${FILTER_FIELD} inline-flex items-center gap-2 cursor-pointer`}>
-            <input type="checkbox" name="overdue" value="1" defaultChecked={overdue} className="accent-[var(--warning)]" />
-            {t("projects.filters.overdue")}
-          </label>
-          <Button type="submit" variant="outline" className="h-11 w-full">
-            {t("common.apply")}
-          </Button>
-        </form>
+        {/* Real-time filters — no Apply button. Stage dropdown is type-scoped. */}
+        <ProjectsFilters types={projectTypeOptions} stagesByType={stagesByType} />
       </div>
 
       {/* Poster grid — big square covers */}

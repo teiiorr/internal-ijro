@@ -304,6 +304,32 @@ export async function listStageProjects(f: StageProjectFilters, locale: string) 
 }
 
 /** The 9 active types, localized — for the create form and filter bar. */
+/** Stage-name options grouped by project type, so the list filter can scope the
+ *  "stage" dropdown to the selected type. value = snapshot nameUzLatn (matches
+ *  the active-stage filter in listProjects). */
+export async function listStageOptionsByType(locale: string): Promise<Record<string, { value: string; name: string }[]>> {
+  const rows = await db
+    .select({
+      typeId: projectTypes.id,
+      uz: stageTemplateItems.nameUzLatn,
+      cy: stageTemplateItems.nameUzCyrl,
+      ru: stageTemplateItems.nameRu,
+      order: stageTemplateItems.orderIndex,
+    })
+    .from(projectTypes)
+    .innerJoin(stageTemplateItems, eq(stageTemplateItems.templateId, projectTypes.stageTemplateId))
+    .where(eq(projectTypes.isActive, true))
+    .orderBy(asc(projectTypes.orderIndex), asc(stageTemplateItems.orderIndex));
+  const out: Record<string, { value: string; name: string }[]> = {};
+  for (const r of rows) {
+    (out[r.typeId] ??= []).push({
+      value: r.uz,
+      name: localizedTypeName({ nameUzLatn: r.uz, nameUzCyrl: r.cy, nameRu: r.ru }, locale),
+    });
+  }
+  return out;
+}
+
 export async function listProjectTypes(locale: string) {
   const rows = await db.select().from(projectTypes).where(eq(projectTypes.isActive, true)).orderBy(asc(projectTypes.orderIndex));
   return rows.map((r) => ({ id: r.id, code: r.code, name: localizedTypeName(r, locale) }));

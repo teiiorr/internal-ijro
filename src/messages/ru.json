@@ -530,7 +530,8 @@
       "reset": "Сбросить",
       "typedOnly": "Производственные проекты",
       "stage": "Этап",
-      "allStages": "Все этапы"
+      "allStages": "Все этапы",
+      "selectTypeFirst": "Сначала выберите тип"
     },
     "poster": {
       "change": "Изменить постер"
