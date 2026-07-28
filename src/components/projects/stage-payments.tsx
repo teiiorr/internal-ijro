@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, CheckCircle2 } from "lucide-react";
 import { addStagePayment, setStagePaymentStatus, deleteStagePayment } from "@/server/actions/stages";
 import { formatDate } from "@/lib/dates";
 
@@ -42,6 +42,7 @@ export function StagePayments({
   const pendingSum = payments.filter((p) => p.status !== "paid").reduce((a, p) => a + Number(p.amount), 0);
   const currency = payments[0]?.currency ?? "UZS";
   const plannedPct = plannedAmount && plannedAmount > 0 ? Math.min(100, Math.round((paid / plannedAmount) * 100)) : null;
+  const fullyPaid = plannedAmount != null && plannedAmount > 0 && paid >= plannedAmount;
 
   function add() {
     setError(null);
@@ -76,9 +77,20 @@ export function StagePayments({
           </div>
         )}
         {plannedPct != null && (
-          <div className="h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden">
-            <div className="h-full bg-[var(--success)] transition-[width] duration-300" style={{ width: `${plannedPct}%` }} />
-          </div>
+          <>
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold tabular-nums text-[var(--muted)]">{plannedPct}%</span>
+              {fullyPaid && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--success)]/12 px-2 py-0.5 text-xs font-bold text-[var(--success)]">
+                  <CheckCircle2 className="size-3.5" />
+                  {t("projects.stagePayments.fullyPaid")}
+                </span>
+              )}
+            </div>
+            <div className="h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden">
+              <div className="h-full bg-[var(--success)] transition-[width] duration-300" style={{ width: `${plannedPct}%` }} />
+            </div>
+          </>
         )}
       </div>
 

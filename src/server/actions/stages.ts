@@ -235,6 +235,37 @@ export async function setStagePlannedAmount(stageId: string, amount: number | nu
   stageLinks(row.projectId, stageId);
 }
 
+// One-shot edit of a stage's core fields (name + start/end dates + budget) from
+// the single "pencil" dialog. Open to all staff. Clears the deadline reminders
+// so a changed deadline re-arms the cron notifications.
+const updateStageSchema = z.object({
+  name: z.string().min(1).max(255),
+  plannedStartDate: z.string().nullable().optional(),
+  plannedDeadline: z.string().nullable().optional(),
+  plannedAmount: z.number().nullable().optional(),
+});
+export async function updateStage(stageId: string, input: z.infer<typeof updateStageSchema>) {
+  const me = await requirePosition([...MANAGERS]);
+  const parsed = updateStageSchema.parse(input);
+  const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
+  if (!row) throw new Error("not_found");
+  await db
+    .update(projectStages)
+    .set({
+      name: parsed.name.trim(),
+      plannedStartDate: parsed.plannedStartDate || null,
+      plannedDeadline: parsed.plannedDeadline || null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      plannedAmount: parsed.plannedAmount != null ? (String(parsed.plannedAmount) as any) : null,
+      updatedAt: new Date(),
+      reminderApproachingSentAt: null,
+      reminderOverdueSentAt: null,
+    })
+    .where(eq(projectStages.id, stageId));
+  await logActivity({ userId: me.id, action: "stage.updated", entityType: "project_stage", entityId: stageId, newValue: { name: parsed.name } });
+  stageLinks(row.projectId, stageId);
+}
+
 // ---------- documents ----------
 
 async function stageProjectId(stageId: string): Promise<string> {

@@ -18,8 +18,12 @@ import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { OnHoldToggle } from "@/components/projects/on-hold-toggle";
 import { DeleteProjectButton } from "@/components/projects/delete-project-button";
+import { EditProjectDialog } from "@/components/projects/edit-project-dialog";
 import { derivedStatus } from "@/lib/projects/progress";
 import { formatDate } from "@/lib/dates";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { sql } from "drizzle-orm";
 
 const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
 
@@ -32,6 +36,23 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const data = await getProject(id);
   if (!data) notFound();
   const me = session.user;
+  // Curator picker options for the edit dialog (all active internal staff).
+  const curatorOptions = await db
+    .select({ id: users.id, fullName: users.fullName })
+    .from(users)
+    .where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`)
+    .orderBy(users.fullName);
+  const editProject = {
+    id: data.project.id,
+    name: data.project.name,
+    description: data.project.description,
+    type: data.project.type,
+    curatorUserId: data.project.curatorUserId,
+    startDate: data.project.startDate,
+    deadline: data.project.deadline,
+    budget: data.project.budget,
+    budgetCurrency: data.project.budgetCurrency,
+  };
   const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position) || data.project.curatorUserId === me.id;
   // Bo'lim boshlig'i can create / edit / update but NOT delete stages or projects.
   const canDelete = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
@@ -76,6 +97,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
           {(canManage || canDeleteProject) && (
             <div className="flex flex-col items-end gap-2 shrink-0">
+              {canManage && <EditProjectDialog project={editProject} curators={curatorOptions} />}
               {canManage && <OnHoldToggle projectId={sp.project.id} onHold={sp.project.statusOverride === "on_hold"} />}
               {canDeleteProject && <DeleteProjectButton projectId={sp.project.id} />}
             </div>
@@ -85,6 +107,31 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         {sp.project.description && (
           <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
         )}
+
+        {/* Details entered at creation — dates + budget (now visible, editable via the pencil) */}
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="text-base font-semibold mb-4">{t("projects.details.title")}</h3>
+            <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 text-sm">
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
+                <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate) : t("common.emptyValue")}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
+                <dd className="font-semibold mt-0.5">{sp.project.deadline ? formatDate(sp.project.deadline) : t("common.emptyValue")}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
+                <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? money(Number(sp.project.budget), currency) : t("common.emptyValue")}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
+                <dd className="font-semibold mt-0.5">{sp.curator?.fullName ?? t("common.emptyValue")}</dd>
+              </div>
+            </dl>
+          </CardContent>
+        </Card>
 
         {/* stage list (main) + payment rollup (sidebar) — fills the full width */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
@@ -188,6 +235,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </div>
         {(canManage || canDeleteProject) && (
           <div className="flex flex-col items-end gap-2 shrink-0">
+            {canManage && <EditProjectDialog project={editProject} curators={curatorOptions} />}
             {canManage && (
               <OnHoldToggle
                 projectId={data.project.id}
@@ -248,6 +296,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
               <dd className="font-medium mt-0.5">{data.project.deadline ? formatDate(data.project.deadline) : t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
+              <dd className="font-medium mt-0.5 tabular-nums">{data.project.budget != null ? money(Number(data.project.budget), data.project.budgetCurrency) : t("common.emptyValue")}</dd>
             </div>
           </dl>
         </CardContent>

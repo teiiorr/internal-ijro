@@ -636,6 +636,7 @@ export const projectStages = pgTable(
     name: varchar("name", { length: 255 }).notNull(),
     /** 'locked' | 'active' | 'completed' */
     status: varchar("status", { length: 20 }).default("locked").notNull(),
+    plannedStartDate: date("planned_start_date"),
     plannedDeadline: date("planned_deadline"),
     plannedAmount: decimal("planned_amount", { precision: 15, scale: 2 }),
     responsibleUserId: uuid("responsible_user_id").references(() => users.id, {

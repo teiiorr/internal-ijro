@@ -39,6 +39,7 @@ export type StageView = {
   orderIndex: number;
   status: string;
   name: string;
+  plannedStartDate: string | null;
   plannedDeadline: string | null;
   plannedAmount: number | null;
   startedAt: Date | null;
@@ -83,6 +84,7 @@ export async function getStageProject(projectId: string, locale: string) {
       orderIndex: projectStages.orderIndex,
       status: projectStages.status,
       snapshot: projectStages.name,
+      plannedStartDate: projectStages.plannedStartDate,
       plannedDeadline: projectStages.plannedDeadline,
       plannedAmount: projectStages.plannedAmount,
       startedAt: projectStages.startedAt,
@@ -113,6 +115,7 @@ export async function getStageProject(projectId: string, locale: string) {
       orderIndex: s.orderIndex,
       status: s.status,
       name: stageName(s, locale),
+      plannedStartDate: s.plannedStartDate,
       plannedDeadline: s.plannedDeadline,
       plannedAmount: s.plannedAmount != null ? num(s.plannedAmount) : null,
       startedAt: s.startedAt,
@@ -152,6 +155,7 @@ export async function getStage(stageId: string, locale: string) {
       orderIndex: projectStages.orderIndex,
       status: projectStages.status,
       snapshot: projectStages.name,
+      plannedStartDate: projectStages.plannedStartDate,
       plannedDeadline: projectStages.plannedDeadline,
       plannedAmount: projectStages.plannedAmount,
       startedAt: projectStages.startedAt,
@@ -219,6 +223,7 @@ export async function getStage(stageId: string, locale: string) {
       orderIndex: s.orderIndex,
       status: s.status,
       name: stageName(s, locale),
+      plannedStartDate: s.plannedStartDate,
       plannedDeadline: s.plannedDeadline,
       plannedAmount: s.plannedAmount != null ? num(s.plannedAmount) : null,
       startedAt: s.startedAt,

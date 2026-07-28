@@ -336,7 +336,8 @@
       "projectTypePlaceholder": "Turini tanlang (bosqichlar avtomatik yaratiladi)",
       "projectTypeHint": "Tur tanlansa, ushbu turga mos bosqichlar avtomatik qo'shiladi.",
       "responsible": "Mas'ul",
-      "responsibleHint": "Barcha bosqichlarga qo'llanadi (keyin alohida o'zgartirish mumkin)."
+      "responsibleHint": "Barcha bosqichlarga qo'llanadi (keyin alohida o'zgartirish mumkin).",
+      "nameRequired": "Nomni kiriting"
     },
     "type": {
       "internal": "Ichki",
@@ -454,7 +455,8 @@
     "details": {
       "title": "Tafsilotlar",
       "startDate": "Boshlanish sanasi",
-      "dueDate": "Tugash muddati"
+      "dueDate": "Tugash muddati",
+      "budget": "Byudjet"
     },
     "sort": {
       "created": "Sana bo‘yicha",
@@ -492,7 +494,8 @@
       "markPaid": "To'landi deb belgilash",
       "markPending": "Kutilmoqda deb belgilash",
       "empty": "To'lovlar yo'q",
-      "invalidAmount": "Summani to'g'ri kiriting"
+      "invalidAmount": "Summani to'g'ri kiriting",
+      "fullyPaid": "To’liq to’langan"
     },
     "stageActions": {
       "complete": "Bosqichni yakunlash",
@@ -524,6 +527,20 @@
     },
     "poster": {
       "change": "Poster o'zgartirish"
+    },
+    "edit": {
+      "button": "Tahrirlash",
+      "title": "Loyihani tahrirlash"
+    },
+    "editStage": {
+      "button": "Tahrirlash",
+      "title": "Bosqichni tahrirlash",
+      "stageName": "Bosqich nomi",
+      "startDate": "Boshlanish sanasi",
+      "endDate": "Tugash sanasi",
+      "budget": "Byudjet",
+      "scheduleTitle": "Muddat va byudjet",
+      "dateOrder": "Tugash sanasi boshlanish sanasidan oldin bo’lishi mumkin emas"
     }
   },
   "employees": {

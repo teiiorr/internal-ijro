@@ -473,6 +473,44 @@ export async function deleteProject(projectId: string) {
   revalidatePath("/projects");
 }
 
+// Edit an existing project's core fields (all staff — see access policy). The
+// production type (projectTypeId) is intentionally NOT editable here: changing
+// it would orphan/rebuild the stage pipeline. Files (poster/documents) excluded.
+const updateProjectSchema = z.object({
+  name: z.string().min(2).max(255),
+  description: z.string().nullable().optional(),
+  type: z.enum(["internal", "external"]),
+  curatorUserId: z.string().uuid().nullable().optional(),
+  startDate: z.string().nullable().optional(),
+  deadline: z.string().nullable().optional(),
+  budget: z.number().nullable().optional(),
+  budgetCurrency: z.string().min(1).max(10).optional(),
+});
+export async function updateProject(id: string, input: z.infer<typeof updateProjectSchema>) {
+  const me = await requirePosition([...MANAGERS]);
+  const parsed = updateProjectSchema.parse(input);
+  const [existing] = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, id)).limit(1);
+  if (!existing) throw new Error("not_found");
+  await db
+    .update(projects)
+    .set({
+      name: parsed.name.trim(),
+      description: parsed.description?.trim() || null,
+      type: parsed.type,
+      curatorUserId: parsed.curatorUserId ?? null,
+      startDate: parsed.startDate || null,
+      deadline: parsed.deadline || null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      budget: parsed.budget != null ? (String(parsed.budget) as any) : null,
+      budgetCurrency: parsed.budgetCurrency || "UZS",
+      updatedAt: new Date(),
+    })
+    .where(eq(projects.id, id));
+  await logActivity({ userId: me.id, action: "project.updated", entityType: "project", entityId: id, newValue: { name: parsed.name } });
+  revalidatePath(`/projects/${id}`);
+  revalidatePath("/projects");
+}
+
 // Create a contractor directly (no self-registration / account) and auto-approve it.
 const contractorSchema = z.object({
   name: z.string().min(2).max(255),

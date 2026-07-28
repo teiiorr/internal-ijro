@@ -10,7 +10,9 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { StagePayments } from "@/components/projects/stage-payments";
 import { CompleteStageButton } from "@/components/projects/complete-stage-button";
-import { SetStageDeadline } from "@/components/projects/set-stage-deadline";
+import { EditStageDialog } from "@/components/projects/edit-stage-dialog";
+import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
+import { formatDate } from "@/lib/dates";
 
 export default async function StageDetailPage({ params }: { params: Promise<{ id: string; stageId: string }> }) {
   const session = await auth();
@@ -57,13 +59,36 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
             )}
           </div>
         </div>
+        {canManage && (
+          <div className="shrink-0">
+            <EditStageDialog
+              stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount }}
+            />
+          </div>
+        )}
       </div>
 
-      {/* Stage deadline — set by us; the current (active) stage shows a live countdown */}
+      {/* Schedule + budget — read-only; edit via the pencil above. Active stage ticks a live countdown. */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-3">
-          <h3 className="text-base font-semibold">{t("projects.stageDeadline.title")}</h3>
-          <SetStageDeadline stageId={s.id} deadline={s.plannedDeadline} canManage={canManage} active={s.status === "active"} />
+          <h3 className="text-base font-semibold">{t("projects.editStage.scheduleTitle")}</h3>
+          <dl className="grid sm:grid-cols-3 gap-4 text-sm">
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
+              <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate) : t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
+              <dd className="font-semibold mt-0.5 flex flex-wrap items-center gap-2">
+                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline) : t("common.emptyValue")}</span>
+                {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
+              <dd className="font-semibold mt-0.5 tabular-nums">{s.plannedAmount != null ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : t("common.emptyValue")}</dd>
+            </div>
+          </dl>
         </CardContent>
       </Card>
 
