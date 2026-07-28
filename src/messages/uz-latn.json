@@ -311,6 +311,7 @@
   },
   "projects": {
     "pageTitle": "Loyihalar",
+    "searchPlaceholder": "Loyihalarni qidirish...",
     "new": {
       "contractorPlaceholder": "Tasdiqlangan pudratchini tanlang",
       "defaultCurrency": "UZS"

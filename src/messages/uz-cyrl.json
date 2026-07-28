@@ -311,6 +311,7 @@
   },
   "projects": {
     "pageTitle": "Лойиҳалар",
+    "searchPlaceholder": "Лойиҳаларни қидириш...",
     "new": {
       "contractorPlaceholder": "Тасдиқланган пудратчини танланг",
       "defaultCurrency": "UZS"

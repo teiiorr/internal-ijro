@@ -311,6 +311,7 @@
   },
   "projects": {
     "pageTitle": "Проекты",
+    "searchPlaceholder": "Поиск проектов...",
     "new": {
       "contractorPlaceholder": "Выберите утверждённого подрядчика",
       "defaultCurrency": "UZS"

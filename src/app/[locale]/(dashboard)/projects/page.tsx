@@ -7,7 +7,7 @@ import { listProjectTypes, listStageNameOptions } from "@/server/queries/stages"
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
-import { Plus, Download, AlertTriangle, ChevronDown } from "lucide-react";
+import { Plus, Download, AlertTriangle, ChevronDown, Search } from "lucide-react";
 import { can } from "@/lib/permissions";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 
@@ -64,9 +64,10 @@ export default async function ProjectsPage({
   const payment = (get("payment") as "paid" | "unpaid" | undefined) ?? null;
   const overdue = get("overdue") === "1";
   const stage = get("stage") || null;
+  const search = get("search")?.trim() || null;
 
   const [rows, projectTypeOptions, stageOptions] = await Promise.all([
-    listProjects({ projectTypeId, payment, overdue: overdue || null, stage }, locale),
+    listProjects({ search, projectTypeId, payment, overdue: overdue || null, stage }, locale),
     listProjectTypes(locale),
     listStageNameOptions(locale),
   ]);
@@ -112,6 +113,7 @@ export default async function ProjectsPage({
   };
 
   const extra = new URLSearchParams();
+  if (search) extra.set("search", search);
   if (projectTypeId) extra.set("typeId", projectTypeId);
   if (payment) extra.set("payment", payment);
   if (overdue) extra.set("overdue", "1");
@@ -165,6 +167,17 @@ export default async function ProjectsPage({
         {/* even grid — dashed, airy controls (full-width on mobile so labels never clip) */}
         <form className="grid grid-cols-1 gap-2 sm:grid-cols-3" action="/projects">
           <input type="hidden" name="status" value={statusFilter} />
+          {/* search — full width, dashed like the other controls */}
+          <div className="relative sm:col-span-3">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
+            <input
+              type="search"
+              name="search"
+              defaultValue={search ?? ""}
+              placeholder={t("projects.searchPlaceholder")}
+              className="h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent pl-10 pr-3.5 text-sm font-medium text-[var(--foreground)] transition-colors placeholder:text-[var(--muted)] focus:border-[var(--primary)] focus:outline-none"
+            />
+          </div>
           <FilterSelect name="typeId" defaultValue={projectTypeId ?? ""}>
             <option value="">{t("projects.filters.allTypes")}</option>
             {projectTypeOptions.map((pt) => (
