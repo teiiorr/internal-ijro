@@ -1,4 +1,3 @@
-import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BrandLogo } from "@/components/brand-logo";
 import { Link } from "@/i18n/navigation";
@@ -12,7 +11,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <BrandLogo className="h-12 sm:h-16" />
           </Link>
           <div className="flex items-center gap-1.5">
-            <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </div>

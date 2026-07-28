@@ -9,9 +9,10 @@ export const routing = defineRouting({
   // which browsers honour as a self-redirect (ERR_TOO_MANY_REDIRECTS).
   // Always-prefixed URLs sidestep that interaction entirely.
   localePrefix: "always",
-  // Uzbek Cyrillic is the organisation's primary script, so anonymous
-  // visitors (login, /) land on it by default. "/" -> "/uz-cyrl".
-  defaultLocale: "uz-cyrl",
+  // Anonymous visitors (login / register / "/") land on Uzbek Latin ("O'zbek")
+  // by default. Language can be switched only inside the app (after login).
+  // "/" -> "/uz-latn".
+  defaultLocale: "uz-latn",
 });
 
 export type AppLocale = (typeof routing.locales)[number];
