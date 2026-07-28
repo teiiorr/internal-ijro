@@ -501,7 +501,13 @@
       "complete": "Bosqichni yakunlash",
       "completed": "Bosqich yakunlandi",
       "projectCompleted": "Loyiha yakunlandi!",
-      "notActive": "Bu bosqich faol emas"
+      "notActive": "Bu bosqich faol emas",
+      "reopen": "Yakunlashni bekor qilish",
+      "reopenConfirm": "Bu bosqich qayta ochilsinmi?",
+      "reopenYes": "Ha, ochish",
+      "reopened": "Bosqich qayta ochildi",
+      "reopenNotLast": "Faqat oxirgi yakunlangan bosqichni bekor qilish mumkin",
+      "reopenNotCompleted": "Bu bosqich yakunlanmagan"
     },
     "stageDeadline": {
       "title": "Bosqich muddati",

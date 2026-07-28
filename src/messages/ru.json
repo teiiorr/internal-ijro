@@ -501,7 +501,13 @@
       "complete": "Завершить этап",
       "completed": "Этап завершён",
       "projectCompleted": "Проект завершён!",
-      "notActive": "Этот этап не активен"
+      "notActive": "Этот этап не активен",
+      "reopen": "Отменить завершение",
+      "reopenConfirm": "Вернуть этап в работу?",
+      "reopenYes": "Да, вернуть",
+      "reopened": "Этап возвращён в работу",
+      "reopenNotLast": "Отменить можно только последний завершённый этап",
+      "reopenNotCompleted": "Этап не завершён"
     },
     "stageDeadline": {
       "title": "Срок этапа",

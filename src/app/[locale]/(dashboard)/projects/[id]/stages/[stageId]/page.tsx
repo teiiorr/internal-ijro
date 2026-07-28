@@ -10,6 +10,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { StagePayments } from "@/components/projects/stage-payments";
 import { CompleteStageButton } from "@/components/projects/complete-stage-button";
+import { ReopenStageButton } from "@/components/projects/reopen-stage-button";
 import { EditStageDialog } from "@/components/projects/edit-stage-dialog";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
@@ -31,6 +32,9 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
 
   const s = data.stage;
   const total = data.siblings.length;
+  // Only the most-recently completed stage can be un-completed (matches reopenStage's guard).
+  const lastCompleted = [...data.siblings].reverse().find((x) => x.status === "completed");
+  const isLastCompleted = s.status === "completed" && lastCompleted?.id === s.id;
   const statusMeta =
     s.status === "completed"
       ? { tone: "green" as StatusTone, icon: <CheckCircle2 className="size-3.5" />, label: t("projects.stagePath.done") }
@@ -122,6 +126,13 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
       {canManage && s.status === "active" && (
         <div className="flex justify-end pt-1">
           <CompleteStageButton stageId={s.id} />
+        </div>
+      )}
+
+      {/* Undo an accidental completion — only the last completed stage */}
+      {canManage && isLastCompleted && (
+        <div className="flex justify-end pt-1">
+          <ReopenStageButton stageId={s.id} />
         </div>
       )}
     </div>
