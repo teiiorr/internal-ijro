@@ -1,10 +1,13 @@
 "use client";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
-import { Download, Trash2, FileText, Folder, FolderInput } from "lucide-react";
-import { attachStageDocument, removeStageDocument, setStageDocumentCategory } from "@/server/actions/stages";
+import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2 } from "lucide-react";
+import { removeStageDocument, setStageDocumentCategory } from "@/server/actions/stages";
+import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";
 
 type Doc = {
@@ -16,6 +19,8 @@ type Doc = {
   uploadedAt: Date | string;
   uploaderName: string | null;
 };
+
+type Staged = { file: File; originalSize: number; compressed: boolean };
 
 function humanSize(bytes: number | null): string {
   if (!bytes) return "";
@@ -29,16 +34,25 @@ export function StageDocuments({
   documents,
   canManage,
   suggestions,
+  maxBytes,
 }: {
   stageId: string;
   documents: Doc[];
   canManage: boolean;
   suggestions: string[];
+  maxBytes: number;
 }) {
   const t = useTranslations();
+  const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
   const [category, setCategory] = useState("");
+  // Add flow: a picked file is staged (and images compressed) behind an explicit
+  // "Add" button — nothing uploads until the user confirms.
+  const [staged, setStaged] = useState<Staged | null>(null);
+  const [preparing, setPreparing] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [pickerKey, setPickerKey] = useState(0); // bump to reset the FileInput after a successful add
   const uncategorized = t("projects.stageDocs.uncategorized");
   const dlId = `folders-${stageId}`;
 
@@ -67,14 +81,67 @@ export function StageDocuments({
     return [...set].sort((a, b) => a.localeCompare(b));
   }, [documents, suggestions]);
 
-  function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    const cat = category.trim() || null;
-    start(async () => {
-      await attachStageDocument(stageId, f, cat);
-      if (fileRef.current) fileRef.current.value = "";
-    });
+  // Pick (or drop) a file → stage it. Big raster images are re-rendered smaller
+  // client-side so they never hit the wire (or the server) at full size.
+  async function onFileChange(file: File | null) {
+    if (!file) {
+      setStaged(null);
+      return;
+    }
+    setPreparing(true);
+    try {
+      const r = await compressImage(file);
+      setStaged({ file: r.file, originalSize: r.originalSize, compressed: r.compressed });
+    } catch {
+      setStaged({ file, originalSize: file.size, compressed: false });
+    } finally {
+      setPreparing(false);
+    }
+  }
+
+  function errorMessage(code: string): string {
+    switch (code) {
+      case "file_too_large":
+        return t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) });
+      case "file_empty":
+        return t("projects.stageDocs.emptyFile");
+      case "ext_forbidden":
+        return t("projects.stageDocs.forbiddenType");
+      default:
+        return t("projects.stageDocs.uploadError");
+    }
+  }
+
+  async function onAdd() {
+    if (!staged || uploading || preparing) return;
+    if (staged.file.size > maxBytes) {
+      toast.error(t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) }));
+      return;
+    }
+    setUploading(true);
+    try {
+      const qs = new URLSearchParams({ stageId, name: staged.file.name });
+      if (category.trim()) qs.set("category", category.trim());
+      const res = await fetch(`/api/files/stage-docs?${qs.toString()}`, {
+        method: "POST",
+        headers: { "content-type": staged.file.type || "application/octet-stream" },
+        body: staged.file,
+      });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        toast.error(errorMessage(body.error ?? ""));
+        return;
+      }
+      // Keep the folder selected so several files can be filed in a row; reset the picker.
+      setStaged(null);
+      setPickerKey((k) => k + 1);
+      toast.success(t("projects.stageDocs.added"));
+      router.refresh();
+    } catch {
+      toast.error(t("projects.stageDocs.uploadError"));
+    } finally {
+      setUploading(false);
+    }
   }
 
   function move(id: string, value: string) {
@@ -82,6 +149,9 @@ export function StageDocuments({
       await setStageDocumentCategory(id, value || null);
     });
   }
+
+  const tooBig = !!staged && staged.file.size > maxBytes;
+  const busy = preparing || uploading;
 
   return (
     <div className="space-y-4">
@@ -205,10 +275,46 @@ export function StageDocuments({
               ))}
             </datalist>
           </div>
-          <FileInput ref={fileRef} onChange={onPick} disabled={pending} />
+
+          <FileInput key={pickerKey} ref={fileRef} onFileChange={onFileChange} disabled={busy} />
+
+          {/* Staged-file feedback: final size + a note when we shrank an image. */}
+          {preparing && (
+            <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
+              <Loader2 className="size-3.5 animate-spin" />
+              {t("projects.stageDocs.preparing")}
+            </p>
+          )}
+          {staged && !preparing && (
+            <p className={"text-xs " + (tooBig ? "text-[var(--danger)]" : "text-[var(--muted)]")}>
+              {staged.compressed
+                ? t("projects.stageDocs.compressedNote", {
+                    from: humanSize(staged.originalSize),
+                    to: humanSize(staged.file.size),
+                  })
+                : humanSize(staged.file.size)}
+              {tooBig ? ` · ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
+            </p>
+          )}
+
           <p className="text-xs text-[var(--muted)]">
             {t("projects.stageDocs.folderHint", { folder: category.trim() || uncategorized })}
           </p>
+          <p className="text-xs text-[var(--muted)]">{t("projects.stageDocs.sizeHint", { max: humanSize(maxBytes) })}</p>
+
+          <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className="w-full">
+            {uploading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                {t("projects.stageDocs.uploading")}
+              </>
+            ) : (
+              <>
+                <Plus className="size-4" />
+                {t("common.add")}
+              </>
+            )}
+          </Button>
         </div>
       )}
     </div>

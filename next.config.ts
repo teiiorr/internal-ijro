@@ -12,9 +12,13 @@ const nextConfig: NextConfig = {
   // App stays behind nginx; trust the X-Forwarded-* headers it sets.
   poweredByHeader: false,
   experimental: {
-    // File uploads (stage docs, posters, attachments) go through Server Actions,
-    // whose request body defaults to 1MB. Raise it to match nginx (30M) so
-    // multi-MB PDFs upload instead of failing. App still caps files at MAX_UPLOAD_BYTES.
+    // Server Actions buffer the ENTIRE request body in memory before our code
+    // runs — dangerous on the 2GB production box (shared with Postgres), where a
+    // big buffered upload can trip the OOM killer. So large files DON'T go through
+    // Server Actions: stage-document uploads stream straight to disk via the route
+    // handler at /api/files/stage-docs (constant memory). This limit only covers
+    // the remaining small Server-Action uploads (posters, short attachments); keep
+    // it modest so nothing buffers tens of MB in RAM.
     serverActions: {
       bodySizeLimit: "30mb",
     },

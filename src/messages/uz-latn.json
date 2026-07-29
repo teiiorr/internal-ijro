@@ -481,7 +481,16 @@
       "folderPlaceholder": "Papka nomi (masalan, Hisobotlar)",
       "folderHint": "Fayl «{folder}» papkasiga joylanadi",
       "uncategorized": "Boshqa",
-      "move": "Boshqa papkaga ko'chirish"
+      "move": "Boshqa papkaga ko'chirish",
+      "uploading": "Yuklanmoqda…",
+      "preparing": "Rasm tayyorlanmoqda…",
+      "added": "Fayl qo'shildi",
+      "uploadError": "Yuklashda xatolik yuz berdi",
+      "tooLarge": "Fayl juda katta (maksimal {max})",
+      "emptyFile": "Fayl bo'sh",
+      "forbiddenType": "Bu turdagi fayllarni yuklab bo'lmaydi",
+      "compressedNote": "Rasm siqildi: {from} → {to}",
+      "sizeHint": "Maksimal hajm {max}. Katta rasmlar avtomatik siqiladi."
     },
     "stagePayments": {
       "title": "To'lovlar",

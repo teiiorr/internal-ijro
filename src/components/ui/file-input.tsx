@@ -6,6 +6,12 @@ import { cn } from "@/lib/utils";
 
 type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "className"> & {
   className?: string;
+  /**
+   * Fires with the picked File (or null when cleared). Lets a parent own the
+   * selection — e.g. to stage it behind an explicit "Add" button or to compress
+   * it before upload — without re-reading input.files. `onChange` still fires too.
+   */
+  onFileChange?: (file: File | null) => void;
 };
 
 /**
@@ -19,7 +25,7 @@ type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "classNa
  * sits awkwardly next to the button.
  */
 export const FileInput = React.forwardRef<HTMLInputElement, Props>(
-  ({ className, onChange, ...props }, ref) => {
+  ({ className, onChange, onFileChange, ...props }, ref) => {
     const t = useTranslations();
     const internalRef = React.useRef<HTMLInputElement | null>(null);
     const [fileName, setFileName] = React.useState<string | null>(null);
@@ -32,8 +38,10 @@ export const FileInput = React.forwardRef<HTMLInputElement, Props>(
     }
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-      setFileName(e.currentTarget.files?.[0]?.name ?? null);
+      const picked = e.currentTarget.files?.[0] ?? null;
+      setFileName(picked?.name ?? null);
       onChange?.(e);
+      onFileChange?.(picked);
     }
 
     function openPicker() {
@@ -44,6 +52,7 @@ export const FileInput = React.forwardRef<HTMLInputElement, Props>(
       e?.stopPropagation();
       if (internalRef.current) internalRef.current.value = "";
       setFileName(null);
+      onFileChange?.(null);
     }
 
     function handleDrop(e: React.DragEvent<HTMLDivElement>) {
@@ -57,6 +66,8 @@ export const FileInput = React.forwardRef<HTMLInputElement, Props>(
       dt.items.add(file);
       internalRef.current.files = dt.files;
       setFileName(file.name);
+      // The dispatched 'change' triggers handleChange, which fires onChange +
+      // onFileChange — so we don't call them directly here (avoids double-firing).
       internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
     }
 

@@ -21,6 +21,25 @@ apt-get update -y
 apt-get install -y curl ca-certificates gnupg lsb-release ufw fail2ban \
   build-essential rsync openssl git
 
+bold "1b/8 Swap file (2GB droplet ships with none)"
+# Without swap, any memory spike — a big upload, a build, Postgres under load —
+# makes the kernel OOM-kill a process outright (often Postgres, since it shares
+# the box). A 2GB swapfile turns those spikes into a brief slowdown instead of a
+# crash. Idempotent: skips if a swapfile is already active.
+if ! swapon --show | grep -q '/swapfile'; then
+  fallocate -l 2G /swapfile 2>/dev/null || dd if=/dev/zero of=/swapfile bs=1M count=2048
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  grep -q '^/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  # Prefer RAM; only lean on swap under real pressure.
+  sysctl -w vm.swappiness=10 >/dev/null
+  grep -q '^vm.swappiness' /etc/sysctl.conf || echo 'vm.swappiness=10' >> /etc/sysctl.conf
+  echo "2GB swap enabled."
+else
+  echo "swap already active — left untouched."
+fi
+
 bold "2/8 Node.js ${NODE_MAJOR}.x via NodeSource"
 if ! command -v node >/dev/null || ! node -v | grep -q "^v${NODE_MAJOR}\."; then
   curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash -

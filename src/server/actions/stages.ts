@@ -7,7 +7,7 @@ import { projects, projectStages, stageDocuments, stagePayments, users } from "@
 import { requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
-import { storeFile, deleteFileByUrl } from "@/lib/upload";
+import { deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
 
 const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
@@ -327,24 +327,10 @@ function normalizeCategory(raw: string | null | undefined): string | null {
   return v.length > 0 ? v : null;
 }
 
-/** Attach a document (any format) to a stage, filed under an optional folder. Next 16: takes a Web File directly. */
-export async function attachStageDocument(stageId: string, file: File, category?: string | null) {
-  const me = await requirePosition([...MANAGERS]);
-  const projectId = await stageProjectId(stageId);
-  const stored = await storeFile(file, `stage-docs/${stageId}`);
-  await db.insert(stageDocuments).values({
-    stageId,
-    fileUrl: stored.url,
-    fileName: stored.originalName,
-    fileSize: stored.size,
-    fileMimeType: stored.mimeType,
-    category: normalizeCategory(category),
-    uploadedByUserId: me.id,
-  });
-  await db.update(projectStages).set({ updatedAt: new Date() }).where(eq(projectStages.id, stageId));
-  await logActivity({ userId: me.id, action: "stage.document_added", entityType: "project_stage", entityId: stageId, newValue: { fileName: stored.originalName } });
-  stageLinks(projectId, stageId);
-}
+// Adding a document is handled by the streaming route at
+// src/app/api/files/stage-docs/route.ts (uploads stream to disk instead of being
+// buffered in memory by a Server Action — safe for the 2GB production box). The
+// server actions below only touch existing rows, so they carry no file body.
 
 /** Move a document to another folder (or clear it). Powers drag-free re-filing from the stage page. */
 export async function setStageDocumentCategory(documentId: string, category: string | null) {
