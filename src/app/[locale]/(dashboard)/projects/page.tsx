@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { ProjectsFilters } from "@/components/projects/projects-filters";
+import { ScrollMemory } from "@/components/scroll-memory";
 import { Plus, Download, AlertTriangle } from "lucide-react";
 import { can } from "@/lib/permissions";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
@@ -116,6 +117,8 @@ export default async function ProjectsPage({
 
   return (
     <div className="space-y-5 sm:space-y-6">
+      {/* Restores the list scroll position when returning from a project. */}
+      <ScrollMemory />
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
         <div className="flex gap-2 shrink-0">
