@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { StagesList } from "@/components/projects/stages-list";
 import { StagePath } from "@/components/projects/stage-path";
 import { ProjectPoster } from "@/components/projects/project-poster";
+import { ProjectDocsPanels } from "@/components/projects/project-docs-panels";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
@@ -135,12 +137,23 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         {/* stage list (main) + payment rollup (sidebar) — fills the full width */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
-          <Card>
-            <CardContent className="p-5 sm:p-6">
-              <h3 className="text-base font-semibold mb-4">{t("projects.stagePath.title")}</h3>
-              <StagePath projectId={sp.project.id} stages={sp.stages} />
-            </CardContent>
-          </Card>
+          <div className="min-w-0 space-y-6">
+            <Card>
+              <CardContent className="p-5 sm:p-6">
+                <h3 className="text-base font-semibold mb-4">{t("projects.stagePath.title")}</h3>
+                <StagePath projectId={sp.project.id} stages={sp.stages} />
+              </CardContent>
+            </Card>
+
+            {/* Project-level document buckets — fills the space under the stages. */}
+            <ProjectDocsPanels
+              projectId={sp.project.id}
+              canManage={canManage}
+              maxBytes={MAX_UPLOAD_BYTES}
+              tahlil={sp.documents.tahlil.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
+              xalqaro={sp.documents.xalqaro_tajriba.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
+            />
+          </div>
 
           <div className="space-y-6">
             <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={canManage} />

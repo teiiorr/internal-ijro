@@ -14,6 +14,7 @@ import {
   projectTypes,
   projectStages,
   stageDocuments,
+  projectDocuments,
   stageTemplateItems,
 } from "@/lib/db/schema";
 import { requireUser, requirePosition } from "@/lib/session";
@@ -645,4 +646,17 @@ export async function acceptNda() {
     .where(eq(externalCompanies.contactEmail, me.email));
   await logActivity({ userId: me.id, action: "contractor.nda_accepted" });
   revalidatePath("/contractor/dashboard");
+}
+
+// ---------- project documents (analysis / international experience) ----------
+// Uploads go through the streaming route /api/files/project-docs; this only
+// removes an existing file. Open to all internal staff (matches upload access).
+export async function removeProjectDocument(documentId: string) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const [doc] = await db.select().from(projectDocuments).where(eq(projectDocuments.id, documentId)).limit(1);
+  if (!doc) return;
+  await deleteFileByUrl(doc.fileUrl);
+  await db.delete(projectDocuments).where(eq(projectDocuments.id, documentId));
+  await logActivity({ userId: me.id, action: "project.document_removed", entityType: "project", entityId: doc.projectId, newValue: { kind: doc.kind } });
+  revalidatePath(`/projects/${doc.projectId}`);
 }

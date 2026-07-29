@@ -492,6 +492,11 @@
       "compressedNote": "Изображение сжато: {from} → {to}",
       "sizeHint": "Максимум {max}. Большие изображения сжимаются автоматически."
     },
+    "projectDocs": {
+      "tahlilTitle": "Анализ по проекту",
+      "xalqaroTitle": "Международный опыт",
+      "empty": "Пока нет документов"
+    },
     "stagePayments": {
       "title": "Оплаты",
       "projectTotal": "Оплаты по проекту",

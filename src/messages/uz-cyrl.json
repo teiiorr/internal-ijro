@@ -492,6 +492,11 @@
       "compressedNote": "Расм сиқилди: {from} → {to}",
       "sizeHint": "Максимал ҳажм {max}. Катта расмлар автоматик сиқилади."
     },
+    "projectDocs": {
+      "tahlilTitle": "Лойиҳа бўйича таҳлил",
+      "xalqaroTitle": "Халқаро тажриба",
+      "empty": "Ҳозирча ҳужжат йўқ"
+    },
     "stagePayments": {
       "title": "Тўловлар",
       "projectTotal": "Лойиҳа бўйича тўловлар",

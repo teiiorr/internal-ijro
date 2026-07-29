@@ -7,6 +7,7 @@ import {
   projectStages,
   stageTemplateItems,
   stageDocuments,
+  projectDocuments,
   stagePayments,
   externalCompanies,
   users,
@@ -134,6 +135,27 @@ export async function getStageProject(projectId: string, locale: string) {
     pending: sum(stages.map((s) => s.pending)),
   };
 
+  // Project-level document buckets (analysis / international experience).
+  const docRows = await db
+    .select({
+      id: projectDocuments.id,
+      kind: projectDocuments.kind,
+      fileUrl: projectDocuments.fileUrl,
+      fileName: projectDocuments.fileName,
+      fileSize: projectDocuments.fileSize,
+      uploadedAt: projectDocuments.uploadedAt,
+      uploaderName: users.fullName,
+    })
+    .from(projectDocuments)
+    .leftJoin(users, eq(users.id, projectDocuments.uploadedByUserId))
+    .where(eq(projectDocuments.projectId, projectId))
+    .orderBy(desc(projectDocuments.uploadedAt));
+
+  const documents = {
+    tahlil: docRows.filter((d) => d.kind === "tahlil"),
+    xalqaro_tajriba: docRows.filter((d) => d.kind === "xalqaro_tajriba"),
+  };
+
   return {
     project: p[0],
     type: typeRow ? { ...typeRow, name: localizedTypeName(typeRow, locale) } : null,
@@ -141,6 +163,7 @@ export async function getStageProject(projectId: string, locale: string) {
     company,
     stages,
     totals,
+    documents,
   };
 }
 

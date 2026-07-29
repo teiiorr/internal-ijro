@@ -492,6 +492,11 @@
       "compressedNote": "Rasm siqildi: {from} → {to}",
       "sizeHint": "Maksimal hajm {max}. Katta rasmlar avtomatik siqiladi."
     },
+    "projectDocs": {
+      "tahlilTitle": "Loyiha bo'yicha tahlil",
+      "xalqaroTitle": "Xalqaro tajriba",
+      "empty": "Hozircha hujjat yo'q"
+    },
     "stagePayments": {
       "title": "To'lovlar",
       "projectTotal": "Loyiha bo'yicha to'lovlar",

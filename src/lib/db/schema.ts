@@ -688,6 +688,37 @@ export const stageDocuments = pgTable(
   })
 );
 
+// ---------- project_documents ----------
+// Project-level document buckets shown under the stage list: analysis
+// ("tahlil" — Loyiha bo'yicha tahlil) and international experience
+// ("xalqaro_tajriba" — Xalqaro tajriba). One row per uploaded file.
+export const PROJECT_DOC_KINDS = ["tahlil", "xalqaro_tajriba"] as const;
+export type ProjectDocKind = (typeof PROJECT_DOC_KINDS)[number];
+
+export const projectDocuments = pgTable(
+  "project_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    /** 'tahlil' | 'xalqaro_tajriba' */
+    kind: varchar("kind", { length: 32 }).notNull(),
+    fileUrl: text("file_url").notNull(),
+    fileName: varchar("file_name", { length: 255 }).notNull(),
+    fileSize: integer("file_size"),
+    fileMimeType: varchar("file_mime_type", { length: 120 }),
+    uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    projectIdx: index("project_documents_project_idx").on(t.projectId),
+    kindIdx: index("project_documents_kind_idx").on(t.projectId, t.kind),
+  })
+);
+
 // ---------- 5.24 stage_payments ----------
 // Multiple payments per stage. Project total = Σ across all its stages.
 export const stagePayments = pgTable(
