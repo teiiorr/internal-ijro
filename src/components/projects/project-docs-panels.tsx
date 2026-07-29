@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { Download, Trash2, FileText, Plus, Loader2, BarChart3, Globe2 } from "lucide-react";
+import { Download, Trash2, FileText, Plus, Loader2, BarChart3, Globe2, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
 import { removeProjectDocument } from "@/server/actions/projects";
@@ -69,6 +69,7 @@ function DocPanel({
   const [preparing, setPreparing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
+  const [open, setOpen] = useState(false); // upload form collapsed by default — keeps the panel compact
 
   async function onFileChange(file: File | null) {
     if (!file) return setStaged(null);
@@ -117,6 +118,7 @@ function DocPanel({
       }
       setStaged(null);
       setPickerKey((k) => k + 1);
+      setOpen(false); // collapse again after a successful add
       toast.success(t("projects.stageDocs.added"));
       router.refresh();
     } catch {
@@ -189,7 +191,7 @@ function DocPanel({
           </ul>
         )}
 
-        {canManage && (
+        {canManage && (open ? (
           <div className="space-y-2.5 pt-1">
             <FileInput key={pickerKey} onFileChange={onFileChange} disabled={busy} />
 
@@ -208,21 +210,36 @@ function DocPanel({
               </p>
             )}
 
-            <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className={`w-full ${theme.btn}`}>
-              {uploading ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  {t("projects.stageDocs.uploading")}
-                </>
-              ) : (
-                <>
-                  <Plus className="size-4" />
-                  {t("common.add")}
-                </>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className={`flex-1 ${theme.btn}`}>
+                {uploading ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    {t("projects.stageDocs.uploading")}
+                  </>
+                ) : (
+                  <>
+                    <Plus className="size-4" />
+                    {t("common.add")}
+                  </>
+                )}
+              </Button>
+              <Button type="button" variant="ghost" disabled={uploading} onClick={() => { setOpen(false); setStaged(null); }}>
+                <ChevronUp className="size-4" />
+                {t("projects.projectDocs.hide")}
+              </Button>
+            </div>
           </div>
-        )}
+        ) : (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[var(--border-strong)] py-2.5 text-sm font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
+          >
+            <Plus className="size-4" />
+            {t("projects.projectDocs.addFile")}
+          </button>
+        ))}
       </div>
     </div>
   );

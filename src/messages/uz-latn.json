@@ -495,7 +495,9 @@
     "projectDocs": {
       "tahlilTitle": "Loyiha bo'yicha tahlil",
       "xalqaroTitle": "Xalqaro tajriba",
-      "empty": "Hozircha hujjat yo'q"
+      "empty": "Hozircha hujjat yo'q",
+      "addFile": "Fayl qo'shish",
+      "hide": "Yashirish"
     },
     "stagePayments": {
       "title": "To'lovlar",

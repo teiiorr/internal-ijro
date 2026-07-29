@@ -495,7 +495,9 @@
     "projectDocs": {
       "tahlilTitle": "Анализ по проекту",
       "xalqaroTitle": "Международный опыт",
-      "empty": "Пока нет документов"
+      "empty": "Пока нет документов",
+      "addFile": "Добавить файл",
+      "hide": "Скрыть"
     },
     "stagePayments": {
       "title": "Оплаты",
