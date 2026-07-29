@@ -873,10 +873,10 @@
       "submitStandup": "Стендап топшириш"
     },
     "greeting": {
-      "morning": "Ҳайрли тонг",
-      "afternoon": "Ҳайрли кун",
-      "evening": "Ҳайрли кеч",
-      "night": "Ҳайрли тун"
+      "morning": "Хайрли тонг",
+      "afternoon": "Хайрли кун",
+      "evening": "Хайрли кеч",
+      "night": "Хайрли тун"
     },
     "ownerRole": "Платформа эгаси"
   },
