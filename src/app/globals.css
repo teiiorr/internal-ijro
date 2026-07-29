@@ -335,3 +335,17 @@ input:not([type]), select, textarea {
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* Ticker-tape marquee for overflowing labels (see components/ui/marquee.tsx).
+   Loops seamlessly by shifting exactly one copy + gap; constant speed via a
+   per-instance --marquee-duration. Disabled under reduced-motion. */
+@keyframes marquee-x {
+  to { transform: translateX(calc(-1 * var(--marquee-shift, 100%))); }
+}
+.animate-marquee {
+  animation: marquee-x var(--marquee-duration, 12s) linear infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; }
+}

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Download, Trash2, FileText, Plus, Loader2, BarChart3, Globe2, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
+import { Marquee } from "@/components/ui/marquee";
 import { removeProjectDocument } from "@/server/actions/projects";
 import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";
@@ -132,7 +133,7 @@ function DocPanel({
   const busy = preparing || uploading;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]">
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]">
       {/* Gradient header — title centred, icon + count pinned to the sides.
           text-white is set on the <h3> itself to beat the base `h3 { color }` rule. */}
       <div className={`relative bg-gradient-to-r ${theme.grad} px-4 py-3.5`}>
@@ -145,101 +146,109 @@ function DocPanel({
         </span>
       </div>
 
-      <div className="space-y-3 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-4">
         {docs.length === 0 ? (
           <p className="rounded-xl border border-dashed border-[var(--border-strong)] py-5 text-center text-sm text-[var(--muted)]">
             {t("projects.projectDocs.empty")}
           </p>
         ) : (
           <ul className="space-y-2">
-            {docs.map((d) => (
-              <li
-                key={d.id}
-                className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5"
-              >
-                <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${theme.soft}`}>
-                  <FileText className="size-4" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold" title={d.fileName}>
-                    {d.fileName}
-                  </p>
-                  <p className="truncate text-xs text-[var(--muted)]">
-                    {humanSize(d.fileSize)}
-                    {d.uploaderName ? ` · ${d.uploaderName}` : ""}
-                    {` · ${formatDate(d.uploadedAt as Date)}`}
-                  </p>
-                </div>
-                <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
-                  <a href={d.fileUrl} download>
-                    <Download className="size-4" />
-                  </a>
-                </Button>
-                {canManage && (
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    disabled={pending}
-                    aria-label={t("common.delete")}
-                    onClick={() => start(async () => { await removeProjectDocument(d.id); })}
-                  >
-                    <Trash2 className="size-4" />
+            {docs.map((d) => {
+              const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date)}`;
+              return (
+                <li
+                  key={d.id}
+                  className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5"
+                >
+                  <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${theme.soft}`}>
+                    <FileText className="size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    {/* Long names/meta scroll like a ticker; they keep the exact same box. */}
+                    <Marquee className="text-sm font-semibold">{d.fileName}</Marquee>
+                    <Marquee className="text-xs text-[var(--muted)]">{meta}</Marquee>
+                  </div>
+                  <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
+                    <a href={d.fileUrl} download>
+                      <Download className="size-4" />
+                    </a>
                   </Button>
-                )}
-              </li>
-            ))}
+                  {canManage && (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      disabled={pending}
+                      aria-label={t("common.delete")}
+                      onClick={() => start(async () => { await removeProjectDocument(d.id); })}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
 
-        {canManage && (open ? (
-          <div className="space-y-2.5 pt-1">
-            <FileInput key={pickerKey} onFileChange={onFileChange} disabled={busy} />
-
-            {preparing && (
-              <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
-                <Loader2 className="size-3.5 animate-spin" />
-                {t("projects.stageDocs.preparing")}
-              </p>
-            )}
-            {staged && !preparing && (
-              <p className={"text-xs " + (tooBig ? "text-[var(--danger)]" : "text-[var(--muted)]")}>
-                {staged.compressed
-                  ? t("projects.stageDocs.compressedNote", { from: humanSize(staged.originalSize), to: humanSize(staged.file.size) })
-                  : humanSize(staged.file.size)}
-                {tooBig ? ` · ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
-              </p>
-            )}
-
-            <div className="flex gap-2">
-              <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className={`flex-1 ${theme.btn}`}>
-                {uploading ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    {t("projects.stageDocs.uploading")}
-                  </>
-                ) : (
-                  <>
-                    <Plus className="size-4" />
-                    {t("common.add")}
-                  </>
-                )}
-              </Button>
-              <Button type="button" variant="ghost" disabled={uploading} onClick={() => { setOpen(false); setStaged(null); }}>
-                <ChevronUp className="size-4" />
-                {t("projects.projectDocs.hide")}
-              </Button>
+        {/* Upload area pinned to the bottom so the button lines up across panels
+            regardless of how many files each holds. Collapsed by default; the
+            button and the form cross-animate (height + fade) when toggled. */}
+        {canManage && (
+          <div className="mt-auto">
+            <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}>
+              <div className="overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setOpen(true)}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[var(--border-strong)] py-2.5 text-sm font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
+                >
+                  <Plus className="size-4" />
+                  {t("projects.projectDocs.addFile")}
+                </button>
+              </div>
+            </div>
+            <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+              <div className="overflow-hidden">
+                <div className="space-y-2.5">
+                  <FileInput key={pickerKey} onFileChange={onFileChange} disabled={busy} />
+                  {preparing && (
+                    <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
+                      <Loader2 className="size-3.5 animate-spin" />
+                      {t("projects.stageDocs.preparing")}
+                    </p>
+                  )}
+                  {staged && !preparing && (
+                    <p className={"text-xs " + (tooBig ? "text-[var(--danger)]" : "text-[var(--muted)]")}>
+                      {staged.compressed
+                        ? t("projects.stageDocs.compressedNote", { from: humanSize(staged.originalSize), to: humanSize(staged.file.size) })
+                        : humanSize(staged.file.size)}
+                      {tooBig ? ` · ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
+                    </p>
+                  )}
+                  <div className="flex gap-2">
+                    <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className={`flex-1 ${theme.btn}`}>
+                      {uploading ? (
+                        <>
+                          <Loader2 className="size-4 animate-spin" />
+                          {t("projects.stageDocs.uploading")}
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="size-4" />
+                          {t("common.add")}
+                        </>
+                      )}
+                    </Button>
+                    <Button type="button" variant="ghost" disabled={uploading} onClick={() => { setOpen(false); setStaged(null); }}>
+                      <ChevronUp className="size-4" />
+                      {t("projects.projectDocs.hide")}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[var(--border-strong)] py-2.5 text-sm font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
-          >
-            <Plus className="size-4" />
-            {t("projects.projectDocs.addFile")}
-          </button>
-        ))}
+        )}
       </div>
     </div>
   );
@@ -260,7 +269,7 @@ export function ProjectDocsPanels({
 }) {
   const t = useTranslations();
   return (
-    <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
+    <div className="grid items-stretch gap-4 sm:gap-5 md:grid-cols-2">
       <DocPanel projectId={projectId} kind="tahlil" title={t("projects.projectDocs.tahlilTitle")} docs={tahlil} canManage={canManage} maxBytes={maxBytes} />
       <DocPanel projectId={projectId} kind="xalqaro_tajriba" title={t("projects.projectDocs.xalqaroTitle")} docs={xalqaro} canManage={canManage} maxBytes={maxBytes} />
     </div>
