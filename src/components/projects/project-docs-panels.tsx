@@ -131,13 +131,16 @@ function DocPanel({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]">
-      {/* Gradient header */}
-      <div className={`flex items-center gap-3 bg-gradient-to-r ${theme.grad} px-4 py-3.5 text-white`}>
-        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/20 backdrop-blur-sm">
+      {/* Gradient header — title centred, icon + count pinned to the sides.
+          text-white is set on the <h3> itself to beat the base `h3 { color }` rule. */}
+      <div className={`relative bg-gradient-to-r ${theme.grad} px-4 py-3.5`}>
+        <span className="absolute left-4 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-xl bg-white/20 text-white backdrop-blur-sm">
           <Icon className="size-5" />
         </span>
-        <h3 className="min-w-0 flex-1 truncate text-[15px] font-bold leading-tight">{title}</h3>
-        <span className="shrink-0 rounded-full bg-white/25 px-2 py-0.5 text-xs font-bold tabular-nums">{docs.length}</span>
+        <h3 className="truncate px-14 text-center text-[15px] font-bold leading-tight text-white">{title}</h3>
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/25 px-2 py-0.5 text-xs font-bold tabular-nums text-white">
+          {docs.length}
+        </span>
       </div>
 
       <div className="space-y-3 p-4">
