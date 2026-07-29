@@ -150,11 +150,16 @@ export default async function ProjectsPage({
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((p) => (
-            <Link key={p.id} href={`/projects/${p.id}`} className="group block">
-              <div className="relative aspect-square overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] shadow-[var(--shadow-1)] transition-shadow group-hover:shadow-[var(--shadow-2)]">
+            <Link
+              key={p.id}
+              href={`/projects/${p.id}`}
+              className="group block rounded-2xl border border-[var(--border)] bg-[var(--card)] p-2 shadow-[var(--shadow-1)] transition-[background-color,border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-[var(--primary)] hover:bg-[var(--primary)] hover:shadow-[var(--shadow-2)]"
+            >
+              {/* The poster is untouched on hover — only the tile behind/around it turns violet. */}
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
                 {p.posterUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.posterUrl} alt={p.name} className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.04]" />
+                  <img src={p.posterUrl} alt={p.name} className="size-full object-cover" />
                 ) : (
                   <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
                     <span className="select-none text-5xl font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span>
@@ -172,10 +177,22 @@ export default async function ProjectsPage({
                   <div className="h-full bg-[var(--success)]" style={{ width: `${p.progressPercentage}%` }} />
                 </div>
               </div>
-              <div className="mt-2.5 space-y-1.5">
-                <p className="line-clamp-2 min-h-[2.75em] text-sm font-semibold leading-snug">{p.name}</p>
-                <StatusTag tone={STATUS_TONE[p.derived]}>{t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}</StatusTag>
-                <p className="truncate text-xs text-[var(--muted)]">{p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal")}</p>
+              {/* Footer — sits on the tile, so text flips to the on-primary colour when the
+                  tile turns violet on hover. Title centred; type on the left, status pill on the
+                  right; the pill fills in (solid) on hover instead of staying a dashed outline. */}
+              <div className="space-y-2 px-1.5 pb-1 pt-2.5">
+                <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug transition-colors duration-300 group-hover:text-[var(--primary-foreground)]">{p.name}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="truncate text-xs text-[var(--muted)] transition-colors duration-300 group-hover:text-[var(--primary-foreground)] group-hover:opacity-80">
+                    {p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal")}
+                  </span>
+                  <StatusTag
+                    tone={STATUS_TONE[p.derived]}
+                    className="shrink-0 transition-all duration-300 group-hover:border-transparent group-hover:bg-[var(--primary-foreground)] group-hover:text-[var(--primary)]"
+                  >
+                    {t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}
+                  </StatusTag>
+                </div>
               </div>
             </Link>
           ))}
