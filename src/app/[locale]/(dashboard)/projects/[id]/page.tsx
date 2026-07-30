@@ -15,6 +15,7 @@ import { StagePath } from "@/components/projects/stage-path";
 import { ProjectPoster } from "@/components/projects/project-poster";
 import { ProjectDocsPanels } from "@/components/projects/project-docs-panels";
 import { PaymentDocuments } from "@/components/projects/payment-documents";
+import { FitText } from "@/components/ui/fit-text";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
@@ -183,17 +184,24 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <CardContent className="p-5 space-y-3">
               <h3 className="text-base font-semibold">{t("projects.stagePayments.projectTotal")}</h3>
               <dl className="space-y-2.5 text-sm">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                  <dt className="text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
-                  <dd className="ml-auto whitespace-nowrap font-semibold tabular-nums">{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</dd>
+                <div className="flex items-baseline gap-2">
+                  <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
+                  <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums">
+                    <FitText>{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</FitText>
+                  </dd>
                 </div>
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                  <dt className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</dt>
-                  <dd className="ml-auto whitespace-nowrap font-semibold tabular-nums text-[var(--success)]">{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</dd>
+                <div className="flex items-baseline gap-2">
+                  <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.paid")}</dt>
+                  <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums text-[var(--success)]">
+                    <FitText>{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</FitText>
+                  </dd>
                 </div>
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                  <dt className="text-[var(--muted)]">{t("projects.stagePayments.pending")}</dt>
-                  <dd className="ml-auto whitespace-nowrap font-semibold tabular-nums text-[var(--warning)]">{showMoney ? money(sp.totals.pending, currency) : MONEY_MASK}</dd>
+                {/* Remaining = planned − paid (never below zero). */}
+                <div className="flex items-baseline gap-2">
+                  <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.remaining")}</dt>
+                  <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums text-[var(--warning)]">
+                    <FitText>{showMoney ? money(Math.max(0, sp.totals.planned - sp.totals.paid), currency) : MONEY_MASK}</FitText>
+                  </dd>
                 </div>
               </dl>
               {activeStage && (
