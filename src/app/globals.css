@@ -251,6 +251,21 @@ body {
    Class kept to avoid touching every call-site; emits no gradient. */
 .gradient-text { color: var(--foreground); }
 
+/* The Godfather honorific — engraved Cinzel caps in a gilded gold gradient,
+   evoking the film's title card. Latin-only, owner-greeting only. */
+.godfather-title {
+  font-family: var(--font-godfather), Georgia, "Times New Roman", serif;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1.05;
+  background: linear-gradient(180deg, #fff4cc 0%, #f4d67a 30%, #c9982a 62%, #8a5a12 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 2px 6px rgba(120, 80, 0, 0.35));
+}
+
 /* =========================================================================
    FORM CONTROLS
    ========================================================================= */

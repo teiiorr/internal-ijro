@@ -41,12 +41,12 @@ export default async function DashboardPage() {
         <p className="text-sm text-[var(--muted)] font-medium mb-1">{greet},</p>
         <h1 className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl break-words">
           <span className="gradient-text">{localizeName(user.fullName, locale)}</span>
-          {owner && (
-            <span className="ml-2 align-middle text-base sm:text-lg font-semibold text-[var(--warning)] whitespace-nowrap">
-              «{OWNER_TITLE}»
-            </span>
-          )}
         </h1>
+        {owner && (
+          <p className="godfather-title mt-1.5 text-3xl leading-none sm:text-4xl md:text-5xl">
+            {OWNER_TITLE}
+          </p>
+        )}
         <p className="text-[var(--muted)] mt-1 text-sm font-medium">
           {owner ? t("dashboard.ownerRole") : (meRow?.positionTitle ?? t(`positions.${user.position}` as "positions.direktor"))}
         </p>

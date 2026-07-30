@@ -65,7 +65,7 @@ export default async function OwnerPage() {
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("owner.title")}</h1>
           <p className="text-[var(--muted)] mt-1 text-sm font-medium">
-            {localizeName(user.fullName, locale)} <span className="text-[var(--warning)] font-semibold">«{OWNER_TITLE}»</span>
+            {localizeName(user.fullName, locale)} <span className="godfather-title align-middle text-lg sm:text-xl">{OWNER_TITLE}</span>
           </p>
         </div>
       </div>

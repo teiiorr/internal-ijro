@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
 import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2 } from "lucide-react";
-import { Marquee } from "@/components/ui/marquee";
 import { removeNormativeDocument, setNormativeDocumentFolder } from "@/server/actions/normative";
 import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";
@@ -160,8 +159,8 @@ export function NormativeDocuments({
                         <FileText className="size-4" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <Marquee className="text-sm font-semibold">{d.fileName}</Marquee>
-                        <Marquee className="text-xs text-[var(--muted)]">{meta}</Marquee>
+                        <p className="truncate text-sm font-semibold" title={d.fileName}>{d.fileName}</p>
+                        <p className="truncate text-xs text-[var(--muted)]">{meta}</p>
                       </div>
                       {canManage && folderNames.length > 0 && (
                         <div className="relative shrink-0">

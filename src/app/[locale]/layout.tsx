@@ -3,12 +3,21 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { Montserrat, JetBrains_Mono } from "next/font/google";
+import { Montserrat, JetBrains_Mono, Cinzel_Decorative } from "next/font/google";
 
 const montserrat = Montserrat({
   subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+// Cinzel Decorative — engraved Roman caps that evoke the Godfather title card;
+// used only for the owner's honorific. Latin-only (the honorific is Latin).
+const cinzel = Cinzel_Decorative({
+  subsets: ["latin"],
+  weight: ["700", "900"],
+  variable: "--font-godfather",
   display: "swap",
 });
 
@@ -37,7 +46,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       data-locale={locale}
-      className={`${montserrat.variable} ${jbMono.variable}`}
+      className={`${montserrat.variable} ${jbMono.variable} ${cinzel.variable}`}
       suppressHydrationWarning
     >
       <body>

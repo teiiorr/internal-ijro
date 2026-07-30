@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { ProjectsFilters } from "@/components/projects/projects-filters";
 import { ScrollMemory } from "@/components/scroll-memory";
+import { Marquee } from "@/components/ui/marquee";
 import { Plus, Download, AlertTriangle } from "lucide-react";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { canEditProjects } from "@/lib/permissions/project-editors";
@@ -186,9 +187,10 @@ export default async function ProjectsPage({
               <div className="space-y-2 px-1.5 pb-1 pt-2.5">
                 <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug transition-colors duration-300 group-hover:text-[var(--primary-foreground)]">{p.name}</p>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="truncate text-xs text-[var(--muted)] transition-colors duration-300 group-hover:text-[var(--primary-foreground)] group-hover:opacity-80">
+                  {/* Long type names (e.g. "Eksklyuziv kontent…") scroll like a ticker so they can be read in full. */}
+                  <Marquee className="min-w-0 flex-1 text-xs text-[var(--muted)] transition-colors duration-300 group-hover:text-[var(--primary-foreground)] group-hover:opacity-80">
                     {p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal")}
-                  </span>
+                  </Marquee>
                   <StatusTag
                     tone={STATUS_TONE[p.derived]}
                     className="shrink-0 transition-all duration-300 group-hover:border-transparent group-hover:bg-[var(--primary-foreground)] group-hover:text-[var(--primary)]"

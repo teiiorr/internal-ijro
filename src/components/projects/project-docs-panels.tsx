@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { Download, Trash2, FileText, Plus, Loader2, BarChart3, Globe2, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
-import { Marquee } from "@/components/ui/marquee";
 import { removeProjectDocument } from "@/server/actions/projects";
 import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";
@@ -164,9 +163,8 @@ function DocPanel({
                     <FileText className="size-4" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    {/* Long names/meta scroll like a ticker; they keep the exact same box. */}
-                    <Marquee className="text-sm font-semibold">{d.fileName}</Marquee>
-                    <Marquee className="text-xs text-[var(--muted)]">{meta}</Marquee>
+                    <p className="truncate text-sm font-semibold" title={d.fileName}>{d.fileName}</p>
+                    <p className="truncate text-xs text-[var(--muted)]">{meta}</p>
                   </div>
                   <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
                     <a href={d.fileUrl} download>
