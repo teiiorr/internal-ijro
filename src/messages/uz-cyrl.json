@@ -939,7 +939,8 @@
     "selectPresenter": "Маърузачини танланг",
     "projectField": "Лойиҳа — танланг ёки ёзинг",
     "presenterField": "Маърузачи — танланг ёки ёзинг",
-    "newTopic": "Янги мавзу"
+    "newTopic": "Янги мавзу",
+    "emptyAgenda": "Кун тартиби бўш"
   },
   "owner": {
     "title": "Эгаси панели",

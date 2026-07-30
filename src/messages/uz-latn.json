@@ -939,7 +939,8 @@
     "selectPresenter": "Ma'ruzachini tanlang",
     "projectField": "Loyiha — tanlang yoki yozing",
     "presenterField": "Ma'ruzachi — tanlang yoki yozing",
-    "newTopic": "Yangi mavzu"
+    "newTopic": "Yangi mavzu",
+    "emptyAgenda": "Kun tartibi bo'sh"
   },
   "owner": {
     "title": "Egasi paneli",

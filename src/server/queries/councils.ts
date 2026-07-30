@@ -50,5 +50,30 @@ export async function getCouncilPage(kind: string) {
       .orderBy(asc(councilAgendaItems.orderIndex));
   }
 
-  return { meetings, upcoming, agenda };
+  // Agenda for every meeting of this kind → lets the history render as an
+  // expandable archive (each past meeting shows its own kun tartibi inside).
+  const allItems = await db
+    .select({
+      meetingId: councilAgendaItems.meetingId,
+      id: councilAgendaItems.id,
+      orderIndex: councilAgendaItems.orderIndex,
+      topic: councilAgendaItems.topic,
+      projectId: councilAgendaItems.projectId,
+      projectName: sql<string | null>`coalesce(${projects.name}, ${councilAgendaItems.projectName})`,
+      presenterUserId: councilAgendaItems.presenterUserId,
+      presenterName: sql<string | null>`coalesce(${users.fullName}, ${councilAgendaItems.presenterName})`,
+    })
+    .from(councilAgendaItems)
+    .innerJoin(councilMeetings, eq(councilMeetings.id, councilAgendaItems.meetingId))
+    .leftJoin(projects, eq(projects.id, councilAgendaItems.projectId))
+    .leftJoin(users, eq(users.id, councilAgendaItems.presenterUserId))
+    .where(eq(councilMeetings.kind, kind))
+    .orderBy(asc(councilAgendaItems.orderIndex));
+
+  const agendaByMeeting: Record<string, AgendaRow[]> = {};
+  for (const { meetingId, ...row } of allItems) {
+    (agendaByMeeting[meetingId] ??= []).push(row);
+  }
+
+  return { meetings, upcoming, agenda, agendaByMeeting };
 }
