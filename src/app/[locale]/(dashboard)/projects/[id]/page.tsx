@@ -14,7 +14,6 @@ import { StagesList } from "@/components/projects/stages-list";
 import { StagePath } from "@/components/projects/stage-path";
 import { ProjectPoster } from "@/components/projects/project-poster";
 import { ProjectDocsPanels } from "@/components/projects/project-docs-panels";
-import { PaymentDocuments } from "@/components/projects/payment-documents";
 import { FitText } from "@/components/ui/fit-text";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
@@ -220,24 +219,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               )}
             </CardContent>
             </Card>
-
-            {/* Payment documents (receipts / invoices) — money allowlist only, right under the totals. */}
-            {showMoney && (
-              <Card>
-                <CardContent className="p-5 space-y-3">
-                  <div>
-                    <h3 className="text-base font-semibold">{t("projects.paymentDocs.title")}</h3>
-                    <p className="mt-0.5 text-xs text-[var(--muted)]">{t("projects.paymentDocs.hint")}</p>
-                  </div>
-                  <PaymentDocuments
-                    projectId={sp.project.id}
-                    documents={sp.documents.payment.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
-                    canManage={canManage}
-                    maxBytes={MAX_UPLOAD_BYTES}
-                  />
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
       </div>
