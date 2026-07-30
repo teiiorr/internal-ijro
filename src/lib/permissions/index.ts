@@ -1,7 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { coordinatorAssignments, users, type Position } from "@/lib/db/schema";
-import { getPositionLevel } from "./positions";
 
 export * from "./positions";
 
@@ -57,33 +56,11 @@ export async function canAssignTaskTo(
   assigner: ActorContext,
   assignee: ActorContext
 ): Promise<boolean> {
-  if (assigner.id === assignee.id) return false;
-  if (assigner.position === "hr" || assigner.position === "mutaxassis") return false;
-  if (assigner.position === "kontragent") return false;
-  if (assignee.position === "kontragent") return false;
-
-  // HR can receive tasks from any manager (cross-department support function).
-  if (assignee.position === "hr") return true;
-
-  if (assigner.position === "direktor") return true;
-  if (assigner.position === "orinbosar") return assignee.position !== "direktor";
-
-  if (assigner.position === "koordinator") {
-    return (
-      (await isInCoordinatedDepartments(assigner.id, assignee.departmentId)) &&
-      getPositionLevel(assignee.position) > getPositionLevel(assigner.position)
-    );
-  }
-
-  if (assigner.position === "bolim_boshligi") {
-    return assigner.departmentId === assignee.departmentId && getPositionLevel(assignee.position) > 4;
-  }
-
-  if (assigner.position === "bosh_mutaxassis" || assigner.position === "yetakchi_mutaxassis") {
-    return isSubordinate(assigner.id, assignee.id);
-  }
-
-  return false;
+  // Open assignment policy (user directive): any internal staff member can assign
+  // a task to any other internal staff member — no hierarchy/department scoping.
+  // Contractors are external and are excluded both as assigner and assignee.
+  if (assigner.position === "kontragent" || assignee.position === "kontragent") return false;
+  return true;
 }
 
 export { can, type Capability } from "./capabilities";

@@ -169,48 +169,17 @@ export async function getOverdueTaskCount(actorId: string, actorPosition: Positi
 }
 
 export async function listAssignableUsers(actorId: string, actorPosition: Position, actorDepartmentId: string | null) {
-  // Used by the create-task dropdown — we still apply canAssignTaskTo on the server when creating.
-  if (actorPosition === "direktor") {
-    return db
-      .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
-      .from(users)
-      .where(sql`${users.status} = 'active' AND ${users.position} <> 'kontragent'`)
-      .orderBy(users.fullName);
-  }
-  if (actorPosition === "orinbosar") {
-    return db
-      .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
-      .from(users)
-      .where(sql`${users.status} = 'active' AND ${users.position} not in ('kontragent','direktor')`)
-      .orderBy(users.fullName);
-  }
-  if (actorPosition === "bolim_boshligi" && actorDepartmentId) {
-    return db
-      .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
-      .from(users)
-      .where(
-        sql`${users.status} = 'active' AND (${users.departmentId} = ${actorDepartmentId} AND ${users.position} in ('bosh_mutaxassis','yetakchi_mutaxassis','mutaxassis') OR ${users.position} = 'hr')`
-      )
-      .orderBy(users.fullName);
-  }
-  if (actorPosition === "koordinator") {
-    return db
-      .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
-      .from(users)
-      .where(
-        sql`${users.status} = 'active' AND (${users.departmentId} in (select department_id from coordinator_assignments where coordinator_user_id = ${actorId}) AND ${users.position} in ('bolim_boshligi','bosh_mutaxassis','yetakchi_mutaxassis','mutaxassis') OR ${users.position} = 'hr')`
-      )
-      .orderBy(users.fullName);
-  }
-  if (actorPosition === "bosh_mutaxassis" || actorPosition === "yetakchi_mutaxassis") {
-    // Direct reports + HR
-    return db
-      .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
-      .from(users)
-      .where(sql`${users.status} = 'active' AND (${users.reportsToUserId} = ${actorId} OR ${users.position} = 'hr')`)
-      .orderBy(users.fullName);
-  }
-  return [];
+  // Open assignment policy (user directive): anyone can assign a task to any
+  // internal staff member, so the dropdown lists every active non-contractor.
+  // canAssignTaskTo still runs on the server as a final guard.
+  void actorId;
+  void actorPosition;
+  void actorDepartmentId;
+  return db
+    .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
+    .from(users)
+    .where(sql`${users.status} = 'active' AND ${users.position} <> 'kontragent'`)
+    .orderBy(users.fullName);
 }
 
 void gte; void lte; void inArray;

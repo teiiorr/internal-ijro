@@ -11,7 +11,8 @@ export default async function NewTaskPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
-  if (["mutaxassis", "hr", "kontragent"].includes(session.user.position)) redirect("/tasks");
+  // Open assignment: any internal staff member can create/assign tasks (contractors excluded).
+  if (session.user.position === "kontragent") redirect("/tasks");
 
   const [assignees, prjs] = await Promise.all([
     listAssignableUsers(session.user.id, session.user.position, session.user.departmentId),
