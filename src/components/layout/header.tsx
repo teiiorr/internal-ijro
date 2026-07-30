@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "@/i18n/navigation";
 import { Search, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -29,6 +30,9 @@ export function Header({ userName }: { userName: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [q, setQ] = useState("");
   const router = useRouter();
+  const pathname = usePathname();
+  // Task search belongs to the Tasks section only — hide it everywhere else.
+  const onTasks = pathname === "/tasks" || pathname.startsWith("/tasks/");
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,17 +56,19 @@ export function Header({ userName }: { userName: string }) {
           <BrandLogo className="h-10 sm:h-14" />
         </Link>
 
-        <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-md ml-4">
-          <div className="relative w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
-            <input
-              placeholder={t("header.searchPlaceholder")}
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              className="h-11 w-full rounded-full border border-[var(--input)] bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 pl-11 pr-4 text-[14px] font-medium placeholder:text-[var(--subtle)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-glow)] transition-all duration-200"
-            />
-          </div>
-        </form>
+        {onTasks && (
+          <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-md ml-4">
+            <div className="relative w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
+              <input
+                placeholder={t("header.searchPlaceholder")}
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                className="h-11 w-full rounded-full border border-[var(--input)] bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 pl-11 pr-4 text-[14px] font-medium placeholder:text-[var(--subtle)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-glow)] transition-all duration-200"
+              />
+            </div>
+          </form>
+        )}
 
         <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
           <NotificationBell />
