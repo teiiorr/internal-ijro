@@ -102,8 +102,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 curators={curatorOptions}
                 canManage={canManage}
                 canDelete={canDeleteProject}
-                // Single-stage projects can't reach "in progress" from stage progress alone → allow a manual mark.
-                showInProgress={canManage && sp.stages.length === 1 && sp.project.progressPercentage < 100 && sp.project.statusOverride !== "on_hold"}
+                // Show "mark in progress" on every not-started project (0% + no override), and on
+                // ones already manually marked (so they can be un-marked).
+                showInProgress={canManage && sp.project.statusOverride !== "on_hold" && (sp.project.progressPercentage === 0 || sp.project.statusOverride === "in_progress")}
                 onHold={sp.project.statusOverride === "on_hold"}
                 inProgress={sp.project.statusOverride === "in_progress"}
               />
@@ -258,7 +259,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               curators={curatorOptions}
               canManage={canManage}
               canDelete={canDeleteProject}
-              showInProgress={false}
+              showInProgress={canManage && data.project.statusOverride !== "on_hold" && (data.project.progressPercentage === 0 || data.project.statusOverride === "in_progress")}
               onHold={data.project.statusOverride === "on_hold"}
               inProgress={data.project.statusOverride === "in_progress"}
             />
