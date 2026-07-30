@@ -15,6 +15,7 @@ import {
   Presentation,
   Coins,
   ShieldCheck,
+  FileCheck2,
   Menu,
   X,
 } from "lucide-react";
@@ -36,6 +37,7 @@ const ITEMS: NavItem[] = [
   { href: "/kengashlar/ekspert", icon: Presentation, key: "ekspertKengash", allowed: STAFF },
   { href: "/kengashlar/smeta", icon: Coins, key: "smetaKengash", allowed: STAFF },
   { href: "/employees", icon: Users, key: "employees", allowed: HR_ROLES },
+  { href: "/meyoriy-hujjatlar", icon: FileCheck2, key: "normativeDocs", allowed: ALL },
   { href: "/departments", icon: Building2, key: "departments", allowed: ADMIN },
   { href: "/contractors", icon: Handshake, key: "contractors", allowed: ADMIN.concat("koordinator") },
   { href: "/notifications", icon: Bell, key: "notifications", allowed: ALL },

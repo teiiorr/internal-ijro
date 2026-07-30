@@ -57,7 +57,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
         <div>
           <h1 className="text-2xl font-bold">{data.user.fullName}</h1>
           <div className="flex items-center gap-2 mt-1">
-            <Badge variant="secondary">{t(`positions.${data.user.position}`)}</Badge>
+            <Badge variant="secondary">{data.user.positionTitle ?? t(`positions.${data.user.position}`)}</Badge>
             <span className="text-sm text-[var(--muted)]">{data.department?.name ?? "—"}</span>
             <Badge variant={data.user.status === "active" ? "success" : data.user.status === "pending" ? "warning" : "secondary"}>
               {data.user.status}
@@ -74,6 +74,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
             <ChangePositionDialog
               userId={data.user.id}
               currentPosition={data.user.position}
+              currentPositionTitle={data.user.positionTitle}
               currentDepartmentId={data.user.departmentId}
               departments={deptOptions}
               managers={managerOptions}

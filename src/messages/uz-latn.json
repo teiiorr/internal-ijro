@@ -116,13 +116,14 @@
     "ekspertKengash": "Ekspertlar Kengashi",
     "smetaKengash": "Smeta Komissiyasi",
     "more": "Ko'proq",
-    "owner": "Egasi paneli"
+    "owner": "Egasi paneli",
+    "normativeDocs": "Me'yoriy hujjatlar"
   },
   "positions": {
     "direktor": "Direktor",
     "orinbosar": "O'rinbosar",
     "koordinator": "Koordinator",
-    "bolim_boshligi": "Bo'lim Boshlig'i",
+    "bolim_boshligi": "Bo'lim boshlig'i",
     "bosh_mutaxassis": "Bosh mutaxassis",
     "yetakchi_mutaxassis": "Yetakchi mutaxassis",
     "mutaxassis": "Mutaxassis",
@@ -639,7 +640,9 @@
       "newPosition": "Yangi lavozim",
       "department": "Bo'lim",
       "reportsTo": "Bevosita rahbar",
-      "reason": "Sababi"
+      "reason": "Sababi",
+      "positionTitle": "Lavozim nomi (ixtiyoriy)",
+      "positionTitlePlaceholder": "Masalan: Ijrochi direktor"
     },
     "archive": {
       "btn": "Arxivlash",
@@ -988,5 +991,9 @@
       "env": "Muhit sozlamalari",
       "secrets": "Maxfiy kalitlar"
     }
+  },
+  "normative": {
+    "title": "Me'yoriy hujjatlar",
+    "subtitle": "Tashkilotning me'yoriy hujjatlari — papkalar bo'yicha saqlanadi"
   }
 }

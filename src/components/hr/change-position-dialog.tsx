@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { changePosition } from "@/server/actions/employees";
@@ -16,12 +17,14 @@ const POSITIONS = [
 export function ChangePositionDialog({
   userId,
   currentPosition,
+  currentPositionTitle,
   currentDepartmentId,
   departments,
   managers,
 }: {
   userId: string;
   currentPosition: string;
+  currentPositionTitle?: string | null;
   currentDepartmentId: string | null;
   departments: { id: string; name: string }[];
   managers: { id: string; fullName: string }[];
@@ -30,6 +33,7 @@ export function ChangePositionDialog({
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const [pos, setPos] = useState(currentPosition);
+  const [title, setTitle] = useState(currentPositionTitle ?? "");
   const [dept, setDept] = useState<string>(currentDepartmentId ?? "");
   const [reportsTo, setReportsTo] = useState<string>("");
   const [reason, setReason] = useState("");
@@ -41,6 +45,7 @@ export function ChangePositionDialog({
         userId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         newPosition: pos as any,
+        positionTitle: title.trim() || null,
         newDepartmentId: dept || null,
         reportsToUserId: reportsTo || null,
         reason: reason || undefined,
@@ -65,6 +70,10 @@ export function ChangePositionDialog({
                 {POSITIONS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>{t("employees.changePosition.positionTitle")}</Label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} placeholder={t("employees.changePosition.positionTitlePlaceholder")} />
           </div>
           <div className="space-y-1.5">
             <Label>{t("employees.changePosition.department")}</Label>

@@ -28,13 +28,24 @@ type Project = {
 export function EditProjectDialog({
   project,
   curators,
+  open: controlledOpen,
+  onOpenChange,
 }: {
   project: Project;
   curators: { id: string; fullName: string }[];
+  /** Controlled mode — when provided, the built-in trigger button is hidden. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const t = useTranslations();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const controlled = controlledOpen !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlled ? controlledOpen : internalOpen;
+  const setOpen = (o: boolean) => {
+    onOpenChange?.(o);
+    if (!controlled) setInternalOpen(o);
+  };
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -73,12 +84,14 @@ export function EditProjectDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Pencil className="size-4" />
-          {t("projects.edit.button")}
-        </Button>
-      </DialogTrigger>
+      {!controlled && (
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm">
+            <Pencil className="size-4" />
+            {t("projects.edit.button")}
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-xl">
         <DialogHeader><DialogTitle>{t("projects.edit.title")}</DialogTitle></DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">

@@ -62,6 +62,9 @@ export const users = pgTable(
     phone: varchar("phone", { length: 50 }),
     avatarUrl: text("avatar_url"),
     position: varchar("position", { length: 50 }).notNull().$type<Position>(),
+    /** Free-text job title shown instead of the position label when set (e.g. "Ijrochi direktor").
+     *  `position` still drives permissions; this is display-only. */
+    positionTitle: varchar("position_title", { length: 200 }),
     departmentId: uuid("department_id").references(() => departments.id, { onDelete: "set null" }),
     reportsToUserId: uuid("reports_to_user_id").references((): AnyPgColumn => users.id, {
       onDelete: "set null",
@@ -716,6 +719,27 @@ export const projectDocuments = pgTable(
   (t) => ({
     projectIdx: index("project_documents_project_idx").on(t.projectId),
     kindIdx: index("project_documents_kind_idx").on(t.projectId, t.kind),
+  })
+);
+
+// ---------- normative_documents ----------
+// Organisation-wide regulatory documents ("Me'yoriy hujjatlar"), grouped by an
+// optional user-typed folder. Not tied to any project or stage.
+export const normativeDocuments = pgTable(
+  "normative_documents",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** Optional folder name typed by the uploader. NULL = uncategorised. */
+    folder: varchar("folder", { length: 120 }),
+    fileUrl: text("file_url").notNull(),
+    fileName: varchar("file_name", { length: 255 }).notNull(),
+    fileSize: integer("file_size"),
+    fileMimeType: varchar("file_mime_type", { length: 120 }),
+    uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    folderIdx: index("normative_documents_folder_idx").on(t.folder),
   })
 );
 

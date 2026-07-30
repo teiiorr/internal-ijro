@@ -29,6 +29,7 @@ export type EmployeeListRow = {
   email: string;
   phone: string | null;
   position: Position;
+  positionTitle: string | null;
   status: UserStatus;
   hireDate: string | null;
   departmentId: string | null;
@@ -62,6 +63,7 @@ export async function listEmployees(filters: EmployeeListFilters = {}): Promise<
       email: users.email,
       phone: users.phone,
       position: users.position,
+      positionTitle: users.positionTitle,
       status: users.status,
       hireDate: users.hireDate,
       departmentId: users.departmentId,

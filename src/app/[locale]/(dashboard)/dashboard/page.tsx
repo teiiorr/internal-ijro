@@ -1,5 +1,8 @@
 import { auth } from "@/lib/auth";
 import { getTranslations, getLocale } from "next-intl/server";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { localizeName } from "@/lib/names";
 import { isOwner, OWNER_TITLE } from "@/lib/permissions/owner";
 import { HrWidgets } from "@/components/dashboards/hr-widgets";
@@ -20,6 +23,7 @@ export default async function DashboardPage() {
   const greetKey = hour < 5 ? "night" : hour < 11 ? "morning" : hour < 18 ? "afternoon" : hour < 22 ? "evening" : "night";
   const greet = t(`dashboard.greeting.${greetKey}` as "dashboard.greeting.morning");
   const owner = isOwner(user.email);
+  const [meRow] = await db.select({ positionTitle: users.positionTitle }).from(users).where(eq(users.id, user.id)).limit(1);
 
   return (
     <div className="space-y-6">
@@ -34,7 +38,7 @@ export default async function DashboardPage() {
           )}
         </h1>
         <p className="text-[var(--muted)] mt-1 text-sm font-medium">
-          {owner ? t("dashboard.ownerRole") : t(`positions.${user.position}` as "positions.direktor")}
+          {owner ? t("dashboard.ownerRole") : (meRow?.positionTitle ?? t(`positions.${user.position}` as "positions.direktor"))}
         </p>
       </div>
 

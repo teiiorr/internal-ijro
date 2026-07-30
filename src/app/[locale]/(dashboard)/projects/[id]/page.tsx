@@ -18,10 +18,7 @@ import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
-import { OnHoldToggle } from "@/components/projects/on-hold-toggle";
-import { InProgressToggle } from "@/components/projects/in-progress-toggle";
-import { DeleteProjectButton } from "@/components/projects/delete-project-button";
-import { EditProjectDialog } from "@/components/projects/edit-project-dialog";
+import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
 import { formatDate } from "@/lib/dates";
 import { db } from "@/lib/db";
@@ -99,14 +96,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
           {(canManage || canDeleteProject) && (
-            <div className="flex flex-col items-end gap-2 shrink-0">
-              {canManage && <EditProjectDialog project={editProject} curators={curatorOptions} />}
-              {canManage && <OnHoldToggle projectId={sp.project.id} onHold={sp.project.statusOverride === "on_hold"} />}
-              {/* Single-stage projects can't reach "in progress" from stage progress alone — allow a manual mark. */}
-              {canManage && sp.stages.length === 1 && sp.project.progressPercentage < 100 && sp.project.statusOverride !== "on_hold" && (
-                <InProgressToggle projectId={sp.project.id} active={sp.project.statusOverride === "in_progress"} />
-              )}
-              {canDeleteProject && <DeleteProjectButton projectId={sp.project.id} />}
+            <div className="shrink-0">
+              <ProjectActionsMenu
+                project={editProject}
+                curators={curatorOptions}
+                canManage={canManage}
+                canDelete={canDeleteProject}
+                // Single-stage projects can't reach "in progress" from stage progress alone → allow a manual mark.
+                showInProgress={canManage && sp.stages.length === 1 && sp.project.progressPercentage < 100 && sp.project.statusOverride !== "on_hold"}
+                onHold={sp.project.statusOverride === "on_hold"}
+                inProgress={sp.project.statusOverride === "in_progress"}
+              />
             </div>
           )}
         </div>
@@ -252,15 +252,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
         {(canManage || canDeleteProject) && (
-          <div className="flex flex-col items-end gap-2 shrink-0">
-            {canManage && <EditProjectDialog project={editProject} curators={curatorOptions} />}
-            {canManage && (
-              <OnHoldToggle
-                projectId={data.project.id}
-                onHold={data.project.statusOverride === "on_hold"}
-              />
-            )}
-            {canDeleteProject && <DeleteProjectButton projectId={data.project.id} />}
+          <div className="shrink-0">
+            <ProjectActionsMenu
+              project={editProject}
+              curators={curatorOptions}
+              canManage={canManage}
+              canDelete={canDeleteProject}
+              showInProgress={false}
+              onHold={data.project.statusOverride === "on_hold"}
+              inProgress={data.project.statusOverride === "in_progress"}
+            />
           </div>
         )}
       </div>

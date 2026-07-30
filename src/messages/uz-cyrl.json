@@ -116,13 +116,14 @@
     "ekspertKengash": "Экспертлар Кенгаши",
     "smetaKengash": "Смета Комиссияси",
     "more": "Кўпроқ",
-    "owner": "Эгаси панели"
+    "owner": "Эгаси панели",
+    "normativeDocs": "Меъёрий ҳужжатлар"
   },
   "positions": {
     "direktor": "Директор",
     "orinbosar": "Ўринбосар",
     "koordinator": "Координатор",
-    "bolim_boshligi": "Бўлим Бошлиғи",
+    "bolim_boshligi": "Бўлим бошлиғи",
     "bosh_mutaxassis": "Бош мутахассис",
     "yetakchi_mutaxassis": "Етакчи мутахассис",
     "mutaxassis": "Мутахассис",
@@ -639,7 +640,9 @@
       "newPosition": "Янги лавозим",
       "department": "Бўлим",
       "reportsTo": "Бевосита раҳбар",
-      "reason": "Сабаби"
+      "reason": "Сабаби",
+      "positionTitle": "Лавозим номи (ихтиёрий)",
+      "positionTitlePlaceholder": "Масалан: Ижрочи директор"
     },
     "archive": {
       "btn": "Архивлаш",
@@ -988,5 +991,9 @@
       "env": "Муҳит созламалари",
       "secrets": "Махфий калитлар"
     }
+  },
+  "normative": {
+    "title": "Меъёрий ҳужжатлар",
+    "subtitle": "Ташкилотнинг меъёрий ҳужжатлари — папкалар бўйича сақланади"
   }
 }

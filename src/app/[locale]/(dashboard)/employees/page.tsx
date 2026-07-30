@@ -72,7 +72,7 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
               </Badge>
             </div>
             <div className="flex items-center justify-between mt-2 text-xs text-[var(--muted)]">
-              <span>{t(`positions.${r.position}`)}</span>
+              <span>{r.positionTitle ?? t(`positions.${r.position}`)}</span>
               <span className="truncate ml-2">{r.departmentName ?? "—"}</span>
             </div>
           </Link>
@@ -105,7 +105,7 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
                     </Link>
                   </TableCell>
                   <TableCell className="text-[var(--muted)]">{r.email}</TableCell>
-                  <TableCell>{t(`positions.${r.position}`)}</TableCell>
+                  <TableCell>{r.positionTitle ?? t(`positions.${r.position}`)}</TableCell>
                   <TableCell>{r.departmentName ?? "—"}</TableCell>
                   <TableCell>
                     <Badge

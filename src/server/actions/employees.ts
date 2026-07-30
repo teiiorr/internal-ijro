@@ -70,6 +70,8 @@ const changePositionSchema = z.object({
   newPosition: z.enum(internalPositions as [string, ...string[]]),
   newDepartmentId: z.string().uuid().nullable().optional(),
   reportsToUserId: z.string().uuid().nullable().optional(),
+  /** Free-text job title shown instead of the position label. */
+  positionTitle: z.string().max(200).nullable().optional(),
   reason: z.string().max(500).optional(),
 });
 
@@ -96,6 +98,7 @@ export async function changePosition(input: z.infer<typeof changePositionSchema>
       .update(users)
       .set({
         position: parsed.newPosition as (typeof POSITIONS)[number],
+        positionTitle: parsed.positionTitle !== undefined ? (parsed.positionTitle?.trim() || null) : u.positionTitle,
         departmentId: parsed.newDepartmentId ?? null,
         reportsToUserId: parsed.reportsToUserId ?? u.reportsToUserId,
         updatedAt: new Date(),
