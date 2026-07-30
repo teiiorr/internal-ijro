@@ -81,10 +81,12 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
     color: STATUS_HEX[k],
   }));
 
-  // payments bar geometry (paid green + pending amber over the planned reference)
-  const payBase = Math.max(pay.planned, pay.paid + pay.pending, 1);
+  // Pending = remaining balance = planned − paid (never below zero).
+  const payRemaining = Math.max(0, pay.planned - pay.paid);
+  // payments bar geometry (paid green + remaining amber over the planned reference)
+  const payBase = Math.max(pay.planned, pay.paid, 1);
   const paidPct = (pay.paid / payBase) * 100;
-  const pendingPct = (pay.pending / payBase) * 100;
+  const pendingPct = (payRemaining / payBase) * 100;
 
   return (
     <div className="space-y-6">
@@ -207,12 +209,12 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
             </div>
             <div className="flex items-baseline justify-between gap-3 sm:block">
               <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.pending")}</p>
-              <p className="whitespace-nowrap text-lg font-bold tabular-nums text-[var(--warning)] sm:mt-1 sm:text-xl">{money(pay.pending)}</p>
+              <p className="whitespace-nowrap text-lg font-bold tabular-nums text-[var(--warning)] sm:mt-1 sm:text-xl">{money(payRemaining)}</p>
             </div>
           </div>
           <div className="flex h-3 overflow-hidden rounded-full bg-[var(--surface-3)]">
             {pay.paid > 0 && <div className="bg-[var(--success)] transition-all duration-500" style={{ width: `${paidPct}%` }} title={money(pay.paid)} />}
-            {pay.pending > 0 && <div className="bg-[var(--warning)] transition-all duration-500" style={{ width: `${pendingPct}%` }} title={money(pay.pending)} />}
+            {payRemaining > 0 && <div className="bg-[var(--warning)] transition-all duration-500" style={{ width: `${pendingPct}%` }} title={money(payRemaining)} />}
           </div>
         </CardContent>
       </Card>
