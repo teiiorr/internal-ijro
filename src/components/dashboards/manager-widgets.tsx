@@ -50,7 +50,7 @@ const KPI_TONE = {
   warning: { chip: "bg-[var(--warning-soft)]", icon: "text-[var(--warning)]", value: "" },
 } as const;
 
-export async function ManagerWidgets() {
+export async function ManagerWidgets({ showPayments = false }: { showPayments?: boolean }) {
   const t = await getTranslations();
   const locale = await getLocale();
   const [kpi, statusBreak, typeBreak, board, pay, top, slow, deptLoad] = await Promise.all([
@@ -182,7 +182,8 @@ export async function ManagerWidgets() {
         </CardContent>
       </Card>
 
-      {/* Payments overview */}
+      {/* Payments overview — restricted (director, Finance dept, dept heads) */}
+      {showPayments && (
       <Card>
         <CardHeader className="flex-row items-center gap-3 pb-4">
           <div className="grid size-10 place-items-center rounded-xl bg-[var(--success-soft)]">
@@ -215,6 +216,7 @@ export async function ManagerWidgets() {
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* Row: Top performers + Most overdue (people) */}
       <div className="grid gap-5 lg:grid-cols-2">

@@ -2,6 +2,7 @@ import "server-only";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import type { Position, UserStatus } from "@/lib/db/schema";
+import { canEditProjects } from "@/lib/permissions/project-editors";
 
 export type SessionUser = {
   id: string;
@@ -28,5 +29,12 @@ export async function requireUser(): Promise<SessionUser> {
 export async function requirePosition(allowed: Position[]): Promise<SessionUser> {
   const user = await requireUser();
   if (!allowed.includes(user.position)) redirect("/dashboard");
+  return user;
+}
+
+/** Only the fixed project-editor allowlist may mutate projects/stages. */
+export async function requireProjectEditor(): Promise<SessionUser> {
+  const user = await requireUser();
+  if (!canEditProjects(user.email)) redirect("/projects");
   return user;
 }

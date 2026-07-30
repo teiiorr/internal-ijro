@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { getTranslations, getLocale } from "next-intl/server";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { users, departments } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { localizeName } from "@/lib/names";
 import { isOwner, OWNER_TITLE } from "@/lib/permissions/owner";
@@ -23,7 +23,17 @@ export default async function DashboardPage() {
   const greetKey = hour < 5 ? "night" : hour < 11 ? "morning" : hour < 18 ? "afternoon" : hour < 22 ? "evening" : "night";
   const greet = t(`dashboard.greeting.${greetKey}` as "dashboard.greeting.morning");
   const owner = isOwner(user.email);
-  const [meRow] = await db.select({ positionTitle: users.positionTitle }).from(users).where(eq(users.id, user.id)).limit(1);
+  const [meRow] = await db
+    .select({ positionTitle: users.positionTitle, deptName: departments.name })
+    .from(users)
+    .leftJoin(departments, eq(departments.id, users.departmentId))
+    .where(eq(users.id, user.id))
+    .limit(1);
+  // Payments overview: director, anyone in the Finance (Moliya) department, and every department head.
+  const showPayments =
+    user.position === "direktor" ||
+    user.position === "bolim_boshligi" ||
+    /moliya/i.test(meRow?.deptName ?? "");
 
   return (
     <div className="space-y-6">
@@ -44,8 +54,10 @@ export default async function DashboardPage() {
 
       <InboxWidget userId={user.id} />
 
+      {/* Charts/graphs are visible to everyone now; payments overview is gated inside. */}
+      <ManagerWidgets showPayments={showPayments} />
+
       {isHr && <HrWidgets />}
-      {isManager && <ManagerWidgets />}
       {!isManager && !isHr && <SpecialistWidgets userId={user.id} />}
     </div>
   );

@@ -4,13 +4,11 @@ import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { projects, projectStages, stageDocuments, stagePayments, users } from "@/lib/db/schema";
-import { requirePosition } from "@/lib/session";
+import { requireProjectEditor } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
-
-const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 
 function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/projects/${projectId}`);
@@ -30,7 +28,7 @@ async function directorIds(): Promise<string[]> {
  * Strict sequential state machine: only an 'active' stage can be completed.
  */
 export async function completeStage(stageId: string) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
 
   const result = await db.transaction(async (tx) => {
     const rows = await tx.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
@@ -178,7 +176,7 @@ export async function completeStage(stageId: string) {
  * that was unlocked by its completion back to locked.
  */
 export async function reopenStage(stageId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
 
   const projectId = await db.transaction(async (tx) => {
     const rows = await tx.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
@@ -248,7 +246,7 @@ export async function reopenStage(stageId: string) {
 // ---------- field updaters ----------
 
 export async function setStageResponsible(stageId: string, userId: string | null) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
   if (!row) throw new Error("not_found");
   await db.update(projectStages).set({ responsibleUserId: userId, updatedAt: new Date() }).where(eq(projectStages.id, stageId));
@@ -257,7 +255,7 @@ export async function setStageResponsible(stageId: string, userId: string | null
 }
 
 export async function setStageDeadline(stageId: string, date: string | null) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
   if (!row) throw new Error("not_found");
   await db
@@ -269,7 +267,7 @@ export async function setStageDeadline(stageId: string, date: string | null) {
 }
 
 export async function setStagePlannedAmount(stageId: string, amount: number | null) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
   if (!row) throw new Error("not_found");
   await db
@@ -291,7 +289,7 @@ const updateStageSchema = z.object({
   plannedAmount: z.number().nullable().optional(),
 });
 export async function updateStage(stageId: string, input: z.infer<typeof updateStageSchema>) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
   const parsed = updateStageSchema.parse(input);
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
   if (!row) throw new Error("not_found");
@@ -334,7 +332,7 @@ function normalizeCategory(raw: string | null | undefined): string | null {
 
 /** Move a document to another folder (or clear it). Powers drag-free re-filing from the stage page. */
 export async function setStageDocumentCategory(documentId: string, category: string | null) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
   const [doc] = await db.select().from(stageDocuments).where(eq(stageDocuments.id, documentId)).limit(1);
   if (!doc) return;
   const projectId = await stageProjectId(doc.stageId);
@@ -344,7 +342,7 @@ export async function setStageDocumentCategory(documentId: string, category: str
 }
 
 export async function removeStageDocument(documentId: string) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
   const [doc] = await db.select().from(stageDocuments).where(eq(stageDocuments.id, documentId)).limit(1);
   if (!doc) return;
   const projectId = await stageProjectId(doc.stageId);
@@ -365,7 +363,7 @@ const paymentSchema = z.object({
 });
 
 export async function addStagePayment(input: z.infer<typeof paymentSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const parsed = paymentSchema.parse(input);
   const projectId = await stageProjectId(parsed.stageId);
   await db.insert(stagePayments).values({
@@ -383,7 +381,7 @@ export async function addStagePayment(input: z.infer<typeof paymentSchema>) {
 }
 
 export async function setStagePaymentStatus(paymentId: string, status: "pending" | "paid") {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const [row] = await db.select().from(stagePayments).where(eq(stagePayments.id, paymentId)).limit(1);
   if (!row) return;
   const projectId = await stageProjectId(row.stageId);
@@ -396,7 +394,7 @@ export async function setStagePaymentStatus(paymentId: string, status: "pending"
 }
 
 export async function deleteStagePayment(paymentId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const [row] = await db.select().from(stagePayments).where(eq(stagePayments.id, paymentId)).limit(1);
   if (!row) return;
   const projectId = await stageProjectId(row.stageId);

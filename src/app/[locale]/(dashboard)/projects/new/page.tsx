@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { canEditProjects } from "@/lib/permissions/project-editors";
 import { getTranslations, getLocale } from "next-intl/server";
 import { eq, sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
@@ -15,6 +16,7 @@ export default async function NewProjectPage() {
   const locale = await getLocale();
   // Open to all internal staff (temporary — refine later). Only external contractors are blocked.
   if (session.user.position === "kontragent") redirect("/projects");
+  if (!canEditProjects(session.user.email)) redirect("/projects");
   const [companies, curators, responsibles, typeRows] = await Promise.all([
     db.select({ id: externalCompanies.id, name: externalCompanies.name }).from(externalCompanies).where(eq(externalCompanies.status, "approved")).orderBy(externalCompanies.name),
     db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`).orderBy(users.fullName),

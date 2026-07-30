@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
+import { canEditProjects } from "@/lib/permissions/project-editors";
 import { StagePayments } from "@/components/projects/stage-payments";
 import { CompleteStageButton } from "@/components/projects/complete-stage-button";
 import { ReopenStageButton } from "@/components/projects/reopen-stage-button";
@@ -26,10 +27,9 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   if (!data || data.stage.projectId !== id) notFound();
 
   const me = session.user;
-  const canManage =
-    ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position) ||
-    data.stage.projectCuratorUserId === me.id;
-  const canManagePayments = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
+  // Stage changes restricted to the fixed project-editor allowlist.
+  const canManage = canEditProjects(me.email);
+  const canManagePayments = canManage;
 
   const s = data.stage;
   const total = data.siblings.length;

@@ -20,6 +20,7 @@ import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
+import { canEditProjects } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
@@ -53,19 +54,20 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     budget: data.project.budget,
     budgetCurrency: data.project.budgetCurrency,
   };
-  const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position) || data.project.curatorUserId === me.id;
-  // Bo'lim boshlig'i can create / edit / update but NOT delete stages or projects.
-  const canDelete = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
-  // Deleting a whole project is irreversible → senior management only.
-  const canDeleteProject = ["direktor", "orinbosar", "koordinator"].includes(me.position);
-  const canTogglePayment = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
+  // Project changes are restricted to the fixed project-editor allowlist; everyone else is read-only.
+  const editor = canEditProjects(me.email);
+  const canManage = editor;
+  const canDelete = editor;
+  // Deleting a whole project is irreversible → editor + senior management only.
+  const canDeleteProject = editor && ["direktor", "orinbosar", "koordinator"].includes(me.position);
+  const canTogglePayment = editor;
 
   // ---- Typed (template-driven) project → serpentine stage view ----
   if (data.project.projectTypeId) {
     const sp = await getStageProject(id, locale);
     if (!sp) notFound();
     const contractors = await listContractors("approved");
-    const canManageContractor = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
+    const canManageContractor = editor;
     const status = derivedStatus(sp.project.progressPercentage, sp.project.statusOverride);
     const statusTone: StatusTone =
       status === "completed" ? "green"

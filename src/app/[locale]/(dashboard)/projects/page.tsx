@@ -10,8 +10,8 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { ProjectsFilters } from "@/components/projects/projects-filters";
 import { ScrollMemory } from "@/components/scroll-memory";
 import { Plus, Download, AlertTriangle } from "lucide-react";
-import { can } from "@/lib/permissions";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
+import { canEditProjects } from "@/lib/permissions/project-editors";
 
 type Sort = "created" | "name" | "deadline" | "progress";
 type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_hold" | "at_risk";
@@ -48,7 +48,7 @@ export default async function ProjectsPage({
     listProjectTypes(locale),
     listStageOptionsByType(locale),
   ]);
-  const canCreate = can(session.user.position, "projects.create");
+  const canCreate = canEditProjects(session.user.email);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

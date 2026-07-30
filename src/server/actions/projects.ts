@@ -17,7 +17,8 @@ import {
   projectDocuments,
   stageTemplateItems,
 } from "@/lib/db/schema";
-import { requireUser, requirePosition } from "@/lib/session";
+import { redirect } from "next/navigation";
+import { requireUser, requireProjectEditor } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
@@ -40,7 +41,7 @@ const projectSchema = z.object({
 });
 
 export async function createProject(input: z.infer<typeof projectSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const parsed = projectSchema.parse(input);
   if (parsed.type === "external" && !parsed.externalCompanyId) throw new Error("company_required");
 
@@ -156,7 +157,7 @@ const milestoneSchema = z.object({
 });
 
 export async function createMilestone(input: z.infer<typeof milestoneSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const parsed = milestoneSchema.parse(input);
   await db.insert(milestones).values({
     projectId: parsed.projectId,
@@ -196,7 +197,7 @@ export async function setMilestoneStatus(milestoneId: string, status: string) {
 }
 
 export async function setMilestonePaymentStatus(milestoneId: string, paymentStatus: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) return;
   await db.update(milestones).set({ paymentStatus }).where(eq(milestones.id, milestoneId));
@@ -213,7 +214,7 @@ export async function setMilestonePaymentStatus(milestoneId: string, paymentStat
 
 /** Set a stage's progress (0..100). Server clamps; never trust client. */
 export async function setMilestoneProgress(milestoneId: string, progress: number) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const value = Math.max(0, Math.min(100, Math.round(Number(progress) || 0)));
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) throw new Error("not_found");
@@ -248,7 +249,7 @@ export async function updateMilestone(
   milestoneId: string,
   input: z.infer<typeof updateMilestoneSchema>
 ) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const parsed = updateMilestoneSchema.parse(input);
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) throw new Error("not_found");
@@ -274,7 +275,7 @@ export async function updateMilestone(
 
 export async function deleteMilestone(milestoneId: string) {
   // Bo'lim boshlig'i can create + edit + reorder stages but NOT delete.
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) return;
   await db.delete(milestones).where(eq(milestones.id, milestoneId));
@@ -290,7 +291,7 @@ export async function deleteMilestone(milestoneId: string) {
 
 /** Apply a new ordering to the project's stages. orderedIds must be a full list. */
 export async function reorderMilestones(projectId: string, orderedIds: string[]) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   await db.transaction(async (tx) => {
     for (let i = 0; i < orderedIds.length; i++) {
       await tx
@@ -311,7 +312,7 @@ export async function reorderMilestones(projectId: string, orderedIds: string[])
 
 /** Toggle the manual on-hold override for a project. */
 export async function setProjectOnHold(projectId: string, onHold: boolean) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   await db
     .update(projects)
     .set({ statusOverride: onHold ? "on_hold" : null, updatedAt: new Date() })
@@ -331,7 +332,7 @@ export async function setProjectOnHold(projectId: string, onHold: boolean) {
  * same statusOverride field, so it and on-hold are mutually exclusive.
  */
 export async function setProjectInProgress(projectId: string, on: boolean) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   await db
     .update(projects)
     .set({ statusOverride: on ? "in_progress" : null, updatedAt: new Date() })
@@ -348,7 +349,7 @@ export async function setProjectInProgress(projectId: string, on: boolean) {
 
 // Project poster (square cover image)
 export async function setProjectPoster(projectId: string, file: File) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   if (!file.type.startsWith("image/")) throw new Error("image_required");
   const [prev] = await db.select({ posterUrl: projects.posterUrl }).from(projects).where(eq(projects.id, projectId)).limit(1);
   const stored = await storeFile(file, `project-posters/${projectId}`);
@@ -360,7 +361,7 @@ export async function setProjectPoster(projectId: string, file: File) {
 }
 
 export async function removeProjectPoster(projectId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const [prev] = await db.select({ posterUrl: projects.posterUrl }).from(projects).where(eq(projects.id, projectId)).limit(1);
   if (prev?.posterUrl) await deleteFileByUrl(prev.posterUrl);
   await db.update(projects).set({ posterUrl: null, updatedAt: new Date() }).where(eq(projects.id, projectId));
@@ -469,7 +470,9 @@ const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bos
 // tasks & council-agenda references are set null (they survive). Uploaded files
 // (stage docs + poster) are cleaned off disk best-effort before the row is dropped.
 export async function deleteProject(projectId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator"]);
+  // Deletion needs BOTH the project-editor allowlist AND a director-level position.
+  const me = await requireProjectEditor();
+  if (!["direktor", "orinbosar", "koordinator"].includes(me.position)) redirect("/projects");
   const [prj] = await db
     .select({ id: projects.id, name: projects.name, posterUrl: projects.posterUrl })
     .from(projects)
@@ -509,7 +512,7 @@ const updateProjectSchema = z.object({
   budgetCurrency: z.string().min(1).max(10).optional(),
 });
 export async function updateProject(id: string, input: z.infer<typeof updateProjectSchema>) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
   const parsed = updateProjectSchema.parse(input);
   const [existing] = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, id)).limit(1);
   if (!existing) throw new Error("not_found");
@@ -542,7 +545,7 @@ const contractorSchema = z.object({
   specialization: z.string().max(500).nullable().optional(),
 });
 export async function createContractor(input: z.infer<typeof contractorSchema>) {
-  const me = await requirePosition([...MANAGERS]);
+  const me = await requireProjectEditor();
   const parsed = contractorSchema.parse(input);
   const ins = await db
     .insert(externalCompanies)
@@ -576,7 +579,7 @@ export async function setProjectContractor(projectId: string, companyId: string 
 
 // Approve/reject contractor (external_companies + user activation)
 export async function approveContractor(companyId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const company = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
   if (company.length === 0) return;
   await db.transaction(async (tx) => {
@@ -596,7 +599,7 @@ export async function approveContractor(companyId: string) {
 }
 
 export async function rejectContractor(companyId: string, reason: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   await db
     .update(externalCompanies)
     .set({ status: "rejected", rejectionReason: reason })
@@ -619,7 +622,7 @@ const ratingSchema = z.object({
   notes: z.string().nullable().optional(),
 });
 export async function completeProjectWithRating(input: z.infer<typeof ratingSchema>) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const parsed = ratingSchema.parse(input);
   await db.transaction(async (tx) => {
     await tx
@@ -673,7 +676,7 @@ export async function acceptNda() {
 // Uploads go through the streaming route /api/files/project-docs; this only
 // removes an existing file. Open to all internal staff (matches upload access).
 export async function removeProjectDocument(documentId: string) {
-  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  const me = await requireProjectEditor();
   const [doc] = await db.select().from(projectDocuments).where(eq(projectDocuments.id, documentId)).limit(1);
   if (!doc) return;
   await deleteFileByUrl(doc.fileUrl);
