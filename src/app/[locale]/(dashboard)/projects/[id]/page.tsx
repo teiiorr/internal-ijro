@@ -19,6 +19,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { OnHoldToggle } from "@/components/projects/on-hold-toggle";
+import { InProgressToggle } from "@/components/projects/in-progress-toggle";
 import { DeleteProjectButton } from "@/components/projects/delete-project-button";
 import { EditProjectDialog } from "@/components/projects/edit-project-dialog";
 import { derivedStatus } from "@/lib/projects/progress";
@@ -101,6 +102,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <div className="flex flex-col items-end gap-2 shrink-0">
               {canManage && <EditProjectDialog project={editProject} curators={curatorOptions} />}
               {canManage && <OnHoldToggle projectId={sp.project.id} onHold={sp.project.statusOverride === "on_hold"} />}
+              {/* Single-stage projects can't reach "in progress" from stage progress alone — allow a manual mark. */}
+              {canManage && sp.stages.length === 1 && sp.project.progressPercentage < 100 && sp.project.statusOverride !== "on_hold" && (
+                <InProgressToggle projectId={sp.project.id} active={sp.project.statusOverride === "in_progress"} />
+              )}
               {canDeleteProject && <DeleteProjectButton projectId={sp.project.id} />}
             </div>
           )}

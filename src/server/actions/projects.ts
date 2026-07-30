@@ -325,6 +325,27 @@ export async function setProjectOnHold(projectId: string, onHold: boolean) {
   revalidatePath(`/projects/${projectId}`);
 }
 
+/**
+ * Manually mark a project as "in progress" (or clear it). Meant for single-stage
+ * projects, whose derived status can only be not_started/completed. Writes the
+ * same statusOverride field, so it and on-hold are mutually exclusive.
+ */
+export async function setProjectInProgress(projectId: string, on: boolean) {
+  const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);
+  await db
+    .update(projects)
+    .set({ statusOverride: on ? "in_progress" : null, updatedAt: new Date() })
+    .where(eq(projects.id, projectId));
+  await logActivity({
+    userId: me.id,
+    action: on ? "project.marked_in_progress" : "project.status_cleared",
+    entityType: "project",
+    entityId: projectId,
+  });
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${projectId}`);
+}
+
 // Project poster (square cover image)
 export async function setProjectPoster(projectId: string, file: File) {
   const me = await requirePosition(["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"]);

@@ -57,6 +57,10 @@ export function derivedStatus(
 ): DerivedStatus {
   if (statusOverride === "on_hold") return "on_hold";
   if (progress >= 100) return "completed";
+  // Manual "in progress" override — mainly for single-stage projects, whose
+  // progress can only be 0% (active) or 100% (done), so they'd otherwise never
+  // show as "in progress". Ignored once the project actually completes.
+  if (statusOverride === "in_progress") return "in_progress";
   if (progress <= 0) return "not_started";
   return "in_progress";
 }

@@ -436,6 +436,8 @@
     },
     "atRisk": "Muddati o'tgan",
     "pause": "To'xtatish",
+    "markInProgress": "Jarayonda deb belgilash",
+    "clearInProgress": "Belgini bekor qilish",
     "resume": "Davom etish",
     "stages": {
       "overall": "Umumiy bajarilish",
