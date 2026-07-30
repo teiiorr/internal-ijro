@@ -152,11 +152,11 @@ export function NormativeDocuments({
                   {g.docs.length}
                 </span>
               </div>
-              <ul className="grid gap-2 lg:grid-cols-2 sm:pl-6">
+              <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2 sm:pl-6">
                 {g.docs.map((d) => {
                   const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date)}`;
                   return (
-                    <li key={d.id} className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5">
+                    <li key={d.id} className="flex min-w-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5">
                       <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]">
                         <FileText className="size-4" />
                       </div>
