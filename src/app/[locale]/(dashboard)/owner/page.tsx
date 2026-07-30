@@ -10,6 +10,7 @@ import { listAudit } from "@/server/queries/audit";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { FitText } from "@/components/ui/fit-text";
 import { ShieldCheck, Download, PlusCircle, Trash2, Pencil, Database, Server, HardDriveDownload, KeyRound } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -33,20 +34,25 @@ export default async function OwnerPage() {
     getSystemInfo(),
   ]);
 
+  // Count tiles — small numbers, fit the narrow grid cells.
   const tiles: { label: string; value: string | number; sub?: string }[] = [
     { label: t("owner.stats.users"), value: stats.users, sub: `${stats.activeUsers} ${t("owner.stats.activeSuffix")}` },
     { label: t("owner.stats.projects"), value: stats.projects, sub: `${stats.activeProjects} ${t("owner.stats.activeSuffix")}` },
     { label: t("owner.stats.tasks"), value: stats.tasks },
     { label: t("owner.stats.stages"), value: stats.stages },
     { label: t("owner.stats.documents"), value: stats.documents },
-    { label: t("owner.stats.paid"), value: money(stats.paid) },
-    { label: t("owner.stats.pending"), value: money(stats.pending) },
     { label: t("owner.stats.companies"), value: stats.companies },
     { label: t("owner.stats.departments"), value: stats.departments },
     { label: t("owner.stats.notifications"), value: stats.notifications },
     { label: t("owner.stats.logs"), value: stats.logs },
     { label: t("owner.stats.dbSize"), value: stats.dbSize },
     { label: t("owner.stats.connections"), value: sys.connections },
+  ];
+  // Money tiles — big sums; rendered last as full-width cards so the whole
+  // figure fits on one line instead of wrapping in a narrow cell.
+  const moneyTiles: { label: string; value: string }[] = [
+    { label: t("owner.stats.paid"), value: money(stats.paid) },
+    { label: t("owner.stats.pending"), value: money(stats.pending) },
   ];
 
   const kindMeta = {
@@ -80,6 +86,18 @@ export default async function OwnerPage() {
                 <p className="text-xs font-semibold text-[var(--muted)] leading-tight">{tile.label}</p>
                 <p className="text-2xl font-bold tabular-nums mt-1.5 break-words">{tile.value}</p>
                 {tile.sub && <p className="text-xs text-[var(--muted)] mt-0.5">{tile.sub}</p>}
+              </CardContent>
+            </Card>
+          ))}
+          {/* Money tiles last, stretched full width — the sum fits on one line
+              (font shrinks to fit rather than wrapping). */}
+          {moneyTiles.map((tile) => (
+            <Card key={tile.label} className="col-span-full">
+              <CardContent className="flex items-center justify-between gap-4 p-4">
+                <p className="shrink-0 text-xs font-semibold text-[var(--muted)] leading-tight">{tile.label}</p>
+                <div className="min-w-0 flex-1 text-right">
+                  <FitText className="font-bold tabular-nums" maxPx={26} minPx={15}>{tile.value}</FitText>
+                </div>
               </CardContent>
             </Card>
           ))}
