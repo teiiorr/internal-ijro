@@ -205,6 +205,17 @@ html {
 }
 .dark { color-scheme: dark; }
 
+/* Native <select> option lists: on Windows / Android the popup otherwise renders
+   with a white background while inheriting the light dark-theme text colour, so
+   the options become nearly invisible. Force a solid dark background + light text
+   (literal hex — native <option> ignores CSS variables on some platforms). */
+.dark select { color-scheme: dark; }
+.dark select option,
+.dark select optgroup {
+  background-color: #1e2233;
+  color: #eceffb;
+}
+
 body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   background: var(--background);

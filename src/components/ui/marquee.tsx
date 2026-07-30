@@ -9,8 +9,8 @@ import * as React from "react";
  * plain truncated line (identical to `truncate`).
  *
  * A hidden, absolutely-positioned copy is measured against the container width;
- * a ResizeObserver re-measures on layout changes. Speed is constant (~40 px/s),
- * so short and long labels scroll at the same comfortable pace.
+ * a ResizeObserver re-measures on layout changes. Speed is constant (~20 px/s),
+ * so short and long labels scroll at the same gentle, easy-to-read pace.
  */
 export function Marquee({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const wrapRef = React.useRef<HTMLDivElement>(null);
@@ -43,7 +43,8 @@ export function Marquee({ children, className = "" }: { children: React.ReactNod
     ? ({
         gap: `${GAP}px`,
         "--marquee-shift": `${width + GAP}px`,
-        "--marquee-duration": `${Math.max(4, (width + GAP) / 40)}s`,
+        // ~20 px/s — half the old speed, comfortable to read; min 8s for short labels.
+        "--marquee-duration": `${Math.max(8, (width + GAP) / 20)}s`,
       } as React.CSSProperties)
     : undefined;
 
