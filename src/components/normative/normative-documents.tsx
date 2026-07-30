@@ -5,7 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
-import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2 } from "lucide-react";
+import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2, ChevronUp } from "lucide-react";
 import { removeNormativeDocument, setNormativeDocumentFolder } from "@/server/actions/normative";
 import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";
@@ -45,6 +45,7 @@ export function NormativeDocuments({
   const [preparing, setPreparing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
+  const [open, setOpen] = useState(false); // upload form collapsed by default (like Tahlil)
   const uncategorized = t("projects.stageDocs.uncategorized");
   const dlId = "normative-folders";
 
@@ -119,6 +120,7 @@ export function NormativeDocuments({
       }
       setStaged(null);
       setPickerKey((k) => k + 1);
+      setOpen(false); // collapse again after a successful add
       toast.success(t("projects.stageDocs.added"));
       router.refresh();
     } catch {
@@ -150,7 +152,7 @@ export function NormativeDocuments({
                   {g.docs.length}
                 </span>
               </div>
-              <ul className="grid gap-2 sm:grid-cols-2 sm:pl-6">
+              <ul className="grid gap-2 lg:grid-cols-2 sm:pl-6">
                 {g.docs.map((d) => {
                   const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date)}`;
                   return (
@@ -203,7 +205,23 @@ export function NormativeDocuments({
       )}
 
       {canManage && (
-        <div className="max-w-lg space-y-2.5 rounded-xl border border-dashed border-[var(--border-strong)] p-3">
+        <div className="max-w-lg">
+          {/* Collapsed by default: a button reveals the folder + file upload form (like Tahlil). */}
+          <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}>
+            <div className="overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[var(--border-strong)] py-2.5 text-sm font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
+              >
+                <Plus className="size-4" />
+                {t("projects.projectDocs.addFile")}
+              </button>
+            </div>
+          </div>
+          <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+            <div className="overflow-hidden">
+        <div className="space-y-2.5 rounded-xl border border-dashed border-[var(--border-strong)] p-3">
           <div className="space-y-2">
             <label htmlFor="normative-folder" className="block text-xs font-semibold text-[var(--muted)]">
               {t("projects.stageDocs.folder")}
@@ -262,9 +280,18 @@ export function NormativeDocuments({
           <p className="text-xs text-[var(--muted)]">{t("projects.stageDocs.folderHint", { folder: folder.trim() || uncategorized })}</p>
           <p className="text-xs text-[var(--muted)]">{t("projects.stageDocs.sizeHint", { max: humanSize(maxBytes) })}</p>
 
-          <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className="w-full">
-            {uploading ? (<><Loader2 className="size-4 animate-spin" />{t("projects.stageDocs.uploading")}</>) : (<><Plus className="size-4" />{t("common.add")}</>)}
-          </Button>
+          <div className="flex gap-2">
+            <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className="flex-1">
+              {uploading ? (<><Loader2 className="size-4 animate-spin" />{t("projects.stageDocs.uploading")}</>) : (<><Plus className="size-4" />{t("common.add")}</>)}
+            </Button>
+            <Button type="button" variant="ghost" disabled={uploading} onClick={() => { setOpen(false); setStaged(null); }}>
+              <ChevronUp className="size-4" />
+              {t("projects.projectDocs.hide")}
+            </Button>
+          </div>
+        </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
