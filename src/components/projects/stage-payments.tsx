@@ -26,13 +26,17 @@ export function StagePayments({
   payments,
   plannedAmount,
   canManage,
+  showMoney = true,
 }: {
   stageId: string;
   payments: Payment[];
   plannedAmount: number | null;
   canManage: boolean;
+  // When false, all figures are shown as "***" (money visible only to the allowlist).
+  showMoney?: boolean;
 }) {
   const t = useTranslations();
+  const fmt = (amount: number, currency: string) => (showMoney ? money(amount, currency) : "***");
   const [pending, start] = useTransition();
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
@@ -62,18 +66,18 @@ export function StagePayments({
       <div className="rounded-xl border border-dashed border-[var(--border-strong)] p-4 space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</span>
-          <span className="font-bold tabular-nums text-[var(--success)]">{money(paid, currency)}</span>
+          <span className="font-bold tabular-nums text-[var(--success)]">{fmt(paid, currency)}</span>
         </div>
         {plannedAmount != null && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-[var(--muted)]">{t("projects.stagePayments.planned")}</span>
-            <span className="font-semibold tabular-nums">{money(plannedAmount, currency)}</span>
+            <span className="font-semibold tabular-nums">{fmt(plannedAmount, currency)}</span>
           </div>
         )}
         {pendingSum > 0 && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-[var(--muted)]">{t("projects.stagePayments.pending")}</span>
-            <span className="font-bold tabular-nums text-[var(--warning)]">{money(pendingSum, currency)}</span>
+            <span className="font-bold tabular-nums text-[var(--warning)]">{fmt(pendingSum, currency)}</span>
           </div>
         )}
         {plannedPct != null && (
@@ -100,7 +104,7 @@ export function StagePayments({
           <li key={p.id} className="flex items-center gap-3 rounded-xl border border-dashed border-[var(--border)] px-3 py-2.5">
             <div className="flex-1 min-w-0">
               <p className={`text-sm font-bold tabular-nums ${p.status === "paid" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
-                {money(Number(p.amount), p.currency)}
+                {fmt(Number(p.amount), p.currency)}
               </p>
               <p className="text-xs text-[var(--muted)] truncate">
                 {p.note ? `${p.note} · ` : ""}

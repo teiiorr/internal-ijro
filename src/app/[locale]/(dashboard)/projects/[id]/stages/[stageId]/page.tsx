@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
-import { canEditProjects } from "@/lib/permissions/project-editors";
+import { canEditProjects, canViewMoney, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { StagePayments } from "@/components/projects/stage-payments";
 import { CompleteStageButton } from "@/components/projects/complete-stage-button";
 import { ReopenStageButton } from "@/components/projects/reopen-stage-button";
@@ -30,6 +30,8 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   // Stage changes restricted to the fixed project-editor allowlist.
   const canManage = canEditProjects(me.email);
   const canManagePayments = canManage;
+  // Budgets & payment sums shown only to the money allowlist; others see ***.
+  const showMoney = canViewMoney(me.email);
 
   const s = data.stage;
   const total = data.siblings.length;
@@ -91,7 +93,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
-              <dd className="font-semibold mt-0.5 tabular-nums">{s.plannedAmount != null ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : t("common.emptyValue")}</dd>
+              <dd className="font-semibold mt-0.5 tabular-nums">{s.plannedAmount != null ? (showMoney ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : MONEY_MASK) : t("common.emptyValue")}</dd>
             </div>
           </dl>
         </CardContent>
@@ -118,7 +120,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-4">
             <h3 className="text-base font-semibold">{t("projects.stagePayments.title")}</h3>
-            <StagePayments stageId={s.id} payments={data.payments} plannedAmount={s.plannedAmount} canManage={canManagePayments} />
+            <StagePayments stageId={s.id} payments={data.payments} plannedAmount={s.plannedAmount} canManage={canManagePayments} showMoney={showMoney} />
           </CardContent>
         </Card>
       </div>

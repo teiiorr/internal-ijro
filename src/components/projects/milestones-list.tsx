@@ -22,7 +22,7 @@ type M = {
 const STATUSES = ["pending", "in_progress", "completed"] as const;
 const PAY = ["pending", "partial", "paid"] as const;
 
-export function MilestonesList({ projectId, items, canManage, canChangePayment }: { projectId: string; items: M[]; canManage: boolean; canChangePayment: boolean }) {
+export function MilestonesList({ projectId, items, canManage, canChangePayment, showMoney = true }: { projectId: string; items: M[]; canManage: boolean; canChangePayment: boolean; showMoney?: boolean }) {
   const t = useTranslations();
   const [pending, start] = useTransition();
   const [adding, setAdding] = useState(false);
@@ -56,7 +56,7 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment }
               <div className="flex items-center gap-2 text-xs flex-wrap">
                 <Badge variant="secondary">{t("projects.milestones.weight")}: {m.weight}</Badge>
                 {m.deadline && <Badge variant="outline">{m.deadline}</Badge>}
-                {m.paymentAmount && <Badge variant="outline">{m.paymentAmount}</Badge>}
+                {m.paymentAmount && <Badge variant="outline">{showMoney ? m.paymentAmount : "***"}</Badge>}
               </div>
             </div>
             <div className="flex gap-2 flex-wrap text-xs">

@@ -20,7 +20,7 @@ import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
-import { canEditProjects } from "@/lib/permissions/project-editors";
+import { canEditProjects, canViewMoney, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
@@ -61,6 +61,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   // Deleting a whole project is irreversible → editor + senior management only.
   const canDeleteProject = editor && ["direktor", "orinbosar", "koordinator"].includes(me.position);
   const canTogglePayment = editor;
+  // Budgets & payment sums are visible only to the money allowlist; others see ***.
+  const showMoney = canViewMoney(me.email);
 
   // ---- Typed (template-driven) project → serpentine stage view ----
   if (data.project.projectTypeId) {
@@ -133,7 +135,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-                <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? money(Number(sp.project.budget), currency) : t("common.emptyValue")}</dd>
+                <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
@@ -181,15 +183,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <dl className="space-y-2.5 text-sm">
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
-                  <dd className="font-semibold tabular-nums">{money(sp.totals.planned, currency)}</dd>
+                  <dd className="font-semibold tabular-nums">{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</dt>
-                  <dd className="font-semibold tabular-nums text-[var(--success)]">{money(sp.totals.paid, currency)}</dd>
+                  <dd className="font-semibold tabular-nums text-[var(--success)]">{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-[var(--muted)]">{t("projects.stagePayments.pending")}</dt>
-                  <dd className="font-semibold tabular-nums text-[var(--warning)]">{money(sp.totals.pending, currency)}</dd>
+                  <dd className="font-semibold tabular-nums text-[var(--warning)]">{showMoney ? money(sp.totals.pending, currency) : MONEY_MASK}</dd>
                 </div>
               </dl>
               {activeStage && (
@@ -321,7 +323,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-              <dd className="font-medium mt-0.5 tabular-nums">{data.project.budget != null ? money(Number(data.project.budget), data.project.budgetCurrency) : t("common.emptyValue")}</dd>
+              <dd className="font-medium mt-0.5 tabular-nums">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</dd>
             </div>
           </dl>
         </CardContent>

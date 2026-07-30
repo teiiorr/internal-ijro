@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { MilestonesList } from "@/components/projects/milestones-list";
+import { canViewMoney } from "@/lib/permissions/project-editors";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 
@@ -47,6 +48,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
               items={data.milestones.map((m) => ({ ...m, paymentAmount: m.paymentAmount as string | null }))}
               canManage={false}
               canChangePayment={false}
+              showMoney={canViewMoney(session.user.email)}
             />
           </CardContent></Card>
         </TabsContent>
