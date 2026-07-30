@@ -16,6 +16,7 @@ const PROJECT_EDITOR_SURNAMES = new Set([
   "madrahimov",
   "serobov",
   "kuralov",
+  "toshxodjayev",
 ]);
 
 export function canEditProjects(email: string | null | undefined): boolean {
