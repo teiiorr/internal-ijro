@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { MoneyInput } from "@/components/ui/money-input";
 import { updateStage } from "@/server/actions/stages";
 
 type Stage = {
@@ -78,7 +79,7 @@ export function EditStageDialog({ stage, currency = "UZS" }: { stage: Stage; cur
           <div className="space-y-1.5">
             <Label htmlFor="es-amount">{t("projects.editStage.budget")}</Label>
             <div className="flex gap-2 items-center">
-              <Input id="es-amount" type="number" step="0.01" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} className="flex-1 min-w-0" />
+              <MoneyInput id="es-amount" value={amount} onValueChange={setAmount} className="flex-1 min-w-0" />
               <span className="text-sm text-[var(--muted)] shrink-0">{currency}</span>
             </div>
           </div>

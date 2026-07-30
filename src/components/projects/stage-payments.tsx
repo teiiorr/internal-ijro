@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MoneyInput } from "@/components/ui/money-input";
 import { Trash2, Plus, CheckCircle2 } from "lucide-react";
 import { addStagePayment, setStagePaymentStatus, deleteStagePayment } from "@/server/actions/stages";
 import { formatDate } from "@/lib/dates";
@@ -66,18 +67,18 @@ export function StagePayments({
       <div className="rounded-xl border border-dashed border-[var(--border-strong)] p-4 space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</span>
-          <span className="font-bold tabular-nums text-[var(--success)]">{fmt(paid, currency)}</span>
+          <span className="whitespace-nowrap font-bold tabular-nums text-[var(--success)]">{fmt(paid, currency)}</span>
         </div>
         {plannedAmount != null && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-[var(--muted)]">{t("projects.stagePayments.planned")}</span>
-            <span className="font-semibold tabular-nums">{fmt(plannedAmount, currency)}</span>
+            <span className="whitespace-nowrap font-semibold tabular-nums">{fmt(plannedAmount, currency)}</span>
           </div>
         )}
         {pendingSum > 0 && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-[var(--muted)]">{t("projects.stagePayments.pending")}</span>
-            <span className="font-bold tabular-nums text-[var(--warning)]">{fmt(pendingSum, currency)}</span>
+            <span className="whitespace-nowrap font-bold tabular-nums text-[var(--warning)]">{fmt(pendingSum, currency)}</span>
           </div>
         )}
         {plannedPct != null && (
@@ -103,7 +104,7 @@ export function StagePayments({
         {payments.map((p) => (
           <li key={p.id} className="flex items-center gap-3 rounded-xl border border-dashed border-[var(--border)] px-3 py-2.5">
             <div className="flex-1 min-w-0">
-              <p className={`text-sm font-bold tabular-nums ${p.status === "paid" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
+              <p className={`whitespace-nowrap text-sm font-bold tabular-nums ${p.status === "paid" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
                 {fmt(Number(p.amount), p.currency)}
               </p>
               <p className="text-xs text-[var(--muted)] truncate">
@@ -134,7 +135,7 @@ export function StagePayments({
       {/* add — wraps gracefully in narrow columns */}
       {canManage && (
         <div className="flex flex-wrap items-center gap-2">
-          <Input type="number" step="0.01" min="0" placeholder={t("projects.stagePayments.amount")} value={amount} onChange={(e) => setAmount(e.target.value)} className="w-28 flex-none" />
+          <MoneyInput placeholder={t("projects.stagePayments.amount")} value={amount} onValueChange={setAmount} className="w-36 flex-none" />
           <Input placeholder={t("projects.stagePayments.note")} value={note} onChange={(e) => setNote(e.target.value)} className="flex-1 min-w-[150px]" />
           <Button onClick={add} disabled={pending} className="flex-none"><Plus className="size-4" />{t("projects.stagePayments.add")}</Button>
         </div>

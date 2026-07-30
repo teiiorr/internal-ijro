@@ -93,7 +93,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
-              <dd className="font-semibold mt-0.5 tabular-nums">{s.plannedAmount != null ? (showMoney ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : MONEY_MASK) : t("common.emptyValue")}</dd>
+              <dd className="font-semibold mt-0.5 tabular-nums whitespace-nowrap">{s.plannedAmount != null ? (showMoney ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : MONEY_MASK) : t("common.emptyValue")}</dd>
             </div>
           </dl>
         </CardContent>

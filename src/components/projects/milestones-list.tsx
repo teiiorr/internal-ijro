@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MoneyInput } from "@/components/ui/money-input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -94,7 +95,7 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment, 
               <div className="space-y-2 md:col-span-2"><Label>{t("projects.milestones.title")}</Label><Input name="title" required /></div>
               <div className="space-y-2"><Label>{t("projects.milestones.deadline")}</Label><Input name="deadline" type="date" /></div>
               <div className="space-y-2"><Label>{t("projects.milestones.weight")}</Label><Input name="weight" type="number" defaultValue={1} min={1} /></div>
-              <div className="space-y-2"><Label>{t("projects.milestones.paymentAmount")}</Label><Input name="paymentAmount" type="number" step="0.01" /></div>
+              <div className="space-y-2"><Label>{t("projects.milestones.paymentAmount")}</Label><MoneyInput name="paymentAmount" /></div>
             </div>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="ghost" onClick={() => setAdding(false)}>{t("common.cancel")}</Button>

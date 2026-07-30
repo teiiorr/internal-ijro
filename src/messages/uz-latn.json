@@ -517,6 +517,11 @@
       "invalidAmount": "Summani to'g'ri kiriting",
       "fullyPaid": "To'liq to'langan"
     },
+    "paymentDocs": {
+      "title": "To'lov hujjatlari",
+      "hint": "Cheklar va hisob-fakturalar",
+      "empty": "Hujjatlar hali yo'q"
+    },
     "stageActions": {
       "complete": "Bosqichni yakunlash",
       "completed": "Bosqich yakunlandi",

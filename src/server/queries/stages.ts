@@ -140,6 +140,7 @@ export async function getStageProject(projectId: string, locale: string) {
     .select({
       id: projectDocuments.id,
       kind: projectDocuments.kind,
+      folder: projectDocuments.folder,
       fileUrl: projectDocuments.fileUrl,
       fileName: projectDocuments.fileName,
       fileSize: projectDocuments.fileSize,
@@ -154,6 +155,7 @@ export async function getStageProject(projectId: string, locale: string) {
   const documents = {
     tahlil: docRows.filter((d) => d.kind === "tahlil"),
     xalqaro_tajriba: docRows.filter((d) => d.kind === "xalqaro_tajriba"),
+    payment: docRows.filter((d) => d.kind === "payment"),
   };
 
   return {

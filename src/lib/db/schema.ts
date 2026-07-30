@@ -693,9 +693,11 @@ export const stageDocuments = pgTable(
 
 // ---------- project_documents ----------
 // Project-level document buckets shown under the stage list: analysis
-// ("tahlil" — Loyiha bo'yicha tahlil) and international experience
-// ("xalqaro_tajriba" — Xalqaro tajriba). One row per uploaded file.
-export const PROJECT_DOC_KINDS = ["tahlil", "xalqaro_tajriba"] as const;
+// ("tahlil" — Loyiha bo'yicha tahlil), international experience
+// ("xalqaro_tajriba" — Xalqaro tajriba) and payment documents
+// ("payment" — cheklar / hisob-fakturalar, grouped by an optional folder).
+// One row per uploaded file.
+export const PROJECT_DOC_KINDS = ["tahlil", "xalqaro_tajriba", "payment"] as const;
 export type ProjectDocKind = (typeof PROJECT_DOC_KINDS)[number];
 
 export const projectDocuments = pgTable(
@@ -705,8 +707,10 @@ export const projectDocuments = pgTable(
     projectId: uuid("project_id")
       .notNull()
       .references(() => projects.id, { onDelete: "cascade" }),
-    /** 'tahlil' | 'xalqaro_tajriba' */
+    /** 'tahlil' | 'xalqaro_tajriba' | 'payment' */
     kind: varchar("kind", { length: 32 }).notNull(),
+    /** Optional folder name typed by the uploader (used by the 'payment' bucket). */
+    folder: varchar("folder", { length: 120 }),
     fileUrl: text("file_url").notNull(),
     fileName: varchar("file_name", { length: 255 }).notNull(),
     fileSize: integer("file_size"),

@@ -14,6 +14,7 @@ import { StagesList } from "@/components/projects/stages-list";
 import { StagePath } from "@/components/projects/stage-path";
 import { ProjectPoster } from "@/components/projects/project-poster";
 import { ProjectDocsPanels } from "@/components/projects/project-docs-panels";
+import { PaymentDocuments } from "@/components/projects/payment-documents";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
@@ -26,7 +27,8 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
 
-const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
+// Amounts are rendered inside whitespace-nowrap containers so "… UZS" never breaks onto its own line.
+const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -135,7 +137,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-                <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
+                <dd className="font-semibold mt-0.5 tabular-nums whitespace-nowrap">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
@@ -181,17 +183,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <CardContent className="p-5 space-y-3">
               <h3 className="text-base font-semibold">{t("projects.stagePayments.projectTotal")}</h3>
               <dl className="space-y-2.5 text-sm">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                   <dt className="text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
-                  <dd className="font-semibold tabular-nums">{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</dd>
+                  <dd className="ml-auto whitespace-nowrap font-semibold tabular-nums">{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                   <dt className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</dt>
-                  <dd className="font-semibold tabular-nums text-[var(--success)]">{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</dd>
+                  <dd className="ml-auto whitespace-nowrap font-semibold tabular-nums text-[var(--success)]">{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                   <dt className="text-[var(--muted)]">{t("projects.stagePayments.pending")}</dt>
-                  <dd className="font-semibold tabular-nums text-[var(--warning)]">{showMoney ? money(sp.totals.pending, currency) : MONEY_MASK}</dd>
+                  <dd className="ml-auto whitespace-nowrap font-semibold tabular-nums text-[var(--warning)]">{showMoney ? money(sp.totals.pending, currency) : MONEY_MASK}</dd>
                 </div>
               </dl>
               {activeStage && (
@@ -210,6 +212,24 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               )}
             </CardContent>
             </Card>
+
+            {/* Payment documents (receipts / invoices) — money allowlist only, right under the totals. */}
+            {showMoney && (
+              <Card>
+                <CardContent className="p-5 space-y-3">
+                  <div>
+                    <h3 className="text-base font-semibold">{t("projects.paymentDocs.title")}</h3>
+                    <p className="mt-0.5 text-xs text-[var(--muted)]">{t("projects.paymentDocs.hint")}</p>
+                  </div>
+                  <PaymentDocuments
+                    projectId={sp.project.id}
+                    documents={sp.documents.payment.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
+                    canManage={canManage}
+                    maxBytes={MAX_UPLOAD_BYTES}
+                  />
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
@@ -323,7 +343,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-              <dd className="font-medium mt-0.5 tabular-nums">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</dd>
+              <dd className="font-medium mt-0.5 tabular-nums whitespace-nowrap">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</dd>
             </div>
           </dl>
         </CardContent>

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { MoneyInput } from "@/components/ui/money-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateProject } from "@/server/actions/projects";
@@ -136,7 +137,7 @@ export function EditProjectDialog({
           <div className="space-y-1.5">
             <Label htmlFor="ep-budget">{t("projects.fields.budget")}</Label>
             <div className="flex gap-2">
-              <Input id="ep-budget" type="number" step="0.01" min="0" value={budget} onChange={(e) => setBudget(e.target.value)} className="flex-1 min-w-0" />
+              <MoneyInput id="ep-budget" value={budget} onValueChange={setBudget} className="flex-1 min-w-0" />
               <Input value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-20 shrink-0" />
             </div>
           </div>

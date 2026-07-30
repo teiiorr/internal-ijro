@@ -684,3 +684,14 @@ export async function removeProjectDocument(documentId: string) {
   await logActivity({ userId: me.id, action: "project.document_removed", entityType: "project", entityId: doc.projectId, newValue: { kind: doc.kind } });
   revalidatePath(`/projects/${doc.projectId}`);
 }
+
+// Re-file a payment document into another (or no) folder.
+export async function setProjectDocumentFolder(documentId: string, folder: string | null) {
+  const me = await requireProjectEditor();
+  const [doc] = await db.select().from(projectDocuments).where(eq(projectDocuments.id, documentId)).limit(1);
+  if (!doc) return;
+  const v = folder ? (folder.replace(/\s+/g, " ").trim().slice(0, 120) || null) : null;
+  await db.update(projectDocuments).set({ folder: v }).where(eq(projectDocuments.id, documentId));
+  await logActivity({ userId: me.id, action: "project.document_moved", entityType: "project", entityId: doc.projectId, newValue: { folder: v } });
+  revalidatePath(`/projects/${doc.projectId}`);
+}

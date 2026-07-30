@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { projects, projectDocuments, PROJECT_DOC_KINDS, type ProjectDocKind } from "@/lib/db/schema";
 import { storeStream, isForbiddenExt } from "@/lib/upload";
+import { canViewMoney } from "@/lib/permissions/project-editors";
 import { logActivity } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -47,8 +48,13 @@ export async function POST(req: NextRequest) {
   const projectId = url.searchParams.get("projectId") ?? "";
   const kind = url.searchParams.get("kind") ?? "";
   const name = (url.searchParams.get("name") ?? "").trim();
+  const folder = (url.searchParams.get("folder") ?? "").trim().slice(0, 120);
   if (!projectId || !name || !PROJECT_DOC_KINDS.includes(kind as ProjectDocKind)) {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
+  }
+  // Payment documents (receipts / invoices) are financial → money allowlist only.
+  if (kind === "payment" && !canViewMoney(session.user.email)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
   if (isForbiddenExt(name)) return NextResponse.json({ error: "ext_forbidden" }, { status: 400 });
 
@@ -73,6 +79,7 @@ export async function POST(req: NextRequest) {
   await db.insert(projectDocuments).values({
     projectId,
     kind,
+    folder: folder || null,
     fileUrl: stored.url,
     fileName: stored.originalName.slice(0, 255),
     fileSize: stored.size,

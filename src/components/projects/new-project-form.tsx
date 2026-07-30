@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { MoneyInput } from "@/components/ui/money-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -146,7 +147,7 @@ export function NewProjectForm({
         <div className="space-y-1.5 md:col-span-2">
           <Label htmlFor="budget">{t("projects.fields.budget")}</Label>
           <div className="flex gap-2">
-            <Input id="budget" name="budget" type="number" step="0.01" className="flex-1 min-w-0" />
+            <MoneyInput id="budget" name="budget" className="flex-1 min-w-0" />
             <Input name="budgetCurrency" defaultValue="UZS" className="w-20 shrink-0" />
           </div>
         </div>
