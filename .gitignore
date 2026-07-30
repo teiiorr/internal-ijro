@@ -12,3 +12,6 @@ uploads/
 # Backups
 *.dump
 /var/backups/
+
+# Next.js generated (build-mode specific) — never commit
+next-env.d.ts
