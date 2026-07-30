@@ -11,7 +11,12 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // App stays behind nginx; trust the X-Forwarded-* headers it sets.
   poweredByHeader: false,
+  // Trim the client bundle: rewrite barrel imports from these big libs into
+  // direct per-module imports so only what's used ships. lucide-react / date-fns
+  // are in Next's default list; recharts (dashboard charts) is not, so it matters
+  // most here.
   experimental: {
+    optimizePackageImports: ["recharts", "date-fns", "lucide-react"],
     // Server Actions buffer the ENTIRE request body in memory before our code
     // runs — dangerous on the 2GB production box (shared with Postgres), where a
     // big buffered upload can trip the OOM killer. So large files DON'T go through

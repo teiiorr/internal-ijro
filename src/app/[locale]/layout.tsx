@@ -6,8 +6,10 @@ import { Toaster } from "sonner";
 import { Montserrat, JetBrains_Mono, Cinzel_Decorative } from "next/font/google";
 
 const montserrat = Montserrat({
+  // weight 300 (font-light) is unused in the app; cyrillic-ext is required for
+  // Uzbek Cyrillic (қ ғ ҳ …), so those subsets stay.
   subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-sans",
   display: "swap",
 });
