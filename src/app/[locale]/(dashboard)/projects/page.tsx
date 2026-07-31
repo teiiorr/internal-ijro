@@ -69,8 +69,19 @@ export default async function ProjectsPage({
     return p.derived === statusFilter;
   });
 
-  // Sort
+  // Status priority — always applied first: in-progress (Jarayonda) on top,
+  // completed (Yakunlangan) at the very bottom, regardless of the chosen sort.
+  const STATUS_PRIORITY: Record<DerivedStatus, number> = {
+    in_progress: 0,
+    not_started: 1,
+    on_hold: 2,
+    completed: 3,
+  };
+
+  // Sort: status priority first, then the selected sort within each group.
   filtered.sort((a, b) => {
+    const byStatus = STATUS_PRIORITY[a.derived] - STATUS_PRIORITY[b.derived];
+    if (byStatus !== 0) return byStatus;
     if (sort === "name") return a.name.localeCompare(b.name);
     if (sort === "progress") return b.progressPercentage - a.progressPercentage;
     if (sort === "deadline") {
