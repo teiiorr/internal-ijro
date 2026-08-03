@@ -3,7 +3,7 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Sparkles, ImagePlus, Loader2, Trash2 } from "lucide-react";
+import { ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WinnerReveal } from "@/components/contests/winner-reveal";
 import { compressImage } from "@/lib/images/compress";
@@ -57,7 +57,6 @@ export function ContestReveal({
     <div className="space-y-3">
       {winnerName ? (
         <Button variant="accent" size="lg" className="w-full" onClick={() => setOpen(true)}>
-          <Sparkles className="size-4" />
           {t("tanlov.revealWinner")}
         </Button>
       ) : (
