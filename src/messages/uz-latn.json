@@ -1043,6 +1043,9 @@
     "setLogo": "Logotip qo'shish",
     "changeLogo": "Logotipni almashtirish",
     "removeLogo": "Logotipni o'chirish",
-    "logoHint": "G'olib logotipi — g'olibni ko'rsatganda chiqadi"
+    "logoHint": "G'olib logotipi — g'olibni ko'rsatganda chiqadi",
+    "pending": "Kutilmoqda",
+    "prev": "Oldingi",
+    "next": "Keyingi"
   }
 }

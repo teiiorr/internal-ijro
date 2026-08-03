@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { X } from "lucide-react";
+import { X, Trophy } from "lucide-react";
 
 type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; color: string; size: number };
 type Rocket = { x: number; y: number; vy: number; targetY: number; color: string };
@@ -167,18 +167,19 @@ export function WinnerReveal({
         </button>
 
         {logoUrl ? (
-          <div className="mx-auto mb-4 grid size-28 place-items-center overflow-hidden rounded-3xl bg-white/10 shadow-[0_10px_30px_-6px_rgba(201,152,42,0.5)] ring-4 ring-[#ffd54a]/50">
+          <div className="mx-auto mb-4 grid size-28 place-items-center overflow-hidden rounded-3xl bg-white/10 shadow-sm ring-4 ring-[var(--warning)]/40">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={logoUrl} alt={winnerName} className="size-full object-contain p-2" />
           </div>
         ) : (
-          <div className="mx-auto mb-4 grid size-20 animate-bounce place-items-center rounded-full bg-gradient-to-br from-[#ffe17a] to-[#c9982a] text-4xl shadow-[0_10px_30px_-6px_rgba(201,152,42,0.7)]">
-            🏆
+          <div className="mx-auto mb-4 grid size-20 place-items-center rounded-full bg-[var(--warning-soft)] text-[var(--warning)] shadow-sm">
+            <Trophy className="size-9" />
           </div>
         )}
 
-        <h2 className="godfather-title mx-auto mt-2 break-words text-4xl leading-tight sm:text-5xl">{winnerName}</h2>
-        <p className="mt-3 text-sm font-semibold text-white/80">{t("tanlov.winnerOf", { name: contestName })}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[var(--warning)]">{t("tanlov.winner")}</p>
+        <h2 className="mx-auto mt-2 break-words text-4xl font-bold leading-tight text-white sm:text-5xl">{winnerName}</h2>
+        <p className="mt-3 text-sm font-medium text-white/70">{t("tanlov.winnerOf", { name: contestName })}</p>
 
         <button
           onClick={onClose}

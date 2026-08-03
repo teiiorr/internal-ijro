@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Sparkles, ImagePlus, Loader2, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { WinnerReveal } from "@/components/contests/winner-reveal";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestLogo } from "@/server/actions/contests";
@@ -55,13 +56,10 @@ export function ContestReveal({
   return (
     <div className="space-y-3">
       {winnerName ? (
-        <button
-          onClick={() => setOpen(true)}
-          className="group flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-[#c9982a] via-[#ffd54a] to-[#c9982a] px-5 py-3.5 text-sm font-extrabold text-[#3a2a00] shadow-[0_10px_28px_-8px_rgba(201,152,42,0.7)] transition-transform hover:scale-[1.02] active:scale-100 sm:text-base"
-        >
-          <Sparkles className="size-5" />
+        <Button variant="accent" size="lg" className="w-full" onClick={() => setOpen(true)}>
+          <Sparkles className="size-4" />
           {t("tanlov.revealWinner")}
-        </button>
+        </Button>
       ) : (
         <p className="rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-3 text-center text-sm text-[var(--muted)]">
           {t("tanlov.noWinner")}

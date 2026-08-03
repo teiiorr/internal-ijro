@@ -1,21 +1,37 @@
 "use client";
-import { useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ImagePlus, Loader2, X, Images } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImagePlus, Loader2, Trash2, Images } from "lucide-react";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestPhoto } from "@/server/actions/contests";
 import type { ContestPhoto } from "@/server/queries/contests";
+
+const AUTOPLAY_MS = 5000;
 
 export function ContestGallery({ contestId, photos, canManage }: { contestId: string; photos: ContestPhoto[]; canManage: boolean }) {
   const t = useTranslations();
   const router = useRouter();
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pending, start] = useTransition();
   const fileRef = useRef<HTMLInputElement>(null);
-  const hero = photos[Math.min(active, photos.length - 1)];
+  const count = photos.length;
+
+  const go = useCallback((dir: number) => setActive((i) => (count ? (i + dir + count) % count : 0)), [count]);
+
+  // Auto-advance every 5s (paused on hover / when only one photo). Depending on
+  // `active` re-arms the timer after each slide — so manual prev/next/dot taps
+  // also reset the 5s window (matters on touch, where there's no hover-pause).
+  useEffect(() => {
+    if (paused || count <= 1) return;
+    const id = window.setTimeout(() => setActive((i) => (i + 1) % count), AUTOPLAY_MS);
+    return () => window.clearTimeout(id);
+  }, [paused, count, active]);
+
+  useEffect(() => { if (active >= count) setActive(0); }, [active, count]);
 
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -41,10 +57,12 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
     }
   }
 
+  const current = photos[Math.min(active, count - 1)];
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-base font-semibold"><Images className="size-4 text-[var(--muted)]" />{t("tanlov.gallery")}</h3>
+        <h3 className="text-base font-semibold">{t("tanlov.gallery")}</h3>
         {canManage && (
           <button
             type="button"
@@ -59,40 +77,75 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
         <input ref={fileRef} type="file" accept="image/*" className="sr-only" onChange={onPick} />
       </div>
 
-      {photos.length === 0 ? (
-        <div className="grid aspect-video place-items-center rounded-2xl border border-dashed border-[var(--border-strong)] text-[var(--subtle)]">
-          <Images className="size-10" />
+      {count === 0 ? (
+        <div className="grid aspect-video place-items-center rounded-xl border border-dashed border-[var(--border-strong)] text-[var(--subtle)]">
+          <Images className="size-9" />
         </div>
       ) : (
         <>
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[var(--surface-2)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={hero.fileUrl} alt={hero.caption ?? ""} className="size-full object-contain" />
+          <div
+            className="group relative aspect-video w-full overflow-hidden rounded-xl bg-[var(--surface-2)]"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
+            {/* Cross-fade stack: all photos rendered, only the active one opaque. */}
+            {photos.map((p, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={p.id}
+                src={p.fileUrl}
+                alt={p.caption ?? ""}
+                className={`absolute inset-0 size-full object-contain transition-opacity duration-700 ${i === active ? "opacity-100" : "opacity-0"}`}
+              />
+            ))}
+
+            {count > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label={t("tanlov.prev")}
+                  onClick={() => go(-1)}
+                  className="absolute left-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)]/85 text-[var(--foreground)] backdrop-blur-sm transition-colors hover:bg-[var(--surface)] sm:opacity-0 sm:group-hover:opacity-100"
+                >
+                  <ChevronLeft className="size-5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label={t("tanlov.next")}
+                  onClick={() => go(1)}
+                  className="absolute right-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)]/85 text-[var(--foreground)] backdrop-blur-sm transition-colors hover:bg-[var(--surface)] sm:opacity-0 sm:group-hover:opacity-100"
+                >
+                  <ChevronRight className="size-5" />
+                </button>
+                <span className="absolute right-2 top-2 rounded-md bg-black/40 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
+                  {active + 1} / {count}
+                </span>
+              </>
+            )}
+
+            {canManage && current && (
+              <button
+                type="button"
+                aria-label={t("common.delete")}
+                disabled={pending}
+                onClick={() => start(async () => { await removeContestPhoto(current.id); router.refresh(); })}
+                className="absolute bottom-2 right-2 grid size-8 place-items-center rounded-lg bg-black/45 text-white backdrop-blur-sm transition-colors hover:bg-[var(--danger)]"
+              >
+                <Trash2 className="size-4" />
+              </button>
+            )}
           </div>
-          {photos.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+
+          {count > 1 && (
+            <div className="flex items-center justify-center gap-1.5">
               {photos.map((p, i) => (
-                <div key={p.id} className="relative shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setActive(i)}
-                    className={`block size-16 overflow-hidden rounded-lg ring-2 transition-all ${i === active ? "ring-[var(--primary)]" : "ring-transparent hover:ring-[var(--border-strong)]"}`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.fileUrl} alt="" className="size-full object-cover" />
-                  </button>
-                  {canManage && (
-                    <button
-                      type="button"
-                      aria-label={t("common.delete")}
-                      disabled={pending}
-                      onClick={() => start(async () => { await removeContestPhoto(p.id); router.refresh(); })}
-                      className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-[var(--danger)] text-white shadow"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  )}
-                </div>
+                <button
+                  key={p.id}
+                  type="button"
+                  aria-label={`${i + 1}`}
+                  onClick={() => setActive(i)}
+                  className={`h-1.5 rounded-full transition-all ${i === active ? "w-5 bg-[var(--primary)]" : "w-1.5 bg-[var(--border-strong)] hover:bg-[var(--muted)]"}`}
+                />
               ))}
             </div>
           )}
