@@ -2,7 +2,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Trash2, Loader2 } from "lucide-react";
+import { IconTrash as Trash2, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { deleteContest } from "@/server/actions/contests";
 

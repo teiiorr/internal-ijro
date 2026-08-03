@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Plus } from "lucide-react";
+import { IconTrash as Trash2, IconPlus as Plus } from "@tabler/icons-react";
 import { addAgendaItem, deleteAgendaItem } from "@/server/actions/councils";
 
 type AgendaRow = {

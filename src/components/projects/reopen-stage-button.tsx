@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Undo2, Loader2 } from "lucide-react";
+import { IconArrowBackUp as Undo2, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { reopenStage } from "@/server/actions/stages";
 
 /** Undo an accidental "complete stage": reverts the last completed stage back to

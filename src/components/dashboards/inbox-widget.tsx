@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
-import { ClipboardCheck, CheckCircle2, ListTodo, ChevronRight } from "lucide-react";
+import { IconClipboardCheck as ClipboardCheck, IconCircleCheck as CheckCircle2, IconListCheck as ListTodo, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { inboxAwaitingMyApproval, inboxMyActive, type InboxItem } from "@/server/queries/inbox";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 

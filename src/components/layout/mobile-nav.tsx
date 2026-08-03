@@ -2,24 +2,7 @@
 import { useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import {
-  LayoutDashboard,
-  ListTodo,
-  FolderKanban,
-  Users,
-  Building2,
-  Handshake,
-  Bell,
-  ScrollText,
-  Settings,
-  Presentation,
-  Coins,
-  ShieldCheck,
-  FileCheck2,
-  Trophy,
-  Menu,
-  X,
-} from "lucide-react";
+import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, IconLayoutKanban as FolderKanban, IconUsers as Users, IconBuilding as Building2, IconHeartHandshake as Handshake, IconBell as Bell, IconFileText as ScrollText, IconSettings as Settings, IconPresentation as Presentation, IconCoins as Coins, IconShieldCheck as ShieldCheck, IconFileCheck as FileCheck2, IconTrophy as Trophy, IconMenu2 as Menu, IconX as X } from "@tabler/icons-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 

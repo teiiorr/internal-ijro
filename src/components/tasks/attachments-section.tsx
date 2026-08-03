@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { useRef, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
-import { Download, Trash2 } from "lucide-react";
+import { IconDownload as Download, IconTrash as Trash2 } from "@tabler/icons-react";
 import { attachFileToTask, removeAttachment } from "@/server/actions/tasks";
 
 type A = { id: string; fileUrl: string; fileName: string; fileSize: number | null };

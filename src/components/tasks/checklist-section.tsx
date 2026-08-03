@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Check, Plus, X } from "lucide-react";
+import { IconCheck as Check, IconPlus as Plus, IconX as X } from "@tabler/icons-react";
 import { addChecklistItem, deleteChecklistItem, toggleChecklistItem } from "@/server/actions/tasks";
 import { cn } from "@/lib/utils";
 

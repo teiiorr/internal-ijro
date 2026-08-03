@@ -5,7 +5,7 @@ import { useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
-import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2 } from "lucide-react";
+import { IconDownload as Download, IconTrash as Trash2, IconFileText as FileText, IconFolder as Folder, IconFolderShare as FolderInput, IconPlus as Plus, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { removeStageDocument, setStageDocumentCategory } from "@/server/actions/stages";
 import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";

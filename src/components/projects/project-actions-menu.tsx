@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { MoreHorizontal, Pencil, Pause, Play, PlayCircle, RotateCcw, Trash2, Loader2 } from "lucide-react";
+import { IconDots as MoreHorizontal, IconPencil as Pencil, IconPlayerPause as Pause, IconPlayerPlay as Play, IconPlayerPlay as PlayCircle, IconRotate as RotateCcw, IconTrash as Trash2, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { EditProjectDialog } from "@/components/projects/edit-project-dialog";

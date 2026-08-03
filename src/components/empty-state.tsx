@@ -1,5 +1,4 @@
-import { Inbox } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { IconInbox as Inbox, type Icon as TablerIcon } from "@tabler/icons-react";
 
 export function EmptyState({
   icon: Icon = Inbox,
@@ -7,7 +6,7 @@ export function EmptyState({
   description,
   action,
 }: {
-  icon?: LucideIcon;
+  icon?: TablerIcon;
   title: string;
   description?: string;
   action?: React.ReactNode;

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { uploadEmployeeDocument, deleteEmployeeDocument } from "@/server/actions/employees";
-import { Trash2, Download } from "lucide-react";
+import { IconTrash as Trash2, IconDownload as Download } from "@tabler/icons-react";
 import { formatDate } from "@/lib/dates";
 
 type Doc = {

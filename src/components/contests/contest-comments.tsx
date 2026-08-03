@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { MessageSquare, Send, Trash2, Loader2 } from "lucide-react";
+import { IconMessage as MessageSquare, IconSend as Send, IconTrash as Trash2, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { addContestComment, removeContestComment } from "@/server/actions/contests";

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Check, Lock, ChevronRight } from "lucide-react";
+import { IconCheck as Check, IconLock as Lock, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { useTranslations } from "next-intl";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";

@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { Download, Trash2, FileText, Plus, Loader2, BarChart3, Globe2, ChevronUp } from "lucide-react";
+import { IconDownload as Download, IconTrash as Trash2, IconFileText as FileText, IconPlus as Plus, IconLoader2 as Loader2, IconChartBar as BarChart3, IconWorld as Globe2, IconChevronUp as ChevronUp } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
 import { removeProjectDocument } from "@/server/actions/projects";

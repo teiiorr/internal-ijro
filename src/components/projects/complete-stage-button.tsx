@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2 } from "lucide-react";
+import { IconCircleCheck as CheckCircle2 } from "@tabler/icons-react";
 import { completeStage } from "@/server/actions/stages";
 
 export function CompleteStageButton({ stageId }: { stageId: string }) {

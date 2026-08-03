@@ -5,7 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
-import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2, ChevronUp, Link2, ExternalLink } from "lucide-react";
+import { IconDownload as Download, IconTrash as Trash2, IconFileText as FileText, IconFolder as Folder, IconFolderShare as FolderInput, IconPlus as Plus, IconLoader2 as Loader2, IconChevronUp as ChevronUp, IconLink as Link2, IconExternalLink as ExternalLink } from "@tabler/icons-react";
 import { removeNormativeDocument, setNormativeDocumentFolder, addNormativeLink } from "@/server/actions/normative";
 import { Input } from "@/components/ui/input";
 import { compressImage } from "@/lib/images/compress";

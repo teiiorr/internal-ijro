@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { WifiOff } from "lucide-react";
+import { IconWifiOff as WifiOff } from "@tabler/icons-react";
 import { getTranslations } from "next-intl/server";
 import { RetryButton } from "./retry-button";
 

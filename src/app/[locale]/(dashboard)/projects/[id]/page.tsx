@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { ArrowLeft, CalendarClock } from "lucide-react";
+import { IconArrowLeft as ArrowLeft, IconCalendarClock as CalendarClock } from "@tabler/icons-react";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
 import { getProject, listContractors } from "@/server/queries/projects";

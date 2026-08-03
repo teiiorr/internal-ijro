@@ -1,6 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { Moon, Sun } from "lucide-react";
+import { IconMoon as Moon, IconSun as Sun } from "@tabler/icons-react";
 import { useTheme } from "./theme-provider";
 import { cn } from "@/lib/utils";
 

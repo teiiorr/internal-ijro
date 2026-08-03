@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "@/i18n/navigation";
-import { Search, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { IconSearch as Search, IconLogout as LogOut, IconSettings as SettingsIcon } from "@tabler/icons-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";

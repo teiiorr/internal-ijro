@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pencil, Trash2, Plus, X } from "lucide-react";
+import { IconPencil as Pencil, IconTrash as Trash2, IconPlus as Plus, IconX as X } from "@tabler/icons-react";
 import { createDepartment, updateDepartment, deleteDepartment } from "@/server/actions/departments";
 
 type Dept = {

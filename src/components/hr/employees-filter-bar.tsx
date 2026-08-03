@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
-import { Search, Download, Building2, Briefcase, Activity } from "lucide-react";
+import { IconSearch as Search, IconDownload as Download, IconBuilding as Building2, IconBriefcase as Briefcase, IconActivity as Activity } from "@tabler/icons-react";
 
 type Dept = { id: string; name: string };
 const POSITIONS = [

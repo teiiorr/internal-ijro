@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CalendarPlus } from "lucide-react";
+import { IconCalendarPlus as CalendarPlus } from "@tabler/icons-react";
 import { createCouncilMeeting } from "@/server/actions/councils";
 
 export function CouncilMeetingForm({ kind }: { kind: "ekspert" | "smeta" }) {

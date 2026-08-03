@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { X, Trophy } from "lucide-react";
+import { IconX as X, IconTrophy as Trophy } from "@tabler/icons-react";
 
 type Particle = { x: number; y: number; vx: number; vy: number; life: number; max: number; color: string; size: number };
 type Rocket = { x: number; y: number; vy: number; targetY: number; color: string };

@@ -13,7 +13,7 @@ import { AttachmentsSection } from "@/components/tasks/attachments-section";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
 import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-card";
 import { MyResponseCard } from "@/components/tasks/my-response-card";
-import { ArrowLeft, Printer } from "lucide-react";
+import { IconArrowLeft as ArrowLeft, IconPrinter as Printer } from "@tabler/icons-react";
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();

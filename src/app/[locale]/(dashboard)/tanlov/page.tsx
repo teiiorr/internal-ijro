@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Trophy, Users } from "lucide-react";
+import { IconTrophy as Trophy, IconUsers as Users } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { listContests } from "@/server/queries/contests";

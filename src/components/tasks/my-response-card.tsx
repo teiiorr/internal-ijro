@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { FileInput } from "@/components/ui/file-input";
 import { Button } from "@/components/ui/button";
-import { BadgeCheck, FileText } from "lucide-react";
+import { IconRosetteDiscountCheck as BadgeCheck, IconFileText as FileText } from "@tabler/icons-react";
 import { submitTaskResponse } from "@/server/actions/tasks";
 import { formatDateTime } from "@/lib/dates";
 

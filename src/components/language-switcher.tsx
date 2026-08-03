@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useTransition, useEffect, useRef, useState } from "react";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { Globe, Check } from "lucide-react";
+import { IconWorld as Globe, IconCheck as Check } from "@tabler/icons-react";
 import { Button } from "./ui/button";
 
 const LABEL: Record<string, string> = {

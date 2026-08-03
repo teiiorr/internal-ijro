@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Bell, CheckCheck } from "lucide-react";
+import { IconBell as Bell, IconChecks as CheckCheck } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";

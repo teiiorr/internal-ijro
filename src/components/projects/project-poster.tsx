@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { ImagePlus, Trash2 } from "lucide-react";
+import { IconPhotoPlus as ImagePlus, IconTrash as Trash2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { setProjectPoster, removeProjectPoster } from "@/server/actions/projects";
 

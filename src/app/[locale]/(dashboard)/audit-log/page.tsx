@@ -5,7 +5,7 @@ import { listAudit } from "@/server/queries/audit";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { IconDownload as Download } from "@tabler/icons-react";
 import Link from "next/link";
 import { formatDateTime } from "@/lib/dates";
 

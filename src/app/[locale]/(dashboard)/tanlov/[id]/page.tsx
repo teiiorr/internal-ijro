@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { ArrowLeft, Users, CalendarDays } from "lucide-react";
+import { IconArrowLeft as ArrowLeft, IconUsers as Users, IconCalendar as CalendarDays } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { getContest } from "@/server/queries/contests";

@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useTranslations } from "next-intl";
-import { Upload, X, FileText } from "lucide-react";
+import { IconUpload as Upload, IconX as X, IconFileText as FileText } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "className"> & {

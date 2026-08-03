@@ -1,7 +1,7 @@
 "use client";
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { PlayCircle, RotateCcw } from "lucide-react";
+import { IconPlayerPlay as PlayCircle, IconRotate as RotateCcw } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { setProjectInProgress } from "@/server/actions/projects";
 

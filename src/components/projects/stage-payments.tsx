@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MoneyInput } from "@/components/ui/money-input";
-import { Trash2, Plus, CheckCircle2 } from "lucide-react";
+import { IconTrash as Trash2, IconPlus as Plus, IconCircleCheck as CheckCircle2 } from "@tabler/icons-react";
 import { addStagePayment, setStagePaymentStatus, deleteStagePayment } from "@/server/actions/stages";
 import { formatDate } from "@/lib/dates";
 

@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { externalCompanies } from "@/lib/db/schema";
 import { SessionProvider } from "next-auth/react";
 import { Header } from "@/components/layout/header";
-import { Folder, LayoutDashboard, User as UserIcon, Settings, FileText } from "lucide-react";
+import { IconFolder as Folder, IconLayoutDashboard as LayoutDashboard, IconUser as UserIcon, IconSettings as Settings, IconFileText as FileText } from "@tabler/icons-react";
 
 export default async function ContractorLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();

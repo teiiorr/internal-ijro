@@ -1,7 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Copy, Check } from "lucide-react";
+import { IconCopy as Copy, IconCheck as Check } from "@tabler/icons-react";
 import { useState } from "react";
 
 export function CopyRegistration({ regNum }: { regNum: string }) {

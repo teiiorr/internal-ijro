@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
-import { Search, BadgeCheck, ChevronDown, Clock4, FileText, AlertCircle } from "lucide-react";
+import { IconSearch as Search, IconRosetteDiscountCheck as BadgeCheck, IconChevronDown as ChevronDown, IconClock as Clock4, IconFileText as FileText, IconAlertCircle as AlertCircle } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { reviewAssigneeResponse } from "@/server/actions/tasks";
 import { Button } from "@/components/ui/button";

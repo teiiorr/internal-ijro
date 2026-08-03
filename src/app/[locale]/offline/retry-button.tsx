@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { IconRefresh as RefreshCw } from "@tabler/icons-react";
 
 export function RetryButton({ label, reconnectedLabel }: { label: string; reconnectedLabel: string }) {
   const [busy, setBusy] = useState(false);

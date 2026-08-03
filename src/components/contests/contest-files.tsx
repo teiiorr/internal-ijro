@@ -3,7 +3,7 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { FileText, Download, Trash2, Plus, Loader2, Paperclip } from "lucide-react";
+import { IconFileText as FileText, IconDownload as Download, IconTrash as Trash2, IconPlus as Plus, IconLoader2 as Loader2, IconPaperclip as Paperclip } from "@tabler/icons-react";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestFile } from "@/server/actions/contests";
 import { formatDate } from "@/lib/dates";

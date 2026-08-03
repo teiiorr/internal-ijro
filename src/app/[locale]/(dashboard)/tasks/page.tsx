@@ -6,7 +6,7 @@ import { listTasks } from "@/server/queries/tasks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TasksViewSwitcher } from "@/components/tasks/tasks-view-switcher";
-import { Plus, Download, Inbox, Send } from "lucide-react";
+import { IconPlus as Plus, IconDownload as Download, IconInbox as Inbox, IconSend as Send } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 type Scope = "mine" | "given";

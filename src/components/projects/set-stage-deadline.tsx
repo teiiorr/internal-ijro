@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { CalendarClock } from "lucide-react";
+import { IconCalendarClock as CalendarClock } from "@tabler/icons-react";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { setStageDeadline } from "@/server/actions/stages";
 import { formatDate } from "@/lib/dates";

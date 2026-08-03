@@ -10,7 +10,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { ProjectsFilters } from "@/components/projects/projects-filters";
 import { ScrollMemory } from "@/components/scroll-memory";
 import { Marquee } from "@/components/ui/marquee";
-import { Plus, Download, AlertTriangle } from "lucide-react";
+import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle } from "@tabler/icons-react";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors";
 

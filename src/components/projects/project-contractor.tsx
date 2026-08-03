@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Handshake, Pencil, Check, Phone, User, Trash2 } from "lucide-react";
+import { IconHeartHandshake as Handshake, IconPencil as Pencil, IconCheck as Check, IconPhone as Phone, IconUser as User, IconTrash as Trash2 } from "@tabler/icons-react";
 import { createContractor, setProjectContractor } from "@/server/actions/projects";
 
 type Contractor = { id: string; name: string; contactPerson: string | null; contactPhone: string | null };

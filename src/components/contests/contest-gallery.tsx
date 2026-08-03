@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, ImagePlus, Loader2, Trash2, Images } from "lucide-react";
+import { IconChevronLeft as ChevronLeft, IconChevronRight as ChevronRight, IconPhotoPlus as ImagePlus, IconLoader2 as Loader2, IconTrash as Trash2, IconPhoto as Images } from "@tabler/icons-react";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestPhoto } from "@/server/actions/contests";
 import type { ContestPhoto } from "@/server/queries/contests";

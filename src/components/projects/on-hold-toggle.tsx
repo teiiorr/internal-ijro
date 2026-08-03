@@ -1,7 +1,7 @@
 "use client";
 import { useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { Pause, Play } from "lucide-react";
+import { IconPlayerPause as Pause, IconPlayerPlay as Play } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { setProjectOnHold } from "@/server/actions/projects";
 

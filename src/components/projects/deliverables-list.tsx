@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Download } from "lucide-react";
+import { IconDownload as Download } from "@tabler/icons-react";
 import { submitDeliverable, reviewDeliverable } from "@/server/actions/projects";
 import { formatDateTime } from "@/lib/dates";
 

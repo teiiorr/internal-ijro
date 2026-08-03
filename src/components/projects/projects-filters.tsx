@@ -2,7 +2,7 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useTransition } from "react";
-import { ChevronDown, Search } from "lucide-react";
+import { IconChevronDown as ChevronDown, IconSearch as Search } from "@tabler/icons-react";
 
 // Airy dashed control — same language as the file dropzone.
 const FIELD =

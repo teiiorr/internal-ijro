@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FitText } from "@/components/ui/fit-text";
-import { ShieldCheck, Download, PlusCircle, Trash2, Pencil, Database, Server, HardDriveDownload, KeyRound } from "lucide-react";
+import { IconShieldCheck as ShieldCheck, IconDownload as Download, IconCirclePlus as PlusCircle, IconTrash as Trash2, IconPencil as Pencil, IconDatabase as Database, IconServer as Server, IconDatabaseExport as HardDriveDownload, IconKey as KeyRound } from "@tabler/icons-react";
 
 export const dynamic = "force-dynamic";
 

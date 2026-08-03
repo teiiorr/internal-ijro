@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trash2, CheckCircle2, GripVertical, Plus, ArrowUp, ArrowDown } from "lucide-react";
+import { IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconGripVertical as GripVertical, IconPlus as Plus, IconArrowUp as ArrowUp, IconArrowDown as ArrowDown } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { overallProgress } from "@/lib/projects/progress";
 import {

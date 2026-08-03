@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TaskPriorityBadge, TaskStatusBadge } from "./task-status-badge";
 import { CalendarView } from "./calendar-view";
 import Link from "next/link";
-import { List, Calendar as CalendarIcon, Inbox, ChevronRight } from "lucide-react";
+import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { deadlineRelative } from "@/lib/dates";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";

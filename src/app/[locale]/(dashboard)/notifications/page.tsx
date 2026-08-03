@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { markAllRead } from "@/server/actions/notifications";
 import { formatDateTime } from "@/lib/dates";
-import { CheckCheck } from "lucide-react";
+import { IconChecks as CheckCheck } from "@tabler/icons-react";
 
 export default async function NotificationsPage() {
   const session = await auth();

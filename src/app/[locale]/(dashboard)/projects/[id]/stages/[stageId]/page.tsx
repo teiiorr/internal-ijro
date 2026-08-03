@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { ArrowLeft, Lock, Loader2, CheckCircle2, User, Info } from "lucide-react";
+import { IconArrowLeft as ArrowLeft, IconLock as Lock, IconLoader2 as Loader2, IconCircleCheck as CheckCircle2, IconUser as User, IconInfoCircle as Info } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { getStage } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";

@@ -15,19 +15,7 @@ import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { ProjectStatusDonut } from "@/components/dashboards/project-status-donut";
 import { ProjectTypeBar } from "@/components/dashboards/project-type-bar";
 import type { DerivedStatus } from "@/lib/projects/progress";
-import {
-  Trophy,
-  AlertTriangle,
-  Layers,
-  FolderKanban,
-  CalendarClock,
-  CalendarX2,
-  ListChecks,
-  ChevronRight,
-  PieChart,
-  BarChart3,
-  Wallet,
-} from "lucide-react";
+import { IconTrophy as Trophy, IconAlertTriangle as AlertTriangle, IconStack2 as Layers, IconLayoutKanban as FolderKanban, IconCalendarClock as CalendarClock, IconCalendarX as CalendarX2, IconListCheck as ListChecks, IconChevronRight as ChevronRight, IconChartPie as PieChart, IconChartBar as BarChart3, IconWallet as Wallet } from "@tabler/icons-react";
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/).slice(0, 2);

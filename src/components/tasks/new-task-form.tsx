@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createTask } from "@/server/actions/tasks";
-import { X, Plus, Search } from "lucide-react";
+import { IconX as X, IconPlus as Plus, IconSearch as Search } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 type Person = { id: string; fullName: string; position: string };
