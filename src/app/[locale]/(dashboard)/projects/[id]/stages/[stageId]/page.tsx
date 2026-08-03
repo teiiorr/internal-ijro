@@ -79,7 +79,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-3">
           <h3 className="text-base font-semibold">{t("projects.editStage.scheduleTitle")}</h3>
-          <dl className="grid sm:grid-cols-3 gap-4 text-sm">
+          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
               <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate) : t("common.emptyValue")}</dd>
@@ -109,7 +109,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
       )}
 
       {/* Documents + Payments side by side on wide screens, stacked on mobile */}
-      <div className="grid gap-6 lg:grid-cols-2 items-start">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 items-start">
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-4">
             <h3 className="text-base font-semibold">{t("projects.stageDocs.title")}</h3>

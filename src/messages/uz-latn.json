@@ -117,7 +117,8 @@
     "smetaKengash": "Smeta Komissiyasi",
     "more": "Ko'proq",
     "owner": "Egasi paneli",
-    "normativeDocs": "Me'yoriy hujjatlar"
+    "normativeDocs": "Me'yoriy hujjatlar",
+    "tanlov": "Tanlov"
   },
   "positions": {
     "direktor": "Direktor",
@@ -997,6 +998,36 @@
   },
   "normative": {
     "title": "Me'yoriy hujjatlar",
-    "subtitle": "Tashkilotning me'yoriy hujjatlari — papkalar bo'yicha saqlanadi"
+    "subtitle": "Tashkilotning me'yoriy hujjatlari — papkalar bo'yicha saqlanadi",
+    "orLink": "yoki havola",
+    "linkTitlePlaceholder": "Havola nomi",
+    "addLink": "Havola qo'shish",
+    "linkError": "Havolani qo'shib bo'lmadi"
+  },
+  "tanlov": {
+    "title": "Tanlov",
+    "subtitle": "Tanlov orqali o'tgan loyihalar",
+    "empty": "Hozircha tanlovlar yo'q",
+    "add": "Yangi tanlov",
+    "nameLabel": "Tanlov nomi",
+    "namePlaceholder": "Masalan: Milliy animatsiya tanlovi",
+    "nameRequired": "Tanlov nomini kiriting",
+    "participants": "Ishtirokchilar soni",
+    "participantsShort": "ishtirokchi",
+    "heldAt": "O'tkazilgan sana",
+    "winnerLabel": "G'olib (studiya yoki loyiha)",
+    "winnerPlaceholder": "G'olib nomi",
+    "descriptionLabel": "Izoh",
+    "createTitle": "Yangi tanlov",
+    "editTitle": "Tanlovni tahrirlash",
+    "revealWinner": "G'olibni ko'rsatish",
+    "winner": "G'olib",
+    "noWinner": "G'olib hali belgilanmagan",
+    "replay": "Yana ko'rsatish",
+    "celebrateDone": "Ajoyib! 🎉",
+    "addPhoto": "Rasm qo'shish",
+    "photoAdded": "Rasm qo'shildi",
+    "photoError": "Rasmni yuklab bo'lmadi",
+    "deleteConfirm": "Bu tanlov o'chirilsinmi?"
   }
 }

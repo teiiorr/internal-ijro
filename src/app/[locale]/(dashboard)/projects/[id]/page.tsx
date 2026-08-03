@@ -149,7 +149,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </Card>
 
         {/* stage list (main) + payment rollup (sidebar) — fills the full width */}
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
           <div className="min-w-0 space-y-6">
             <Card>
               <CardContent className="p-5 sm:p-6">
@@ -314,7 +314,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-4">
           <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
-          <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
               <dd className="font-medium mt-0.5">{data.curator?.fullName ?? t("common.emptyValue")}</dd>

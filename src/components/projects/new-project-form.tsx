@@ -88,7 +88,7 @@ export function NewProjectForm({
         <Label htmlFor="description">{t("projects.fields.description")}</Label>
         <Textarea id="description" name="description" rows={3} />
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
           <Label>{t("projects.fields.type")}</Label>
           <Select value={type} onValueChange={(v) => setType(v as typeof type)}>

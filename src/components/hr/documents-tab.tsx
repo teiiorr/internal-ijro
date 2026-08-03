@@ -50,7 +50,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
   return (
     <div className="space-y-4">
       {canEdit && (
-        <form onSubmit={onUpload} className="grid gap-3 md:grid-cols-4 items-end border rounded-lg p-4">
+        <form onSubmit={onUpload} className="grid grid-cols-1 gap-3 md:grid-cols-4 items-end border rounded-lg p-4">
           <div className="space-y-1.5">
             <Label>{t("employees.docs.type")}</Label>
             <Select value={docType} onValueChange={setDocType} name="documentType">

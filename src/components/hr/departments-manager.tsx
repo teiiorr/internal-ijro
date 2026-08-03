@@ -54,7 +54,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
   const Form = ({ id, initial }: { id: string | "new"; initial?: Partial<Dept> }) => (
     <Card>
       <CardContent className="p-6">
-        <form onSubmit={(e) => onSubmit(e, id)} className="grid gap-3 md:grid-cols-2">
+        <form onSubmit={(e) => onSubmit(e, id)} className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="space-y-1.5 md:col-span-2">
             <Label>{t("departments.fields.name")}</Label>
             <Input name="name" required defaultValue={initial?.name ?? ""} />

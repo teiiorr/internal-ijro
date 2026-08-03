@@ -56,7 +56,7 @@ export function SettingsTabs({ init }: { init: Init }) {
   return (
     <div className="space-y-6 max-w-3xl">
       <Section title={t("settings.tabs.personal")}>
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label>{t("settings.personal.language")}</Label>
             <Select defaultValue={init.languagePreference} onValueChange={(v) => start(async () => { await updateProfilePreferences({ languagePreference: v }); })}>

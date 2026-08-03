@@ -113,7 +113,7 @@ export function DeliverablesList({
       {canSubmit && (
         <form onSubmit={onSubmit} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
           <h4 className="font-semibold">{t("projects.deliverables.submit")}</h4>
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             <div className="space-y-2">
               <Label>{t("projects.deliverables.type")}</Label>
               <Select name="type" defaultValue="document">

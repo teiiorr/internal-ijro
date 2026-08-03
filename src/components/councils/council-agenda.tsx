@@ -126,7 +126,7 @@ export function CouncilAgenda({
 
       {/* add row */}
       {canManage && (
-        <div className="grid gap-2 sm:grid-cols-[1fr_200px_200px_auto] sm:items-center">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_200px_200px_auto] sm:items-center">
           <Input placeholder={t("kengash.topic")} value={topic} onChange={(e) => setTopic(e.target.value)} />
           <input
             list={`proj-${meetingId}`}

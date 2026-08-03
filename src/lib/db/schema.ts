@@ -737,6 +737,8 @@ export const normativeDocuments = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     /** Optional folder name typed by the uploader. NULL = uncategorised. */
     folder: varchar("folder", { length: 120 }),
+    /** true → this entry is an external link (fileUrl holds the URL, no file on disk). */
+    isLink: boolean("is_link").default(false).notNull(),
     fileUrl: text("file_url").notNull(),
     fileName: varchar("file_name", { length: 255 }).notNull(),
     fileSize: integer("file_size"),
@@ -811,6 +813,48 @@ export const councilAgendaItems = pgTable(
   },
   (t) => ({
     meetingIdx: index("council_agenda_items_meeting_idx").on(t.meetingId),
+  })
+);
+
+// ---------- 5.27 contests (Tanlov orqali o'tgan loyihalar) ----------
+// A tender/contest that a project passed through: its name, how many studios
+// took part, and who won. Photos live in contest_photos.
+export const contests = pgTable(
+  "contests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: varchar("name", { length: 255 }).notNull(), // Tanlov nomi
+    participantsCount: integer("participants_count").default(0).notNull(), // ishtirokchilar soni
+    winnerName: varchar("winner_name", { length: 255 }), // G'olib (studiya / loyiha)
+    winnerProjectId: uuid("winner_project_id").references(() => projects.id, { onDelete: "set null" }),
+    description: text("description"),
+    heldAt: date("held_at"),
+    createdByUserId: uuid("created_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    heldIdx: index("contests_held_idx").on(t.heldAt),
+  })
+);
+
+// ---------- 5.28 contest_photos ----------
+export const contestPhotos = pgTable(
+  "contest_photos",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    contestId: uuid("contest_id")
+      .notNull()
+      .references(() => contests.id, { onDelete: "cascade" }),
+    fileUrl: text("file_url").notNull(),
+    fileName: varchar("file_name", { length: 255 }).notNull(),
+    caption: varchar("caption", { length: 255 }), // ixtiyoriy izoh
+    orderIndex: integer("order_index").default(0).notNull(),
+    uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    contestIdx: index("contest_photos_contest_idx").on(t.contestId),
   })
 );
 

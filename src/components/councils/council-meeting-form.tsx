@@ -29,7 +29,7 @@ export function CouncilMeetingForm({ kind }: { kind: "ekspert" | "smeta" }) {
 
   return (
     <div className="space-y-2">
-      <div className="grid gap-2 sm:grid-cols-[220px_1fr_auto] sm:items-end">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-[220px_1fr_auto] sm:items-end">
         <div className="space-y-1">
           <label className="text-xs font-medium text-[var(--muted)]">{t("kengash.meetingDate")}</label>
           <Input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />

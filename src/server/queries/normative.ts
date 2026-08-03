@@ -13,6 +13,7 @@ export async function listNormativeDocuments() {
       fileName: normativeDocuments.fileName,
       fileSize: normativeDocuments.fileSize,
       category: normativeDocuments.folder,
+      isLink: normativeDocuments.isLink,
       uploadedAt: normativeDocuments.uploadedAt,
       uploaderName: users.fullName,
     })

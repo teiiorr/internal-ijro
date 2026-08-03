@@ -16,6 +16,7 @@ import {
   Coins,
   ShieldCheck,
   FileCheck2,
+  Trophy,
   Menu,
   X,
 } from "lucide-react";
@@ -34,6 +35,7 @@ const ITEMS: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, key: "dashboard", allowed: ALL },
   { href: "/tasks", icon: ListTodo, key: "tasks", allowed: STAFF },
   { href: "/projects", icon: FolderKanban, key: "projects", allowed: ALL },
+  { href: "/tanlov", icon: Trophy, key: "tanlov", allowed: ALL },
   { href: "/kengashlar/ekspert", icon: Presentation, key: "ekspertKengash", allowed: STAFF },
   { href: "/kengashlar/smeta", icon: Coins, key: "smetaKengash", allowed: STAFF },
   { href: "/employees", icon: Users, key: "employees", allowed: HR_ROLES },

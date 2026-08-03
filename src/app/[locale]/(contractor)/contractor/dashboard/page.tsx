@@ -19,7 +19,7 @@ export default async function ContractorDashboardPage() {
         {company?.rating && <p className="text-sm text-[var(--muted)] mt-1">{t("contractor.dashboard.averageRating")}: ⭐ {company.rating}</p>}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card>
           <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.activeProjects")}</CardTitle></CardHeader>
           <CardContent><p className="text-4xl font-bold tabular">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>

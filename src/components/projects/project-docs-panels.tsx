@@ -267,7 +267,7 @@ export function ProjectDocsPanels({
 }) {
   const t = useTranslations();
   return (
-    <div className="grid items-stretch gap-4 sm:gap-5 md:grid-cols-2">
+    <div className="grid grid-cols-1 items-stretch gap-4 sm:gap-5 md:grid-cols-2">
       <DocPanel projectId={projectId} kind="tahlil" title={t("projects.projectDocs.tahlilTitle")} docs={tahlil} canManage={canManage} maxBytes={maxBytes} />
       <DocPanel projectId={projectId} kind="xalqaro_tajriba" title={t("projects.projectDocs.xalqaroTitle")} docs={xalqaro} canManage={canManage} maxBytes={maxBytes} />
     </div>

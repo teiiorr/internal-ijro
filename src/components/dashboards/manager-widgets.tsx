@@ -116,7 +116,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
       </div>
 
       {/* Projects analytics: status donut + type bar */}
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex-row items-center gap-3 pb-4">
             <div className="grid size-10 place-items-center rounded-xl bg-[var(--primary-soft)]">
@@ -221,7 +221,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
       )}
 
       {/* Row: Top performers + Most overdue (people) */}
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex-row items-center gap-3 pb-4">
             <div className="grid size-10 place-items-center rounded-xl bg-[var(--success-soft)]">

@@ -117,7 +117,8 @@
     "smetaKengash": "Смета Комиссияси",
     "more": "Кўпроқ",
     "owner": "Эгаси панели",
-    "normativeDocs": "Меъёрий ҳужжатлар"
+    "normativeDocs": "Меъёрий ҳужжатлар",
+    "tanlov": "Танлов"
   },
   "positions": {
     "direktor": "Директор",
@@ -997,6 +998,36 @@
   },
   "normative": {
     "title": "Меъёрий ҳужжатлар",
-    "subtitle": "Ташкилотнинг меъёрий ҳужжатлари — папкалар бўйича сақланади"
+    "subtitle": "Ташкилотнинг меъёрий ҳужжатлари — папкалар бўйича сақланади",
+    "orLink": "ёки ҳавола",
+    "linkTitlePlaceholder": "Ҳавола номи",
+    "addLink": "Ҳавола қўшиш",
+    "linkError": "Ҳаволани қўшиб бўлмади"
+  },
+  "tanlov": {
+    "title": "Танлов",
+    "subtitle": "Танлов орқали ўтган лойиҳалар",
+    "empty": "Ҳозирча танловлар йўқ",
+    "add": "Янги танлов",
+    "nameLabel": "Танлов номи",
+    "namePlaceholder": "Масалан: Миллий анимация танлови",
+    "nameRequired": "Танлов номини киритинг",
+    "participants": "Иштирокчилар сони",
+    "participantsShort": "иштирокчи",
+    "heldAt": "Ўтказилган сана",
+    "winnerLabel": "Ғолиб (студия ёки лойиҳа)",
+    "winnerPlaceholder": "Ғолиб номи",
+    "descriptionLabel": "Изоҳ",
+    "createTitle": "Янги танлов",
+    "editTitle": "Танловни таҳрирлаш",
+    "revealWinner": "Ғолибни кўрсатиш",
+    "winner": "Ғолиб",
+    "noWinner": "Ғолиб ҳали белгиланмаган",
+    "replay": "Яна кўрсатиш",
+    "celebrateDone": "Ажойиб! 🎉",
+    "addPhoto": "Расм қўшиш",
+    "photoAdded": "Расм қўшилди",
+    "photoError": "Расмни юклаб бўлмади",
+    "deleteConfirm": "Бу танлов ўчирилсинми?"
   }
 }

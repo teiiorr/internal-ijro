@@ -91,7 +91,7 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment, 
       {canManage && (
         adding ? (
           <form onSubmit={onAdd} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
               <div className="space-y-2 md:col-span-2"><Label>{t("projects.milestones.title")}</Label><Input name="title" required /></div>
               <div className="space-y-2"><Label>{t("projects.milestones.deadline")}</Label><Input name="deadline" type="date" /></div>
               <div className="space-y-2"><Label>{t("projects.milestones.weight")}</Label><Input name="weight" type="number" defaultValue={1} min={1} /></div>

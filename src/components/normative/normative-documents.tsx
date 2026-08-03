@@ -5,8 +5,9 @@ import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
-import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2, ChevronUp } from "lucide-react";
-import { removeNormativeDocument, setNormativeDocumentFolder } from "@/server/actions/normative";
+import { Download, Trash2, FileText, Folder, FolderInput, Plus, Loader2, ChevronUp, Link2, ExternalLink } from "lucide-react";
+import { removeNormativeDocument, setNormativeDocumentFolder, addNormativeLink } from "@/server/actions/normative";
+import { Input } from "@/components/ui/input";
 import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";
 
@@ -16,6 +17,7 @@ type Doc = {
   fileName: string;
   fileSize: number | null;
   category: string | null; // = folder
+  isLink: boolean;
   uploadedAt: Date | string;
   uploaderName: string | null;
 };
@@ -46,6 +48,8 @@ export function NormativeDocuments({
   const [uploading, setUploading] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
   const [open, setOpen] = useState(false); // upload form collapsed by default (like Tahlil)
+  const [linkTitle, setLinkTitle] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
   const uncategorized = t("projects.stageDocs.uncategorized");
   const dlId = "normative-folders";
 
@@ -134,6 +138,23 @@ export function NormativeDocuments({
     start(async () => { await setNormativeDocumentFolder(id, value || null); });
   }
 
+  function onAddLink() {
+    const title = linkTitle.trim();
+    let url = linkUrl.trim();
+    if (!title || !url) return;
+    if (!/^https?:\/\//i.test(url)) url = `https://${url}`; // be forgiving
+    start(async () => {
+      try {
+        await addNormativeLink({ title, url, folder: folder.trim() || null });
+        setLinkTitle(""); setLinkUrl(""); setOpen(false);
+        toast.success(t("projects.stageDocs.added"));
+        router.refresh();
+      } catch {
+        toast.error(t("normative.linkError"));
+      }
+    });
+  }
+
   const tooBig = !!staged && staged.file.size > maxBytes;
   const busy = preparing || uploading;
 
@@ -157,12 +178,12 @@ export function NormativeDocuments({
                   const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date)}`;
                   return (
                     <li key={d.id} className="flex min-w-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5">
-                      <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]">
-                        <FileText className="size-4" />
+                      <div className={`grid size-9 shrink-0 place-items-center rounded-lg ${d.isLink ? "bg-[var(--accent-soft,var(--primary-soft))] text-[var(--accent,var(--primary))]" : "bg-[var(--primary-soft)] text-[var(--primary)]"}`}>
+                        {d.isLink ? <Link2 className="size-4" /> : <FileText className="size-4" />}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold" title={d.fileName}>{d.fileName}</p>
-                        <p className="truncate text-xs text-[var(--muted)]">{meta}</p>
+                        <p className="truncate text-xs text-[var(--muted)]" title={d.isLink ? d.fileUrl : undefined}>{d.isLink ? d.fileUrl : meta}</p>
                       </div>
                       {canManage && folderNames.length > 0 && (
                         <div className="relative shrink-0">
@@ -181,9 +202,15 @@ export function NormativeDocuments({
                           </select>
                         </div>
                       )}
-                      <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
-                        <a href={d.fileUrl} download><Download className="size-4" /></a>
-                      </Button>
+                      {d.isLink ? (
+                        <Button asChild variant="ghost" size="icon-sm" title={t("common.open")}>
+                          <a href={d.fileUrl} target="_blank" rel="noopener noreferrer"><ExternalLink className="size-4" /></a>
+                        </Button>
+                      ) : (
+                        <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
+                          <a href={d.fileUrl} download><Download className="size-4" /></a>
+                        </Button>
+                      )}
                       {canManage && (
                         <Button
                           variant="ghost"
@@ -287,6 +314,20 @@ export function NormativeDocuments({
             <Button type="button" variant="ghost" disabled={uploading} onClick={() => { setOpen(false); setStaged(null); }}>
               <ChevronUp className="size-4" />
               {t("projects.projectDocs.hide")}
+            </Button>
+          </div>
+
+          {/* Or add an external link instead of a file. */}
+          <div className="flex items-center gap-2 pt-1 text-[11px] font-bold uppercase tracking-wide text-[var(--muted)]">
+            <span className="h-px flex-1 bg-[var(--border)]" />
+            {t("normative.orLink")}
+            <span className="h-px flex-1 bg-[var(--border)]" />
+          </div>
+          <Input value={linkTitle} onChange={(e) => setLinkTitle(e.target.value)} maxLength={255} placeholder={t("normative.linkTitlePlaceholder")} className="h-10" />
+          <div className="flex flex-wrap gap-2">
+            <Input value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} inputMode="url" placeholder="https://..." className="h-10 flex-1 min-w-[160px]" />
+            <Button type="button" variant="outline" onClick={onAddLink} disabled={pending || !linkTitle.trim() || !linkUrl.trim()} className="shrink-0">
+              <Link2 className="size-4" />{t("normative.addLink")}
             </Button>
           </div>
         </div>

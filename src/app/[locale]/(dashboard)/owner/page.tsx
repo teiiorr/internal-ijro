@@ -184,7 +184,7 @@ export default async function OwnerPage() {
       {/* 4. Dev tools / system info */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">{t("owner.system.title")}</h2>
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {/* Runtime */}
           <Card>
             <CardContent className="p-5 space-y-2.5">

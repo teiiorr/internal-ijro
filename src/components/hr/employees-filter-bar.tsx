@@ -30,7 +30,7 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
   const exportUrl = `/api/export/employees?${sp.toString()}`;
 
   return (
-    <div className="grid gap-3 md:grid-cols-5">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
       <div className="relative md:col-span-2">
         <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
         <Input

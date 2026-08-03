@@ -63,7 +63,7 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <F name="birthDate" label={t("employees.profile.birthDate")} type="date" defaultValue={p.birthDate} />
         <F name="maritalStatus" label={t("employees.profile.maritalStatus")} defaultValue={p.maritalStatus} />
         <F name="passportSerial" label={t("employees.profile.passportSerial")} defaultValue={p.passportSerial} />

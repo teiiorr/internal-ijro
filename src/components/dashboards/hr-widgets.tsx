@@ -14,7 +14,7 @@ export async function HrWidgets() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {[
           { label: t("dashboard.hr.activeEmployees"), value: counts.total, href: "/employees" },
           { label: t("dashboard.hr.newThisMonth"), value: counts.newThisMonth, href: "/employees" },
@@ -30,7 +30,7 @@ export async function HrWidgets() {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader><CardTitle>{t("dashboard.hr.birthdays")}</CardTitle></CardHeader>
           <CardContent>

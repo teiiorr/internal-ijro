@@ -97,7 +97,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
           <Card>
             <CardHeader><CardTitle>{t("employees.profile.sectionTitle")}</CardTitle></CardHeader>
             <CardContent>
-              <div className="grid gap-2 md:grid-cols-3 mb-6 text-sm">
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-3 mb-6 text-sm">
                 <div><span className="text-[var(--muted)]">{t("common.email")}:</span> {data.user.email}</div>
                 <div><span className="text-[var(--muted)]">{t("common.phone")}:</span> {data.user.phone ?? "—"}</div>
                 <div><span className="text-[var(--muted)]">{t("employees.table.hireDate")}:</span> {data.user.hireDate ?? "—"}</div>

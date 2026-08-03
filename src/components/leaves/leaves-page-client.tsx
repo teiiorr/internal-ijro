@@ -46,7 +46,7 @@ export function LeavesPageClient({
 
       {open && (
         <Card><CardContent className="p-6">
-          <form action={(fd) => start(async () => { await requestLeave(fd); setOpen(false); })} className="grid gap-3 md:grid-cols-4 items-end">
+          <form action={(fd) => start(async () => { await requestLeave(fd); setOpen(false); })} className="grid grid-cols-1 gap-3 md:grid-cols-4 items-end">
             <div className="space-y-1.5">
               <Label>{t("leaves.fields.type")}</Label>
               <Select name="type" defaultValue="vacation">

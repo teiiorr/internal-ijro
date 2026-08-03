@@ -142,7 +142,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
         <p className="text-xs text-[var(--muted)]">{t("tasks.new.primaryAssigneeHint")}</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label>{t("tasks.fields.project")}</Label>
           <Select name="projectId">

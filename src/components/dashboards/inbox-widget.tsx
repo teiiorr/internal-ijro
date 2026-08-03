@@ -32,7 +32,7 @@ export async function InboxWidget({ userId }: { userId: string }) {
   ]);
 
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       <Card>
         <div className="px-6 pt-5 pb-3 flex items-center justify-between border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">

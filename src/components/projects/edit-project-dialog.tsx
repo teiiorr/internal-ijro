@@ -107,7 +107,7 @@ export function EditProjectDialog({
             <Label htmlFor="ep-desc">{t("projects.fields.description")}</Label>
             <Textarea id="ep-desc" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label>{t("projects.fields.type")}</Label>
               <Select value={type} onValueChange={setType}>
@@ -137,7 +137,7 @@ export function EditProjectDialog({
               <Input id="ep-deadline" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
             </div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="ep-budget">{t("projects.fields.budget")}</Label>
               <div className="flex gap-2">
