@@ -827,6 +827,8 @@ export const contests = pgTable(
     participantsCount: integer("participants_count").default(0).notNull(), // ishtirokchilar soni
     winnerName: varchar("winner_name", { length: 255 }), // G'olib (studiya / loyiha)
     winnerProjectId: uuid("winner_project_id").references(() => projects.id, { onDelete: "set null" }),
+    /** Winner's logo shown on the reveal screen. */
+    winnerLogoUrl: text("winner_logo_url"),
     description: text("description"),
     heldAt: date("held_at"),
     createdByUserId: uuid("created_by_user_id").references(() => users.id, { onDelete: "set null" }),
@@ -855,6 +857,43 @@ export const contestPhotos = pgTable(
   },
   (t) => ({
     contestIdx: index("contest_photos_contest_idx").on(t.contestId),
+  })
+);
+
+// ---------- 5.29 contest_files (hujjatlar) ----------
+export const contestFiles = pgTable(
+  "contest_files",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    contestId: uuid("contest_id")
+      .notNull()
+      .references(() => contests.id, { onDelete: "cascade" }),
+    fileUrl: text("file_url").notNull(),
+    fileName: varchar("file_name", { length: 255 }).notNull(),
+    fileSize: integer("file_size"),
+    fileMimeType: varchar("file_mime_type", { length: 120 }),
+    uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    contestIdx: index("contest_files_contest_idx").on(t.contestId),
+  })
+);
+
+// ---------- 5.30 contest_comments (izohlar) ----------
+export const contestComments = pgTable(
+  "contest_comments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    contestId: uuid("contest_id")
+      .notNull()
+      .references(() => contests.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    body: varchar("body", { length: 2000 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    contestIdx: index("contest_comments_contest_idx").on(t.contestId),
   })
 );
 

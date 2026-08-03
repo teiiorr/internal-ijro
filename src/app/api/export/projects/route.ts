@@ -3,9 +3,13 @@ import ExcelJS from "exceljs";
 import { auth } from "@/lib/auth";
 import { listProjectsForReport } from "@/server/queries/projects";
 import { canViewMoney } from "@/lib/permissions/project-editors";
+import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { applyMontserrat } from "@/lib/excel";
 
 export const runtime = "nodejs";
+
+// In-progress first, completed last — matches the projects grid.
+const STATUS_PRIORITY: Record<DerivedStatus, number> = { in_progress: 0, not_started: 1, on_hold: 2, completed: 3 };
 
 // Report headers (Uzbek Latin, matching the printed "Loyihalar hisoboti").
 const HEADERS = [
@@ -22,13 +26,32 @@ const HEADERS = [
 ];
 const MONEY_COLS = ["planned", "paid", "remaining"];
 
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session?.user) return new NextResponse("unauthorized", { status: 401 });
   // The report includes budgets/payments → money allowlist only.
   if (!canViewMoney(session.user.email)) return new NextResponse("forbidden", { status: 403 });
 
-  const rows = await listProjectsForReport();
+  // Honour the same filters as the projects list.
+  const sp = req.nextUrl.searchParams;
+  const statusTab = sp.get("status") || "all";
+  const raw = await listProjectsForReport({
+    search: sp.get("search"),
+    projectTypeId: sp.get("typeId"),
+    stage: sp.get("stage"),
+    payment: (sp.get("payment") as "paid" | "unpaid" | null) ?? null,
+    overdue: sp.get("overdue") === "1",
+  });
+
+  // Apply the derived-status tab filter + status-priority sort in JS.
+  const rows = raw
+    .map((r) => {
+      const derived = derivedStatus(r.progress, r.statusOverride);
+      const atRisk = r.deadlineOverdue && derived !== "completed" && derived !== "on_hold";
+      return { ...r, derived, atRisk };
+    })
+    .filter((r) => (statusTab === "all" ? true : statusTab === "at_risk" ? r.atRisk : r.derived === statusTab))
+    .sort((a, b) => STATUS_PRIORITY[a.derived] - STATUS_PRIORITY[b.derived]);
 
   const wb = new ExcelJS.Workbook();
   wb.creator = "Markaz Ijro";

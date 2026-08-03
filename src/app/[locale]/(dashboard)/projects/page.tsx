@@ -51,6 +51,15 @@ export default async function ProjectsPage({
   ]);
   const canCreate = canEditProjects(session.user.email);
   const canExport = canViewMoney(session.user.email); // report has sums → allowlist only
+  // Excel export mirrors the currently-applied filters.
+  const exportParams = new URLSearchParams();
+  if (search) exportParams.set("search", search);
+  if (statusFilter !== "all") exportParams.set("status", statusFilter);
+  if (projectTypeId) exportParams.set("typeId", projectTypeId);
+  if (payment) exportParams.set("payment", payment);
+  if (overdue) exportParams.set("overdue", "1");
+  if (stage) exportParams.set("stage", stage);
+  const exportHref = `/api/export/projects${exportParams.toString() ? `?${exportParams.toString()}` : ""}`;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -137,7 +146,7 @@ export default async function ProjectsPage({
         <div className="flex gap-2 shrink-0">
           {canExport && (
             <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
-              <a href="/api/export/projects"><Download className="size-4" /> XLSX</a>
+              <a href={exportHref}><Download className="size-4" /> XLSX</a>
             </Button>
           )}
           {canCreate && (

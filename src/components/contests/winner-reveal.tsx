@@ -15,12 +15,12 @@ const COLORS = ["#ffd54a", "#ff5252", "#40c4ff", "#69f0ae", "#e040fb", "#ffab40"
 export function WinnerReveal({
   contestName,
   winnerName,
-  photoUrl,
+  logoUrl,
   onClose,
 }: {
   contestName: string;
   winnerName: string;
-  photoUrl?: string | null;
+  logoUrl?: string | null;
   onClose: () => void;
 }) {
   const t = useTranslations();
@@ -166,18 +166,19 @@ export function WinnerReveal({
           <X className="size-4" />
         </button>
 
-        <div className="mx-auto mb-4 grid size-20 animate-bounce place-items-center rounded-full bg-gradient-to-br from-[#ffe17a] to-[#c9982a] text-4xl shadow-[0_10px_30px_-6px_rgba(201,152,42,0.7)]">
-          🏆
-        </div>
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#ffd54a]">{t("tanlov.winner")}</p>
-
-        {photoUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={photoUrl} alt={winnerName} className="mx-auto my-4 size-28 rounded-2xl object-cover shadow-lg ring-4 ring-[#ffd54a]/40" />
+        {logoUrl ? (
+          <div className="mx-auto mb-4 grid size-28 place-items-center overflow-hidden rounded-3xl bg-white/10 shadow-[0_10px_30px_-6px_rgba(201,152,42,0.5)] ring-4 ring-[#ffd54a]/50">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logoUrl} alt={winnerName} className="size-full object-contain p-2" />
+          </div>
+        ) : (
+          <div className="mx-auto mb-4 grid size-20 animate-bounce place-items-center rounded-full bg-gradient-to-br from-[#ffe17a] to-[#c9982a] text-4xl shadow-[0_10px_30px_-6px_rgba(201,152,42,0.7)]">
+            🏆
+          </div>
         )}
 
-        <h2 className="godfather-title mx-auto mt-3 break-words text-4xl leading-tight sm:text-5xl">{winnerName}</h2>
-        <p className="mt-3 text-sm font-medium text-white/70">{contestName}</p>
+        <h2 className="godfather-title mx-auto mt-2 break-words text-4xl leading-tight sm:text-5xl">{winnerName}</h2>
+        <p className="mt-3 text-sm font-semibold text-white/80">{t("tanlov.winnerOf", { name: contestName })}</p>
 
         <button
           onClick={onClose}

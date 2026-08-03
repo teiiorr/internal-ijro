@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Trophy } from "lucide-react";
+import { Trophy, Users, Images } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { listContests } from "@/server/queries/contests";
 import { Card, CardContent } from "@/components/ui/card";
-import { ContestCard } from "@/components/contests/contest-card";
 import { ContestForm } from "@/components/contests/contest-form";
 
 export const dynamic = "force-dynamic";
@@ -40,10 +40,43 @@ export default async function TanlovPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          {contests.map((c) => (
-            <ContestCard key={c.id} contest={c} canManage={canManage} />
-          ))}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+          {contests.map((c) => {
+            const hero = c.photos[0];
+            return (
+              <Link
+                key={c.id}
+                href={`/tanlov/${c.id}`}
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-2)]"
+              >
+                <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
+                  {hero ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={hero.fileUrl} alt={c.name} className="size-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                  ) : (
+                    <div className="grid size-full place-items-center text-[var(--subtle)]"><Trophy className="size-12" /></div>
+                  )}
+                  <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                    <Users className="size-3.5" /> {c.participantsCount}
+                  </span>
+                  {c.photos.length > 1 && (
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                      <Images className="size-3.5" /> {c.photos.length}
+                    </span>
+                  )}
+                  {(c.winnerName || c.winnerProjectName) && (
+                    <span className="absolute bottom-3 right-3 grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#ffe17a] to-[#c9982a] text-base shadow-md">🏆</span>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col gap-1 p-4">
+                  <h3 className="line-clamp-2 font-bold leading-snug">{c.name}</h3>
+                  <p className="mt-auto pt-1 text-xs font-medium text-[var(--primary)] opacity-0 transition-opacity group-hover:opacity-100">
+                    {t("tanlov.openDetail")} →
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

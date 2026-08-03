@@ -1028,6 +1028,21 @@
     "addPhoto": "Rasm qo'shish",
     "photoAdded": "Rasm qo'shildi",
     "photoError": "Rasmni yuklab bo'lmadi",
-    "deleteConfirm": "Bu tanlov o'chirilsinmi?"
+    "deleteConfirm": "Bu tanlov o'chirilsinmi?",
+    "winnerOf": "«{name}» tanlovi g'olibi",
+    "openDetail": "Batafsil",
+    "about": "Tanlov haqida",
+    "gallery": "Fotogalereya",
+    "comments": "Izohlar",
+    "addComment": "Izoh qo'shish",
+    "commentPlaceholder": "Izohingizni yozing...",
+    "noComments": "Hozircha izohlar yo'q",
+    "files": "Fayllar",
+    "addFile": "Fayl qo'shish",
+    "noFiles": "Fayllar hali yo'q",
+    "setLogo": "Logotip qo'shish",
+    "changeLogo": "Logotipni almashtirish",
+    "removeLogo": "Logotipni o'chirish",
+    "logoHint": "G'olib logotipi — g'olibni ko'rsatganda chiqadi"
   }
 }

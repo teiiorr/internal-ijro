@@ -184,11 +184,37 @@ export type ProjectReportRow = {
   contractNumber: string;
   startDate: string | null;
   deadline: string | null;
+  progress: number;
+  statusOverride: string | null;
+  deadlineOverdue: boolean;
   plannedTotal: number;
   paidTotal: number;
 };
 
-export async function listProjectsForReport(): Promise<ProjectReportRow[]> {
+/**
+ * Report rows honouring the same filters as the projects list (search / project
+ * type / stage / payment / overdue). The derived-status tab + status-priority
+ * sort are applied by the caller (route), since derived status isn't a column.
+ */
+export async function listProjectsForReport(f: ProjectFilters = {}): Promise<ProjectReportRow[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const conds = [] as any[];
+  if (f.search) {
+    const s = `%${f.search.toLowerCase()}%`;
+    conds.push(sql`(lower(p.name) like ${s} or lower(coalesce(p.description, '')) like ${s})`);
+  }
+  if (f.type) conds.push(sql`p.type = ${f.type}`);
+  if (f.projectTypeId) conds.push(sql`p.project_type_id = ${f.projectTypeId}`);
+  if (f.payment === "unpaid")
+    conds.push(sql`exists (select 1 from stage_payments sp join project_stages s on s.id = sp.stage_id where s.project_id = p.id and sp.status <> 'paid')`);
+  if (f.payment === "paid")
+    conds.push(sql`exists (select 1 from stage_payments sp join project_stages s on s.id = sp.stage_id where s.project_id = p.id) and not exists (select 1 from stage_payments sp join project_stages s on s.id = sp.stage_id where s.project_id = p.id and sp.status <> 'paid')`);
+  if (f.overdue)
+    conds.push(sql`exists (select 1 from project_stages s where s.project_id = p.id and s.status = 'active' and s.planned_deadline < now()::date)`);
+  if (f.stage)
+    conds.push(sql`exists (select 1 from project_stages s where s.project_id = p.id and s.status = 'active' and s.name = ${f.stage})`);
+  const whereSql = conds.length > 0 ? sql`where ${sql.join(conds, sql` and `)}` : sql``;
+
   const rows = await db.execute<ProjectReportRow>(sql`
     select
       p.name,
@@ -199,6 +225,9 @@ export async function listProjectsForReport(): Promise<ProjectReportRow[]> {
       p.contract_number as "contractNumber",
       to_char(p.start_date, 'DD.MM.YYYY') as "startDate",
       to_char(p.deadline,   'DD.MM.YYYY') as "deadline",
+      p.progress_percentage as "progress",
+      p.status_override as "statusOverride",
+      (p.deadline is not null and p.deadline < now()::date) as "deadlineOverdue",
       coalesce((select sum(s.planned_amount) from project_stages s
                   where s.project_id = p.id), 0)::float8 as "plannedTotal",
       coalesce((select sum(sp.amount) from stage_payments sp
@@ -206,6 +235,7 @@ export async function listProjectsForReport(): Promise<ProjectReportRow[]> {
                  where s.project_id = p.id and sp.status = 'paid'), 0)::float8 as "paidTotal"
     from projects p
     left join external_companies ec on ec.id = p.external_company_id
+    ${whereSql}
     order by p.created_at asc
   `);
   return rows as unknown as ProjectReportRow[];
