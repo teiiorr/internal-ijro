@@ -333,6 +333,7 @@
       "startDate": "Дата начала",
       "deadline": "Срок завершения",
       "budget": "Бюджет",
+      "contractNumber": "Номер договора",
       "progress": "Прогресс",
       "projectType": "Тип проекта",
       "projectTypePlaceholder": "Выберите тип (этапы создадутся автоматически)",

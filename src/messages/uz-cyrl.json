@@ -333,6 +333,7 @@
       "startDate": "Бошланиш санаси",
       "deadline": "Тугатиш муддати",
       "budget": "Бюджет",
+      "contractNumber": "Шартнома рақами",
       "progress": "Бажарилиш",
       "projectType": "Лойиҳа тури",
       "projectTypePlaceholder": "Турини танланг (босқичлар автоматик яратилади)",

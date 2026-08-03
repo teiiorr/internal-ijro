@@ -171,3 +171,42 @@ export async function listProjectsForContractor(contractorUserId: string) {
     .orderBy(desc(projects.createdAt));
   return { company: company[0], projects: prjs };
 }
+
+/**
+ * Flat per-project rows for the Excel report (Loyihalar hisoboti):
+ * name, studio, current stage, contract number, dates and the money totals
+ * (planned / paid / remaining). Ordered oldest-first for a stable registry.
+ */
+export type ProjectReportRow = {
+  name: string;
+  studioName: string | null;
+  activeStage: string | null;
+  contractNumber: string;
+  startDate: string | null;
+  deadline: string | null;
+  plannedTotal: number;
+  paidTotal: number;
+};
+
+export async function listProjectsForReport(): Promise<ProjectReportRow[]> {
+  const rows = await db.execute<ProjectReportRow>(sql`
+    select
+      p.name,
+      ec.name as "studioName",
+      (select s.name from project_stages s
+         where s.project_id = p.id and s.status = 'active'
+         order by s.order_index limit 1) as "activeStage",
+      p.contract_number as "contractNumber",
+      to_char(p.start_date, 'DD.MM.YYYY') as "startDate",
+      to_char(p.deadline,   'DD.MM.YYYY') as "deadline",
+      coalesce((select sum(s.planned_amount) from project_stages s
+                  where s.project_id = p.id), 0)::float8 as "plannedTotal",
+      coalesce((select sum(sp.amount) from stage_payments sp
+                  join project_stages s on s.id = sp.stage_id
+                 where s.project_id = p.id and sp.status = 'paid'), 0)::float8 as "paidTotal"
+    from projects p
+    left join external_companies ec on ec.id = p.external_company_id
+    order by p.created_at asc
+  `);
+  return rows as unknown as ProjectReportRow[];
+}

@@ -61,6 +61,7 @@ export function NewProjectForm({
           deadline: (fd.get("deadline") as string) || null,
           budget: fd.get("budget") ? Number(fd.get("budget")) : null,
           budgetCurrency: String(fd.get("budgetCurrency") ?? "UZS"),
+          contractNumber: String(fd.get("contractNumber") ?? "").trim() || "1",
         });
         router.push(`/projects/${res.id}`);
       } catch (e) { setError((e as Error).message); }
@@ -144,12 +145,16 @@ export function NewProjectForm({
           <Label htmlFor="deadline">{t("projects.fields.deadline")}</Label>
           <Input id="deadline" name="deadline" type="date" />
         </div>
-        <div className="space-y-1.5 md:col-span-2">
+        <div className="space-y-1.5">
           <Label htmlFor="budget">{t("projects.fields.budget")}</Label>
           <div className="flex gap-2">
             <MoneyInput id="budget" name="budget" className="flex-1 min-w-0" />
             <Input name="budgetCurrency" defaultValue="UZS" className="w-20 shrink-0" />
           </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="contractNumber">{t("projects.fields.contractNumber")}</Label>
+          <Input id="contractNumber" name="contractNumber" defaultValue="1" maxLength={50} />
         </div>
       </div>
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}

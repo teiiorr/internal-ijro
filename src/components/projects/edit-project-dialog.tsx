@@ -24,6 +24,7 @@ type Project = {
   deadline: string | null;
   budget: string | number | null;
   budgetCurrency: string;
+  contractNumber: string;
 };
 
 export function EditProjectDialog({
@@ -58,6 +59,7 @@ export function EditProjectDialog({
   const [deadline, setDeadline] = useState(project.deadline ?? "");
   const [budget, setBudget] = useState(project.budget != null ? String(project.budget) : "");
   const [currency, setCurrency] = useState(project.budgetCurrency || "UZS");
+  const [contractNumber, setContractNumber] = useState(project.contractNumber ?? "1");
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,6 +76,7 @@ export function EditProjectDialog({
           deadline: deadline || null,
           budget: budget ? Number(budget) : null,
           budgetCurrency: currency.trim() || "UZS",
+          contractNumber: contractNumber.trim() || "1",
         });
         setOpen(false);
         router.refresh();
@@ -134,11 +137,17 @@ export function EditProjectDialog({
               <Input id="ep-deadline" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
             </div>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="ep-budget">{t("projects.fields.budget")}</Label>
-            <div className="flex gap-2">
-              <MoneyInput id="ep-budget" value={budget} onValueChange={setBudget} className="flex-1 min-w-0" />
-              <Input value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-20 shrink-0" />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="ep-budget">{t("projects.fields.budget")}</Label>
+              <div className="flex gap-2">
+                <MoneyInput id="ep-budget" value={budget} onValueChange={setBudget} className="flex-1 min-w-0" />
+                <Input value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-20 shrink-0" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ep-contract">{t("projects.fields.contractNumber")}</Label>
+              <Input id="ep-contract" value={contractNumber} onChange={(e) => setContractNumber(e.target.value)} maxLength={50} />
             </div>
           </div>
           {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}

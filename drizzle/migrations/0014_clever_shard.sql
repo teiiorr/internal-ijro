@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ADD COLUMN "contract_number" varchar(50) DEFAULT '1' NOT NULL;

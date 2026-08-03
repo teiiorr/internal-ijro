@@ -333,6 +333,7 @@
       "startDate": "Boshlanish sanasi",
       "deadline": "Tugatish muddati",
       "budget": "Byudjet",
+      "contractNumber": "Shartnoma raqami",
       "progress": "Bajarilish",
       "projectType": "Loyiha turi",
       "projectTypePlaceholder": "Turini tanlang (bosqichlar avtomatik yaratiladi)",

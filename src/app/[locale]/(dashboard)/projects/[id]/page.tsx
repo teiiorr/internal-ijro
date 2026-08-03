@@ -55,6 +55,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     deadline: data.project.deadline,
     budget: data.project.budget,
     budgetCurrency: data.project.budgetCurrency,
+    contractNumber: data.project.contractNumber,
   };
   // Project changes are restricted to the fixed project-editor allowlist; everyone else is read-only.
   const editor = canEditProjects(me.email);

@@ -216,6 +216,8 @@ export const projects = pgTable(
     deadline: date("deadline"),
     budget: decimal("budget", { precision: 15, scale: 2 }),
     budgetCurrency: varchar("budget_currency", { length: 10 }).default("UZS").notNull(),
+    /** Contract number (Shartnoma raqami) shown on the projects report. Defaults to "1". */
+    contractNumber: varchar("contract_number", { length: 50 }).default("1").notNull(),
     progressPercentage: integer("progress_percentage").default(0).notNull(),
     /** Manual override — currently only "on_hold". Derived status takes precedence when null. */
     statusOverride: varchar("status_override", { length: 20 }),

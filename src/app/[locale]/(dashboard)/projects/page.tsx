@@ -12,7 +12,7 @@ import { ScrollMemory } from "@/components/scroll-memory";
 import { Marquee } from "@/components/ui/marquee";
 import { Plus, Download, AlertTriangle } from "lucide-react";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
-import { canEditProjects } from "@/lib/permissions/project-editors";
+import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors";
 
 type Sort = "created" | "name" | "deadline" | "progress";
 type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_hold" | "at_risk";
@@ -50,6 +50,7 @@ export default async function ProjectsPage({
     listStageOptionsByType(locale),
   ]);
   const canCreate = canEditProjects(session.user.email);
+  const canExport = canViewMoney(session.user.email); // report has sums → allowlist only
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -134,9 +135,11 @@ export default async function ProjectsPage({
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
         <div className="flex gap-2 shrink-0">
-          <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
-            <a href="/api/export/projects"><Download className="size-4" /> XLSX</a>
-          </Button>
+          {canExport && (
+            <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
+              <a href="/api/export/projects"><Download className="size-4" /> XLSX</a>
+            </Button>
+          )}
           {canCreate && (
             <Button asChild size="default">
               <Link href="/projects/new"><Plus className="size-4" /> <span className="hidden sm:inline">{t("projects.newTitle")}</span><span className="sm:hidden">{t("common.create")}</span></Link>

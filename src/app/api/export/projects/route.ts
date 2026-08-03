@@ -1,39 +1,83 @@
 import { NextRequest, NextResponse } from "next/server";
 import ExcelJS from "exceljs";
 import { auth } from "@/lib/auth";
-import { listProjects } from "@/server/queries/projects";
+import { listProjectsForReport } from "@/server/queries/projects";
+import { canViewMoney } from "@/lib/permissions/project-editors";
 import { applyMontserrat } from "@/lib/excel";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
+// Report headers (Uzbek Latin, matching the printed "Loyihalar hisoboti").
+const HEADERS = [
+  { header: "№", key: "no", width: 5 },
+  { header: "Loyiha nomi", key: "name", width: 30 },
+  { header: "Ishlab chiqaruvchi studiya", key: "studio", width: 26 },
+  { header: "Loyiha davri", key: "stage", width: 24 },
+  { header: "Shartnoma raqami", key: "contract", width: 16 },
+  { header: "Boshlash", key: "start", width: 13 },
+  { header: "Tugatish", key: "end", width: 13 },
+  { header: "Jami summa", key: "planned", width: 16 },
+  { header: "To'lab berilgan", key: "paid", width: 16 },
+  { header: "Qoldiq", key: "remaining", width: 16 },
+];
+const MONEY_COLS = ["planned", "paid", "remaining"];
+
+export async function GET(_req: NextRequest) {
   const session = await auth();
   if (!session?.user) return new NextResponse("unauthorized", { status: 401 });
-  const sp = req.nextUrl.searchParams;
-  const rows = await listProjects({
-    search: sp.get("q"),
-    status: sp.get("status"),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    type: (sp.get("type") as any) ?? null,
-  });
+  // The report includes budgets/payments → money allowlist only.
+  if (!canViewMoney(session.user.email)) return new NextResponse("forbidden", { status: 403 });
+
+  const rows = await listProjectsForReport();
+
   const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet("Projects");
-  ws.columns = [
-    { header: "Name", key: "name", width: 36 },
-    { header: "Type", key: "type", width: 10 },
-    { header: "Status", key: "status", width: 14 },
-    { header: "Progress %", key: "progressPercentage", width: 12 },
-    { header: "Curator", key: "curatorName", width: 22 },
-    { header: "Contractor", key: "companyName", width: 22 },
-    { header: "Deadline", key: "deadline", width: 14 },
-  ];
-  for (const r of rows) ws.addRow(r);
+  wb.creator = "Markaz Ijro";
+  wb.created = new Date();
+  const ws = wb.addWorksheet("Loyihalar hisoboti");
+  ws.columns = HEADERS;
+
+  rows.forEach((r, i) => {
+    ws.addRow({
+      no: i + 1,
+      name: r.name,
+      studio: r.studioName ?? "",
+      stage: r.activeStage ?? "",
+      contract: r.contractNumber,
+      start: r.startDate ?? "",
+      end: r.deadline ?? "",
+      planned: Math.round(r.plannedTotal),
+      paid: Math.round(r.paidTotal),
+      remaining: Math.round(Math.max(0, r.plannedTotal - r.paidTotal)),
+    });
+  });
+
+  // Number format + alignment for the money columns.
+  for (const key of MONEY_COLS) {
+    const col = ws.getColumn(key);
+    col.numFmt = "#,##0";
+    col.alignment = { horizontal: "right" };
+  }
+  ws.getColumn("no").alignment = { horizontal: "center" };
+  ws.getColumn("start").alignment = { horizontal: "center" };
+  ws.getColumn("end").alignment = { horizontal: "center" };
+  ws.getRow(1).alignment = { horizontal: "center", vertical: "middle", wrapText: true };
+
+  // Thin borders across the used range (header + data) for the bordered table look.
+  const thin = { style: "thin" as const, color: { argb: "FFBFBFBF" } };
+  const lastRow = rows.length + 1;
+  for (let r = 1; r <= lastRow; r++) {
+    for (let c = 1; c <= HEADERS.length; c++) {
+      ws.getCell(r, c).border = { top: thin, left: thin, bottom: thin, right: thin };
+    }
+  }
+
   applyMontserrat(ws);
+
   const buf = await wb.xlsx.writeBuffer();
   return new NextResponse(new Uint8Array(buf), {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="projects-${new Date().toISOString().slice(0, 10)}.xlsx"`,
+      "Content-Disposition": `attachment; filename="loyihalar-hisoboti-${new Date().toISOString().slice(0, 10)}.xlsx"`,
     },
   });
 }
