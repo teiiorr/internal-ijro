@@ -41,34 +41,43 @@ export default async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Rate limiting (per IP). Tuned for an internal corporate tool with ~40 users.
-  // Single page loads trigger many subordinate requests (RSC fetches, prefetches,
-  // i18n re-renders) — 5/min was eating real users on the first /login open.
-  // Skip RL entirely for loopback/private-network clients (server-side renders,
-  // localhost SSR, internal probes) so localhost calls during smoke tests pass.
   const xff = req.headers.get("x-forwarded-for");
   const ip = xff?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "anon";
   const isPrivate =
     ip === "anon" || ip === "127.0.0.1" || ip === "::1" ||
     ip.startsWith("10.") || ip.startsWith("192.168.") ||
     /^172\.(1[6-9]|2\d|3[01])\./.test(ip);
+
+  const sessionCookie =
+    req.cookies.get("authjs.session-token")?.value ??
+    req.cookies.get("__Secure-authjs.session-token")?.value;
+
+  // Rate limiting (per IP). IMPORTANT: the whole office sits behind ONE public
+  // IP (NAT), so a low per-IP cap falsely 429s everyone once a handful of people
+  // are active — each page load fans out into many RSC + prefetch requests plus
+  // 60s notification polling, and 40 users share the same bucket. So:
+  //  • auth endpoints (login/forgot/reset): strict per-IP cap for brute force
+  //    (backed by per-account lockout too);
+  //  • anonymous traffic to other paths: a generous cap;
+  //  • authenticated users (valid session): only a very high runaway backstop —
+  //    they're trusted internal staff and must not be blocked as a shared IP.
   if (!isPrivate) {
-    const isAuth = pathname.includes("/login") || pathname.includes("/forgot-password") || pathname.includes("/reset-password");
-    const rl = isAuth ? rateLimit(`auth:${ip}`, 30, 60_000) : rateLimit(`pg:${ip}`, 600, 60_000);
+    const isAuthEndpoint =
+      pathname.includes("/login") || pathname.includes("/forgot-password") || pathname.includes("/reset-password");
+    const rl = isAuthEndpoint
+      ? rateLimit(`auth:${ip}`, 120, 60_000)
+      : sessionCookie
+        ? rateLimit(`user:${ip}`, 20_000, 60_000)
+        : rateLimit(`anon:${ip}`, 600, 60_000);
     if (!rl.allowed) {
       return new NextResponse("too_many_requests", { status: 429, headers: { "Retry-After": "60" } });
     }
   }
 
-  if (!isPublic(pathname)) {
-    const sessionCookie =
-      req.cookies.get("authjs.session-token")?.value ??
-      req.cookies.get("__Secure-authjs.session-token")?.value;
-    if (!sessionCookie) {
-      const loginUrl = new URL("/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
+  if (!isPublic(pathname) && !sessionCookie) {
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   return intlMiddleware(req);
