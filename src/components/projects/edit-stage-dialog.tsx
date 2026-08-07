@@ -16,6 +16,7 @@ type Stage = {
   plannedStartDate: string | null;
   plannedDeadline: string | null;
   plannedAmount: number | null;
+  contractNumber: string;
 };
 
 export function EditStageDialog({ stage, currency = "UZS" }: { stage: Stage; currency?: string }) {
@@ -29,6 +30,7 @@ export function EditStageDialog({ stage, currency = "UZS" }: { stage: Stage; cur
   const [startDate, setStartDate] = useState(stage.plannedStartDate ?? "");
   const [deadline, setDeadline] = useState(stage.plannedDeadline ?? "");
   const [amount, setAmount] = useState(stage.plannedAmount != null ? String(stage.plannedAmount) : "");
+  const [contractNumber, setContractNumber] = useState(stage.contractNumber ?? "1");
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,6 +44,7 @@ export function EditStageDialog({ stage, currency = "UZS" }: { stage: Stage; cur
           plannedStartDate: startDate || null,
           plannedDeadline: deadline || null,
           plannedAmount: amount ? Number(amount) : null,
+          contractNumber: contractNumber.trim() || "1",
         });
         setOpen(false);
         router.refresh();
@@ -76,11 +79,17 @@ export function EditStageDialog({ stage, currency = "UZS" }: { stage: Stage; cur
               <Input id="es-end" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
             </div>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="es-amount">{t("projects.editStage.budget")}</Label>
-            <div className="flex gap-2 items-center">
-              <MoneyInput id="es-amount" value={amount} onValueChange={setAmount} className="flex-1 min-w-0" />
-              <span className="text-sm text-[var(--muted)] shrink-0">{currency}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="es-amount">{t("projects.editStage.budget")}</Label>
+              <div className="flex gap-2 items-center">
+                <MoneyInput id="es-amount" value={amount} onValueChange={setAmount} className="flex-1 min-w-0" />
+                <span className="text-sm text-[var(--muted)] shrink-0">{currency}</span>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="es-contract">{t("projects.fields.contractNumber")}</Label>
+              <Input id="es-contract" value={contractNumber} onChange={(e) => setContractNumber(e.target.value)} maxLength={50} />
             </div>
           </div>
           {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}

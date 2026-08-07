@@ -69,7 +69,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
         {canManage && (
           <div className="shrink-0">
             <EditStageDialog
-              stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount }}
+              stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount, contractNumber: s.contractNumber }}
             />
           </div>
         )}
@@ -79,7 +79,11 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-3">
           <h3 className="text-base font-semibold">{t("projects.editStage.scheduleTitle")}</h3>
-          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.contractNumber")}</dt>
+              <dd className="font-semibold mt-0.5 break-words">{s.contractNumber || t("common.emptyValue")}</dd>
+            </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
               <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate) : t("common.emptyValue")}</dd>

@@ -38,7 +38,6 @@ const projectSchema = z.object({
   deadline: z.string().nullable().optional(),
   budget: z.number().nullable().optional(),
   budgetCurrency: z.string().default("UZS"),
-  contractNumber: z.string().max(50).optional(),
 });
 
 export async function createProject(input: z.infer<typeof projectSchema>) {
@@ -61,7 +60,6 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         budget: parsed.budget != null ? (parsed.budget as any) : null,
         budgetCurrency: parsed.budgetCurrency,
-        contractNumber: parsed.contractNumber?.trim() || "1",
         createdByUserId: me.id,
       })
       .returning({ id: projects.id });
@@ -512,7 +510,6 @@ const updateProjectSchema = z.object({
   deadline: z.string().nullable().optional(),
   budget: z.number().nullable().optional(),
   budgetCurrency: z.string().min(1).max(10).optional(),
-  contractNumber: z.string().max(50).optional(),
 });
 export async function updateProject(id: string, input: z.infer<typeof updateProjectSchema>) {
   const me = await requireProjectEditor();
@@ -531,7 +528,6 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       budget: parsed.budget != null ? (String(parsed.budget) as any) : null,
       budgetCurrency: parsed.budgetCurrency || "UZS",
-      ...(parsed.contractNumber !== undefined && { contractNumber: parsed.contractNumber.trim() || "1" }),
       updatedAt: new Date(),
     })
     .where(eq(projects.id, id));

@@ -181,7 +181,7 @@ export type ProjectReportRow = {
   name: string;
   studioName: string | null;
   activeStage: string | null;
-  contractNumber: string;
+  contractNumber: string | null;
   startDate: string | null;
   deadline: string | null;
   progress: number;
@@ -222,7 +222,14 @@ export async function listProjectsForReport(f: ProjectFilters = {}): Promise<Pro
       (select s.name from project_stages s
          where s.project_id = p.id and s.status = 'active'
          order by s.order_index limit 1) as "activeStage",
-      p.contract_number as "contractNumber",
+      coalesce(
+        (select s.contract_number from project_stages s
+           where s.project_id = p.id and s.status = 'active'
+           order by s.order_index limit 1),
+        (select s.contract_number from project_stages s
+           where s.project_id = p.id
+           order by s.order_index desc limit 1)
+      ) as "contractNumber",
       to_char(p.start_date, 'DD.MM.YYYY') as "startDate",
       to_char(p.deadline,   'DD.MM.YYYY') as "deadline",
       p.progress_percentage as "progress",

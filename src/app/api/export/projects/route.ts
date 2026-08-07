@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
       name: r.name,
       studio: r.studioName ?? "",
       stage: r.activeStage ?? "",
-      contract: r.contractNumber,
+      contract: r.contractNumber ?? "",
       start: r.startDate ?? "",
       end: r.deadline ?? "",
       planned: Math.round(r.plannedTotal),

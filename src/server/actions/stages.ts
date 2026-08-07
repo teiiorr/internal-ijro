@@ -287,6 +287,7 @@ const updateStageSchema = z.object({
   plannedStartDate: z.string().nullable().optional(),
   plannedDeadline: z.string().nullable().optional(),
   plannedAmount: z.number().nullable().optional(),
+  contractNumber: z.string().max(50).optional(),
 });
 export async function updateStage(stageId: string, input: z.infer<typeof updateStageSchema>) {
   const me = await requireProjectEditor();
@@ -301,6 +302,7 @@ export async function updateStage(stageId: string, input: z.infer<typeof updateS
       plannedDeadline: parsed.plannedDeadline || null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       plannedAmount: parsed.plannedAmount != null ? (String(parsed.plannedAmount) as any) : null,
+      ...(parsed.contractNumber !== undefined && { contractNumber: parsed.contractNumber.trim() || "1" }),
       updatedAt: new Date(),
       reminderApproachingSentAt: null,
       reminderOverdueSentAt: null,
