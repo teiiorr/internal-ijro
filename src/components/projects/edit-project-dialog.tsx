@@ -11,6 +11,7 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateProject } from "@/server/actions/projects";
+import { PROJECT_GENRES } from "@/lib/projects/genres";
 
 const NONE = "__none__";
 
@@ -19,6 +20,7 @@ type Project = {
   name: string;
   description: string | null;
   type: string;
+  genre: string | null;
   curatorUserId: string | null;
   startDate: string | null;
   deadline: string | null;
@@ -53,6 +55,7 @@ export function EditProjectDialog({
   const [name, setName] = useState(project.name);
   const [description, setDescription] = useState(project.description ?? "");
   const [type, setType] = useState(project.type === "external" ? "external" : "internal");
+  const [genre, setGenre] = useState(project.genre ?? NONE);
   const [curator, setCurator] = useState(project.curatorUserId ?? NONE);
   const [startDate, setStartDate] = useState(project.startDate ?? "");
   const [deadline, setDeadline] = useState(project.deadline ?? "");
@@ -69,6 +72,7 @@ export function EditProjectDialog({
           name: name.trim(),
           description: description.trim() || null,
           type: type as "internal" | "external",
+          genre: genre === NONE ? null : genre,
           curatorUserId: curator === NONE ? null : curator,
           startDate: startDate || null,
           deadline: deadline || null,
@@ -112,6 +116,18 @@ export function EditProjectDialog({
                 <SelectContent>
                   <SelectItem value="internal">{t("projects.type.internal")}</SelectItem>
                   <SelectItem value="external">{t("projects.type.external")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("projects.fields.genre")}</Label>
+              <Select value={genre} onValueChange={setGenre}>
+                <SelectTrigger><SelectValue placeholder={t("common.emptyValue")} /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE}>{t("common.emptyValue")}</SelectItem>
+                  {PROJECT_GENRES.map((g) => (
+                    <SelectItem key={g} value={g}>{t(`projects.genre.${g}` as "projects.genre.film")}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

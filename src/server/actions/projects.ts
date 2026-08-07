@@ -30,6 +30,7 @@ const projectSchema = z.object({
   type: z.enum(["internal", "external"]),
   /** One of the 9 seeded project_types. Non-null → auto-build the stage pipeline. */
   projectTypeId: z.string().uuid().nullable().optional(),
+  genre: z.string().max(40).nullable().optional(),
   externalCompanyId: z.string().uuid().nullable().optional(),
   curatorUserId: z.string().uuid().nullable().optional(),
   /** mas'ul — applied to every generated stage (editable per stage later). */
@@ -53,6 +54,7 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
         description: parsed.description ?? null,
         type: parsed.type,
         projectTypeId: parsed.projectTypeId ?? null,
+        genre: parsed.genre?.trim() || null,
         externalCompanyId: parsed.externalCompanyId ?? null,
         curatorUserId: parsed.curatorUserId ?? me.id,
         startDate: parsed.startDate ?? null,
@@ -510,6 +512,7 @@ const updateProjectSchema = z.object({
   deadline: z.string().nullable().optional(),
   budget: z.number().nullable().optional(),
   budgetCurrency: z.string().min(1).max(10).optional(),
+  genre: z.string().max(40).nullable().optional(),
 });
 export async function updateProject(id: string, input: z.infer<typeof updateProjectSchema>) {
   const me = await requireProjectEditor();
@@ -528,6 +531,7 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       budget: parsed.budget != null ? (String(parsed.budget) as any) : null,
       budgetCurrency: parsed.budgetCurrency || "UZS",
+      ...(parsed.genre !== undefined && { genre: parsed.genre?.trim() || null }),
       updatedAt: new Date(),
     })
     .where(eq(projects.id, id));

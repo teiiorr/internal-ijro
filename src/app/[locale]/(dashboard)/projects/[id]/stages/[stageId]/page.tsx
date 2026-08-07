@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconArrowLeft as ArrowLeft, IconLock as Lock, IconLoader2 as Loader2, IconCircleCheck as CheckCircle2, IconUser as User, IconInfoCircle as Info } from "@tabler/icons-react";
+import { IconLock as Lock, IconLoader2 as Loader2, IconCircleCheck as CheckCircle2, IconUser as User, IconInfoCircle as Info } from "@tabler/icons-react";
+import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { getStage } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,9 +50,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
     <div className="space-y-6">
       {/* header (full width) */}
       <div className="flex items-start gap-3">
-        <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
-          <Link href={`/projects/${id}`}><ArrowLeft className="size-4" /></Link>
-        </Button>
+        <BackButton fallbackHref={`/projects/${id}`} className="mt-0.5" />
         <div className="flex-1 min-w-0">
           <p className="text-xs font-medium text-[var(--muted)]">
             <Link href={`/projects/${id}`} className="hover:underline">{s.projectName}</Link>

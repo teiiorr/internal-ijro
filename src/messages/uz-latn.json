@@ -341,7 +341,10 @@
       "projectTypeHint": "Tur tanlansa, ushbu turga mos bosqichlar avtomatik qo'shiladi.",
       "responsible": "Mas'ul",
       "responsibleHint": "Barcha bosqichlarga qo'llanadi (keyin alohida o'zgartirish mumkin).",
-      "nameRequired": "Nomni kiriting"
+      "nameRequired": "Nomni kiriting",
+      "genre": "Kontent turi",
+      "genrePlaceholder": "Tanlang (ixtiyoriy)",
+      "genreHint": "Masalan, eksklyuziv loyiha uchun — film, kitob, multserial…"
     },
     "type": {
       "internal": "Ichki",
@@ -572,6 +575,18 @@
       "budget": "Byudjet",
       "scheduleTitle": "Muddat va byudjet",
       "dateOrder": "Tugash sanasi boshlanish sanasidan oldin bo'lishi mumkin emas"
+    },
+    "genre": {
+      "film": "Film",
+      "multserial": "Multserial",
+      "serial": "Serial",
+      "kitob": "Kitob",
+      "anime": "Anime",
+      "spektakl": "Spektakl",
+      "teledastur": "Teledastur",
+      "oyin": "Raqamli o'yin",
+      "dublyaj": "Dublyaj",
+      "boshqa": "Boshqa"
     }
   },
   "employees": {

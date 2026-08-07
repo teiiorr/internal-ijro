@@ -207,6 +207,9 @@ export const projects = pgTable(
     projectTypeId: uuid("project_type_id").references((): AnyPgColumn => projectTypes.id, {
       onDelete: "set null",
     }),
+    /** Content genre (film / multserial / kitob …). Mainly for "Eksklyuziv
+     *  loyihalar" projects whose pipeline type doesn't say what the content is. */
+    genre: varchar("genre", { length: 40 }),
     externalCompanyId: uuid("external_company_id").references(() => externalCompanies.id, {
       onDelete: "set null",
     }),

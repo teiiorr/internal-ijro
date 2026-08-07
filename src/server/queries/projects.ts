@@ -71,6 +71,7 @@ export async function listProjects(f: ProjectFilters, locale?: string) {
       deadline: projects.deadline,
       startDate: projects.startDate,
       posterUrl: projects.posterUrl,
+      genre: projects.genre,
       curatorName: users.fullName,
       companyName: externalCompanies.name,
       projectTypeId: projects.projectTypeId,

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createProject, createContractor } from "@/server/actions/projects";
+import { PROJECT_GENRES } from "@/lib/projects/genres";
 
 type Company = { id: string; name: string };
 type User = { id: string; fullName: string };
@@ -30,6 +31,7 @@ export function NewProjectForm({
   const [pending, start] = useTransition();
   const [type, setType] = useState<"internal" | "external">("internal");
   const [projectTypeId, setProjectTypeId] = useState<string>("");
+  const [genre, setGenre] = useState<string>("");
   const [responsibleUserId, setResponsibleUserId] = useState<string>("");
   const [companyText, setCompanyText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +56,7 @@ export function NewProjectForm({
           description: (fd.get("description") as string) || null,
           type,
           projectTypeId: projectTypeId || null,
+          genre: genre || null,
           externalCompanyId,
           curatorUserId: (fd.get("curatorUserId") as string) || null,
           responsibleUserId: responsibleUserId || null,
@@ -78,6 +81,18 @@ export function NewProjectForm({
           </SelectContent>
         </Select>
         <p className="text-xs text-[var(--muted)]">{t("projects.fields.projectTypeHint")}</p>
+      </div>
+      <div className="space-y-1.5">
+        <Label>{t("projects.fields.genre")}</Label>
+        <Select value={genre} onValueChange={setGenre}>
+          <SelectTrigger><SelectValue placeholder={t("projects.fields.genrePlaceholder")} /></SelectTrigger>
+          <SelectContent>
+            {PROJECT_GENRES.map((g) => (
+              <SelectItem key={g} value={g}>{t(`projects.genre.${g}` as "projects.genre.film")}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-[var(--muted)]">{t("projects.fields.genreHint")}</p>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="name">{t("projects.fields.name")}</Label>

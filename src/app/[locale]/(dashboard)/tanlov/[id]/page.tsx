@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { IconArrowLeft as ArrowLeft, IconUsers as Users, IconCalendar as CalendarDays } from "@tabler/icons-react";
+import { IconUsers as Users, IconCalendar as CalendarDays } from "@tabler/icons-react";
+import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { getContest } from "@/server/queries/contests";
@@ -31,9 +32,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
     <div className="space-y-6">
       {/* header */}
       <div className="flex items-start gap-3">
-        <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
-          <Link href="/tanlov"><ArrowLeft className="size-4" /></Link>
-        </Button>
+        <BackButton fallbackHref="/tanlov" className="mt-0.5" />
         <div className="min-w-0 flex-1">
           <h1 className="text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{c.name}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--muted)]">

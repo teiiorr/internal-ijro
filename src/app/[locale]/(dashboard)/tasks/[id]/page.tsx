@@ -13,7 +13,8 @@ import { AttachmentsSection } from "@/components/tasks/attachments-section";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
 import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-card";
 import { MyResponseCard } from "@/components/tasks/my-response-card";
-import { IconArrowLeft as ArrowLeft, IconPrinter as Printer } from "@tabler/icons-react";
+import { IconPrinter as Printer } from "@tabler/icons-react";
+import { BackButton } from "@/components/ui/back-button";
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -53,9 +54,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="space-y-5 max-w-5xl">
       <div className="flex items-start gap-2 flex-wrap">
-        <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
-          <Link href="/tasks"><ArrowLeft className="size-4" /></Link>
-        </Button>
+        <BackButton fallbackHref="/tasks" className="mt-0.5" />
         <h1 className="text-base sm:text-lg font-semibold tracking-tight leading-snug flex-1 min-w-0 break-words">
           {data.task.title}
         </h1>

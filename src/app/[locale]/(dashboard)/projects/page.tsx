@@ -12,6 +12,7 @@ import { ScrollMemory } from "@/components/scroll-memory";
 import { Marquee } from "@/components/ui/marquee";
 import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle } from "@tabler/icons-react";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
+import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors";
 
 type Sort = "created" | "name" | "deadline" | "progress";
@@ -88,8 +89,10 @@ export default async function ProjectsPage({
     completed: 3,
   };
 
-  // Sort: status priority first, then the selected sort within each group.
+  // Sort: at-risk (red / overdue) projects first, then status priority, then
+  // the selected sort within each group.
   filtered.sort((a, b) => {
+    if (a.atRisk !== b.atRisk) return a.atRisk ? -1 : 1;
     const byStatus = STATUS_PRIORITY[a.derived] - STATUS_PRIORITY[b.derived];
     if (byStatus !== 0) return byStatus;
     if (sort === "name") return a.name.localeCompare(b.name);
@@ -210,9 +213,11 @@ export default async function ProjectsPage({
               <div className="space-y-2 px-1.5 pb-1 pt-2.5">
                 <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug transition-colors duration-300 group-hover:text-[var(--primary-foreground)]">{p.name}</p>
                 <div className="flex items-center justify-between gap-2">
-                  {/* Long type names (e.g. "Eksklyuziv kontent…") scroll like a ticker so they can be read in full. */}
+                  {/* Show the content genre when set (e.g. exclusive projects); else the pipeline type. Long names scroll. */}
                   <Marquee className="min-w-0 flex-1 text-xs text-[var(--muted)] transition-colors duration-300 group-hover:text-[var(--primary-foreground)] group-hover:opacity-80">
-                    {p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal")}
+                    {isProjectGenre(p.genre)
+                      ? t(`projects.genre.${p.genre}` as "projects.genre.film")
+                      : (p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal"))}
                   </Marquee>
                   <StatusTag
                     tone={STATUS_TONE[p.derived]}

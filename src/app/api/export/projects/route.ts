@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
       return { ...r, derived, atRisk };
     })
     .filter((r) => (statusTab === "all" ? true : statusTab === "at_risk" ? r.atRisk : r.derived === statusTab))
-    .sort((a, b) => STATUS_PRIORITY[a.derived] - STATUS_PRIORITY[b.derived]);
+    .sort((a, b) => (a.atRisk !== b.atRisk ? (a.atRisk ? -1 : 1) : STATUS_PRIORITY[a.derived] - STATUS_PRIORITY[b.derived]));
 
   const wb = new ExcelJS.Workbook();
   wb.creator = "Markaz Ijro";

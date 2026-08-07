@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconArrowLeft as ArrowLeft, IconCalendarClock as CalendarClock } from "@tabler/icons-react";
+import { IconCalendarClock as CalendarClock } from "@tabler/icons-react";
+import { BackButton } from "@/components/ui/back-button";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
 import { getProject, listContractors } from "@/server/queries/projects";
@@ -21,6 +22,7 @@ import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
+import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
 import { db } from "@/lib/db";
@@ -50,6 +52,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     name: data.project.name,
     description: data.project.description,
     type: data.project.type,
+    genre: data.project.genre,
     curatorUserId: data.project.curatorUserId,
     startDate: data.project.startDate,
     deadline: data.project.deadline,
@@ -85,14 +88,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <div className="space-y-6">
         {/* header (full width) */}
         <div className="flex items-start gap-3">
-          <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
-            <Link href="/projects"><ArrowLeft className="size-4" /></Link>
-          </Button>
+          <BackButton fallbackHref="/projects" className="mt-0.5" />
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
             <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
               <StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag>
               {sp.type && <span className="font-medium text-[var(--muted)]">{sp.type.name}</span>}
+              {isProjectGenre(sp.project.genre) && (
+                <StatusTag tone="muted">{t(`projects.genre.${sp.project.genre}` as "projects.genre.film")}</StatusTag>
+              )}
               <span className="font-semibold tabular-nums text-[var(--muted)]">{sp.project.progressPercentage}%</span>
               {sp.curator && (
                 <span className="text-[var(--muted)]">
@@ -244,14 +248,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-start gap-2 flex-wrap">
-        <Button asChild variant="ghost" size="icon-sm" className="mt-0.5 shrink-0">
-          <Link href="/projects"><ArrowLeft className="size-4" /></Link>
-        </Button>
+        <BackButton fallbackHref="/projects" className="mt-0.5" />
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{data.project.name}</h1>
           <div className="flex items-center gap-2 mt-2 flex-wrap text-sm">
             <Badge variant={statusVariant}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Badge>
             <Badge variant="secondary">{t(`projects.type.${data.project.type}` as "projects.type.internal")}</Badge>
+            {isProjectGenre(data.project.genre) && (
+              <Badge variant="secondary">{t(`projects.genre.${data.project.genre}` as "projects.genre.film")}</Badge>
+            )}
             {data.curator && (
               <span className="text-[var(--muted)]">
                 {t("projects.curatorLabel")}: <span className="font-medium text-[var(--foreground)]">{data.curator.fullName}</span>
