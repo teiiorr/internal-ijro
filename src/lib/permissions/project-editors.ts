@@ -27,6 +27,19 @@ export function canEditProjects(email: string | null | undefined): boolean {
 }
 
 /**
+ * Extra staff (beyond the editor allowlist) allowed to ADD the project-level
+ * document panels — "Loyiha bo'yicha tahlil" + "Xalqaro tajriba". They can
+ * upload but not delete (delete stays editor-only).
+ */
+const PROJECT_DOC_UPLOADER_SURNAMES = new Set(["matyakubov", "matyoqubov"]);
+
+export function canUploadProjectDocs(email: string | null | undefined): boolean {
+  if (!email) return false;
+  const surname = email.split("@")[0]?.split(".")[0]?.toLowerCase() ?? "";
+  return PROJECT_EDITOR_SURNAMES.has(surname) || PROJECT_DOC_UPLOADER_SURNAMES.has(surname);
+}
+
+/**
  * Money visibility. Budgets and payment sums (in figures) are shown ONLY to this
  * same fixed allowlist; everyone else sees {@link MONEY_MASK} instead. The one
  * exception is the dashboard "To'lovlar ko'rinishi" card, which keeps its own

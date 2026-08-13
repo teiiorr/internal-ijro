@@ -23,7 +23,7 @@ import { ProjectChat } from "@/components/projects/project-chat";
 import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
-import { canEditProjects, canViewMoney, MONEY_MASK } from "@/lib/permissions/project-editors";
+import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
@@ -164,7 +164,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {/* Project-level document buckets — fills the space under the stages. */}
             <ProjectDocsPanels
               projectId={sp.project.id}
-              canManage={canManage}
+              canManage={canUploadProjectDocs(me.email)}
+              canDelete={editor}
               maxBytes={MAX_UPLOAD_BYTES}
               tahlil={sp.documents.tahlil.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
               xalqaro={sp.documents.xalqaro_tajriba.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}

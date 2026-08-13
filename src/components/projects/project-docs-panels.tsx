@@ -51,6 +51,7 @@ function DocPanel({
   title,
   docs,
   canManage,
+  canDelete,
   maxBytes,
 }: {
   projectId: string;
@@ -58,6 +59,7 @@ function DocPanel({
   title: string;
   docs: Doc[];
   canManage: boolean;
+  canDelete: boolean;
   maxBytes: number;
 }) {
   const t = useTranslations();
@@ -171,7 +173,7 @@ function DocPanel({
                       <Download className="size-4" />
                     </a>
                   </Button>
-                  {canManage && (
+                  {canDelete && (
                     <Button
                       variant="ghost"
                       size="icon-sm"
@@ -255,12 +257,14 @@ function DocPanel({
 export function ProjectDocsPanels({
   projectId,
   canManage,
+  canDelete,
   maxBytes,
   tahlil,
   xalqaro,
 }: {
   projectId: string;
   canManage: boolean;
+  canDelete: boolean;
   maxBytes: number;
   tahlil: Doc[];
   xalqaro: Doc[];
@@ -268,8 +272,8 @@ export function ProjectDocsPanels({
   const t = useTranslations();
   return (
     <div className="grid grid-cols-1 items-stretch gap-4 sm:gap-5 md:grid-cols-2">
-      <DocPanel projectId={projectId} kind="tahlil" title={t("projects.projectDocs.tahlilTitle")} docs={tahlil} canManage={canManage} maxBytes={maxBytes} />
-      <DocPanel projectId={projectId} kind="xalqaro_tajriba" title={t("projects.projectDocs.xalqaroTitle")} docs={xalqaro} canManage={canManage} maxBytes={maxBytes} />
+      <DocPanel projectId={projectId} kind="tahlil" title={t("projects.projectDocs.tahlilTitle")} docs={tahlil} canManage={canManage} canDelete={canDelete} maxBytes={maxBytes} />
+      <DocPanel projectId={projectId} kind="xalqaro_tajriba" title={t("projects.projectDocs.xalqaroTitle")} docs={xalqaro} canManage={canManage} canDelete={canDelete} maxBytes={maxBytes} />
     </div>
   );
 }
