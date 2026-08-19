@@ -140,7 +140,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
 
           <TabsContent value="chat">
             <Card><CardContent className="p-5 sm:p-6">
-              <ProjectChat projectId={data.project.id} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
+              <ProjectChat projectId={data.project.id} currentUserId={session.user.id} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
             </CardContent></Card>
           </TabsContent>
         </Tabs>
@@ -176,7 +176,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </TabsContent>
           <TabsContent value="chat">
             <Card><CardContent className="p-6">
-              <ProjectChat projectId={data.project.id} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
+              <ProjectChat projectId={data.project.id} currentUserId={session.user.id} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
             </CardContent></Card>
           </TabsContent>
         </Tabs>

@@ -373,7 +373,17 @@ export async function removeProjectPoster(projectId: string) {
 }
 
 // Project messages (chat)
-const msgSchema = z.object({ projectId: z.string().uuid(), content: z.string().min(1).max(5000) });
+const attachmentSchema = z.object({
+  url: z.string(),
+  name: z.string(),
+  size: z.number(),
+  mimeType: z.string(),
+});
+const msgSchema = z.object({
+  projectId: z.string().uuid(),
+  content: z.string().min(1).max(5000),
+  attachments: z.array(attachmentSchema).optional(),
+});
 /** A kontragent may only act on a project that belongs to their own studio
  *  (resolved by email → company → project). Staff pass through unchanged. */
 async function assertProjectAccess(me: { position: string; email: string }, projectId: string) {
@@ -393,7 +403,12 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
   const me = await requireUser();
   const parsed = msgSchema.parse(input);
   await assertProjectAccess(me, parsed.projectId);
-  await db.insert(projectMessages).values({ projectId: parsed.projectId, userId: me.id, content: parsed.content });
+  await db.insert(projectMessages).values({
+    projectId: parsed.projectId,
+    userId: me.id,
+    content: parsed.content,
+    attachments: parsed.attachments?.length ? parsed.attachments : undefined,
+  });
   revalidatePath(`/projects/${parsed.projectId}`);
   revalidatePath(`/contractor/projects/${parsed.projectId}`);
 }

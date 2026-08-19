@@ -392,7 +392,13 @@
     },
     "chat": {
       "placeholder": "Xabar yozing...",
-      "noMessages": "Xabarlar yo'q."
+      "noMessages": "Xabarlar yo'q.",
+      "fileTooLarge": "Fayl juda katta",
+      "uploadError": "Faylni yuklashda xatolik"
+    },
+    "studioFiles": {
+      "title": "Studiya hujjatlari",
+      "empty": "Studiya hali hujjat yuklamagan"
     },
     "complete": {
       "btn": "Yakunlash va baholash",
