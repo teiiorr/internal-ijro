@@ -838,7 +838,17 @@
       "specialization": "Mutaxassisligi",
       "noCompany": "Bog'langan kompaniya yo'q."
     },
-    "portalLabel": "Studiya portali"
+    "portalLabel": "Studiya portali",
+    "budget": {
+      "title": "Byudjet (loyihangiz)"
+    },
+    "tabs": {
+      "docs": "Hujjatlar va media",
+      "stages": "Bosqichlar"
+    },
+    "docs": {
+      "mediaHint": "Hujjat yoki foto qo'shing — katta rasmlar avtomatik siqiladi. Cheklov: {max}"
+    }
   },
   "dashboard": {
     "title": "Bosh sahifa",

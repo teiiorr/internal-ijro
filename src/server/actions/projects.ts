@@ -374,9 +374,25 @@ export async function removeProjectPoster(projectId: string) {
 
 // Project messages (chat)
 const msgSchema = z.object({ projectId: z.string().uuid(), content: z.string().min(1).max(5000) });
+/** A kontragent may only act on a project that belongs to their own studio
+ *  (resolved by email → company → project). Staff pass through unchanged. */
+async function assertProjectAccess(me: { position: string; email: string }, projectId: string) {
+  if (me.position !== "kontragent") return;
+  const [c] = await db
+    .select({ id: externalCompanies.id })
+    .from(externalCompanies)
+    .where(eq(externalCompanies.contactEmail, me.email))
+    .limit(1);
+  const [p] = c
+    ? await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1)
+    : [undefined];
+  if (!c || !p || p.ec !== c.id) throw new Error("forbidden");
+}
+
 export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
   const me = await requireUser();
   const parsed = msgSchema.parse(input);
+  await assertProjectAccess(me, parsed.projectId);
   await db.insert(projectMessages).values({ projectId: parsed.projectId, userId: me.id, content: parsed.content });
   revalidatePath(`/projects/${parsed.projectId}`);
   revalidatePath(`/contractor/projects/${parsed.projectId}`);
@@ -392,6 +408,7 @@ export async function submitDeliverable(opts: {
   file: File;
 }) {
   const me = await requireUser();
+  await assertProjectAccess(me, opts.projectId);
   const stored = await storeFile(opts.file, `deliverables/${opts.projectId}`);
   const ins = await db
     .insert(deliverables)

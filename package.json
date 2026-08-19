@@ -15,7 +15,8 @@
     "db:seed:templates": "tsx scripts/seed-stage-templates.ts",
     "worker": "tsx scripts/worker.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:seed:studios": "tsx scripts/seed-studios.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.2",
