@@ -144,6 +144,24 @@ export async function listContractors(status?: string | null) {
   return db.select().from(externalCompanies).where(where).orderBy(desc(externalCompanies.createdAt));
 }
 
+/** Studios + the projects assigned to each (for the reveal on the studios page). */
+export async function listContractorsWithProjects() {
+  const companies = await db.select().from(externalCompanies).orderBy(desc(externalCompanies.createdAt));
+  const prjs = await db
+    .select({ id: projects.id, name: projects.name, status: projects.status, ec: projects.externalCompanyId })
+    .from(projects)
+    .where(sql`${projects.externalCompanyId} is not null`)
+    .orderBy(desc(projects.createdAt));
+  const byCompany = new Map<string, { id: string; name: string; status: string }[]>();
+  for (const p of prjs) {
+    if (!p.ec) continue;
+    const arr = byCompany.get(p.ec) ?? [];
+    arr.push({ id: p.id, name: p.name, status: p.status });
+    byCompany.set(p.ec, arr);
+  }
+  return companies.map((c) => ({ ...c, projects: byCompany.get(c.id) ?? [] }));
+}
+
 export async function getContractor(id: string) {
   const r = await db.select().from(externalCompanies).where(eq(externalCompanies.id, id)).limit(1);
   return r[0] ?? null;

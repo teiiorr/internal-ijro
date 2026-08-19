@@ -692,7 +692,12 @@
     "pendingTitle": "Tasdiqlash kutilmoqda",
     "allTitle": "Barcha studiyalar",
     "none": "Yo'q.",
-    "reason": "Sababi"
+    "reason": "Sababi",
+    "uploadLogo": "Logo yuklash",
+    "logoSaved": "Logo saqlandi",
+    "logoError": "Logo yuklashda xatolik",
+    "projectsCount": "{n} ta loyiha",
+    "noProjects": "Loyihalar yo'q"
   },
   "reports": {
     "standupTitle": "Kunlik standup",

@@ -692,7 +692,12 @@
     "pendingTitle": "Тасдиқлаш кутилмоқда",
     "allTitle": "Барча студиялар",
     "none": "Йўқ.",
-    "reason": "Сабаби"
+    "reason": "Сабаби",
+    "uploadLogo": "Логотип юклаш",
+    "logoSaved": "Логотип сақланди",
+    "logoError": "Логотип юклашда хатолик",
+    "projectsCount": "{n} та лойиҳа",
+    "noProjects": "Лойиҳалар йўқ"
   },
   "reports": {
     "standupTitle": "Кунлик стендап",

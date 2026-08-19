@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { IconHeartHandshake as Handshake, IconPencil as Pencil, IconCheck as Check, IconPhone as Phone, IconUser as User, IconTrash as Trash2 } from "@tabler/icons-react";
 import { createContractor, setProjectContractor } from "@/server/actions/projects";
 
-type Contractor = { id: string; name: string; contactPerson: string | null; contactPhone: string | null };
+type Contractor = { id: string; name: string; contactPerson: string | null; contactPhone: string | null; logoUrl?: string | null };
 type Option = { id: string; name: string };
 
 export function ProjectContractor({
@@ -97,6 +97,10 @@ export function ProjectContractor({
       {!editing ? (
         company ? (
           <div className="space-y-1">
+            {company.logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={company.logoUrl} alt="" className="mb-2 h-16 w-auto max-w-[160px] rounded-lg border border-[var(--border)] object-contain bg-[var(--surface-2)] p-1" />
+            )}
             <p className="font-semibold">{company.name}</p>
             {company.contactPerson && (
               <p className="flex items-center gap-1.5 text-sm text-[var(--muted)]">

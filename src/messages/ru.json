@@ -692,7 +692,12 @@
     "pendingTitle": "Ожидают одобрения",
     "allTitle": "Все студии",
     "none": "Нет.",
-    "reason": "Причина"
+    "reason": "Причина",
+    "uploadLogo": "Загрузить лого",
+    "logoSaved": "Лого сохранено",
+    "logoError": "Ошибка загрузки лого",
+    "projectsCount": "Проектов: {n}",
+    "noProjects": "Нет проектов"
   },
   "reports": {
     "standupTitle": "Ежедневный standup",

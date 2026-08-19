@@ -174,6 +174,7 @@ export const externalCompanies = pgTable("external_companies", {
   contactPerson: varchar("contact_person", { length: 255 }),
   contactEmail: varchar("contact_email", { length: 255 }),
   contactPhone: varchar("contact_phone", { length: 50 }),
+  logoUrl: text("logo_url"),
   address: text("address"),
   website: varchar("website", { length: 255 }),
   specialization: text("specialization"),
