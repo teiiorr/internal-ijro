@@ -20,15 +20,14 @@ import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 
-import { StudioDocumentsView } from "@/components/contractor/studio-documents-view";
 import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
 import { db } from "@/lib/db";
-import { users, projectStages, stageDocuments } from "@/lib/db/schema";
-import { desc, eq, sql } from "drizzle-orm";
+import { users } from "@/lib/db/schema";
+import { sql } from "drizzle-orm";
 
 // Amounts are rendered inside whitespace-nowrap containers so "… UZS" never breaks onto its own line.
 const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
@@ -84,23 +83,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       : "muted";
     const activeStage = sp.stages.find((s) => s.status === "active");
     const currency = sp.project.budgetCurrency ?? "UZS";
-
-    const studioDocs = sp.company
-      ? await db
-          .select({
-            id: stageDocuments.id,
-            fileUrl: stageDocuments.fileUrl,
-            fileName: stageDocuments.fileName,
-            fileSize: stageDocuments.fileSize,
-            fileMimeType: stageDocuments.fileMimeType,
-            category: stageDocuments.category,
-            uploadedAt: stageDocuments.uploadedAt,
-          })
-          .from(stageDocuments)
-          .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
-          .where(eq(projectStages.projectId, id))
-          .orderBy(desc(stageDocuments.uploadedAt))
-      : [];
 
     return (
       <div className="space-y-6 stagger-children">
@@ -245,15 +227,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        {/* Studio documents — folders the studio uploaded */}
-        {sp.company && studioDocs.length > 0 && (
-          <Card>
-            <CardContent className="p-5 sm:p-6 space-y-4">
-              <h3 className="text-base font-semibold">{t("projects.studioFiles.title")}</h3>
-              <StudioDocumentsView documents={studioDocs.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))} />
-            </CardContent>
-          </Card>
-        )}
       </div>
     );
   }
