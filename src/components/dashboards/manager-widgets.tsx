@@ -237,7 +237,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
                       <span className="shrink-0 font-bold tabular-nums text-[var(--success)]">{row.c}</span>
                     </div>
                     <div className="h-1.5 overflow-hidden rounded-full bg-[var(--surface-3)]">
-                      <div className="h-full rounded-full bg-[var(--success)] transition-[width] duration-500" style={{ width: `${(row.c / topMax) * 100}%` }} />
+                      <div className="h-full rounded-full bg-[var(--success)] animate-progress" style={{ width: `${(row.c / topMax) * 100}%` }} />
                     </div>
                   </div>
                   <span className="w-5 shrink-0 text-right text-[11px] font-bold tabular-nums text-[var(--subtle)]">#{i + 1}</span>

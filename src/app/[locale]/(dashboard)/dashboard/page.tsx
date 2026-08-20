@@ -36,7 +36,7 @@ export default async function DashboardPage() {
     /moliya/i.test(meRow?.deptName ?? "");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-children">
       <div>
         <p className="text-sm text-[var(--muted)] font-medium mb-1">{greet},</p>
         <h1 className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl break-words">

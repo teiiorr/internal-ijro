@@ -14,7 +14,7 @@ const ACCENT = "#1B4F72";
 const BORDER = "#CCCCCC";
 
 const s = StyleSheet.create({
-  page: { padding: "22mm 20mm", fontSize: 11, fontFamily: "Montserrat", color: INK },
+  page: { padding: "22mm 20mm", fontSize: 11, fontFamily: "Montserrat", color: INK, fontWeight: 500 },
   topbar: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottom: `1.5pt solid ${ACCENT}`, paddingBottom: 10, marginBottom: 18 },
   brand: { fontSize: 9, color: ACCENT, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase" },
   regNum: { fontSize: 12, color: ACCENT, fontWeight: 700 },
@@ -25,7 +25,7 @@ const s = StyleSheet.create({
   metaValue: { fontSize: 11, color: INK, fontWeight: 500 },
   section: { marginTop: 18 },
   sectionTitle: { fontSize: 13, fontWeight: 700, marginBottom: 8, color: INK, borderBottom: `0.75pt solid ${BORDER}`, paddingBottom: 4 },
-  body: { fontSize: 11, lineHeight: 1.6, color: INK },
+  body: { fontSize: 11, lineHeight: 1.6, color: INK, fontWeight: 500 },
   tableHeader: { flexDirection: "row", backgroundColor: "#E8EEF3", paddingVertical: 6, paddingHorizontal: 8, borderBottom: `1pt solid ${BORDER}` },
   tableHeaderText: { fontSize: 9, fontWeight: 700, color: ACCENT, textTransform: "uppercase", letterSpacing: 0.5 },
   assigneeRow: { flexDirection: "row", paddingVertical: 8, paddingHorizontal: 8, borderBottom: `0.5pt solid ${BORDER}` },
@@ -191,7 +191,7 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
           {/* Round stamp */}
           <View style={s.stampOuter}>
             <View style={s.stampInner}>
-              <Text style={[s.stampSub, { marginBottom: 1 }]}>BKRM</Text>
+              <Text style={[s.stampSub, { marginBottom: 1 }]}>TEIIOR DEV</Text>
               <Text style={s.stampTitle}>ICHKI</Text>
               <Text style={s.stampTitle}>IJRO</Text>
               <Text style={s.stampSub}>★</Text>

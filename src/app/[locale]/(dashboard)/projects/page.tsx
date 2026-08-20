@@ -141,7 +141,7 @@ export default async function ProjectsPage({
   );
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="space-y-5 sm:space-y-6 stagger-children">
       {/* Restores the list scroll position when returning from a project. */}
       <ScrollMemory />
       <div className="flex items-center justify-between flex-wrap gap-3">

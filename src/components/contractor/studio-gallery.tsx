@@ -69,18 +69,18 @@ export function StudioGallery({
           <p className="text-sm font-medium">{t("empty")}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 stagger-children">
           {filtered.map((img, i) => (
             <button
               key={img.id}
               onClick={() => setLightboxIdx(i)}
-              className="group relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+              className="group relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] hover-scale"
             >
               <img
                 src={img.fileUrl}
                 alt={img.fileName}
                 loading="lazy"
-                className="size-full object-cover transition-transform duration-200 group-hover:scale-105"
+                className="size-full object-cover animate-img-reveal transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pb-1.5 pt-6 opacity-0 transition-opacity group-hover:opacity-100">
                 <p className="truncate text-[11px] font-medium text-white">{img.fileName}</p>

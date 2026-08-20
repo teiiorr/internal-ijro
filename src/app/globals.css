@@ -402,3 +402,196 @@ input:not([type]), select, textarea {
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee { animation: none; }
 }
+
+/* =========================================================================
+   RELAXING ANIMATIONS — smooth, buttery transitions everywhere
+   ========================================================================= */
+
+/* --- Page content fade-in + rise --- */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+main, [role="main"] {
+  animation: page-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Card hover lift (enhances .glass-card) --- */
+.glass-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
+}
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: var(--glass-border);
+}
+.glass-card:active {
+  transform: translateY(0) scale(0.995);
+  transition-duration: 0.1s;
+}
+
+/* --- Stagger children fade-in for lists & grids --- */
+@keyframes item-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.stagger-children > * {
+  animation: item-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.16s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.24s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.28s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.32s; }
+.stagger-children > *:nth-child(n+9) { animation-delay: 0.36s; }
+
+/* --- Progress bar fill animation --- */
+@keyframes progress-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.animate-progress {
+  transform-origin: left;
+  animation: progress-fill 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Smooth number counter feel on stats --- */
+@keyframes count-pop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-count {
+  animation: count-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Tab content crossfade --- */
+@keyframes tab-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+[data-state="active"][role="tabpanel"] {
+  animation: tab-fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Sidebar link hover glow --- */
+nav a {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+nav a:hover {
+  transform: translateX(2px);
+}
+nav a:active {
+  transform: translateX(0) scale(0.98);
+  transition-duration: 0.08s;
+}
+
+/* --- Input focus glow ring --- */
+input:focus, textarea:focus, select:focus {
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  border-color: var(--primary) !important;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* --- Badge subtle entrance --- */
+@keyframes badge-pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+.badge-animate {
+  animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* --- Floating breathing glow for active indicators --- */
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
+  50%      { box-shadow: 0 0 12px 4px var(--primary-glow); }
+}
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* --- Smooth skeleton shimmer --- */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg,
+    var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* --- Toast slide-in --- */
+@keyframes toast-enter {
+  from { transform: translateX(100%) scale(0.9); opacity: 0; }
+  to   { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+/* --- Image reveal on gallery --- */
+@keyframes img-reveal {
+  from { opacity: 0; transform: scale(0.92); filter: blur(8px); }
+  to   { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+.animate-img-reveal {
+  animation: img-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Smooth hover scale for image thumbnails --- */
+.hover-scale {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-scale:hover {
+  transform: scale(1.03);
+  box-shadow: var(--shadow-2);
+}
+
+/* --- Status dot pulse variants --- */
+@keyframes status-pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+}
+@keyframes status-pulse-amber {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+}
+.pulse-green { animation: status-pulse-green 2s ease-in-out infinite; }
+.pulse-amber { animation: status-pulse-amber 2s ease-in-out infinite; }
+
+/* --- Smooth accordion expand --- */
+@keyframes accordion-down {
+  from { height: 0; opacity: 0; }
+  to   { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to   { height: 0; opacity: 0; }
+}
+
+/* --- Respect prefers-reduced-motion for ALL custom animations --- */
+@media (prefers-reduced-motion: reduce) {
+  main, [role="main"] { animation: none; }
+  .glass-card { transition: none; }
+  .glass-card:hover { transform: none; }
+  .stagger-children > * { animation: none; }
+  .animate-progress { animation: none; }
+  .animate-count { animation: none; }
+  [data-state="active"][role="tabpanel"] { animation: none; }
+  nav a { transition: none; }
+  nav a:hover { transform: none; }
+  .badge-animate { animation: none; }
+  .animate-breathe { animation: none; }
+  .skeleton-shimmer { animation: none; }
+  .animate-img-reveal { animation: none; }
+  .hover-scale { transition: none; }
+  .hover-scale:hover { transform: none; }
+  .pulse-green, .pulse-amber { animation: none; }
+}

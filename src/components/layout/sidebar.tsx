@@ -35,7 +35,7 @@ const ITEMS: Item[] = [
   { href: "/employees",         icon: Users,           key: "employees",      allowed: HR_ROLES,                                                           section: "work" },
   { href: "/meyoriy-hujjatlar", icon: FileCheck2,      key: "normativeDocs",  allowed: ALL,                                                                section: "work" },
   { href: "/departments",       icon: Building2,       key: "departments",    allowed: ADMIN,                                                              section: "work" },
-  { href: "/contractors",       icon: Handshake,       key: "contractors",    allowed: ADMIN.concat("koordinator"),                                        section: "work" },
+  { href: "/contractors",       icon: Handshake,       key: "contractors",    allowed: ADMIN.concat("koordinator", "bolim_boshligi"),                      section: "work" },
   { href: "/notifications",     icon: Bell,            key: "notifications",  allowed: ALL,                                                                section: "system" },
   { href: "/audit-log",         icon: ScrollText,      key: "auditLog",       allowed: ADMIN.concat("hr"),                                                 section: "system" },
   { href: "/settings",          icon: Settings,        key: "settings",       allowed: ALL,                                                                section: "system" },

@@ -13,6 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { compressImage } from "@/lib/images/compress";
 import { approveContractor, rejectContractor } from "@/server/actions/projects";
+import { RenameStudioButton, DeleteStudioButton } from "@/components/contractor/studio-crud-dialogs";
 
 type Proj = { id: string; name: string; status: string };
 type C = {
@@ -68,7 +69,7 @@ export function ContractorRow({ c, canManageLogo }: { c: C; canManageLogo: boole
         <div className="flex min-w-0 items-start gap-3">
           {/* Logo avatar (+ upload for managers) */}
           <div className="relative shrink-0">
-            <div className="grid size-11 place-items-center overflow-hidden rounded-lg bg-[var(--surface-3)] text-[var(--muted)]">
+            <div className="grid size-14 place-items-center overflow-hidden rounded-xl bg-[var(--surface-3)] text-[var(--muted)]">
               {logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={logoUrl} alt="" className="size-full object-cover" />
@@ -112,6 +113,12 @@ export function ContractorRow({ c, canManageLogo }: { c: C; canManageLogo: boole
             <Badge variant={c.status === "rejected" ? "danger" : "warning"}>{t(`status.${c.status}` as "status.pending")}</Badge>
           )}
           {c.rating && <Badge variant="secondary">⭐ {c.rating}</Badge>}
+          {canManageLogo && (
+            <>
+              <RenameStudioButton companyId={c.id} currentName={c.name} />
+              <DeleteStudioButton companyId={c.id} studioName={c.name} hasProjects={c.projects.length > 0} />
+            </>
+          )}
           {c.status === "pending" && (
             <>
               <Button size="sm" disabled={pending} onClick={() => start(async () => { await approveContractor(c.id); })}>{t("common.approve")}</Button>

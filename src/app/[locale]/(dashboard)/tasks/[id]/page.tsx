@@ -52,7 +52,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
     .orderBy(usersTbl.fullName);
 
   return (
-    <div className="space-y-5 max-w-5xl">
+    <div className="space-y-5 max-w-5xl stagger-children">
       <div className="flex items-start gap-2 flex-wrap">
         <BackButton fallbackHref="/tasks" className="mt-0.5" />
         <h1 className="text-base sm:text-lg font-semibold tracking-tight leading-snug flex-1 min-w-0 break-words">

@@ -23,7 +23,7 @@ export default async function ContractorDetailPage({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!["direktor", "orinbosar", "koordinator"].includes(session.user.position)) redirect("/dashboard");
+  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position)) redirect("/dashboard");
 
   const t = await getTranslations();
   const { id } = await params;
@@ -45,7 +45,7 @@ export default async function ContractorDetailPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-children">
       <div className="flex items-center gap-3">
         <BackButton fallbackHref="/contractors" />
         <h1 className="text-2xl font-bold truncate sm:text-3xl">{company.name}</h1>

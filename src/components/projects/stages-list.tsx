@@ -118,7 +118,7 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
         </div>
         <div className="h-2.5 rounded-full bg-[var(--surface-3)] overflow-hidden">
           <div
-            className="h-full rounded-full bg-[var(--primary)] transition-[width] duration-300"
+            className="h-full rounded-full bg-[var(--primary)] animate-progress"
             style={{ width: `${total}%` }}
           />
         </div>

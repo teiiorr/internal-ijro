@@ -19,7 +19,7 @@ import { FitText } from "@/components/ui/fit-text";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
-import { ProjectChat } from "@/components/projects/project-chat";
+
 import { StudioDocumentsView } from "@/components/contractor/studio-documents-view";
 import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
@@ -103,7 +103,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       : [];
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 stagger-children">
         {/* header (full width) */}
         <div className="flex items-start gap-3">
           <BackButton fallbackHref="/projects" className="mt-0.5" />
@@ -254,20 +254,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </CardContent>
           </Card>
         )}
-
-        {/* Chat with studio */}
-        {sp.company && (
-          <Card>
-            <CardContent className="p-5 sm:p-6 space-y-4">
-              <h3 className="text-base font-semibold">{t("projects.tabs.chat")}</h3>
-              <ProjectChat
-                projectId={data.project.id}
-                currentUserId={me.id}
-                messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))}
-              />
-            </CardContent>
-          </Card>
-        )}
       </div>
     );
   }
@@ -289,7 +275,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     : "secondary";
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 max-w-5xl stagger-children">
       <div className="flex items-start gap-2 flex-wrap">
         <BackButton fallbackHref="/projects" className="mt-0.5" />
         <div className="flex-1 min-w-0">
@@ -385,20 +371,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </dl>
         </CardContent>
       </Card>
-
-      {/* 4. Chat (only for external/company projects) */}
-      {data.company && (
-        <Card>
-          <CardContent className="p-5 sm:p-6 space-y-4">
-            <h3 className="text-base font-semibold">{t("projects.tabs.chat")}</h3>
-            <ProjectChat
-              projectId={data.project.id}
-              currentUserId={me.id}
-              messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))}
-            />
-          </CardContent>
-        </Card>
-      )}
 
       {/* unused parameter satisfied */}
       <span className="hidden">{canTogglePayment ? "" : ""}</span>

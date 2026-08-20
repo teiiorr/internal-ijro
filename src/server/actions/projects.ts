@@ -16,10 +16,12 @@ import {
   stageDocuments,
   projectDocuments,
   stageTemplateItems,
+  notificationSettings,
 } from "@/lib/db/schema";
 import { redirect } from "next/navigation";
 import { requireUser, requireProjectEditor } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
+import { hashPassword } from "@/lib/auth/password";
 import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
@@ -776,4 +778,81 @@ export async function loadStageMessagesForProject(projectId: string) {
   }
 
   return { byStage, general };
+}
+
+// --- Studio CRUD ---
+
+export async function renameContractor(companyId: string, name: string) {
+  const me = await requireProjectEditor();
+  const trimmed = name.trim();
+  if (trimmed.length < 2) throw new Error("name_too_short");
+  await db.update(externalCompanies).set({ name: trimmed }).where(eq(externalCompanies.id, companyId));
+  await logActivity({ userId: me.id, action: "contractor.renamed", entityType: "external_company", entityId: companyId, newValue: { name: trimmed } });
+  revalidatePath("/contractors");
+  revalidatePath(`/contractors/${companyId}`);
+}
+
+export async function deleteContractor(companyId: string) {
+  const me = await requireProjectEditor();
+  const linked = await db.select({ id: projects.id }).from(projects).where(eq(projects.externalCompanyId, companyId)).limit(1);
+  if (linked.length > 0) throw new Error("has_projects");
+  const company = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
+  if (company.length === 0) return;
+  if (company[0].contactEmail) {
+    await db.delete(users).where(and(eq(users.email, company[0].contactEmail), eq(users.position, "kontragent")));
+  }
+  await db.delete(externalCompanies).where(eq(externalCompanies.id, companyId));
+  await logActivity({ userId: me.id, action: "contractor.deleted", entityType: "external_company", entityId: companyId, newValue: { name: company[0].name } });
+  revalidatePath("/contractors");
+}
+
+const createStudioSchema = z.object({
+  name: z.string().min(2).max(255),
+  contactPerson: z.string().min(2).max(255),
+  contactEmail: z.string().email().max(255),
+  password: z.string().min(6).max(128),
+  contactPhone: z.string().max(50).optional().or(z.literal("")),
+});
+
+export async function createStudioWithLogin(input: z.infer<typeof createStudioSchema>) {
+  const me = await requireProjectEditor();
+  const parsed = createStudioSchema.parse(input);
+  const email = parsed.contactEmail.toLowerCase().trim();
+
+  const existing = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
+  if (existing.length > 0) throw new Error("email_taken");
+
+  const result = await db.transaction(async (tx) => {
+    const company = await tx
+      .insert(externalCompanies)
+      .values({
+        name: parsed.name.trim(),
+        contactPerson: parsed.contactPerson.trim(),
+        contactEmail: email,
+        contactPhone: parsed.contactPhone?.trim() || null,
+        status: "approved",
+        approvedByUserId: me.id,
+        approvedAt: new Date(),
+      })
+      .returning({ id: externalCompanies.id });
+
+    const u = await tx
+      .insert(users)
+      .values({
+        email,
+        fullName: parsed.contactPerson.trim(),
+        passwordHash: await hashPassword(parsed.password),
+        position: "kontragent",
+        status: "active",
+        emailVerifiedAt: new Date(),
+      })
+      .returning({ id: users.id });
+
+    await tx.insert(notificationSettings).values({ userId: u[0].id });
+    return company[0];
+  });
+
+  await logActivity({ userId: me.id, action: "contractor.created_with_login", entityType: "external_company", entityId: result.id, newValue: { name: parsed.name, email } });
+  revalidatePath("/contractors");
+  return result;
 }

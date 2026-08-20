@@ -4,30 +4,35 @@ import { auth } from "@/lib/auth";
 import { listContractorsWithProjects } from "@/server/queries/projects";
 import { Card, CardContent } from "@/components/ui/card";
 import { ContractorRow } from "@/components/projects/contractor-row";
+import { CreateStudioButton } from "@/components/contractor/studio-crud-dialogs";
 
 export default async function ContractorsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
-  if (!["direktor", "orinbosar", "koordinator"].includes(session.user.position)) redirect("/dashboard");
+  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position)) redirect("/dashboard");
 
   const rows = await listContractorsWithProjects();
   const pending = rows.filter((r) => r.status === "pending");
   const others = rows.filter((r) => r.status !== "pending");
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{t("contractors.pageTitle")}</h1>
+    <div className="space-y-6 stagger-children">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-3xl font-bold">{t("contractors.pageTitle")}</h1>
+        <CreateStudioButton />
+      </div>
 
-      <Card>
-        <CardContent className="p-6 space-y-3">
-          <h2 className="font-semibold text-lg">{t("contractors.pendingTitle")} ({pending.length})</h2>
-          {pending.length === 0 && <p className="text-sm text-[var(--muted)]">{t("contractors.none")}</p>}
-          {pending.map((c) => (
-            <ContractorRow key={c.id} c={{ ...c, rating: c.rating as string | null }} canManageLogo />
-          ))}
-        </CardContent>
-      </Card>
+      {pending.length > 0 && (
+        <Card>
+          <CardContent className="p-6 space-y-3">
+            <h2 className="font-semibold text-lg">{t("contractors.pendingTitle")} ({pending.length})</h2>
+            {pending.map((c) => (
+              <ContractorRow key={c.id} c={{ ...c, rating: c.rating as string | null }} canManageLogo />
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardContent className="p-6 space-y-3">
@@ -35,7 +40,7 @@ export default async function ContractorsPage() {
           {others.map((c) => (
             <ContractorRow key={c.id} c={{ ...c, rating: c.rating as string | null }} canManageLogo />
           ))}
-          {others.length === 0 && <p className="text-sm text-[var(--muted)]">None.</p>}
+          {others.length === 0 && <p className="text-sm text-[var(--muted)]">{t("contractors.none")}</p>}
         </CardContent>
       </Card>
     </div>

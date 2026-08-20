@@ -91,7 +91,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   );
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="space-y-5 sm:space-y-6 stagger-children">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
         <div className="flex gap-2 shrink-0">

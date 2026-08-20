@@ -141,18 +141,18 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
       )}
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-xl bg-[var(--surface-2)] py-3">
+      <div className="grid grid-cols-3 gap-2 text-center stagger-children">
+        <div className="rounded-xl bg-[var(--surface-2)] py-3 hover-scale">
           <div className="flex items-center justify-center gap-1 text-[var(--primary)]">
             <FolderIcon className="size-4" />
-            <span className="text-lg font-bold">{stats.projectCount}</span>
+            <span className="text-lg font-bold animate-count">{stats.projectCount}</span>
           </div>
           <p className="text-[11px] font-medium text-[var(--muted)]">{t("statsProjects")}</p>
         </div>
-        <div className="rounded-xl bg-[var(--surface-2)] py-3">
+        <div className="rounded-xl bg-[var(--surface-2)] py-3 hover-scale">
           <div className="flex items-center justify-center gap-1 text-[var(--primary)]">
             <FileIcon className="size-4" />
-            <span className="text-lg font-bold">{stats.docCount}</span>
+            <span className="text-lg font-bold animate-count">{stats.docCount}</span>
           </div>
           <p className="text-[11px] font-medium text-[var(--muted)]">{t("statsDocs")}</p>
         </div>
