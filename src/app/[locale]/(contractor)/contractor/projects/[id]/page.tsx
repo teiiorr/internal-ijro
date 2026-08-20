@@ -78,7 +78,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
         <Card>
           <CardContent className="p-5">
             <h3 className="text-base font-semibold mb-3">{t("contractor.budget.title")}</h3>
-            <dl className="grid grid-cols-3 gap-4 text-sm">
+            <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-3 gap-3 sm:gap-4 text-sm">
               <div>
                 <dt className="text-xs text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
                 <dd className="font-bold tabular-nums mt-0.5">{money(sp.totals.planned, currency)}</dd>

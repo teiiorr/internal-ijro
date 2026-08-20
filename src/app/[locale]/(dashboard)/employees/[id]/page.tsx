@@ -97,10 +97,10 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
           <Card>
             <CardHeader><CardTitle>{t("employees.profile.sectionTitle")}</CardTitle></CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-3 mb-6 text-sm">
-                <div><span className="text-[var(--muted)]">{t("common.email")}:</span> {data.user.email}</div>
-                <div><span className="text-[var(--muted)]">{t("common.phone")}:</span> {data.user.phone ?? "—"}</div>
-                <div><span className="text-[var(--muted)]">{t("employees.table.hireDate")}:</span> {data.user.hireDate ?? "—"}</div>
+              <div className="detail-grid grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-2 mb-6 text-sm">
+                <div><span className="text-xs font-medium text-[var(--muted)]">{t("common.email")}</span><p className="font-semibold mt-0.5">{data.user.email}</p></div>
+                <div><span className="text-xs font-medium text-[var(--muted)]">{t("common.phone")}</span><p className="font-semibold mt-0.5">{data.user.phone ?? "—"}</p></div>
+                <div><span className="text-xs font-medium text-[var(--muted)]">{t("employees.table.hireDate")}</span><p className="font-semibold mt-0.5">{data.user.hireDate ?? "—"}</p></div>
               </div>
               {canEdit ? <ProfileForm userId={data.user.id} profile={data.profile} /> : <p className="text-sm text-[var(--muted)]">{t("employees.profile.viewOnly")}</p>}
             </CardContent>

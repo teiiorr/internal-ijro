@@ -189,7 +189,7 @@ export default async function OwnerPage() {
           <Card>
             <CardContent className="p-5 space-y-2.5">
               <div className="flex items-center gap-2 text-sm font-semibold"><Server className="size-4 text-[var(--muted)]" />{t("owner.system.runtime")}</div>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+              <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-2 gap-2 sm:gap-x-4 sm:gap-y-1.5 text-sm">
                 <InfoRow k={t("owner.system.appVersion")} v={sys.runtime.appVersion} />
                 <InfoRow k="Node" v={sys.runtime.node} />
                 <InfoRow k="NODE_ENV" v={sys.runtime.nodeEnv} />
@@ -206,7 +206,7 @@ export default async function OwnerPage() {
           <Card>
             <CardContent className="p-5 space-y-2.5">
               <div className="flex items-center gap-2 text-sm font-semibold"><Database className="size-4 text-[var(--muted)]" />{t("owner.system.database")}</div>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+              <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-2 gap-2 sm:gap-x-4 sm:gap-y-1.5 text-sm">
                 <InfoRow k={t("owner.stats.dbSize")} v={stats.dbSize} />
                 <InfoRow k={t("owner.system.connections")} v={String(sys.connections)} />
               </dl>
@@ -230,7 +230,7 @@ export default async function OwnerPage() {
               <div className="flex items-center gap-2 text-sm font-semibold"><HardDriveDownload className="size-4 text-[var(--muted)]" />{t("owner.system.backup")}</div>
               {sys.backup.ok ? (
                 sys.backup.latest ? (
-                  <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+                  <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-2 gap-2 sm:gap-x-4 sm:gap-y-1.5 text-sm">
                     <InfoRow k={t("owner.system.backupLatest")} v={formatDateTime(sys.backup.latest.mtime)} />
                     <InfoRow k={t("owner.system.backupSize")} v={`${sys.backup.latest.sizeMb} MB`} />
                     <InfoRow k={t("owner.system.backupCount")} v={String(sys.backup.count)} />
@@ -249,7 +249,7 @@ export default async function OwnerPage() {
           <Card>
             <CardContent className="p-5 space-y-2.5">
               <div className="flex items-center gap-2 text-sm font-semibold"><KeyRound className="size-4 text-[var(--muted)]" />{t("owner.system.env")}</div>
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+              <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-2 gap-2 sm:gap-x-4 sm:gap-y-1.5 text-sm">
                 {sys.env.safe.map((e) => <InfoRow key={e.k} k={e.k} v={e.v} />)}
               </dl>
               <div className="pt-1">

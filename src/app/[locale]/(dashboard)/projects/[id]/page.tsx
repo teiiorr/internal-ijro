@@ -130,7 +130,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <Card>
           <CardContent className="p-5 sm:p-6">
             <h3 className="text-base font-semibold mb-4">{t("projects.details.title")}</h3>
-            <dl className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 text-sm">
+            <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-x-6 sm:gap-y-4 text-sm">
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
                 <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate) : t("common.emptyValue")}</dd>
@@ -320,7 +320,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-4">
           <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
-          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+          <dl className="detail-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-x-6 sm:gap-y-3 text-sm">
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
               <dd className="font-medium mt-0.5">{data.curator?.fullName ?? t("common.emptyValue")}</dd>
