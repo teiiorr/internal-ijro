@@ -4,6 +4,7 @@ import { addMonths, endOfMonth, endOfWeek, format, isWithinInterval, parseISO, s
 import { IconChevronLeft as ChevronLeft, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { shortName } from "@/lib/names";
 
 type Item = { id: string; userName: string; startDate: string; endDate: string; type: string; status: string };
 
@@ -45,7 +46,7 @@ export function LeavesCalendar({ items }: { items: Item[] }) {
               <div className="text-xs text-[var(--muted)]">{format(d, "d")}</div>
               {dayItems.slice(0, 3).map((it) => (
                 <div key={`${it.id}-${d.toISOString()}`} className={cn("truncate text-xs rounded px-1.5 py-0.5", STATUS_BG[it.status] ?? "bg-[var(--accent)]")}>
-                  {it.userName} · {it.type}
+                  {shortName(it.userName)} · {it.type}
                 </div>
               ))}
               {dayItems.length > 3 && <div className="text-xs text-[var(--muted)]">+{dayItems.length - 3} more</div>}

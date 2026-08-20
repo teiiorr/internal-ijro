@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createProject, createContractor } from "@/server/actions/projects";
 import { PROJECT_GENRES } from "@/lib/projects/genres";
+import { shortName } from "@/lib/names";
 
 type Company = { id: string; name: string };
 type User = { id: string; fullName: string };
@@ -135,7 +136,7 @@ export function NewProjectForm({
           <Select name="curatorUserId">
             <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
             <SelectContent>
-              {curators.map((c) => <SelectItem key={c.id} value={c.id}>{c.fullName}</SelectItem>)}
+              {curators.map((c) => <SelectItem key={c.id} value={c.id}>{shortName(c.fullName)}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -145,7 +146,7 @@ export function NewProjectForm({
             <Select value={responsibleUserId} onValueChange={setResponsibleUserId}>
               <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
               <SelectContent>
-                {responsibles.map((c) => <SelectItem key={c.id} value={c.id}>{c.fullName}</SelectItem>)}
+                {responsibles.map((c) => <SelectItem key={c.id} value={c.id}>{shortName(c.fullName)}</SelectItem>)}
               </SelectContent>
             </Select>
             <p className="text-xs text-[var(--muted)]">{t("projects.fields.responsibleHint")}</p>

@@ -73,7 +73,7 @@ export function NotificationBell() {
   return (
     <div ref={ref} className="relative">
       <Button variant="ghost" size="icon" aria-label={t("nav.notifications")} onClick={toggle} className="relative">
-        <Bell className="size-[19px]" />
+        <Bell className="size-5 sm:size-[22px]" />
         {unread > 0 && (
           <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--accent)] text-white text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--background-2)]">
             {unread > 99 ? "99+" : unread}

@@ -1,6 +1,7 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   IconPhone as Phone,
@@ -12,6 +13,7 @@ import {
   IconFolder as FolderIcon,
   IconFile as FileIcon,
   IconLoader2 as Loader,
+  IconCamera as Camera,
 } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { updateContractorNotes } from "@/server/actions/projects";
@@ -41,9 +43,12 @@ type Stats = {
 
 export function StudioInfoCard({ company, stats }: { company: Company; stats: Stats }) {
   const t = useTranslations("contractors.detail");
+  const router = useRouter();
   const [notes, setNotes] = useState(company.notes ?? "");
   const [saved, setSaved] = useState(true);
   const [pending, start] = useTransition();
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   function saveNotes() {
     start(async () => {
@@ -53,13 +58,36 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
     });
   }
 
+  async function uploadLogo(file: File) {
+    if (!file.type.startsWith("image/")) return;
+    setUploading(true);
+    try {
+      const res = await fetch(`/api/files/studio-logo?companyId=${company.id}&name=${encodeURIComponent(file.name)}`, {
+        method: "POST",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+      if (!res.ok) throw new Error("upload failed");
+      toast.success("Logo yuklandi");
+      router.refresh();
+    } catch {
+      toast.error("Logo yuklab bo'lmadi");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   const rating = company.rating != null ? Number(company.rating) : null;
 
   return (
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-3)]">
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          className="group relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-3)] cursor-pointer"
+        >
           {company.logoUrl ? (
             <img src={company.logoUrl} alt="" className="size-full object-cover" />
           ) : (
@@ -67,7 +95,11 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
               {company.name.charAt(0).toUpperCase()}
             </span>
           )}
-        </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+            {uploading ? <Loader className="size-5 text-white animate-spin" /> : <Camera className="size-5 text-white" />}
+          </div>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadLogo(f); e.target.value = ""; }} />
+        </button>
         <div className="min-w-0 flex-1">
           <h2 className="text-xl font-bold truncate">{company.name}</h2>
           {company.contactPerson && (

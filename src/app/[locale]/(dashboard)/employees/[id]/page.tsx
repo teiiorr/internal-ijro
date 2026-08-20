@@ -19,6 +19,7 @@ import { db } from "@/lib/db";
 import { departments as deptsTable, users as usersTable } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { shortName } from "@/lib/names";
 import { formatDate } from "@/lib/dates";
 
 export default async function EmployeePage({ params }: { params: Promise<{ id: string }> }) {
@@ -55,7 +56,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
     <div className="space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold">{data.user.fullName}</h1>
+          <h1 className="text-2xl font-bold">{shortName(data.user.fullName)}</h1>
           <div className="flex items-center gap-2 mt-1">
             <Badge variant="secondary">{data.user.positionTitle ?? t(`positions.${data.user.position}`)}</Badge>
             <span className="text-sm text-[var(--muted)]">{data.department?.name ?? "—"}</span>

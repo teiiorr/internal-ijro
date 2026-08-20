@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getEmployeeCounts, getBirthdaysThisWeek } from "@/server/queries/employees";
 import { listDepartments } from "@/server/queries/departments";
+import { shortName } from "@/lib/names";
 
 export async function HrWidgets() {
   const t = await getTranslations();
@@ -40,7 +41,7 @@ export async function HrWidgets() {
               <ul className="space-y-1 text-sm">
                 {birthdays.map((b) => (
                   <li key={b.id} className="flex justify-between">
-                    <Link href={`/employees/${b.id}`} className="hover:underline">{b.fullName}</Link>
+                    <Link href={`/employees/${b.id}`} className="hover:underline">{shortName(b.fullName)}</Link>
                     <span className="text-[var(--muted)]">{b.birthDate}</span>
                   </li>
                 ))}

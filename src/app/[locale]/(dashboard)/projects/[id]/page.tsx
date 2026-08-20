@@ -25,6 +25,7 @@ import { derivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
+import { shortName } from "@/lib/names";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
@@ -91,34 +92,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <BackButton fallbackHref="/projects" className="mt-0.5" />
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
-            <div className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 lg:grid-cols-5 gap-2 mt-3 text-sm">
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
-                <dd className="mt-0.5"><StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag></dd>
-              </div>
-              {sp.type && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
-                  <dd className="font-semibold mt-0.5">{sp.type.name}</dd>
-                </div>
-              )}
-              {isProjectGenre(sp.project.genre) && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
-                  <dd className="mt-0.5"><StatusTag tone="muted">{t(`projects.genre.${sp.project.genre}` as "projects.genre.film")}</StatusTag></dd>
-                </div>
-              )}
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
-                <dd className="font-bold tabular-nums mt-0.5">{sp.project.progressPercentage}%</dd>
-              </div>
-              {sp.curator && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                  <dd className="font-semibold mt-0.5 truncate">{sp.curator.fullName}</dd>
-                </div>
-              )}
-            </div>
           </div>
           {(canManage || canDeleteProject) && (
             <div className="shrink-0">
@@ -127,8 +100,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 curators={curatorOptions}
                 canManage={canManage}
                 canDelete={canDeleteProject}
-                // Show "mark in progress" on every not-started project (0% + no override), and on
-                // ones already manually marked (so they can be un-marked).
                 showInProgress={canManage && sp.project.statusOverride !== "on_hold" && (sp.project.progressPercentage === 0 || sp.project.statusOverride === "in_progress")}
                 onHold={sp.project.statusOverride === "on_hold"}
                 inProgress={sp.project.statusOverride === "in_progress"}
@@ -141,11 +112,30 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
         )}
 
-        {/* Details entered at creation — dates + budget (now visible, editable via the pencil) */}
         <Card>
           <CardContent className="p-5 sm:p-6">
             <h3 className="text-base font-semibold mb-4">{t("projects.details.title")}</h3>
-            <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-x-6 sm:gap-y-4 text-sm">
+            <dl className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 lg:grid-cols-4 gap-2 text-sm">
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
+                <dd className="mt-0.5"><StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag></dd>
+              </div>
+              {sp.type && (
+                <div>
+                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
+                  <dd className="font-semibold mt-0.5 truncate">{sp.type.name}</dd>
+                </div>
+              )}
+              {isProjectGenre(sp.project.genre) && (
+                <div>
+                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
+                  <dd className="mt-0.5"><StatusTag tone="muted">{t(`projects.genre.${sp.project.genre}` as "projects.genre.film")}</StatusTag></dd>
+                </div>
+              )}
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
+                <dd className="font-bold tabular-nums mt-0.5">{sp.project.progressPercentage}%</dd>
+              </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
                 <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate) : t("common.emptyValue")}</dd>
@@ -158,10 +148,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
                 <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
               </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.curator?.fullName ?? t("common.emptyValue")}</dd>
-              </div>
+              {sp.curator && (
+                <div>
+                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
+                  <dd className="font-semibold mt-0.5 truncate">{shortName(sp.curator.fullName)}</dd>
+                </div>
+              )}
             </dl>
           </CardContent>
         </Card>
@@ -268,34 +260,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <BackButton fallbackHref="/projects" className="mt-0.5" />
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{data.project.name}</h1>
-          <div className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 lg:grid-cols-5 gap-2 mt-3 text-sm">
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
-              <dd className="mt-0.5"><Badge variant={statusVariant}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Badge></dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
-              <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.type.${data.project.type}` as "projects.type.internal")}</Badge></dd>
-            </div>
-            {isProjectGenre(data.project.genre) && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
-                <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.genre.${data.project.genre}` as "projects.genre.film")}</Badge></dd>
-              </div>
-            )}
-            {data.curator && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                <dd className="font-semibold mt-0.5 truncate">{data.curator.fullName}</dd>
-              </div>
-            )}
-            {data.company && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.contractorLabel")}</dt>
-                <dd className="mt-0.5"><Link href="/contractors" className="hover:underline text-[var(--primary)] font-semibold">{data.company.name}</Link></dd>
-              </div>
-            )}
-          </div>
         </div>
         {(canManage || canDeleteProject) && (
           <div className="shrink-0">
@@ -320,14 +284,61 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </Card>
       )}
 
-      {/* 1. Umumiy bajarilish + Bosqichlar */}
+      {/* Tafsilotlar — all details in one section */}
+      <Card>
+        <CardContent className="p-5 sm:p-6 space-y-4">
+          <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
+          <dl className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 gap-2 text-sm">
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
+              <dd className="mt-0.5"><Badge variant={statusVariant}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Badge></dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
+              <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.type.${data.project.type}` as "projects.type.internal")}</Badge></dd>
+            </div>
+            {isProjectGenre(data.project.genre) && (
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
+                <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.genre.${data.project.genre}` as "projects.genre.film")}</Badge></dd>
+              </div>
+            )}
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
+              <dd className="font-semibold mt-0.5">{data.project.startDate ? formatDate(data.project.startDate) : t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
+              <dd className="font-semibold mt-0.5">{data.project.deadline ? formatDate(data.project.deadline) : t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
+              <dd className="font-semibold mt-0.5 tabular-nums">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</dd>
+            </div>
+            {data.curator && (
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
+                <dd className="font-semibold mt-0.5 truncate">{shortName(data.curator.fullName)}</dd>
+              </div>
+            )}
+            {data.company && (
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.contractorLabel")}</dt>
+                <dd className="mt-0.5"><Link href="/contractors" className="hover:underline text-[var(--primary)] font-semibold truncate">{data.company.name}</Link></dd>
+              </div>
+            )}
+          </dl>
+        </CardContent>
+      </Card>
+
+      {/* Bosqichlar */}
       <Card>
         <CardContent className="p-5 sm:p-6">
           <StagesList projectId={data.project.id} items={stages} canManage={canManage} canDelete={canDelete} />
         </CardContent>
       </Card>
 
-      {/* 2. Hujjatlar */}
+      {/* Hujjatlar */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-4">
           <h3 className="text-base font-semibold">{t("projects.documents.title")}</h3>
@@ -338,35 +349,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             canSubmit={me.position === "kontragent" || canManage}
             canReview={canManage}
           />
-        </CardContent>
-      </Card>
-
-      {/* 3. Tafsilotlar */}
-      <Card>
-        <CardContent className="p-5 sm:p-6 space-y-4">
-          <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
-          <dl className="detail-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-x-6 sm:gap-y-3 text-sm">
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-              <dd className="font-medium mt-0.5">{data.curator?.fullName ?? t("common.emptyValue")}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
-              <dd className="font-medium mt-0.5">{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-              <dd className="font-medium mt-0.5">{data.project.startDate ? formatDate(data.project.startDate) : t("common.emptyValue")}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-              <dd className="font-medium mt-0.5">{data.project.deadline ? formatDate(data.project.deadline) : t("common.emptyValue")}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-              <dd className="font-medium mt-0.5 tabular-nums whitespace-nowrap">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</dd>
-            </div>
-          </dl>
         </CardContent>
       </Card>
 

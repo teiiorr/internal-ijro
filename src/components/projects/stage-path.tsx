@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
+import { shortName } from "@/lib/names";
 
 export type StagePathItem = {
   id: string;
@@ -66,17 +67,19 @@ export function StagePath({ projectId, stages }: { projectId: string; stages: St
 
               {/* content */}
               <div className="min-w-0 flex-1 py-2 pr-1">
-                <div className="flex items-start gap-2">
-                  <span className={`min-w-0 flex-1 font-semibold leading-6 ${isLocked ? "text-[var(--muted)]" : "text-[var(--foreground)]"}`}>
+                <div className="flex items-center gap-2">
+                  <span className={`min-w-0 flex-1 font-semibold leading-6 truncate ${isLocked ? "text-[var(--muted)]" : "text-[var(--foreground)]"}`}>
                     {i + 1}. {s.name}
                   </span>
-                  <ChevronRight className="mt-0.5 size-5 shrink-0 text-[var(--subtle)] transition-colors group-hover:text-[var(--foreground)]" />
-                </div>
-                <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
                   <StatusTag tone={tone}>{label}</StatusTag>
                   {isActive && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
-                  {meta && <span className="text-sm leading-5 text-[var(--muted)]">{meta}</span>}
+                  <ChevronRight className="size-5 shrink-0 text-[var(--subtle)] transition-colors group-hover:text-[var(--foreground)]" />
                 </div>
+                {(s.responsibleName || s.plannedDeadline) && (
+                  <p className="mt-1 text-sm text-[var(--muted)] truncate">
+                    {[shortName(s.responsibleName), s.plannedDeadline ? formatDate(s.plannedDeadline) : null].filter(Boolean).join(" · ")}
+                  </p>
+                )}
               </div>
             </Link>
           </li>

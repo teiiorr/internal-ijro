@@ -95,7 +95,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
           <p className="text-sm font-medium">{t("contractors.none")}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 stagger-children">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 stagger-children">
           {filtered.map((s) => (
             <Link
               key={s.id}
@@ -103,7 +103,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
               className="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)]"
             >
               {/* Hero area — square logo */}
-              <div className={`relative aspect-square bg-gradient-to-br ${colorFor(s.id)} overflow-hidden transition-all duration-500`}>
+              <div className={`relative aspect-[4/3] sm:aspect-square bg-gradient-to-br ${colorFor(s.id)} overflow-hidden transition-all duration-500`}>
                 {s.logoUrl ? (
                   <SmoothImage
                     src={s.logoUrl}
@@ -112,7 +112,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
                   />
                 ) : (
                   <div className="flex size-full items-center justify-center">
-                    <span className="select-none text-7xl font-black text-[var(--foreground)] opacity-15 transition-all duration-500 group-hover:scale-110 group-hover:opacity-20">
+                    <span className="select-none text-5xl sm:text-7xl font-black text-[var(--foreground)] opacity-15 transition-all duration-500 group-hover:scale-110 group-hover:opacity-20">
                       {initial(s.name)}
                     </span>
                   </div>

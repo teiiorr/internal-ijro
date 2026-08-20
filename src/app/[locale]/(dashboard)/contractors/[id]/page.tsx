@@ -14,6 +14,7 @@ import { StudioInfoCard } from "@/components/contractor/studio-info-card";
 import { StudioProjectsList } from "@/components/contractor/studio-projects-list";
 import { StudioDocumentsFull } from "@/components/contractor/studio-documents-full";
 import { StudioGallery } from "@/components/contractor/studio-gallery";
+import { RenameStudioButton, DeleteStudioButton } from "@/components/contractor/studio-crud-dialogs";
 import { StudioChatTab } from "./chat-tab";
 
 export default async function ContractorDetailPage({
@@ -49,7 +50,11 @@ export default async function ContractorDetailPage({
     <div className="space-y-6 stagger-children">
       <div className="flex items-center gap-3">
         <BackButton fallbackHref="/contractors" />
-        <h1 className="text-2xl font-bold truncate sm:text-3xl">{company.name}</h1>
+        <h1 className="text-2xl font-bold truncate sm:text-3xl flex-1">{company.name}</h1>
+        <div className="flex items-center gap-1 shrink-0">
+          <RenameStudioButton companyId={company.id} currentName={company.name} />
+          <DeleteStudioButton companyId={company.id} studioName={company.name} hasProjects={prjs.length > 0} />
+        </div>
       </div>
 
       <StudioDetailTabs

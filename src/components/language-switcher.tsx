@@ -4,13 +4,12 @@ import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useTransition, useEffect, useRef, useState } from "react";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { IconWorld as Globe, IconCheck as Check } from "@tabler/icons-react";
-import { Button } from "./ui/button";
+import { IconCheck as Check } from "@tabler/icons-react";
 
-const LABEL: Record<string, string> = {
-  "uz-latn": "O'zbek",
-  "uz-cyrl": "Ўзбек",
-  ru: "Русский",
+const LANG: Record<string, { flag: string; label: string }> = {
+  "uz-latn": { flag: "🇺🇿", label: "Lotin" },
+  "uz-cyrl": { flag: "🇺🇿", label: "Кирилл" },
+  ru:        { flag: "🇷🇺", label: "Русский" },
 };
 
 export function LanguageSwitcher() {
@@ -35,46 +34,47 @@ export function LanguageSwitcher() {
     if (next === locale) return;
     const qs = searchParams?.toString();
     const href = qs ? `${pathname}?${qs}` : pathname;
-    // NOTE: do NOT call router.refresh() here. next-intl performs the locale
-    // switch as a soft navigation via router.replace(); a refresh() fired in
-    // the same transition re-fetches the CURRENT url and cancels the pending
-    // locale navigation, so the language never actually changes.
     startTransition(() => {
       router.replace(href, { locale: next });
     });
   }
 
+  const current = LANG[locale] ?? LANG["uz-latn"];
+
   return (
     <div ref={ref} className="relative">
-      <Button
-        variant="ghost"
-        size="sm"
+      <button
         onClick={() => setOpen((v) => !v)}
         disabled={isPending}
         aria-haspopup="menu"
         aria-expanded={open}
+        className="flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
       >
-        <Globe className="size-4" />
-        <span className="hidden sm:inline">{LABEL[locale]}</span>
-      </Button>
+        <span className="text-base leading-none">{current.flag}</span>
+        <span className="hidden sm:inline text-[13px]">{current.label}</span>
+      </button>
       {open && (
         <div
           role="menu"
-          className="absolute right-0 mt-2 w-44 rounded-2xl border border-[var(--border)] bg-[var(--popover)] p-1.5 shadow-xl z-[100]"
+          className="absolute right-0 mt-2 w-48 rounded-2xl border border-[var(--border)] bg-[var(--popover)] p-1.5 shadow-xl z-[100]"
         >
-          {routing.locales.map((l) => (
-            <button
-              key={l}
-              type="button"
-              role="menuitemradio"
-              aria-checked={l === locale}
-              className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
-              onClick={() => switchTo(l as AppLocale)}
-            >
-              <span>{LABEL[l]}</span>
-              {l === locale && <Check className="size-4 text-[var(--primary)]" aria-hidden />}
-            </button>
-          ))}
+          {routing.locales.map((l) => {
+            const lang = LANG[l] ?? { flag: "🌐", label: l };
+            return (
+              <button
+                key={l}
+                type="button"
+                role="menuitemradio"
+                aria-checked={l === locale}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
+                onClick={() => switchTo(l as AppLocale)}
+              >
+                <span className="text-lg leading-none">{lang.flag}</span>
+                <span className="flex-1">{lang.label}</span>
+                {l === locale && <Check className="size-4 text-[var(--primary)]" aria-hidden />}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

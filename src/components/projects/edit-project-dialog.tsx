@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateProject } from "@/server/actions/projects";
 import { PROJECT_GENRES } from "@/lib/projects/genres";
+import { shortName } from "@/lib/names";
 
 const NONE = "__none__";
 
@@ -137,7 +138,7 @@ export function EditProjectDialog({
                 <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value={NONE}>{t("common.emptyValue")}</SelectItem>
-                  {curators.map((c) => <SelectItem key={c.id} value={c.id}>{c.fullName}</SelectItem>)}
+                  {curators.map((c) => <SelectItem key={c.id} value={c.id}>{shortName(c.fullName)}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>

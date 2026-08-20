@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { shortName } from "@/lib/names";
 import { IconPencil as Pencil, IconTrash as Trash2, IconPlus as Plus, IconX as X } from "@tabler/icons-react";
 import { createDepartment, updateDepartment, deleteDepartment } from "@/server/actions/departments";
 
@@ -64,7 +65,7 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
             <Select name="headUserId" defaultValue={initial?.headUserId ?? undefined}>
               <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
               <SelectContent>
-                {managers.map((m) => <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>)}
+                {managers.map((m) => <SelectItem key={m.id} value={m.id}>{shortName(m.fullName)}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

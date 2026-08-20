@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CopyRegistration } from "@/components/copy-registration";
 import { deadlineRelative, formatDate } from "@/lib/dates";
+import { shortName } from "@/lib/names";
 import { db } from "@/lib/db";
 import { departments as deptsTbl, users as usersTbl } from "@/lib/db/schema";
 
@@ -93,9 +94,9 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
       </div>
 
       <div className="border-t border-[var(--border)] px-5 sm:px-6 py-4 flex items-center gap-3">
-        <Initials name={creator?.fullName ?? "—"} />
+        <Initials name={shortName(creator?.fullName) || "—"} />
         <div className="min-w-0 flex-1">
-          <p className="text-[14px] font-semibold truncate">{creator?.fullName ?? "—"}</p>
+          <p className="text-[14px] font-semibold truncate">{shortName(creator?.fullName) || "—"}</p>
           <p className="text-xs text-[var(--muted)] truncate">
             {creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : ""}
             {creatorDept ? <span> · {creatorDept}</span> : null}

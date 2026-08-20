@@ -13,6 +13,7 @@ import {
 } from "@/server/queries/dashboards";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { ProjectStatusDonut } from "@/components/dashboards/project-status-donut";
+import { shortName } from "@/lib/names";
 import { ProjectTypeBar } from "@/components/dashboards/project-type-bar";
 import type { DerivedStatus } from "@/lib/projects/progress";
 import { IconTrophy as Trophy, IconAlertTriangle as AlertTriangle, IconStack2 as Layers, IconLayoutKanban as FolderKanban, IconCalendarClock as CalendarClock, IconCalendarX as CalendarX2, IconListCheck as ListChecks, IconChevronRight as ChevronRight, IconChartPie as PieChart, IconChartBar as BarChart3, IconWallet as Wallet } from "@tabler/icons-react";
@@ -227,12 +228,12 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
               top.map((row, i) => (
                 <div key={row.userId} className="flex items-center gap-3">
                   <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--success-soft)] text-xs font-bold text-[var(--success)]">
-                    {initials(row.fullName)}
+                    {initials(shortName(row.fullName))}
                   </div>
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex justify-between gap-2 text-sm">
                       <Link href={`/employees/${row.userId}`} className="truncate font-semibold transition-colors hover:text-[var(--success)]">
-                        {row.fullName}
+                        {shortName(row.fullName)}
                       </Link>
                       <span className="shrink-0 font-bold tabular-nums text-[var(--success)]">{row.c}</span>
                     </div>
@@ -264,12 +265,12 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
               slow.map((row, i) => (
                 <div key={row.userId} className="flex items-center gap-3">
                   <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--danger-soft)] text-xs font-bold text-[var(--danger)]">
-                    {initials(row.fullName)}
+                    {initials(shortName(row.fullName))}
                   </div>
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex justify-between gap-2 text-sm">
                       <Link href={`/employees/${row.userId}`} className="truncate font-semibold transition-colors hover:text-[var(--danger)]">
-                        {row.fullName}
+                        {shortName(row.fullName)}
                       </Link>
                       <span className="shrink-0 font-bold tabular-nums text-[var(--danger)]">{row.c}</span>
                     </div>

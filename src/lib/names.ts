@@ -48,10 +48,19 @@ function translit(input: string, map: Record<string, string>, di: [string, strin
   return out;
 }
 
+/** Strip the patronymic (3rd word) from "Familiya Ism Otchestvo". */
+export function shortName(name: string | null | undefined): string {
+  if (!name) return name ?? "";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length <= 2) return name.trim();
+  return parts.slice(0, 2).join(" ");
+}
+
 /** Localize a person's name for the current UI language. */
 export function localizeName(name: string | null | undefined, locale: string): string {
   if (!name) return name ?? "";
-  if (locale === "uz-cyrl") return translit(name, UZ, UZ_DI);
-  if (locale === "ru") return translit(name, RU, RU_DI);
-  return name;
+  const short = shortName(name);
+  if (locale === "uz-cyrl") return translit(short, UZ, UZ_DI);
+  if (locale === "ru") return translit(short, RU, RU_DI);
+  return short;
 }

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createTask } from "@/server/actions/tasks";
 import { IconX as X, IconPlus as Plus, IconSearch as Search } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { shortName } from "@/lib/names";
 
 type Person = { id: string; fullName: string; position: string };
 type Project = { id: string; name: string };
@@ -94,7 +95,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
                     ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
                     : "bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--border)]"
                 )}>
-                  {p.fullName}
+                  {shortName(p.fullName)}
                   <button type="button" onClick={() => toggle(p.id)} className="opacity-70 hover:opacity-100">
                     <X className="size-3.5" />
                   </button>
@@ -128,7 +129,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
                     onClick={() => { toggle(p.id); setSearch(""); }}
                     className="w-full text-left px-4 py-3 hover:bg-[var(--surface-3)] text-sm transition-colors"
                   >
-                    <span className="font-semibold">{p.fullName}</span>
+                    <span className="font-semibold">{shortName(p.fullName)}</span>
                     <span className="text-[var(--muted)] ml-2 text-xs">{t(`positions.${p.position}` as "positions.direktor")}</span>
                   </button>
                 ))}

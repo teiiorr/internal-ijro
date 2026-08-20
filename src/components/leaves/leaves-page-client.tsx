@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { approveLeave, rejectLeave, requestLeave } from "@/server/actions/leaves";
+import { shortName } from "@/lib/names";
 
 type Leave = {
   id: string;
@@ -99,7 +100,7 @@ export function LeavesPageClient({
             {pendingForReview.map((l) => (
               <div key={l.id} className="border rounded-lg p-3 flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <p className="font-medium">{l.userName} · {l.type}</p>
+                  <p className="font-medium">{shortName(l.userName)} · {l.type}</p>
                   <p className="text-xs text-[var(--muted)]">{l.startDate} → {l.endDate}{l.reason ? ` · ${l.reason}` : ""}</p>
                 </div>
                 <div className="flex gap-2 items-center">

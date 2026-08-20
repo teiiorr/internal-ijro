@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { inviteEmployee } from "@/server/actions/employees";
+import { shortName } from "@/lib/names";
 
 type Dept = { id: string; name: string };
 type Manager = { id: string; fullName: string };
@@ -76,7 +77,7 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
           <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
           <SelectContent>
             {managers.map((m) => (
-              <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>
+              <SelectItem key={m.id} value={m.id}>{shortName(m.fullName)}</SelectItem>
             ))}
           </SelectContent>
         </Select>

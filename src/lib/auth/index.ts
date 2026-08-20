@@ -7,6 +7,7 @@ import { users, type Position, type UserStatus } from "@/lib/db/schema";
 import { verifyPassword } from "./password";
 import { verifyTotp } from "./twofa";
 import { maybeSendNewDeviceEmail } from "./new-device";
+import { shortName } from "@/lib/names";
 
 declare module "next-auth" {
   interface Session {
@@ -128,7 +129,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session: async ({ session, token }) => {
       if (token.uid) {
         session.user.id = token.uid as string;
-        session.user.fullName = (token.fullName as string) ?? "";
+        session.user.fullName = shortName((token.fullName as string) ?? "");
         session.user.position = token.position as Position;
         session.user.departmentId = (token.departmentId as string | null) ?? null;
         session.user.status = token.status as UserStatus;

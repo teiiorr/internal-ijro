@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { changePosition } from "@/server/actions/employees";
+import { shortName } from "@/lib/names";
 
 const POSITIONS = [
   "direktor", "orinbosar", "koordinator", "bolim_boshligi",
@@ -89,7 +90,7 @@ export function ChangePositionDialog({
             <Select value={reportsTo} onValueChange={setReportsTo}>
               <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
               <SelectContent>
-                {managers.map((m) => <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>)}
+                {managers.map((m) => <SelectItem key={m.id} value={m.id}>{shortName(m.fullName)}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

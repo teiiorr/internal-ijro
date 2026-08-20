@@ -8,6 +8,7 @@ import { reviewAssigneeResponse } from "@/server/actions/tasks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatDateTime } from "@/lib/dates";
+import { shortName } from "@/lib/names";
 import { toast } from "sonner";
 
 export type AssigneeItem = {
@@ -137,10 +138,10 @@ export function AssigneesCard({
                 className="w-full flex items-center gap-3 px-4 py-3 text-left"
               >
                 <span className={cn("size-2 rounded-full shrink-0", STATUS_DOT[a.status])} />
-                <Initials name={a.fullName} />
+                <Initials name={shortName(a.fullName)} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-[15px]">{a.fullName}</p>
+                    <p className="font-semibold text-[15px]">{shortName(a.fullName)}</p>
                     {a.status === "completed" && <BadgeCheck className="size-[18px] text-[var(--success)]" />}
                   </div>
                   <p className="text-[13px] text-[var(--muted)] truncate">{a.departmentName ?? "—"}</p>
