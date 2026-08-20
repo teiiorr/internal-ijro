@@ -5,17 +5,66 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { departments, employeeProfiles, positionHistory, users } from "@/lib/db/schema";
 import { registerMontserrat } from "@/lib/pdf/fonts";
+import { shortName } from "@/lib/names";
 
 registerMontserrat();
 
+const FONT = "Times New Roman";
+const MUTED = "#444444";
+
 const s = StyleSheet.create({
-  page: { padding: 36, fontSize: 11, fontFamily: "Montserrat" },
-  h1: { fontSize: 20, marginBottom: 12 },
-  h2: { fontSize: 13, marginTop: 14, marginBottom: 4, color: "#1A1A1A" },
-  row: { flexDirection: "row", marginBottom: 4 },
-  label: { width: 130, color: "#6B7280" },
-  value: { flex: 1 },
-  small: { color: "#6B7280", fontSize: 9 },
+  page: {
+    paddingTop: 56,
+    paddingBottom: 56,
+    paddingHorizontal: 72,
+    fontSize: 14,
+    fontFamily: FONT,
+    color: "#000000",
+    lineHeight: 1.5,
+  },
+  h1: {
+    fontSize: 18,
+    fontWeight: 700,
+    textAlign: "center",
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: MUTED,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  divider: {
+    borderBottom: "1pt solid #000000",
+    marginBottom: 16,
+  },
+  h2: {
+    fontSize: 14,
+    fontWeight: 700,
+    textTransform: "uppercase",
+    marginTop: 18,
+    marginBottom: 6,
+    borderBottom: "0.5pt solid #CCCCCC",
+    paddingBottom: 3,
+  },
+  row: {
+    flexDirection: "row",
+    marginBottom: 4,
+  },
+  label: {
+    width: 170,
+    fontSize: 14,
+    color: MUTED,
+  },
+  value: {
+    flex: 1,
+    fontSize: 14,
+  },
+  small: {
+    color: MUTED,
+    fontSize: 12,
+  },
 });
 
 export async function buildEmployeeCardPdf(userId: string): Promise<Buffer | null> {
@@ -44,37 +93,40 @@ export async function buildEmployeeCardPdf(userId: string): Promise<Buffer | nul
   const doc = (
     <Document>
       <Page size="A4" style={s.page}>
-        <Text style={s.h1}>{user.fullName}</Text>
-        <Text style={s.small}>{user.email} · {department?.name ?? "—"} · {user.position}</Text>
+        <Text style={s.h1}>{shortName(user.fullName)}</Text>
+        <Text style={s.subtitle}>
+          {user.email} · {department?.name ?? "—"} · {user.position}
+        </Text>
+        <View style={s.divider} />
 
-        <Text style={s.h2}>Personal</Text>
-        <Field label="Phone" value={user.phone} />
-        <Field label="Birth date" value={profile?.birthDate ?? null} />
-        <Field label="Marital status" value={profile?.maritalStatus ?? null} />
-        <Field label="Address" value={profile?.address ?? null} />
+        <Text style={s.h2}>Shaxsiy ma'lumotlar</Text>
+        <Field label="Telefon" value={user.phone} />
+        <Field label="Tug'ilgan sana" value={profile?.birthDate ?? null} />
+        <Field label="Oilaviy holati" value={profile?.maritalStatus ?? null} />
+        <Field label="Manzil" value={profile?.address ?? null} />
 
-        <Text style={s.h2}>Passport</Text>
-        <Field label="Serial / number" value={[profile?.passportSerial, profile?.passportNumber].filter(Boolean).join(" ") || null} />
-        <Field label="Issued by" value={profile?.passportIssuedBy ?? null} />
-        <Field label="Issued date" value={profile?.passportIssuedDate ?? null} />
+        <Text style={s.h2}>Pasport</Text>
+        <Field label="Seriya / raqam" value={[profile?.passportSerial, profile?.passportNumber].filter(Boolean).join(" ") || null} />
+        <Field label="Kim tomonidan berilgan" value={profile?.passportIssuedBy ?? null} />
+        <Field label="Berilgan sana" value={profile?.passportIssuedDate ?? null} />
         <Field label="INN" value={profile?.inn ?? null} />
 
-        <Text style={s.h2}>Emergency contact</Text>
-        <Field label="Name" value={profile?.emergencyContactName ?? null} />
-        <Field label="Phone" value={profile?.emergencyContactPhone ?? null} />
-        <Field label="Relation" value={profile?.emergencyContactRelation ?? null} />
+        <Text style={s.h2}>Favqulodda aloqa</Text>
+        <Field label="Ism" value={profile?.emergencyContactName ?? null} />
+        <Field label="Telefon" value={profile?.emergencyContactPhone ?? null} />
+        <Field label="Qarindoshlik" value={profile?.emergencyContactRelation ?? null} />
 
-        <Text style={s.h2}>Employment</Text>
-        <Field label="Hire date" value={user.hireDate} />
-        <Field label="Status" value={user.status} />
-        <Field label="Termination" value={user.terminationDate} />
+        <Text style={s.h2}>Ish faoliyati</Text>
+        <Field label="Ishga kirgan sana" value={user.hireDate} />
+        <Field label="Holati" value={user.status} />
+        <Field label="Bo'shatilgan sana" value={user.terminationDate} />
 
-        <Text style={s.h2}>Position history</Text>
+        <Text style={s.h2}>Lavozim tarixi</Text>
         {history.length === 0 ? (
-          <Text style={s.small}>No changes recorded.</Text>
+          <Text style={s.small}>O'zgarishlar qayd etilmagan.</Text>
         ) : (
           history.map((h) => (
-            <Text key={h.id} style={{ fontSize: 10, marginBottom: 2 }}>
+            <Text key={h.id} style={{ fontSize: 13, marginBottom: 2 }}>
               {new Date(h.changeDate).toISOString().slice(0, 10)} · {h.oldPosition ?? "—"} → {h.newPosition}{h.reason ? ` (${h.reason})` : ""}
             </Text>
           ))
@@ -82,8 +134,8 @@ export async function buildEmployeeCardPdf(userId: string): Promise<Buffer | nul
 
         {profile?.notesHr && (
           <>
-            <Text style={s.h2}>HR notes</Text>
-            <Text>{profile.notesHr}</Text>
+            <Text style={s.h2}>HR eslatmalari</Text>
+            <Text style={{ fontSize: 14 }}>{profile.notesHr}</Text>
           </>
         )}
       </Page>

@@ -23,5 +23,14 @@ export function registerMontserrat() {
       { src: path.join(dir, "Montserrat-Italic.ttf"), fontWeight: 700, fontStyle: "italic" },
     ],
   });
+  Font.register({
+    family: "Times New Roman",
+    fonts: [
+      { src: path.join(dir, "TimesNewRoman.ttf"), fontWeight: 400 },
+      { src: path.join(dir, "TimesNewRoman-Bold.ttf"), fontWeight: 700 },
+      { src: path.join(dir, "TimesNewRoman-Italic.ttf"), fontWeight: 400, fontStyle: "italic" },
+      { src: path.join(dir, "TimesNewRoman-BoldItalic.ttf"), fontWeight: 700, fontStyle: "italic" },
+    ],
+  });
   registered = true;
 }
