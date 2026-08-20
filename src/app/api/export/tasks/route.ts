@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import ExcelJS from "exceljs";
 import { auth } from "@/lib/auth";
 import { listTasks } from "@/server/queries/tasks";
-import { applyMontserrat } from "@/lib/excel";
 
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
+  const ExcelJS = (await import("exceljs")).default;
+  const { applyMontserrat } = await import("@/lib/excel");
+
   const session = await auth();
   if (!session?.user) return new NextResponse("unauthorized", { status: 401 });
   const sp = req.nextUrl.searchParams;

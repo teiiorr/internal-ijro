@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import ExcelJS from "exceljs";
+import type ExcelJS from "exceljs";
 import { auth } from "@/lib/auth";
 import { listProjectsForReport } from "@/server/queries/projects";
 import { canViewMoney } from "@/lib/permissions/project-editors";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
-import { applyMontserrat } from "@/lib/excel";
 
 export const runtime = "nodejs";
 
@@ -44,6 +43,9 @@ const TOTAL_FILL: ExcelJS.FillPattern = {
 };
 
 export async function GET(req: NextRequest) {
+  const ExcelJS = (await import("exceljs")).default;
+  const { applyMontserrat } = await import("@/lib/excel");
+
   const session = await auth();
   if (!session?.user) return new NextResponse("unauthorized", { status: 401 });
   if (!canViewMoney(session.user.email)) return new NextResponse("forbidden", { status: 403 });

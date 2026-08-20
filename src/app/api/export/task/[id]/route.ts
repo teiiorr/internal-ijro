@@ -3,7 +3,6 @@ import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { taskAssignees, tasks } from "@/lib/db/schema";
-import { buildTaskDocumentPdf } from "@/lib/pdf/task-document";
 
 export const runtime = "nodejs";
 
@@ -31,6 +30,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
     }
   }
 
+  const { buildTaskDocumentPdf } = await import("@/lib/pdf/task-document");
   const pdf = await buildTaskDocumentPdf(id);
   if (!pdf) return new NextResponse("not_found", { status: 404 });
   const filename = `topshiriq-${(t[0].regNum ?? id).replace(/[/]/g, "-")}.pdf`;

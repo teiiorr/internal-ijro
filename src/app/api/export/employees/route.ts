@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { listEmployees } from "@/server/queries/employees";
-import { buildEmployeesXlsx } from "@/lib/excel";
 
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
+  const { buildEmployeesXlsx } = await import("@/lib/excel");
+
   const session = await auth();
   if (!session?.user?.id) return new NextResponse("unauthorized", { status: 401 });
   if (!["direktor", "orinbosar", "hr"].includes(session.user.position))
