@@ -96,7 +96,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
         <div className="flex gap-2 shrink-0">
           <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
-            <a href={`/api/export/tasks?scope=${scope}`}><Download className="size-4" /> XLSX</a>
+            <a href={`/api/export/tasks?scope=${scope}`}><Download className="size-4" /> Excel</a>
           </Button>
           {canCreate && (
             <Button asChild size="default">

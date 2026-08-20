@@ -84,7 +84,7 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
           </SelectContent>
         </Select>
         <Button asChild variant="outline" disabled={pending}>
-          <a href={exportUrl}><Download className="size-4 mr-1" /> XLSX</a>
+          <a href={exportUrl}><Download className="size-4 mr-1" /> Excel</a>
         </Button>
       </div>
     </div>

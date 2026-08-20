@@ -147,7 +147,7 @@ export default async function OwnerPage() {
             {stats.logs > logs.length && <p className="text-xs text-[var(--muted)] mt-0.5">{t("owner.logs.latest")}</p>}
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link href="/api/export/audit"><Download className="size-4" /> XLSX</Link>
+            <Link href="/api/export/audit"><Download className="size-4" /> Excel</Link>
           </Button>
         </div>
         <Card>
