@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { externalCompanies } from "@/lib/db/schema";
+import { externalCompanies, users } from "@/lib/db/schema";
 import { SessionProvider } from "next-auth/react";
 import { Header } from "@/components/layout/header";
 import { IconFolder as Folder, IconLayoutDashboard as LayoutDashboard, IconUser as UserIcon, IconSettings as Settings, IconFileText as FileText } from "@tabler/icons-react";
@@ -15,12 +15,13 @@ export default async function ContractorLayout({ children }: { children: React.R
   if (session.user.position !== "kontragent") redirect("/dashboard");
   const t = await getTranslations();
 
+  const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);
   const company = await db.select().from(externalCompanies).where(eq(externalCompanies.contactEmail, session.user.email)).limit(1);
   if (company.length > 0 && company[0].status !== "approved") {
     return (
       <SessionProvider>
         <div className="min-h-screen flex flex-col">
-          <Header userName={session.user.fullName} />
+          <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
           <main className="flex-1 flex items-center justify-center p-6">
             <div className="max-w-md text-center space-y-4 glass-strong rounded-3xl p-8">
               <h1 className="text-2xl font-extrabold tracking-tight gradient-text">{t("contractor.accountUnderReview")}</h1>
@@ -49,7 +50,7 @@ export default async function ContractorLayout({ children }: { children: React.R
   return (
     <SessionProvider>
       <div className="min-h-screen flex flex-col">
-        <Header userName={session.user.fullName} />
+        <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <aside className="hidden md:block w-[272px] shrink-0">
             <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass-strong">

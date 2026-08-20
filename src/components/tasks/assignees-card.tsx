@@ -10,10 +10,12 @@ import { Input } from "@/components/ui/input";
 import { formatDateTime } from "@/lib/dates";
 import { shortName } from "@/lib/names";
 import { toast } from "sonner";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export type AssigneeItem = {
   userId: string;
   fullName: string;
+  avatarUrl?: string | null;
   position: string | null;
   departmentName: string | null;
   status: "todo" | "in_progress" | "under_review" | "completed" | "rejected";
@@ -27,15 +29,6 @@ export type AssigneeItem = {
 
 type Filter = "all" | "in_progress" | "completed";
 
-function Initials({ name }: { name: string }) {
-  const parts = name.trim().split(/\s+/).slice(0, 2);
-  const initials = parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
-  return (
-    <div className="size-10 rounded-full bg-[var(--primary-soft)] flex items-center justify-center text-sm font-semibold text-[var(--primary)]">
-      {initials}
-    </div>
-  );
-}
 
 const STATUS_DOT: Record<string, string> = {
   todo: "bg-[var(--muted)]",
@@ -138,7 +131,7 @@ export function AssigneesCard({
                 className="w-full flex items-center gap-3 px-4 py-3 text-left"
               >
                 <span className={cn("size-2 rounded-full shrink-0", STATUS_DOT[a.status])} />
-                <Initials name={shortName(a.fullName)} />
+                <UserAvatar name={shortName(a.fullName)} avatarUrl={a.avatarUrl} size="md" department={a.departmentName} position={a.position} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-[15px]">{shortName(a.fullName)}</p>

@@ -50,7 +50,7 @@ export function LanguageSwitcher() {
         aria-expanded={open}
         className="flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
       >
-        <span className="text-base leading-none">{current.flag}</span>
+        <span className="text-xl sm:text-2xl leading-none">{current.flag}</span>
         <span className="hidden sm:inline text-[13px]">{current.label}</span>
       </button>
       {open && (

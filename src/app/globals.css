@@ -592,6 +592,9 @@ input:focus, textarea:focus, select:focus {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.detail-grid > div:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
 .detail-grid > div:hover {
   background: var(--surface-2);
   border-color: var(--border-strong);

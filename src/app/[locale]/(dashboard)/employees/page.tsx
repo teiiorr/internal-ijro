@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmployeesFilterBar } from "@/components/hr/employees-filter-bar";
 import { IconPlus as Plus } from "@tabler/icons-react";
+import { shortName } from "@/lib/names";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 type SP = Record<string, string | string[] | undefined>;
 
@@ -60,9 +62,10 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
             href={`/employees/${r.id}`}
             className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:bg-[var(--surface-2)] transition-colors"
           >
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-3">
+              <UserAvatar name={shortName(r.fullName)} avatarUrl={r.avatarUrl} size="md" department={r.departmentName} position={r.positionTitle ?? r.position} />
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-[15px]">{r.fullName}</p>
+                <p className="font-semibold text-[15px]">{shortName(r.fullName)}</p>
                 <p className="text-xs text-[var(--muted)] truncate mt-0.5">{r.email}</p>
               </div>
               <Badge
@@ -100,8 +103,9 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
               {rows.map((r) => (
                 <TableRow key={r.id} className="cursor-pointer">
                   <TableCell>
-                    <Link href={`/employees/${r.id}`} className="font-medium hover:underline">
-                      {r.fullName}
+                    <Link href={`/employees/${r.id}`} className="font-medium hover:underline flex items-center gap-2">
+                      <UserAvatar name={shortName(r.fullName)} avatarUrl={r.avatarUrl} size="xs" department={r.departmentName} position={r.positionTitle ?? r.position} />
+                      {shortName(r.fullName)}
                     </Link>
                   </TableCell>
                   <TableCell className="text-[var(--muted)]">{r.email}</TableCell>

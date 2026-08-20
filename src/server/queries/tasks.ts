@@ -85,7 +85,7 @@ export async function getTask(id: string) {
   if (row.length === 0) return null;
   const t = row[0];
   const [creator, project, assigneesList, checklist, comments, attachments, deps] = await Promise.all([
-    db.select({ id: users.id, fullName: users.fullName, email: users.email, position: users.position }).from(users).where(eq(users.id, t.createdByUserId)).limit(1),
+    db.select({ id: users.id, fullName: users.fullName, email: users.email, position: users.position, avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, t.createdByUserId)).limit(1),
     t.projectId
       ? db.select({ id: projects.id, name: projects.name }).from(projects).where(eq(projects.id, t.projectId)).limit(1)
       : Promise.resolve([]),
@@ -100,6 +100,7 @@ export async function getTask(id: string) {
         completedAt: taskAssignees.completedAt,
         updatedAt: taskAssignees.updatedAt,
         fullName: users.fullName,
+        avatarUrl: users.avatarUrl,
         position: users.position,
         departmentName: departments.name,
       })
@@ -116,6 +117,7 @@ export async function getTask(id: string) {
         createdAt: taskComments.createdAt,
         userId: taskComments.userId,
         userName: users.fullName,
+        userAvatarUrl: users.avatarUrl,
         parentCommentId: taskComments.parentCommentId,
       })
       .from(taskComments)

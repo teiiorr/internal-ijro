@@ -15,7 +15,6 @@ const KINDS = ["ekspert", "smeta"] as const;
 type Kind = (typeof KINDS)[number];
 
 function dateTime(d: Date | string): string {
-  // Toshkent vaqti (UTC+5) — server UTC'da ishlaydi.
   const date = new Date(new Date(d).getTime() + 5 * 60 * 60 * 1000);
   const hh = String(date.getUTCHours()).padStart(2, "0");
   const mm = String(date.getUTCMinutes()).padStart(2, "0");
@@ -103,6 +102,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
                       {items.length === 0 ? (
                         <li className="text-[var(--muted)]">{t("kengash.emptyAgenda")}</li>
                       ) : (
+                        
                         items.map((it, i) => (
                           <li key={it.id} className="flex gap-2">
                             <span className="shrink-0 font-semibold tabular-nums text-[var(--muted)]">{i + 1}.</span>

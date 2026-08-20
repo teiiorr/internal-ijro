@@ -12,18 +12,9 @@ import { signOut } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import { localizeName } from "@/lib/names";
 import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
-function Avatar({ name }: { name: string }) {
-  const parts = name.trim().split(/\s+/).slice(0, 2);
-  const initials = parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
-  return (
-    <div className="size-9 rounded-2xl bg-[var(--primary)] text-white flex items-center justify-center text-[12px] font-extrabold shadow-[inset_0_1px_0_rgba(255,255,255,0.20)]">
-      {initials}
-    </div>
-  );
-}
-
-export function Header({ userName }: { userName: string }) {
+export function Header({ userName, avatarUrl }: { userName: string; avatarUrl?: string | null }) {
   const t = useTranslations();
   const locale = useLocale();
   const displayName = localizeName(userName, locale);
@@ -83,7 +74,7 @@ export function Header({ userName }: { userName: string }) {
                 menuOpen ? "bg-[var(--glass-fill-strong)]" : "hover:bg-[var(--glass-fill)]"
               )}
             >
-              <Avatar name={displayName} />
+              <UserAvatar name={displayName} avatarUrl={avatarUrl} size="sm" clickable={false} />
               <span className="hidden md:inline text-sm font-bold">{displayName}</span>
             </button>
             {menuOpen && (

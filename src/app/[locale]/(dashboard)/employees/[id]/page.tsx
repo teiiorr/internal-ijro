@@ -21,6 +21,7 @@ import { sql } from "drizzle-orm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { shortName } from "@/lib/names";
 import { formatDate } from "@/lib/dates";
+import { AvatarUpload } from "@/components/hr/avatar-upload";
 
 export default async function EmployeePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -55,7 +56,16 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-3">
-        <div>
+        <div className="flex items-center gap-4">
+          <AvatarUpload
+            userId={data.user.id}
+            name={shortName(data.user.fullName)}
+            avatarUrl={data.user.avatarUrl}
+            canEdit={canEdit || data.user.id === session.user.id}
+            department={data.department?.name}
+            position={data.user.positionTitle ?? t(`positions.${data.user.position}`)}
+          />
+          <div>
           <h1 className="text-2xl font-bold">{shortName(data.user.fullName)}</h1>
           <div className="flex items-center gap-2 mt-1">
             <Badge variant="secondary">{data.user.positionTitle ?? t(`positions.${data.user.position}`)}</Badge>
@@ -63,6 +73,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
             <Badge variant={data.user.status === "active" ? "success" : data.user.status === "pending" ? "warning" : "secondary"}>
               {data.user.status}
             </Badge>
+          </div>
           </div>
         </div>
         <div className="flex gap-2">

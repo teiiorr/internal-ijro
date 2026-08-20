@@ -7,6 +7,7 @@ import { deadlineRelative, formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
 import { db } from "@/lib/db";
 import { departments as deptsTbl, users as usersTbl } from "@/lib/db/schema";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 type Props = {
   creator: { id: string; fullName: string; position?: string | null } | null;
@@ -22,15 +23,6 @@ type Props = {
   projectName?: string | null;
 };
 
-function Initials({ name }: { name: string }) {
-  const parts = name.trim().split(/\s+/).slice(0, 2);
-  const initials = parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
-  return (
-    <div className="size-10 rounded-xl bg-[var(--primary)] text-[var(--primary-foreground)] flex items-center justify-center font-semibold text-sm shrink-0">
-      {initials}
-    </div>
-  );
-}
 
 const PRIORITY_VARIANT: Record<string, "default" | "secondary" | "warning" | "danger"> = {
   urgent: "danger",
@@ -51,15 +43,17 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
   const t = await getTranslations();
   let creatorPosition: string | null = null;
   let creatorDept: string | null = null;
+  let creatorAvatar: string | null = null;
   if (creator?.id) {
     const row = await db
-      .select({ position: usersTbl.position, deptName: deptsTbl.name })
+      .select({ position: usersTbl.position, deptName: deptsTbl.name, avatarUrl: usersTbl.avatarUrl })
       .from(usersTbl)
       .leftJoin(deptsTbl, eq(deptsTbl.id, usersTbl.departmentId))
       .where(eq(usersTbl.id, creator.id))
       .limit(1);
     creatorPosition = row[0]?.position ?? null;
     creatorDept = row[0]?.deptName ?? null;
+    creatorAvatar = row[0]?.avatarUrl ?? null;
   }
 
   const isCompleted = ["completed", "rejected"].includes(task.status);
@@ -94,7 +88,7 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
       </div>
 
       <div className="border-t border-[var(--border)] px-5 sm:px-6 py-4 flex items-center gap-3">
-        <Initials name={shortName(creator?.fullName) || "—"} />
+        <UserAvatar name={shortName(creator?.fullName) || "—"} avatarUrl={creatorAvatar} size="md" department={creatorDept} position={creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : undefined} />
         <div className="min-w-0 flex-1">
           <p className="text-[14px] font-semibold truncate">{shortName(creator?.fullName) || "—"}</p>
           <p className="text-xs text-[var(--muted)] truncate">
