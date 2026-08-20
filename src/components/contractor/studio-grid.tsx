@@ -102,8 +102,8 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
               href={`/contractors/${s.id}`}
               className="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)]"
             >
-              {/* Hero area — gradient or logo */}
-              <div className={`relative h-32 bg-gradient-to-br ${colorFor(s.id)} overflow-hidden transition-all duration-500`}>
+              {/* Hero area — square logo */}
+              <div className={`relative aspect-square bg-gradient-to-br ${colorFor(s.id)} overflow-hidden transition-all duration-500`}>
                 {s.logoUrl ? (
                   <SmoothImage
                     src={s.logoUrl}
@@ -112,7 +112,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
                   />
                 ) : (
                   <div className="flex size-full items-center justify-center">
-                    <span className="select-none text-6xl font-black text-[var(--foreground)] opacity-15 transition-all duration-500 group-hover:scale-110 group-hover:opacity-20">
+                    <span className="select-none text-7xl font-black text-[var(--foreground)] opacity-15 transition-all duration-500 group-hover:scale-110 group-hover:opacity-20">
                       {initial(s.name)}
                     </span>
                   </div>

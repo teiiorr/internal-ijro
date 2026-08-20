@@ -571,8 +571,8 @@ input:focus, textarea:focus, select:focus {
 .pulse-amber { animation: status-pulse-amber 2s ease-in-out infinite; }
 
 /* =========================================================================
-   DETAIL GRID — bordered table-like cells on mobile, clean grid on desktop
-   Apply .detail-grid to any <dl> with <div> children containing <dt>/<dd>.
+   DETAIL GRID — bordered table-like cells everywhere (mobile + desktop).
+   Apply .detail-grid to any <dl>/<div> with <div> children containing labels + values.
    ========================================================================= */
 .detail-grid > div {
   border: 1px solid var(--border);
@@ -584,18 +584,6 @@ input:focus, textarea:focus, select:focus {
 .detail-grid > div:hover {
   background: var(--surface-2);
   border-color: var(--border-strong);
-}
-@media (min-width: 640px) {
-  .detail-grid > div {
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    background: transparent;
-  }
-  .detail-grid > div:hover {
-    background: transparent;
-    border-color: transparent;
-  }
 }
 
 /* --- Smooth accordion expand --- */

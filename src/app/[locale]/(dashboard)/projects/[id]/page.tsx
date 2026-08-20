@@ -91,17 +91,32 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <BackButton fallbackHref="/projects" className="mt-0.5" />
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
-            <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
-              <StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag>
-              {sp.type && <span className="font-medium text-[var(--muted)]">{sp.type.name}</span>}
-              {isProjectGenre(sp.project.genre) && (
-                <StatusTag tone="muted">{t(`projects.genre.${sp.project.genre}` as "projects.genre.film")}</StatusTag>
+            <div className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 lg:grid-cols-5 gap-2 mt-3 text-sm">
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
+                <dd className="mt-0.5"><StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag></dd>
+              </div>
+              {sp.type && (
+                <div>
+                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
+                  <dd className="font-semibold mt-0.5">{sp.type.name}</dd>
+                </div>
               )}
-              <span className="font-semibold tabular-nums text-[var(--muted)]">{sp.project.progressPercentage}%</span>
+              {isProjectGenre(sp.project.genre) && (
+                <div>
+                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
+                  <dd className="mt-0.5"><StatusTag tone="muted">{t(`projects.genre.${sp.project.genre}` as "projects.genre.film")}</StatusTag></dd>
+                </div>
+              )}
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
+                <dd className="font-bold tabular-nums mt-0.5">{sp.project.progressPercentage}%</dd>
+              </div>
               {sp.curator && (
-                <span className="text-[var(--muted)]">
-                  {t("projects.curatorLabel")}: <span className="font-medium text-[var(--foreground)]">{sp.curator.fullName}</span>
-                </span>
+                <div>
+                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
+                  <dd className="font-semibold mt-0.5 truncate">{sp.curator.fullName}</dd>
+                </div>
               )}
             </div>
           </div>
@@ -253,22 +268,32 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <BackButton fallbackHref="/projects" className="mt-0.5" />
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{data.project.name}</h1>
-          <div className="flex items-center gap-2 mt-2 flex-wrap text-sm">
-            <Badge variant={statusVariant}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Badge>
-            <Badge variant="secondary">{t(`projects.type.${data.project.type}` as "projects.type.internal")}</Badge>
+          <div className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 lg:grid-cols-5 gap-2 mt-3 text-sm">
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
+              <dd className="mt-0.5"><Badge variant={statusVariant}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Badge></dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
+              <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.type.${data.project.type}` as "projects.type.internal")}</Badge></dd>
+            </div>
             {isProjectGenre(data.project.genre) && (
-              <Badge variant="secondary">{t(`projects.genre.${data.project.genre}` as "projects.genre.film")}</Badge>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
+                <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.genre.${data.project.genre}` as "projects.genre.film")}</Badge></dd>
+              </div>
             )}
             {data.curator && (
-              <span className="text-[var(--muted)]">
-                {t("projects.curatorLabel")}: <span className="font-medium text-[var(--foreground)]">{data.curator.fullName}</span>
-              </span>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
+                <dd className="font-semibold mt-0.5 truncate">{data.curator.fullName}</dd>
+              </div>
             )}
             {data.company && (
-              <span className="text-[var(--muted)]">
-                {t("projects.contractorLabel")}:{" "}
-                <Link href="/contractors" className="hover:underline text-[var(--primary)] font-medium">{data.company.name}</Link>
-              </span>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.contractorLabel")}</dt>
+                <dd className="mt-0.5"><Link href="/contractors" className="hover:underline text-[var(--primary)] font-semibold">{data.company.name}</Link></dd>
+              </div>
             )}
           </div>
         </div>
