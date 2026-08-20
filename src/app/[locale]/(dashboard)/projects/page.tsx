@@ -149,7 +149,7 @@ export default async function ProjectsPage({
         <div className="flex gap-2 shrink-0">
           {canExport && (
             <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
-              <a href={exportHref}><Download className="size-4" /> XLSX</a>
+              <a href={exportHref}><Download className="size-4" /> Excel hisoboti</a>
             </Button>
           )}
           {canCreate && (

@@ -210,6 +210,8 @@ export type ProjectReportRow = {
   deadlineOverdue: boolean;
   plannedTotal: number;
   paidTotal: number;
+  stagePlanned: number;
+  stagePaid: number;
 };
 
 /**
@@ -260,7 +262,14 @@ export async function listProjectsForReport(f: ProjectFilters = {}): Promise<Pro
                   where s.project_id = p.id), 0)::float8 as "plannedTotal",
       coalesce((select sum(sp.amount) from stage_payments sp
                   join project_stages s on s.id = sp.stage_id
-                 where s.project_id = p.id and sp.status = 'paid'), 0)::float8 as "paidTotal"
+                 where s.project_id = p.id and sp.status = 'paid'), 0)::float8 as "paidTotal",
+      coalesce((select s.planned_amount from project_stages s
+                  where s.project_id = p.id and s.status = 'active'
+                  order by s.order_index limit 1), 0)::float8 as "stagePlanned",
+      coalesce((select sum(sp.amount) from stage_payments sp
+                  join project_stages s on s.id = sp.stage_id
+                 where s.project_id = p.id and s.status = 'active' and sp.status = 'paid'
+                  ), 0)::float8 as "stagePaid"
     from projects p
     left join external_companies ec on ec.id = p.external_company_id
     ${whereSql}
