@@ -4,7 +4,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { externalCompanies, projectStages, stageDocuments } from "@/lib/db/schema";
-import { getProject } from "@/server/queries/projects";
+import { getProject, getContractorMessageCounts } from "@/server/queries/projects";
 import { getStageProject } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +13,7 @@ import { MilestonesList } from "@/components/projects/milestones-list";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { StudioDocuments } from "@/components/contractor/studio-documents";
+import { ContractorChatTab } from "./contractor-chat-tab";
 import { formatDate } from "@/lib/dates";
 
 const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
@@ -140,7 +141,17 @@ export default async function ContractorProjectPage({ params }: { params: Promis
 
           <TabsContent value="chat">
             <Card><CardContent className="p-5 sm:p-6">
-              <ProjectChat projectId={data.project.id} currentUserId={session.user.id} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
+              <ContractorChatTab
+                projectId={data.project.id}
+                stages={sp.stages.map((s) => ({
+                  id: s.id,
+                  projectId: data.project.id,
+                  name: s.name,
+                  orderNumber: s.orderIndex + 1,
+                  status: s.status,
+                }))}
+                currentUserId={session.user.id}
+              />
             </CardContent></Card>
           </TabsContent>
         </Tabs>

@@ -187,6 +187,7 @@ export const externalCompanies = pgTable("external_companies", {
   rejectionReason: text("rejection_reason"),
   rating: decimal("rating", { precision: 3, scale: 2 }),
   ndaAcceptedAt: timestamp("nda_accepted_at", { withTimezone: true }),
+  notes: text("notes"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
@@ -543,6 +544,7 @@ export const projectMessages = pgTable("project_messages", {
   projectId: uuid("project_id")
     .notNull()
     .references(() => projects.id, { onDelete: "cascade" }),
+  stageId: uuid("stage_id").references(() => projectStages.id, { onDelete: "cascade" }),
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id),
@@ -551,7 +553,9 @@ export const projectMessages = pgTable("project_messages", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   readByCuratorAt: timestamp("read_by_curator_at", { withTimezone: true }),
   readByContractorAt: timestamp("read_by_contractor_at", { withTimezone: true }),
-});
+}, (t) => ({
+  stageIdx: index("project_messages_stage_idx").on(t.projectId, t.stageId),
+}));
 
 export const ratings = pgTable("ratings", {
   id: uuid("id").primaryKey().defaultRandom(),

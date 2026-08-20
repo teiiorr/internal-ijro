@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import {
   projects,
   projectTypes,
+  projectStages,
+  stageDocuments,
   milestones,
   deliverables,
   projectMessages,
@@ -265,4 +267,127 @@ export async function listProjectsForReport(f: ProjectFilters = {}): Promise<Pro
     order by p.created_at asc
   `);
   return rows as unknown as ProjectReportRow[];
+}
+
+// ── Studio detail queries ──────────────────────────────────────────
+
+export async function getContractorDetail(companyId: string) {
+  const [company] = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
+  if (!company) return null;
+
+  const prjs = await db
+    .select({
+      id: projects.id,
+      name: projects.name,
+      status: projects.status,
+      progressPercentage: projects.progressPercentage,
+      deadline: projects.deadline,
+      startDate: projects.startDate,
+      curatorName: users.fullName,
+    })
+    .from(projects)
+    .leftJoin(users, eq(users.id, projects.curatorUserId))
+    .where(eq(projects.externalCompanyId, companyId))
+    .orderBy(desc(projects.createdAt));
+
+  const projectIds = prjs.map((p) => p.id);
+  if (projectIds.length === 0) return { company, projects: [], stages: [], lastActivity: null };
+
+  const stages = await db
+    .select({
+      id: projectStages.id,
+      projectId: projectStages.projectId,
+      name: projectStages.name,
+      orderIndex: projectStages.orderIndex,
+      status: projectStages.status,
+    })
+    .from(projectStages)
+    .where(sql`${projectStages.projectId} in ${projectIds}`)
+    .orderBy(asc(projectStages.orderIndex));
+
+  const [lastMsg] = await db
+    .select({ ts: projectMessages.createdAt })
+    .from(projectMessages)
+    .where(sql`${projectMessages.projectId} in ${projectIds}`)
+    .orderBy(desc(projectMessages.createdAt))
+    .limit(1);
+  const [lastDoc] = await db
+    .select({ ts: stageDocuments.uploadedAt })
+    .from(stageDocuments)
+    .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
+    .where(sql`${projectStages.projectId} in ${projectIds}`)
+    .orderBy(desc(stageDocuments.uploadedAt))
+    .limit(1);
+  const lastActivity = [lastMsg?.ts, lastDoc?.ts].filter(Boolean).sort((a, b) => (b as Date).getTime() - (a as Date).getTime())[0] ?? null;
+
+  return { company, projects: prjs, stages, lastActivity };
+}
+
+export async function getStageMessages(projectId: string, stageId: string | null) {
+  const cond = stageId
+    ? and(eq(projectMessages.projectId, projectId), eq(projectMessages.stageId, stageId))
+    : and(eq(projectMessages.projectId, projectId), sql`${projectMessages.stageId} is null`);
+  return db
+    .select({
+      id: projectMessages.id,
+      content: projectMessages.content,
+      createdAt: projectMessages.createdAt,
+      userId: projectMessages.userId,
+      userName: users.fullName,
+      attachments: projectMessages.attachments,
+    })
+    .from(projectMessages)
+    .innerJoin(users, eq(users.id, projectMessages.userId))
+    .where(cond)
+    .orderBy(asc(projectMessages.createdAt));
+}
+
+export async function getContractorDocuments(companyId: string) {
+  return db
+    .select({
+      id: stageDocuments.id,
+      fileUrl: stageDocuments.fileUrl,
+      fileName: stageDocuments.fileName,
+      fileSize: stageDocuments.fileSize,
+      fileMimeType: stageDocuments.fileMimeType,
+      category: stageDocuments.category,
+      uploadedAt: stageDocuments.uploadedAt,
+      projectId: projectStages.projectId,
+      projectName: projects.name,
+    })
+    .from(stageDocuments)
+    .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
+    .innerJoin(projects, eq(projects.id, projectStages.projectId))
+    .where(eq(projects.externalCompanyId, companyId))
+    .orderBy(desc(stageDocuments.uploadedAt));
+}
+
+export async function getContractorGallery(companyId: string, projectId?: string | null) {
+  const conds = [eq(projects.externalCompanyId, companyId), sql`${stageDocuments.fileMimeType} like 'image/%'`];
+  if (projectId) conds.push(eq(projects.id, projectId));
+  return db
+    .select({
+      id: stageDocuments.id,
+      fileUrl: stageDocuments.fileUrl,
+      fileName: stageDocuments.fileName,
+      fileMimeType: stageDocuments.fileMimeType,
+      uploadedAt: stageDocuments.uploadedAt,
+      projectName: projects.name,
+    })
+    .from(stageDocuments)
+    .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
+    .innerJoin(projects, eq(projects.id, projectStages.projectId))
+    .where(and(...conds))
+    .orderBy(desc(stageDocuments.uploadedAt));
+}
+
+export async function getContractorMessageCounts(companyId: string) {
+  const rows = await db.execute<{ project_id: string; stage_id: string | null; cnt: string }>(sql`
+    select pm.project_id, pm.stage_id, count(*)::text as cnt
+    from project_messages pm
+    join projects p on p.id = pm.project_id
+    where p.external_company_id = ${companyId}
+    group by pm.project_id, pm.stage_id
+  `);
+  return rows as unknown as { project_id: string; stage_id: string | null; cnt: string }[];
 }

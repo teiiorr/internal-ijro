@@ -381,6 +381,7 @@ const attachmentSchema = z.object({
 });
 const msgSchema = z.object({
   projectId: z.string().uuid(),
+  stageId: z.string().uuid().optional(),
   content: z.string().min(1).max(5000),
   attachments: z.array(attachmentSchema).optional(),
 });
@@ -405,6 +406,7 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
   await assertProjectAccess(me, parsed.projectId);
   await db.insert(projectMessages).values({
     projectId: parsed.projectId,
+    stageId: parsed.stageId ?? null,
     userId: me.id,
     content: parsed.content,
     attachments: parsed.attachments?.length ? parsed.attachments : undefined,
@@ -730,4 +732,48 @@ export async function setProjectDocumentFolder(documentId: string, folder: strin
   await db.update(projectDocuments).set({ folder: v }).where(eq(projectDocuments.id, documentId));
   await logActivity({ userId: me.id, action: "project.document_moved", entityType: "project", entityId: doc.projectId, newValue: { folder: v } });
   revalidatePath(`/projects/${doc.projectId}`);
+}
+
+export async function updateContractorNotes(companyId: string, notes: string) {
+  const me = await requireUser();
+  if (me.position === "kontragent") throw new Error("forbidden");
+  await db.update(externalCompanies).set({ notes: notes.trim() || null }).where(eq(externalCompanies.id, companyId));
+  revalidatePath(`/contractors/${companyId}`);
+}
+
+export async function loadStageMessagesForProject(projectId: string) {
+  await requireUser();
+  const stageRows = await db
+    .select({ id: projectStages.id })
+    .from(projectStages)
+    .where(eq(projectStages.projectId, projectId));
+  const stageIds = stageRows.map((s) => s.id);
+
+  const allMsgs = await db
+    .select({
+      id: projectMessages.id,
+      content: projectMessages.content,
+      createdAt: projectMessages.createdAt,
+      userId: projectMessages.userId,
+      userName: users.fullName,
+      attachments: projectMessages.attachments,
+      stageId: projectMessages.stageId,
+    })
+    .from(projectMessages)
+    .innerJoin(users, eq(users.id, projectMessages.userId))
+    .where(eq(projectMessages.projectId, projectId))
+    .orderBy(projectMessages.createdAt);
+
+  const byStage: Record<string, typeof allMsgs> = {};
+  const general: typeof allMsgs = [];
+
+  for (const m of allMsgs) {
+    if (m.stageId) {
+      (byStage[m.stageId] ??= []).push(m);
+    } else {
+      general.push(m);
+    }
+  }
+
+  return { byStage, general };
 }

@@ -73,11 +73,13 @@ type Staged = { file: File; preview?: string };
 
 export function ProjectChat({
   projectId,
+  stageId,
   messages,
   currentUserId,
   maxBytes = 104857600,
 }: {
   projectId: string;
+  stageId?: string | null;
   messages: Msg[];
   currentUserId: string;
   maxBytes?: number;
@@ -158,6 +160,7 @@ export function ProjectChat({
     start(async () => {
       await postProjectMessage({
         projectId,
+        ...(stageId ? { stageId } : {}),
         content: text.trim() || " ",
         attachments,
       });

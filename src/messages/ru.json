@@ -703,7 +703,40 @@
     "logoSaved": "Лого сохранено",
     "logoError": "Ошибка загрузки лого",
     "projectsCount": "Проектов: {n}",
-    "noProjects": "Нет проектов"
+    "noProjects": "Нет проектов",
+    "detail": {
+      "tabs": {
+        "info": "Информация",
+        "projects": "Проекты",
+        "chat": "Чат",
+        "docs": "Документы",
+        "gallery": "Галерея"
+      },
+      "specialization": "Специализация",
+      "notes": "Внутренние заметки",
+      "notesPlaceholder": "Внутренние заметки о студии...",
+      "notesSaved": "Заметка сохранена",
+      "notesSave": "Сохранить",
+      "statsProjects": "Проекты",
+      "statsDocs": "Документы",
+      "statsLastActivity": "Последняя активность",
+      "noProjects": "Нет проектов",
+      "progress": "Прогресс",
+      "selectProject": "Выберите проект",
+      "generalChat": "Общий чат",
+      "docsEmpty": "Документов нет",
+      "gallery": {
+        "empty": "Нет фотографий",
+        "allProjects": "Все проекты"
+      },
+      "folders": {
+        "create": "Создать папку",
+        "createDesc": "Введите название новой папки",
+        "name": "Название папки",
+        "cancel": "Отмена",
+        "createBtn": "Создать"
+      }
+    }
   },
   "reports": {
     "standupTitle": "Ежедневный standup",

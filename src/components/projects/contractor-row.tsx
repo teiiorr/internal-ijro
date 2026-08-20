@@ -93,8 +93,9 @@ export function ContractorRow({ c, canManageLogo }: { c: C; canManageLogo: boole
           </div>
 
           <div className="min-w-0">
-            <p className="font-medium truncate">{c.name}</p>
-            {/* Reveal the studio's projects (replaces the old empty "·" line). */}
+            <Link href={`/contractors/${c.id}`} className="font-medium truncate hover:text-[var(--primary)] hover:underline transition-colors">
+              {c.name}
+            </Link>
             <button
               type="button"
               onClick={() => setOpen((o) => !o)}

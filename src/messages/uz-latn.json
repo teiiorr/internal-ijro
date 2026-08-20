@@ -703,7 +703,40 @@
     "logoSaved": "Logo saqlandi",
     "logoError": "Logo yuklashda xatolik",
     "projectsCount": "{n} ta loyiha",
-    "noProjects": "Loyihalar yo'q"
+    "noProjects": "Loyihalar yo'q",
+    "detail": {
+      "tabs": {
+        "info": "Ma'lumotlar",
+        "projects": "Loyihalar",
+        "chat": "Suhbat",
+        "docs": "Hujjatlar",
+        "gallery": "Galereya"
+      },
+      "specialization": "Ixtisoslashuv",
+      "notes": "Ichki qaydlar",
+      "notesPlaceholder": "Studiya haqida ichki eslatmalar...",
+      "notesSaved": "Qayd saqlandi",
+      "notesSave": "Saqlash",
+      "statsProjects": "Loyihalar",
+      "statsDocs": "Hujjatlar",
+      "statsLastActivity": "Oxirgi faollik",
+      "noProjects": "Loyihalar yo'q",
+      "progress": "Jarayon",
+      "selectProject": "Loyiha tanlang",
+      "generalChat": "Umumiy suhbat",
+      "docsEmpty": "Hujjatlar yo'q",
+      "gallery": {
+        "empty": "Rasmlar yo'q",
+        "allProjects": "Barcha loyihalar"
+      },
+      "folders": {
+        "create": "Papka yaratish",
+        "createDesc": "Yangi papka uchun nom kiriting",
+        "name": "Papka nomi",
+        "cancel": "Bekor qilish",
+        "createBtn": "Yaratish"
+      }
+    }
   },
   "reports": {
     "standupTitle": "Kunlik standup",

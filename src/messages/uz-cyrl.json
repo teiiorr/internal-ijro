@@ -703,7 +703,40 @@
     "logoSaved": "Логотип сақланди",
     "logoError": "Логотип юклашда хатолик",
     "projectsCount": "{n} та лойиҳа",
-    "noProjects": "Лойиҳалар йўқ"
+    "noProjects": "Лойиҳалар йўқ",
+    "detail": {
+      "tabs": {
+        "info": "Маълумотлар",
+        "projects": "Лойиҳалар",
+        "chat": "Суҳбат",
+        "docs": "Ҳужжатлар",
+        "gallery": "Галерея"
+      },
+      "specialization": "Ихтисослашув",
+      "notes": "Ички қайдлар",
+      "notesPlaceholder": "Студия ҳақида ички эслатмалар...",
+      "notesSaved": "Қайд сақланди",
+      "notesSave": "Сақлаш",
+      "statsProjects": "Лойиҳалар",
+      "statsDocs": "Ҳужжатлар",
+      "statsLastActivity": "Охирги фаоллик",
+      "noProjects": "Лойиҳалар йўқ",
+      "progress": "Жараён",
+      "selectProject": "Лойиҳа танланг",
+      "generalChat": "Умумий суҳбат",
+      "docsEmpty": "Ҳужжатлар йўқ",
+      "gallery": {
+        "empty": "Расмлар йўқ",
+        "allProjects": "Барча лойиҳалар"
+      },
+      "folders": {
+        "create": "Папка яратиш",
+        "createDesc": "Янги папка учун ном киритинг",
+        "name": "Папка номи",
+        "cancel": "Бекор қилиш",
+        "createBtn": "Яратиш"
+      }
+    }
   },
   "reports": {
     "standupTitle": "Кунлик стендап",
