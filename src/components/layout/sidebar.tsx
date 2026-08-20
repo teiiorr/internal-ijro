@@ -10,6 +10,7 @@ type Item = {
   icon: React.ComponentType<{ className?: string }>;
   key: keyof IntlNav;
   allowed: Position[];
+  allowedUserIds?: string[];
   section: "primary" | "work" | "system";
   /** Shown only to the platform owner (by email), regardless of position. */
   ownerOnly?: boolean;
@@ -24,6 +25,7 @@ const ALL: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi
 const STAFF: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis"];
 const ADMIN: Position[] = ["direktor", "orinbosar"];
 const HR_ROLES: Position[] = ["direktor", "orinbosar", "hr"];
+const CONTRACTORS_EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
 
 const ITEMS: Item[] = [
   { href: "/dashboard",         icon: LayoutDashboard, key: "dashboard",      allowed: ALL,                                                                section: "primary" },
@@ -35,17 +37,17 @@ const ITEMS: Item[] = [
   { href: "/employees",         icon: Users,           key: "employees",      allowed: HR_ROLES,                                                           section: "work" },
   { href: "/meyoriy-hujjatlar", icon: FileCheck2,      key: "normativeDocs",  allowed: ALL,                                                                section: "work" },
   { href: "/departments",       icon: Building2,       key: "departments",    allowed: ADMIN,                                                              section: "work" },
-  { href: "/contractors",       icon: Handshake,       key: "contractors",    allowed: ADMIN.concat("koordinator", "bolim_boshligi"),                      section: "work" },
+  { href: "/contractors",       icon: Handshake,       key: "contractors",    allowed: ADMIN.concat("koordinator", "bolim_boshligi"), allowedUserIds: CONTRACTORS_EXTRA_USERS, section: "work" },
   { href: "/notifications",     icon: Bell,            key: "notifications",  allowed: ALL,                                                                section: "system" },
   { href: "/audit-log",         icon: ScrollText,      key: "auditLog",       allowed: ADMIN.concat("hr"),                                                 section: "system" },
   { href: "/settings",          icon: Settings,        key: "settings",       allowed: ALL,                                                                section: "system" },
   { href: "/owner",             icon: ShieldCheck,     key: "owner",          allowed: [],                                                                 section: "system", ownerOnly: true },
 ];
 
-export function Sidebar({ position, isOwner }: { position: Position; isOwner?: boolean }) {
+export function Sidebar({ position, userId, isOwner }: { position: Position; userId: string; isOwner?: boolean }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const visible = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position)));
+  const visible = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position) || i.allowedUserIds?.includes(userId)));
 
   const sections: ("primary" | "work" | "system")[] = ["primary", "work", "system"];
 

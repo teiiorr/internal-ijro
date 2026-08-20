@@ -6,12 +6,13 @@ import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, Icon
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 
-type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string; allowed: Position[]; ownerOnly?: boolean };
+type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string; allowed: Position[]; allowedUserIds?: string[]; ownerOnly?: boolean };
 
 const ALL: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"];
 const STAFF: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis"];
 const ADMIN: Position[] = ["direktor", "orinbosar"];
 const HR_ROLES: Position[] = ["direktor", "orinbosar", "hr"];
+const CONTRACTORS_EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
 
 // Full menu (same as the desktop sidebar).
 const ITEMS: NavItem[] = [
@@ -24,7 +25,7 @@ const ITEMS: NavItem[] = [
   { href: "/employees", icon: Users, key: "employees", allowed: HR_ROLES },
   { href: "/meyoriy-hujjatlar", icon: FileCheck2, key: "normativeDocs", allowed: ALL },
   { href: "/departments", icon: Building2, key: "departments", allowed: ADMIN },
-  { href: "/contractors", icon: Handshake, key: "contractors", allowed: ADMIN.concat("koordinator") },
+  { href: "/contractors", icon: Handshake, key: "contractors", allowed: ADMIN.concat("koordinator", "bolim_boshligi"), allowedUserIds: CONTRACTORS_EXTRA_USERS },
   { href: "/notifications", icon: Bell, key: "notifications", allowed: ALL },
   { href: "/audit-log", icon: ScrollText, key: "auditLog", allowed: ADMIN.concat("hr") },
   { href: "/settings", icon: Settings, key: "settings", allowed: ALL },
@@ -34,13 +35,13 @@ const ITEMS: NavItem[] = [
 // The three destinations that stay pinned in the bar (+ a More button).
 const PINNED = ["/dashboard", "/tasks", "/projects"];
 
-export function MobileNav({ position, isOwner }: { position: Position; isOwner?: boolean }) {
+export function MobileNav({ position, userId, isOwner }: { position: Position; userId: string; isOwner?: boolean }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-  const allowed = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position)));
+  const allowed = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position) || i.allowedUserIds?.includes(userId)));
   const pinned = PINNED.map((h) => allowed.find((i) => i.href === h)).filter(Boolean) as NavItem[];
   const moreActive = allowed.some((i) => !PINNED.includes(i.href) && isActive(i.href));
 

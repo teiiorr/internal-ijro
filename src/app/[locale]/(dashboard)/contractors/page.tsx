@@ -10,7 +10,8 @@ export default async function ContractorsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
-  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position)) redirect("/dashboard");
+  const EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
+  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position) && !EXTRA_USERS.includes(session.user.id)) redirect("/dashboard");
 
   const rows = await listContractorsWithProjects();
   const pending = rows.filter((r) => r.status === "pending");

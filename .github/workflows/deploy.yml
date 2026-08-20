@@ -1,0 +1,60 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.github/workflows/android-apk.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: CI=true NODE_OPTIONS='--max-old-space-size=4096' npx next build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H 64.226.65.211 >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy
+        run: |
+          HOST="root@64.226.65.211"
+          REMOTE="/opt/markaz-ijro/app"
+
+          ssh "$HOST" "systemctl stop markaz-ijro || true"
+
+          rsync -az --delete \
+            --exclude='.env' \
+            --exclude='.env.local' \
+            --exclude='uploads' \
+            --exclude='.git' \
+            --exclude='src' \
+            .next/ "$HOST:$REMOTE/.next/"
+
+          rsync -az public/ "$HOST:$REMOTE/public/"
+          rsync -az --delete node_modules/ "$HOST:$REMOTE/node_modules/"
+          rsync -az drizzle/ "$HOST:$REMOTE/drizzle/"
+          rsync -az package.json "$HOST:$REMOTE/package.json"
+
+          ssh "$HOST" "ln -sfn /var/lib/markaz-ijro/uploads $REMOTE/uploads 2>/dev/null; systemctl start markaz-ijro"
+          sleep 3
+          ssh "$HOST" "systemctl is-active markaz-ijro"

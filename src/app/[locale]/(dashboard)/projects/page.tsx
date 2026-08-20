@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { ProjectsFilters } from "@/components/projects/projects-filters";
+import { SmoothImage } from "@/components/ui/smooth-image";
 import { ScrollMemory } from "@/components/scroll-memory";
 import { Marquee } from "@/components/ui/marquee";
 import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle } from "@tabler/icons-react";
@@ -188,8 +189,7 @@ export default async function ProjectsPage({
               {/* The poster is untouched on hover — only the tile behind/around it turns violet. */}
               <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
                 {p.posterUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.posterUrl} alt={p.name} className="size-full object-cover" />
+                  <SmoothImage src={p.posterUrl} alt={p.name} className="size-full object-cover" />
                 ) : (
                   <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
                     <span className="select-none text-5xl font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span>

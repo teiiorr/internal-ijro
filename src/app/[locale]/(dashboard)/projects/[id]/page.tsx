@@ -148,7 +148,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <Card>
           <CardContent className="p-5 sm:p-6">
             <h3 className="text-base font-semibold mb-4">{t("projects.details.title")}</h3>
-            <dl className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 text-sm">
+            <dl className="grid grid-cols-1 min-[400px]:grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 text-sm">
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
                 <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate) : t("common.emptyValue")}</dd>
@@ -159,7 +159,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-                <dd className="font-semibold mt-0.5 tabular-nums whitespace-nowrap">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
+                <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
@@ -171,7 +171,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         {/* stage list (main) + payment rollup (sidebar) — fills the full width */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
-          <div className="min-w-0 space-y-6">
+          <div className="space-y-6 order-2 lg:order-1 min-w-0">
             <Card>
               <CardContent className="p-5 sm:p-6">
                 <h3 className="text-base font-semibold mb-4">{t("projects.stagePath.title")}</h3>
@@ -190,7 +190,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 order-1 lg:order-2">
             <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={canManage} />
             <Card>
               <CardContent className="p-5">
