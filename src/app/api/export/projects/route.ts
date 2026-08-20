@@ -12,18 +12,18 @@ const STATUS_PRIORITY: Record<DerivedStatus, number> = { in_progress: 0, not_sta
 
 const HEADERS = [
   { header: "№", key: "no", width: 5 },
-  { header: "Loyiha nomi", key: "name", width: 30 },
-  { header: "Ishlab chiqaruvchi studiya", key: "studio", width: 26 },
-  { header: "Hozirgi bosqich", key: "stage", width: 24 },
-  { header: "Shartnoma raqami", key: "contract", width: 16 },
-  { header: "Boshlash", key: "start", width: 13 },
-  { header: "Tugatish", key: "end", width: 13 },
-  { header: "Umumiy byudjet", key: "planned", width: 18 },
-  { header: "Umumiy to'langan", key: "paid", width: 18 },
-  { header: "Umumiy qoldiq", key: "remaining", width: 18 },
-  { header: "Bosqich byudjeti", key: "stagePlanned", width: 18 },
-  { header: "Bosqich to'langan", key: "stagePaid", width: 18 },
-  { header: "Bosqich qoldig'i", key: "stageRemaining", width: 18 },
+  { header: "Loyiha nomi", key: "name", width: 32 },
+  { header: "Studiya nomi", key: "studio", width: 24 },
+  { header: "Shartnoma raqami", key: "contract", width: 18 },
+  { header: "Boshlanish sanasi", key: "start", width: 15 },
+  { header: "Tugash sanasi", key: "end", width: 15 },
+  { header: "Jami byudjet", key: "planned", width: 18 },
+  { header: "Jami to'langan", key: "paid", width: 18 },
+  { header: "Jami qoldiq", key: "remaining", width: 18 },
+  { header: "Joriy bosqich", key: "stage", width: 24 },
+  { header: "Joriy bosqich summasi", key: "stagePlanned", width: 20 },
+  { header: "Joriy bosqich to'lovi", key: "stagePaid", width: 20 },
+  { header: "Joriy bosqich qoldig'i", key: "stageRemaining", width: 20 },
 ];
 const MONEY_COLS = ["planned", "paid", "remaining", "stagePlanned", "stagePaid", "stageRemaining"];
 

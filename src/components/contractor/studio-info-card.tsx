@@ -74,9 +74,11 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
             <p className="text-sm text-[var(--muted)]">{company.contactPerson}</p>
           )}
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
-            <Badge variant={company.status === "approved" ? "success" : company.status === "rejected" ? "danger" : "warning"}>
-              {company.status}
-            </Badge>
+            {company.status !== "approved" && (
+              <Badge variant={company.status === "rejected" ? "danger" : "warning"}>
+                {company.status}
+              </Badge>
+            )}
             {rating != null && (
               <span className="flex items-center gap-1 text-sm font-semibold text-amber-500">
                 <Star className="size-4 fill-current" /> {rating.toFixed(1)}
@@ -154,15 +156,25 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
           </div>
           <p className="text-[11px] font-medium text-[var(--muted)]">{t("statsDocs")}</p>
         </div>
-        <div className="rounded-xl bg-[var(--surface-2)] py-3">
-          <p className="text-sm font-bold text-[var(--foreground)]">
+        <div className="rounded-xl bg-[var(--surface-2)] py-3 px-2">
+          <p className="text-xs font-bold text-[var(--foreground)]">
             {stats.lastActivity
-              ? new Date(stats.lastActivity).toLocaleDateString("uz-Latn", { day: "2-digit", month: "short" })
+              ? new Date(stats.lastActivity).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" }) +
+                " " +
+                new Date(stats.lastActivity).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })
               : "—"}
           </p>
           <p className="text-[11px] font-medium text-[var(--muted)]">{t("statsLastActivity")}</p>
         </div>
       </div>
+
+      {/* Login info */}
+      {company.contactEmail && (
+        <div className="rounded-xl border border-[var(--border)] px-4 py-3">
+          <p className="text-xs font-semibold text-[var(--muted)] mb-1">{t("loginInfo")}</p>
+          <p className="text-sm font-mono">{company.contactEmail}</p>
+        </div>
+      )}
 
       {/* Staff notes */}
       <div className="space-y-2">

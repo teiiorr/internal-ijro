@@ -108,7 +108,9 @@ export function ContractorRow({ c, canManageLogo }: { c: C; canManageLogo: boole
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant={c.status === "approved" ? "success" : c.status === "rejected" ? "danger" : "warning"}>{t(`status.${c.status}` as "status.approved")}</Badge>
+          {c.status !== "approved" && (
+            <Badge variant={c.status === "rejected" ? "danger" : "warning"}>{t(`status.${c.status}` as "status.pending")}</Badge>
+          )}
           {c.rating && <Badge variant="secondary">⭐ {c.rating}</Badge>}
           {c.status === "pending" && (
             <>

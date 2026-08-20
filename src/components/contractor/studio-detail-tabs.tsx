@@ -26,26 +26,26 @@ export function StudioDetailTabs({
 
   return (
     <Tabs defaultValue="info" className="w-full">
-      <TabsList className="w-full overflow-x-auto flex-nowrap scrollbar-none">
-        <TabsTrigger value="info" className="gap-1.5">
-          <Info className="size-4" />
-          <span className="hidden sm:inline">{t("info")}</span>
+      <TabsList className="w-full overflow-x-auto flex-nowrap scrollbar-none no-scrollbar">
+        <TabsTrigger value="info" className="gap-1 sm:gap-1.5 px-2.5 sm:px-4 text-xs sm:text-sm">
+          <Info className="size-3.5 sm:size-4" />
+          {t("info")}
         </TabsTrigger>
-        <TabsTrigger value="projects" className="gap-1.5">
-          <Projects className="size-4" />
-          <span className="hidden sm:inline">{t("projects")}</span>
+        <TabsTrigger value="projects" className="gap-1 sm:gap-1.5 px-2.5 sm:px-4 text-xs sm:text-sm">
+          <Projects className="size-3.5 sm:size-4" />
+          {t("projects")}
         </TabsTrigger>
-        <TabsTrigger value="chat" className="gap-1.5">
-          <Chat className="size-4" />
-          <span className="hidden sm:inline">{t("chat")}</span>
+        <TabsTrigger value="chat" className="gap-1 sm:gap-1.5 px-2.5 sm:px-4 text-xs sm:text-sm">
+          <Chat className="size-3.5 sm:size-4" />
+          {t("chat")}
         </TabsTrigger>
-        <TabsTrigger value="docs" className="gap-1.5">
-          <Docs className="size-4" />
-          <span className="hidden sm:inline">{t("docs")}</span>
+        <TabsTrigger value="docs" className="gap-1 sm:gap-1.5 px-2.5 sm:px-4 text-xs sm:text-sm">
+          <Docs className="size-3.5 sm:size-4" />
+          {t("docs")}
         </TabsTrigger>
-        <TabsTrigger value="gallery" className="gap-1.5">
-          <Gallery className="size-4" />
-          <span className="hidden sm:inline">{t("gallery")}</span>
+        <TabsTrigger value="gallery" className="gap-1 sm:gap-1.5 px-2.5 sm:px-4 text-xs sm:text-sm">
+          <Gallery className="size-3.5 sm:size-4" />
+          {t("gallery")}
         </TabsTrigger>
       </TabsList>
 
