@@ -29,6 +29,7 @@ export default async function LeavesPage() {
             reason: leaves.reason,
             rejectionReason: leaves.rejectionReason,
             userName: users.fullName,
+            userAvatarUrl: users.avatarUrl,
           })
           .from(leaves)
           .innerJoin(users, eq(users.id, leaves.userId))

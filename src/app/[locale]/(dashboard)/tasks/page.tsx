@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { listTasks } from "@/server/queries/tasks";
+import { listTasks, countTasks } from "@/server/queries/tasks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TasksViewSwitcher } from "@/components/tasks/tasks-view-switcher";
@@ -24,10 +24,11 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   const scope = ((get("scope") as Scope | undefined) ?? "mine") as Scope;
   const tab = ((get("tab") as StatusTab | undefined) ?? "all") as StatusTab;
 
+  const base = { actorId: me.id, actorPosition: me.position, actorDepartmentId: me.departmentId, search: get("q") };
   const [scopedTasks, givenCount, mineCount] = await Promise.all([
-    listTasks({ actorId: me.id, actorPosition: me.position, actorDepartmentId: me.departmentId, scope, search: get("q") }),
-    listTasks({ actorId: me.id, actorPosition: me.position, actorDepartmentId: me.departmentId, scope: "given", search: get("q") }).then((r) => r.length),
-    listTasks({ actorId: me.id, actorPosition: me.position, actorDepartmentId: me.departmentId, scope: "mine", search: get("q") }).then((r) => r.length),
+    listTasks({ ...base, scope }),
+    countTasks({ ...base, scope: "given" }),
+    countTasks({ ...base, scope: "mine" }),
   ]);
 
   const filtered =

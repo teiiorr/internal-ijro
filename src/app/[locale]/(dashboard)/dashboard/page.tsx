@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { getTranslations, getLocale } from "next-intl/server";
 import { db } from "@/lib/db";
@@ -9,6 +10,10 @@ import { HrWidgets } from "@/components/dashboards/hr-widgets";
 import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
 import { InboxWidget } from "@/components/dashboards/inbox-widget";
+
+function WidgetSkeleton() {
+  return <div className="h-32 rounded-2xl bg-[var(--surface-2)] animate-pulse" />;
+}
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -52,13 +57,16 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <InboxWidget userId={user.id} />
+      <Suspense fallback={<WidgetSkeleton />}>
+        <InboxWidget userId={user.id} />
+      </Suspense>
 
-      {/* Charts/graphs are visible to everyone now; payments overview is gated inside. */}
-      <ManagerWidgets showPayments={showPayments} />
+      <Suspense fallback={<WidgetSkeleton />}>
+        <ManagerWidgets showPayments={showPayments} />
+      </Suspense>
 
-      {isHr && <HrWidgets />}
-      {!isManager && !isHr && <SpecialistWidgets userId={user.id} />}
+      {isHr && <Suspense fallback={<WidgetSkeleton />}><HrWidgets /></Suspense>}
+      {!isManager && !isHr && <Suspense fallback={<WidgetSkeleton />}><SpecialistWidgets userId={user.id} /></Suspense>}
     </div>
   );
 }

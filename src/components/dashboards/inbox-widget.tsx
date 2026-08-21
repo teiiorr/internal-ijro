@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { IconClipboardCheck as ClipboardCheck, IconCircleCheck as CheckCircle2, IconListCheck as ListTodo, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { inboxAwaitingMyApproval, inboxMyActive, type InboxItem } from "@/server/queries/inbox";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
   return (
@@ -15,7 +16,7 @@ function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
         <p className="text-[15px] font-semibold truncate">{item.title}</p>
         <div className="flex items-center gap-2 mt-1 text-[13px] text-[var(--muted)]">
           {item.registrationNumber && <span className="tabular">№ {item.registrationNumber}</span>}
-          {prefix && <span>· {prefix} {item.responseFromName ?? item.creatorName}</span>}
+          {prefix && <span className="inline-flex items-center gap-1">· {prefix} {(item.responseFromName ?? item.creatorName) && <UserAvatar name={(item.responseFromName ?? item.creatorName)!} avatarUrl={item.avatarUrl} size="xs" clickable={false} />}{item.responseFromName ?? item.creatorName}</span>}
         </div>
       </div>
       <DeadlineCountdown deadline={item.deadline} />

@@ -41,6 +41,7 @@ export async function listAudit(f: AuditFilters, limit = 500) {
       createdAt: activityLog.createdAt,
       userId: activityLog.userId,
       userName: users.fullName,
+      userAvatarUrl: users.avatarUrl,
     })
     .from(activityLog)
     .leftJoin(users, eq(users.id, activityLog.userId))

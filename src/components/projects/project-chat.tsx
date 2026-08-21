@@ -12,6 +12,7 @@ import {
 } from "@tabler/icons-react";
 import { compressImage } from "@/lib/images/compress";
 import { toast } from "sonner";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 type Attachment = { url: string; name: string; size: number; mimeType: string };
 type Msg = {
@@ -20,14 +21,9 @@ type Msg = {
   createdAt: Date | string;
   userId: string;
   userName: string;
+  userAvatarUrl?: string | null;
   attachments?: unknown;
 };
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-  return (name[0] ?? "?").toUpperCase();
-}
 
 const AVATAR_COLORS = [
   "bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amber-500",
@@ -208,9 +204,7 @@ export function ProjectChat({
                 {!mine && (
                   <div className="w-7 sm:w-8 shrink-0 self-end">
                     {!sameUser && (
-                      <div className={`grid size-7 sm:size-8 place-items-center rounded-full text-[10px] sm:text-[11px] font-bold text-white ${avatarColor(m.userId)}`}>
-                        {initials(m.userName)}
-                      </div>
+                      <UserAvatar name={m.userName} avatarUrl={m.userAvatarUrl} size="xs" clickable={false} />
                     )}
                   </div>
                 )}

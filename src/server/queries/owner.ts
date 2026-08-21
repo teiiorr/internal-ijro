@@ -88,6 +88,7 @@ export async function getRecentChanges(limit = 40) {
       entityId: activityLog.entityId,
       createdAt: activityLog.createdAt,
       userName: users.fullName,
+      userAvatarUrl: users.avatarUrl,
     })
     .from(activityLog)
     .leftJoin(users, eq(users.id, activityLog.userId))

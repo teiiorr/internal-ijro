@@ -63,7 +63,7 @@ export async function getStageProject(projectId: string, locale: string) {
     .limit(1);
 
   const curator = p[0].curatorUserId
-    ? (await db.select({ id: users.id, fullName: users.fullName }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1))[0] ?? null
+    ? (await db.select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1))[0] ?? null
     : null;
 
   const company = p[0].externalCompanyId

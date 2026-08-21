@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { deadlineRelative } from "@/lib/dates";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { EmptyState } from "@/components/empty-state";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 type T = {
   id: string;
@@ -18,6 +19,7 @@ type T = {
   priority: string;
   deadline: Date | string | null;
   assignedToName: string | null;
+  assignedToAvatarUrl?: string | null;
   projectName: string | null;
 };
 
@@ -74,7 +76,10 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
                     <DeadlinePill deadline={row.deadline} completed={completed} />
                   </div>
                   <div className="flex items-center justify-between mt-3 text-xs text-[var(--muted)]">
-                    <span>{row.assignedToName ?? "—"}</span>
+                    <span className="flex items-center gap-1.5">
+                      {row.assignedToName && <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />}
+                      {row.assignedToName ?? "—"}
+                    </span>
                     {row.projectName && <span className="truncate ml-2">{row.projectName}</span>}
                   </div>
                 </Link>
@@ -107,7 +112,12 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
                       <TableCell><Link href={`/tasks/${row.id}`} className="font-medium hover:underline">{row.title}</Link></TableCell>
                       <TableCell><TaskStatusBadge status={row.status} /></TableCell>
                       <TableCell><TaskPriorityBadge priority={row.priority} /></TableCell>
-                      <TableCell>{row.assignedToName ?? "—"}</TableCell>
+                      <TableCell>
+                        <span className="flex items-center gap-1.5">
+                          {row.assignedToName && <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />}
+                          {row.assignedToName ?? "—"}
+                        </span>
+                      </TableCell>
                       <TableCell>{row.projectName ?? "—"}</TableCell>
                       <TableCell><DeadlinePill deadline={row.deadline} completed={completed} /></TableCell>
                     </TableRow>

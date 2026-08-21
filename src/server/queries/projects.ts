@@ -99,7 +99,7 @@ export async function getProject(id: string) {
       ? db.select().from(externalCompanies).where(eq(externalCompanies.id, p[0].externalCompanyId)).limit(1)
       : Promise.resolve([]),
     p[0].curatorUserId
-      ? db.select({ id: users.id, fullName: users.fullName }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1)
+      ? db.select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1)
       : Promise.resolve([]),
     db.select().from(milestones).where(eq(milestones.projectId, id)).orderBy(asc(milestones.orderIndex)),
     db
@@ -116,6 +116,7 @@ export async function getProject(id: string) {
         createdAt: projectMessages.createdAt,
         userId: projectMessages.userId,
         userName: users.fullName,
+        userAvatarUrl: users.avatarUrl,
         attachments: projectMessages.attachments,
       })
       .from(projectMessages)
@@ -343,6 +344,7 @@ export async function getStageMessages(projectId: string, stageId: string | null
       createdAt: projectMessages.createdAt,
       userId: projectMessages.userId,
       userName: users.fullName,
+      userAvatarUrl: users.avatarUrl,
       attachments: projectMessages.attachments,
     })
     .from(projectMessages)

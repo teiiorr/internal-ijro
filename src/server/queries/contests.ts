@@ -5,7 +5,7 @@ import { contests, contestPhotos, contestFiles, contestComments, projects, users
 
 export type ContestPhoto = { id: string; fileUrl: string; fileName: string; caption: string | null };
 export type ContestFile = { id: string; fileUrl: string; fileName: string; fileSize: number | null; uploaderName: string | null; uploadedAt: Date | string };
-export type ContestComment = { id: string; body: string; userName: string | null; createdAt: Date | string };
+export type ContestComment = { id: string; body: string; userName: string | null; userAvatarUrl: string | null; createdAt: Date | string };
 export type ContestWithPhotos = {
   id: string;
   name: string;
@@ -97,7 +97,7 @@ export async function getContest(id: string): Promise<ContestDetail | null> {
       .where(eq(contestFiles.contestId, id))
       .orderBy(desc(contestFiles.uploadedAt)),
     db
-      .select({ id: contestComments.id, body: contestComments.body, userName: users.fullName, createdAt: contestComments.createdAt })
+      .select({ id: contestComments.id, body: contestComments.body, userName: users.fullName, userAvatarUrl: users.avatarUrl, createdAt: contestComments.createdAt })
       .from(contestComments)
       .leftJoin(users, eq(users.id, contestComments.userId))
       .where(eq(contestComments.contestId, id))

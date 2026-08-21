@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { approveLeave, rejectLeave, requestLeave } from "@/server/actions/leaves";
 import { shortName } from "@/lib/names";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 type Leave = {
   id: string;
@@ -21,6 +22,7 @@ type Leave = {
   reason: string | null;
   rejectionReason: string | null;
   userName?: string;
+  userAvatarUrl?: string | null;
 };
 
 export function LeavesPageClient({
@@ -100,7 +102,7 @@ export function LeavesPageClient({
             {pendingForReview.map((l) => (
               <div key={l.id} className="border rounded-lg p-3 flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <p className="font-medium">{shortName(l.userName)} · {l.type}</p>
+                  <p className="font-medium inline-flex items-center gap-1.5">{l.userName && <UserAvatar name={l.userName} avatarUrl={l.userAvatarUrl} size="xs" clickable={false} />}{shortName(l.userName)} · {l.type}</p>
                   <p className="text-xs text-[var(--muted)]">{l.startDate} → {l.endDate}{l.reason ? ` · ${l.reason}` : ""}</p>
                 </div>
                 <div className="flex gap-2 items-center">

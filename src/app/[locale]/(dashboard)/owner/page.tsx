@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { FitText } from "@/components/ui/fit-text";
 import { IconShieldCheck as ShieldCheck, IconDownload as Download, IconCirclePlus as PlusCircle, IconTrash as Trash2, IconPencil as Pencil, IconDatabase as Database, IconServer as Server, IconDatabaseExport as HardDriveDownload, IconKey as KeyRound } from "@tabler/icons-react";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export const dynamic = "force-dynamic";
 
@@ -119,7 +120,8 @@ export default async function OwnerPage() {
                       {meta.icon}{meta.label}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
+                      <p className="text-sm font-medium truncate inline-flex items-center gap-1.5">
+                        {c.userName && <UserAvatar name={c.userName} avatarUrl={c.userAvatarUrl} size="xs" clickable={false} />}
                         {c.userName ? localizeName(c.userName, locale) : "—"}
                         <code className="ml-2 text-xs text-[var(--muted)]">{c.action}</code>
                       </p>
@@ -169,7 +171,7 @@ export default async function OwnerPage() {
                 {logs.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="text-xs tabular-nums whitespace-nowrap">{formatDateTime(r.createdAt as Date)}</TableCell>
-                    <TableCell className="text-sm">{r.userName ? localizeName(r.userName, locale) : "—"}</TableCell>
+                    <TableCell className="text-sm"><span className="inline-flex items-center gap-1.5">{r.userName && <UserAvatar name={r.userName} avatarUrl={r.userAvatarUrl} size="xs" clickable={false} />}{r.userName ? localizeName(r.userName, locale) : "—"}</span></TableCell>
                     <TableCell><code className="text-xs">{r.action}</code></TableCell>
                     <TableCell className="text-xs text-[var(--muted)]">{r.entityType ?? "—"}{r.entityId ? ` ${r.entityId.slice(0, 8)}` : ""}</TableCell>
                     <TableCell className="text-xs text-[var(--muted)]">{r.ipAddress ?? "—"}</TableCell>

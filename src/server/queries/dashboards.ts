@@ -45,12 +45,13 @@ export async function getTopAssigneesByCompleted(limit = 5) {
     .select({
       userId: tasks.assignedToUserId,
       fullName: users.fullName,
+      avatarUrl: users.avatarUrl,
       c: sql<number>`count(*)::int`,
     })
     .from(tasks)
     .innerJoin(users, eq(users.id, tasks.assignedToUserId))
     .where(sql`${tasks.completedAt} >= now() - interval '30 days'`)
-    .groupBy(tasks.assignedToUserId, users.fullName)
+    .groupBy(tasks.assignedToUserId, users.fullName, users.avatarUrl)
     .orderBy(desc(sql`count(*)`))
     .limit(limit);
   return rows;
@@ -61,12 +62,13 @@ export async function getTopAssigneesByOverdue(limit = 5) {
     .select({
       userId: tasks.assignedToUserId,
       fullName: users.fullName,
+      avatarUrl: users.avatarUrl,
       c: sql<number>`count(*)::int`,
     })
     .from(tasks)
     .innerJoin(users, eq(users.id, tasks.assignedToUserId))
     .where(sql`${tasks.deadline} < now() AND ${tasks.status} not in ('completed','rejected')`)
-    .groupBy(tasks.assignedToUserId, users.fullName)
+    .groupBy(tasks.assignedToUserId, users.fullName, users.avatarUrl)
     .orderBy(desc(sql`count(*)`))
     .limit(limit);
   return rows;
@@ -103,15 +105,20 @@ export async function getTaskActivityTimeline(days = 30) {
 }
 
 export async function getMyTasks(actorId: string) {
-  const today = await db.select({ c: sql<number>`count(*)::int` }).from(tasks).where(sql`${tasks.assignedToUserId} = ${actorId} AND ${tasks.deadline}::date = now()::date`);
-  const week = await db.select({ c: sql<number>`count(*)::int` }).from(tasks).where(sql`${tasks.assignedToUserId} = ${actorId} AND ${tasks.deadline} between now() AND now() + interval '7 days'`);
-  const soon = await db.select({ c: sql<number>`count(*)::int` }).from(tasks).where(sql`${tasks.assignedToUserId} = ${actorId} AND ${tasks.deadline} between now() AND now() + interval '24 hours' AND ${tasks.status} not in ('completed','rejected')`);
-  const overdue = await db.select({ c: sql<number>`count(*)::int` }).from(tasks).where(sql`${tasks.assignedToUserId} = ${actorId} AND ${tasks.deadline} < now() AND ${tasks.status} not in ('completed','rejected')`);
+  const row = await db.execute<{ today: number; week: number; soon: number; overdue: number }>(sql`
+    SELECT
+      count(*) FILTER (WHERE deadline::date = now()::date)::int AS today,
+      count(*) FILTER (WHERE deadline BETWEEN now() AND now() + interval '7 days')::int AS week,
+      count(*) FILTER (WHERE deadline BETWEEN now() AND now() + interval '24 hours' AND status NOT IN ('completed','rejected'))::int AS soon,
+      count(*) FILTER (WHERE deadline < now() AND status NOT IN ('completed','rejected'))::int AS overdue
+    FROM tasks WHERE assigned_to_user_id = ${actorId}
+  `);
+  const r = row[0];
   return {
-    today: Number(today[0]?.c ?? 0),
-    week: Number(week[0]?.c ?? 0),
-    soon: Number(soon[0]?.c ?? 0),
-    overdue: Number(overdue[0]?.c ?? 0),
+    today: Number(r?.today ?? 0),
+    week: Number(r?.week ?? 0),
+    soon: Number(r?.soon ?? 0),
+    overdue: Number(r?.overdue ?? 0),
   };
 }
 

@@ -13,6 +13,7 @@ export type InboxItem = {
   creatorName: string | null;
   responseSubmittedAt: Date | null;
   responseFromName?: string | null;
+  avatarUrl?: string | null;
 };
 
 /**
@@ -30,6 +31,7 @@ export async function inboxAwaitingMyApproval(userId: string): Promise<InboxItem
       creatorName: sql<string | null>`null`,
       responseSubmittedAt: taskAssignees.responseSubmittedAt,
       responseFromName: users.fullName,
+      avatarUrl: users.avatarUrl,
     })
     .from(tasks)
     .innerJoin(taskAssignees, eq(taskAssignees.taskId, tasks.id))
@@ -53,6 +55,7 @@ export async function inboxMyActive(userId: string): Promise<InboxItem[]> {
       status: tasks.status,
       myStatus: taskAssignees.status,
       creatorName: users.fullName,
+      avatarUrl: users.avatarUrl,
       responseSubmittedAt: taskAssignees.responseSubmittedAt,
     })
     .from(taskAssignees)

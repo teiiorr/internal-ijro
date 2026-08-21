@@ -67,6 +67,7 @@ export async function listTasks(f: TaskListFilters) {
       createdAt: tasks.createdAt,
       assignedToUserId: tasks.assignedToUserId,
       assignedToName: assignedAlias.fullName,
+      assignedToAvatarUrl: assignedAlias.avatarUrl,
       projectId: tasks.projectId,
       projectName: projects.name,
     })
@@ -78,6 +79,25 @@ export async function listTasks(f: TaskListFilters) {
     .limit(500);
 
   return rows;
+}
+
+export async function countTasks(f: Pick<TaskListFilters, "actorId" | "actorPosition" | "actorDepartmentId" | "scope" | "search">) {
+  const conds = [] as ReturnType<typeof eq>[];
+  if (f.search) {
+    const s = `%${f.search.toLowerCase()}%`;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    conds.push(or(ilike(tasks.title, s), ilike(tasks.description, s)) as any);
+  }
+  if (f.scope === "mine") {
+    conds.push(sql`EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId})`);
+  } else if (f.scope === "given") {
+    conds.push(sql`${tasks.createdByUserId} = ${f.actorId}`);
+  } else {
+    conds.push(sql`(${tasks.createdByUserId} = ${f.actorId} OR EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId}))`);
+  }
+  const condition = conds.length > 0 ? and(...conds) : undefined;
+  const row = await db.select({ c: sql<number>`count(*)::int` }).from(tasks).where(condition);
+  return Number(row[0]?.c ?? 0);
 }
 
 export async function getTask(id: string) {
@@ -178,7 +198,7 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
   void actorPosition;
   void actorDepartmentId;
   return db
-    .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
+    .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId, avatarUrl: users.avatarUrl })
     .from(users)
     .where(sql`${users.status} = 'active' AND ${users.position} <> 'kontragent'`)
     .orderBy(users.fullName);

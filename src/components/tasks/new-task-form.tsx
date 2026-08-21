@@ -11,8 +11,9 @@ import { createTask } from "@/server/actions/tasks";
 import { IconX as X, IconPlus as Plus, IconSearch as Search } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { shortName } from "@/lib/names";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
-type Person = { id: string; fullName: string; position: string };
+type Person = { id: string; fullName: string; position: string; avatarUrl?: string | null };
 type Project = { id: string; name: string };
 
 const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
@@ -95,6 +96,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
                     ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
                     : "bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--border)]"
                 )}>
+                  <UserAvatar name={p.fullName} avatarUrl={p.avatarUrl} size="xs" clickable={false} />
                   {shortName(p.fullName)}
                   <button type="button" onClick={() => toggle(p.id)} className="opacity-70 hover:opacity-100">
                     <X className="size-3.5" />
@@ -129,7 +131,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
                     onClick={() => { toggle(p.id); setSearch(""); }}
                     className="w-full text-left px-4 py-3 hover:bg-[var(--surface-3)] text-sm transition-colors"
                   >
-                    <span className="font-semibold">{shortName(p.fullName)}</span>
+                    <span className="inline-flex items-center gap-1.5 font-semibold"><UserAvatar name={p.fullName} avatarUrl={p.avatarUrl} size="xs" clickable={false} />{shortName(p.fullName)}</span>
                     <span className="text-[var(--muted)] ml-2 text-xs">{t(`positions.${p.position}` as "positions.direktor")}</span>
                   </button>
                 ))}

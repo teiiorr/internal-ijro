@@ -17,11 +17,7 @@ import { shortName } from "@/lib/names";
 import { ProjectTypeBar } from "@/components/dashboards/project-type-bar";
 import type { DerivedStatus } from "@/lib/projects/progress";
 import { IconTrophy as Trophy, IconAlertTriangle as AlertTriangle, IconStack2 as Layers, IconLayoutKanban as FolderKanban, IconCalendarClock as CalendarClock, IconCalendarX as CalendarX2, IconListCheck as ListChecks, IconChevronRight as ChevronRight, IconChartPie as PieChart, IconChartBar as BarChart3, IconWallet as Wallet } from "@tabler/icons-react";
-
-function initials(name: string) {
-  const parts = name.trim().split(/\s+/).slice(0, 2);
-  return parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
-}
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 const money = (n: number) => `${Math.round(n).toLocaleString("ru-RU")} UZS`;
 
@@ -227,9 +223,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
             ) : (
               top.map((row, i) => (
                 <div key={row.userId} className="flex items-center gap-3">
-                  <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--success-soft)] text-xs font-bold text-[var(--success)]">
-                    {initials(shortName(row.fullName))}
-                  </div>
+                  <UserAvatar name={shortName(row.fullName)} avatarUrl={row.avatarUrl} size="sm" clickable={false} />
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex justify-between gap-2 text-sm">
                       <Link href={`/employees/${row.userId}`} className="truncate font-semibold transition-colors hover:text-[var(--success)]">
@@ -264,9 +258,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
             ) : (
               slow.map((row, i) => (
                 <div key={row.userId} className="flex items-center gap-3">
-                  <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--danger-soft)] text-xs font-bold text-[var(--danger)]">
-                    {initials(shortName(row.fullName))}
-                  </div>
+                  <UserAvatar name={shortName(row.fullName)} avatarUrl={row.avatarUrl} size="sm" clickable={false} />
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex justify-between gap-2 text-sm">
                       <Link href={`/employees/${row.userId}`} className="truncate font-semibold transition-colors hover:text-[var(--danger)]">

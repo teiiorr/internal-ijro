@@ -147,6 +147,7 @@ export async function getBirthdaysThisWeek() {
     .select({
       id: users.id,
       fullName: users.fullName,
+      avatarUrl: users.avatarUrl,
       birthDate: employeeProfiles.birthDate,
     })
     .from(users)

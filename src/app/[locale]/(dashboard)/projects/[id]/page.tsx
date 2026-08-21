@@ -26,6 +26,7 @@ import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
@@ -44,7 +45,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const me = session.user;
   // Curator picker options for the edit dialog (all active internal staff).
   const curatorOptions = await db
-    .select({ id: users.id, fullName: users.fullName })
+    .select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl })
     .from(users)
     .where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`)
     .orderBy(users.fullName);
@@ -151,7 +152,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               {sp.curator && (
                 <div>
                   <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                  <dd className="font-semibold mt-0.5 truncate">{shortName(sp.curator.fullName)}</dd>
+                  <dd className="flex items-center gap-2 mt-0.5">
+                    <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="xs" clickable={false} />
+                    <span className="font-semibold truncate">{shortName(sp.curator.fullName)}</span>
+                  </dd>
                 </div>
               )}
             </dl>
@@ -318,7 +322,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {data.curator && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                <dd className="font-semibold mt-0.5 truncate">{shortName(data.curator.fullName)}</dd>
+                <dd className="font-semibold mt-0.5 truncate inline-flex items-center gap-1.5"><UserAvatar name={data.curator.fullName} avatarUrl={data.curator.avatarUrl} size="xs" clickable={false} />{shortName(data.curator.fullName)}</dd>
               </div>
             )}
             {data.company && (

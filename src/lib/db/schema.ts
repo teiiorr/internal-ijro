@@ -460,7 +460,10 @@ export const leaves = pgTable("leaves", {
   approvedAt: timestamp("approved_at", { withTimezone: true }),
   rejectionReason: text("rejection_reason"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => ({
+  userIdx: index("leaves_user_idx").on(t.userId),
+  statusIdx: index("leaves_status_idx").on(t.status),
+}));
 
 // ---------- 5.15 notifications & settings ----------
 export const notifications = pgTable("notifications", {
@@ -477,7 +480,9 @@ export const notifications = pgTable("notifications", {
   isRead: boolean("is_read").default(false).notNull(),
   readAt: timestamp("read_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => ({
+  userCreatedIdx: index("notifications_user_created_idx").on(t.userId, t.createdAt),
+}));
 
 export const notificationSettings = pgTable("notification_settings", {
   userId: uuid("user_id")
@@ -536,7 +541,10 @@ export const activityLog = pgTable("activity_log", {
   ipAddress: varchar("ip_address", { length: 50 }),
   userAgent: text("user_agent"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (t) => ({
+  createdIdx: index("activity_log_created_idx").on(t.createdAt),
+  userIdx: index("activity_log_user_idx").on(t.userId),
+}));
 
 // ---------- 5.18 project_messages, ratings ----------
 export const projectMessages = pgTable("project_messages", {

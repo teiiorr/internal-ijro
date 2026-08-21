@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { IconDownload as Download } from "@tabler/icons-react";
 import Link from "next/link";
 import { formatDateTime } from "@/lib/dates";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export default async function AuditLogPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const session = await auth();
@@ -50,7 +51,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
               {rows.map((r) => (
                 <TableRow key={r.id}>
                   <TableCell className="text-xs tabular">{formatDateTime(r.createdAt)}</TableCell>
-                  <TableCell>{r.userName ?? "—"}</TableCell>
+                  <TableCell><span className="inline-flex items-center gap-1.5">{r.userName && <UserAvatar name={r.userName} avatarUrl={r.userAvatarUrl} size="xs" clickable={false} />}{r.userName ?? "—"}</span></TableCell>
                   <TableCell><code className="text-xs">{r.action}</code></TableCell>
                   <TableCell className="text-xs text-[var(--muted)]">{r.entityType ?? "—"} {r.entityId ? r.entityId.slice(0, 8) : ""}</TableCell>
                   <TableCell className="text-xs">{r.ipAddress ?? "—"}</TableCell>
