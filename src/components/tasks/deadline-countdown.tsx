@@ -61,8 +61,7 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
 
   let text: string;
   if (days > 0) {
-    // "23 kun 4 soat 12 minut"
-    text = `${days} kun ${hours} soat ${mins} minut`;
+    text = `${days} kun`;
   } else if (hours > 0) {
     // "4 soat 12 minut" — kun dropped
     text = `${hours} soat ${mins} minut`;

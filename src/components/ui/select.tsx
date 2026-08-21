@@ -23,7 +23,7 @@ export const SelectTrigger = React.forwardRef<
       "pl-4 pr-5 text-[15px] text-[var(--foreground)] font-medium whitespace-nowrap " +
       "shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] " +
       "transition-[border-color,box-shadow] duration-200 " +
-      "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-glow)] " +
+      "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] " +
       "data-[placeholder]:text-[var(--subtle)] " +
       "disabled:cursor-not-allowed disabled:opacity-50",
       className

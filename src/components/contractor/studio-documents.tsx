@@ -173,36 +173,25 @@ export function StudioDocuments({
         <label htmlFor={`scat-${projectId}`} className="block text-xs font-semibold text-[var(--muted)]">
           {t("projects.stageDocs.folder")}
         </label>
-        {folderNames.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {folderNames.map((f) => {
-              const active = category.trim() === f;
-              return (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setCategory(active ? "" : f)}
-                  className={
-                    "rounded-lg border border-dashed px-2.5 py-1 text-xs font-semibold transition-colors " +
-                    (active ? "border-[var(--primary)] text-[var(--primary)]" : "border-[var(--border-strong)] text-[var(--muted)] hover:text-[var(--foreground)]")
-                  }
-                >
-                  {f}
-                </button>
-              );
-            })}
-          </div>
-        )}
-        <input
+        <select
           id={`scat-${projectId}`}
-          list={dlId}
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="h-10 w-full appearance-none rounded-lg border border-[var(--border-strong)] bg-[var(--surface-2)] px-3 pr-8 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none"
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center" }}
+        >
+          <option value="">{t("projects.stageDocs.folderPlaceholder")}</option>
+          {folderNames.map((f) => (
+            <option key={f} value={f}>{f}</option>
+          ))}
+        </select>
+        <input
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           maxLength={120}
-          placeholder={t("projects.stageDocs.folderPlaceholder")}
+          placeholder={t("projects.stageDocs.newFolderPlaceholder") ?? t("projects.stageDocs.folderPlaceholder")}
           className="h-10 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none"
         />
-        <datalist id={dlId}>{folderNames.map((f) => <option key={f} value={f} />)}</datalist>
 
         <FileInput key={pickerKey} ref={fileRef} onFileChange={onFileChange} disabled={busy} />
 

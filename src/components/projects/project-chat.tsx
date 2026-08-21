@@ -179,7 +179,7 @@ export function ProjectChat({
   const busy = pending || uploading;
 
   return (
-    <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden" style={{ height: "min(560px, 65dvh)" }}>
+    <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden" style={{ height: "min(560px, 50dvh)", maxHeight: "560px" }}>
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto overscroll-contain px-2.5 py-3 sm:px-4 space-y-0.5">
         {messages.length === 0 && (

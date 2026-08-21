@@ -102,30 +102,33 @@ export function StagePayments({
       {/* list — dashed rows, amount coloured by status (green paid / amber pending) */}
       <ul className="space-y-2">
         {payments.map((p) => (
-          <li key={p.id} className="flex items-center gap-3 rounded-xl border border-dashed border-[var(--border)] px-3 py-2.5">
-            <div className="flex-1 min-w-0">
-              <p className={`whitespace-nowrap text-sm font-bold tabular-nums ${p.status === "paid" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
-                {fmt(Number(p.amount), p.currency)}
-              </p>
-              <p className="text-xs text-[var(--muted)] truncate">
-                {p.note ? `${p.note} · ` : ""}
-                {p.status === "paid" && p.paidAt ? formatDate(p.paidAt as Date) : formatDate(p.createdAt as Date)}
-              </p>
-            </div>
-            {canManage && (
-              <>
-                <Button
-                  variant={p.status === "paid" ? "ghost" : "outline"}
-                  size="sm"
-                  disabled={pending}
-                  onClick={() => start(async () => { await setStagePaymentStatus(p.id, p.status === "paid" ? "pending" : "paid"); })}
-                >
-                  {p.status === "paid" ? t("projects.stagePayments.markPending") : t("projects.stagePayments.markPaid")}
-                </Button>
+          <li key={p.id} className="rounded-xl border border-dashed border-[var(--border)] px-3 py-2.5 space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-bold tabular-nums ${p.status === "paid" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
+                  {fmt(Number(p.amount), p.currency)}
+                </p>
+                <p className="text-xs text-[var(--muted)] truncate">
+                  {p.note ? `${p.note} · ` : ""}
+                  {p.status === "paid" && p.paidAt ? formatDate(p.paidAt as Date) : formatDate(p.createdAt as Date)}
+                </p>
+              </div>
+              {canManage && (
                 <Button variant="ghost" size="icon-sm" disabled={pending} aria-label={t("common.delete")} onClick={() => start(async () => { await deleteStagePayment(p.id); })}>
                   <Trash2 className="size-4" />
                 </Button>
-              </>
+              )}
+            </div>
+            {canManage && (
+              <Button
+                variant={p.status === "paid" ? "ghost" : "outline"}
+                size="sm"
+                className="w-full"
+                disabled={pending}
+                onClick={() => start(async () => { await setStagePaymentStatus(p.id, p.status === "paid" ? "pending" : "paid"); })}
+              >
+                {p.status === "paid" ? t("projects.stagePayments.markPending") : t("projects.stagePayments.markPaid")}
+              </Button>
             )}
           </li>
         ))}

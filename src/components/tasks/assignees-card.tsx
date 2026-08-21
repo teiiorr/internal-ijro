@@ -90,7 +90,7 @@ export function AssigneesCard({
             placeholder={t("common.search")}
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="h-11 w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface-2)] pl-10 pr-3 text-[14px] placeholder:text-[var(--subtle)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-soft)] transition-[border-color,box-shadow] duration-150"
+            className="h-11 w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface-2)] pl-10 pr-3 text-[14px] placeholder:text-[var(--subtle)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-soft)] transition-[border-color,box-shadow] duration-150"
           />
         </div>
         <div className="flex gap-1 ml-auto bg-[var(--surface-3)] rounded-[10px] p-1">

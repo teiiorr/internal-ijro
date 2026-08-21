@@ -11,7 +11,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTML
         "px-4 py-3 text-[15px] leading-relaxed text-[var(--foreground)] placeholder:text-[var(--subtle)] font-medium " +
         "shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] resize-y " +
         "transition-[border-color,box-shadow] duration-200 " +
-        "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_4px_var(--primary-glow)] " +
+        "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] " +
         "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
