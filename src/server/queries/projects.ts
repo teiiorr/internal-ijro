@@ -170,7 +170,7 @@ export async function getContractor(id: string) {
   return r[0] ?? null;
 }
 
-export async function listProjectsForContractor(contractorUserId: string) {
+export async function listProjectsForContractor(contractorUserId: string, locale = "uz-latn") {
   // Resolve company by contractor user (uses email match — simplest reliable join for self-registered contractors)
   const me = await db.select({ email: users.email }).from(users).where(eq(users.id, contractorUserId)).limit(1);
   if (me.length === 0) return { company: null, projects: [] };
@@ -185,13 +185,21 @@ export async function listProjectsForContractor(contractorUserId: string) {
       id: projects.id,
       name: projects.name,
       status: projects.status,
+      statusOverride: projects.statusOverride,
       progressPercentage: projects.progressPercentage,
       deadline: projects.deadline,
+      posterUrl: projects.posterUrl,
+      genre: projects.genre,
+      projectTypeId: projects.projectTypeId,
+      typeUz: projectTypes.nameUzLatn,
+      typeCy: projectTypes.nameUzCyrl,
+      typeRu: projectTypes.nameRu,
     })
     .from(projects)
+    .leftJoin(projectTypes, eq(projectTypes.id, projects.projectTypeId))
     .where(eq(projects.externalCompanyId, company[0].id))
     .orderBy(desc(projects.createdAt));
-  return { company: company[0], projects: prjs };
+  return { company: company[0], projects: prjs.map((r) => ({ ...r, projectTypeName: typeLabel(r, locale) })) };
 }
 
 /**

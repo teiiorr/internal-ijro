@@ -7,6 +7,9 @@ import { db } from "@/lib/db";
 import { externalCompanies, users } from "@/lib/db/schema";
 import { SessionProvider } from "next-auth/react";
 import { Header } from "@/components/layout/header";
+import { ContractorMobileNav } from "@/components/layout/contractor-mobile-nav";
+import { AppFooter } from "@/components/layout/app-footer";
+import { RouteProgress } from "@/components/layout/route-progress";
 import { IconFolder as Folder, IconLayoutDashboard as LayoutDashboard, IconUser as UserIcon, IconSettings as Settings, IconFileText as FileText } from "@tabler/icons-react";
 
 export default async function ContractorLayout({ children }: { children: React.ReactNode }) {
@@ -49,7 +52,8 @@ export default async function ContractorLayout({ children }: { children: React.R
 
   return (
     <SessionProvider>
-      <div className="min-h-screen flex flex-col">
+      <RouteProgress />
+      <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative">
         <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <aside className="hidden md:block w-[272px] shrink-0">
@@ -64,8 +68,12 @@ export default async function ContractorLayout({ children }: { children: React.R
               </nav>
             </div>
           </aside>
-          <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 md:py-8 min-w-0">{children}</main>
+          <main className="flex-1 px-3 sm:px-4 md:px-6 lg:px-8 py-5 sm:py-6 md:py-8 min-w-0 flex flex-col">
+            <div className="flex-1">{children}</div>
+            <AppFooter />
+          </main>
         </div>
+        <ContractorMobileNav />
       </div>
     </SessionProvider>
   );

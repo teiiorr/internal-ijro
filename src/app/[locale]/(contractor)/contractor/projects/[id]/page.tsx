@@ -127,16 +127,16 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
                 <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? money(Number(sp.project.budget), currency) : t("common.emptyValue")}</dd>
               </div>
-              {sp.curator && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                  <dd className="flex items-center gap-2 mt-0.5">
-                    <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="xs" clickable={false} />
-                    <span className="font-semibold truncate">{shortName(sp.curator.fullName)}</span>
-                  </dd>
-                </div>
-              )}
             </dl>
+            {sp.curator && (
+              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--border)]">
+                <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="sm" clickable={false} />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</p>
+                  <p className="font-semibold text-sm truncate">{shortName(sp.curator.fullName)}</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -271,16 +271,16 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                 <dd className="font-semibold mt-0.5">{formatDate(data.project.deadline)}</dd>
               </div>
             )}
-            {data.curator && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                <dd className="flex items-center gap-2 mt-0.5">
-                  <UserAvatar name={data.curator.fullName} avatarUrl={data.curator.avatarUrl} size="xs" clickable={false} />
-                  <span className="font-semibold truncate">{shortName(data.curator.fullName)}</span>
-                </dd>
-              </div>
-            )}
           </dl>
+          {data.curator && (
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--border)]">
+              <UserAvatar name={data.curator.fullName} avatarUrl={data.curator.avatarUrl} size="sm" clickable={false} />
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</p>
+                <p className="font-semibold text-sm truncate">{shortName(data.curator.fullName)}</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
