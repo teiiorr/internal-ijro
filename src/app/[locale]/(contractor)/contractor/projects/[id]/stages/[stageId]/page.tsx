@@ -1,0 +1,136 @@
+import { notFound, redirect } from "next/navigation";
+import { getTranslations, getLocale } from "next-intl/server";
+import Link from "next/link";
+import { IconLock as Lock, IconLoader2 as Loader2, IconCircleCheck as CheckCircle2, IconUser as User } from "@tabler/icons-react";
+import { BackButton } from "@/components/ui/back-button";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { externalCompanies, projects } from "@/lib/db/schema";
+import { getStage } from "@/server/queries/stages";
+import { getStageMessages } from "@/server/queries/projects";
+import { Card, CardContent } from "@/components/ui/card";
+import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { StageDocuments } from "@/components/projects/stage-documents";
+import { StagePayments } from "@/components/projects/stage-payments";
+import { ProjectChat } from "@/components/projects/project-chat";
+import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
+import { formatDate } from "@/lib/dates";
+import { eq } from "drizzle-orm";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload";
+
+export default async function ContractorStageDetailPage({ params }: { params: Promise<{ id: string; stageId: string }> }) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  const t = await getTranslations();
+  const locale = await getLocale();
+  const { id, stageId } = await params;
+
+  const [myCompany] = await db
+    .select({ id: externalCompanies.id })
+    .from(externalCompanies)
+    .where(eq(externalCompanies.contactEmail, session.user.email))
+    .limit(1);
+  if (!myCompany) notFound();
+
+  const [projectRow] = await db
+    .select({ externalCompanyId: projects.externalCompanyId })
+    .from(projects)
+    .where(eq(projects.id, id))
+    .limit(1);
+  if (!projectRow || projectRow.externalCompanyId !== myCompany.id) notFound();
+
+  const data = await getStage(stageId, locale);
+  if (!data || data.stage.projectId !== id) notFound();
+
+  const s = data.stage;
+  const total = data.siblings.length;
+  const statusMeta =
+    s.status === "completed"
+      ? { tone: "green" as StatusTone, icon: <CheckCircle2 className="size-3.5" />, label: t("projects.stagePath.done") }
+      : s.status === "active"
+        ? { tone: "amber" as StatusTone, icon: <Loader2 className="size-3.5" />, label: t("projects.stagePath.active") }
+        : { tone: "red" as StatusTone, icon: <Lock className="size-3.5" />, label: t("projects.stagePath.locked") };
+
+  const messages = await getStageMessages(id, stageId);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <BackButton fallbackHref={`/contractor/projects/${id}`} className="mt-0.5" />
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-[var(--muted)]">
+            <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
+            {" · "}
+            {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
+          </p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
+          <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
+            <StatusTag tone={statusMeta.tone}>{statusMeta.icon}{statusMeta.label}</StatusTag>
+            {s.responsibleName && (
+              <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{s.responsibleName}</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <Card>
+        <CardContent className="p-5 sm:p-6 space-y-3">
+          <h3 className="text-base font-semibold">{t("projects.editStage.scheduleTitle")}</h3>
+          <dl className="detail-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm">
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.contractNumber")}</dt>
+              <dd className="font-semibold mt-0.5 break-words">{s.contractNumber || t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
+              <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate) : t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
+              <dd className="font-semibold mt-0.5 flex flex-wrap items-center gap-2">
+                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline) : t("common.emptyValue")}</span>
+                {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
+              <dd className="font-semibold mt-0.5 tabular-nums whitespace-nowrap">{s.plannedAmount != null ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : t("common.emptyValue")}</dd>
+            </div>
+          </dl>
+        </CardContent>
+      </Card>
+
+      {s.status === "locked" && (
+        <Card>
+          <CardContent className="p-5 flex items-center gap-3 text-sm text-[var(--muted)]">
+            <Lock className="size-4 shrink-0" />
+            {t("projects.stagePath.lockedHint")}
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 items-start">
+        <Card>
+          <CardContent className="p-5 sm:p-6 space-y-4">
+            <h3 className="text-base font-semibold">{t("projects.stageDocs.title")}</h3>
+            <StageDocuments stageId={s.id} documents={data.documents} canManage={false} suggestions={data.categorySuggestions} maxBytes={MAX_UPLOAD_BYTES} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-5 sm:p-6 space-y-4">
+            <h3 className="text-base font-semibold">{t("projects.stagePayments.title")}</h3>
+            <StagePayments stageId={s.id} payments={data.payments} plannedAmount={s.plannedAmount} canManage={false} showMoney={true} />
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardContent className="p-5 sm:p-6 space-y-4">
+          <h3 className="text-base font-semibold">{t("projects.tabs.chat")}</h3>
+          <ProjectChat projectId={id} stageId={stageId} currentUserId={session.user.id} messages={messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

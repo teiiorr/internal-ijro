@@ -23,7 +23,7 @@ export type StagePathItem = {
  * never get squeezed on mobile. Solid green connector for the finished part,
  * dashed for what's ahead.
  */
-export function StagePath({ projectId, stages }: { projectId: string; stages: StagePathItem[] }) {
+export function StagePath({ projectId, stages, basePath }: { projectId: string; stages: StagePathItem[]; basePath?: string }) {
   const t = useTranslations();
 
   return (
@@ -41,7 +41,7 @@ export function StagePath({ projectId, stages }: { projectId: string; stages: St
         return (
           <li key={s.id}>
             <Link
-              href={`/projects/${projectId}/stages/${s.id}`}
+              href={`${basePath ?? "/projects"}/${projectId}/stages/${s.id}`}
               className="group flex gap-3 rounded-xl transition-colors hover:bg-[var(--surface-2)] sm:gap-4"
             >
               {/* status circle + connector (solid green done / dashed ahead) */}
