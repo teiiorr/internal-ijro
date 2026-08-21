@@ -55,7 +55,7 @@ export function Header({ userName, avatarUrl }: { userName: string; avatarUrl?: 
                 placeholder={t("header.searchPlaceholder")}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="h-11 w-full rounded-full border border-[var(--input)] bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 pl-11 pr-4 text-[14px] font-medium placeholder:text-[var(--subtle)] shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] transition-all duration-200"
+                className="h-11 w-full rounded-full border border-[var(--input)] bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 pl-11 pr-4 text-[14px] font-medium placeholder:text-[var(--subtle)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] transition-all duration-200"
               />
             </div>
           </form>

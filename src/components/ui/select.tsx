@@ -21,7 +21,6 @@ export const SelectTrigger = React.forwardRef<
       "flex h-11 w-full min-w-0 items-center justify-between gap-2 rounded-2xl border border-[var(--input)] " +
       "bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 " +
       "pl-4 pr-5 text-[15px] text-[var(--foreground)] font-medium whitespace-nowrap " +
-      "shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] " +
       "transition-[border-color,box-shadow] duration-200 " +
       "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] " +
       "data-[placeholder]:text-[var(--subtle)] " +
