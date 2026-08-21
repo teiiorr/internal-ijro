@@ -24,7 +24,7 @@ export default async function ContractorLayout({ children }: { children: React.R
     return (
       <SessionProvider>
         <div className="min-h-screen flex flex-col">
-          <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
+          <Header userName={company.length > 0 ? company[0].name : session.user.fullName} avatarUrl={me?.avatarUrl} rawName />
           <main className="flex-1 flex items-center justify-center p-6">
             <div className="max-w-md text-center space-y-4 glass-strong rounded-3xl p-8">
               <h1 className="text-2xl font-extrabold tracking-tight gradient-text">{t("contractor.accountUnderReview")}</h1>
@@ -54,7 +54,7 @@ export default async function ContractorLayout({ children }: { children: React.R
     <SessionProvider>
       <RouteProgress />
       <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative">
-        <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
+        <Header userName={company.length > 0 ? company[0].name : session.user.fullName} avatarUrl={me?.avatarUrl} rawName />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <aside className="hidden md:block w-[272px] shrink-0">
             <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass-strong">

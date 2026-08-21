@@ -14,10 +14,10 @@ import { localizeName } from "@/lib/names";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
-export function Header({ userName, avatarUrl }: { userName: string; avatarUrl?: string | null }) {
+export function Header({ userName, avatarUrl, rawName }: { userName: string; avatarUrl?: string | null; rawName?: boolean }) {
   const t = useTranslations();
   const locale = useLocale();
-  const displayName = localizeName(userName, locale);
+  const displayName = rawName ? userName : localizeName(userName, locale);
   const [menuOpen, setMenuOpen] = useState(false);
   const [q, setQ] = useState("");
   const router = useRouter();
