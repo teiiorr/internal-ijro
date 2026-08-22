@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import {
@@ -41,12 +41,17 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
   const allAssigneeIds = Array.from(new Set([parsed.assignedToUserId, ...(parsed.additionalAssigneeIds ?? [])]));
   const a: ActorContext = { id: me.id, position: me.position, departmentId: me.departmentId };
 
-  // Verify each assignee is allowed
+  // Verify each assignee is allowed — one batched fetch (no per-assignee query).
+  const assigneeRows = await db
+    .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
+    .from(users)
+    .where(inArray(users.id, allAssigneeIds));
+  const assigneeById = new Map(assigneeRows.map((u) => [u.id, u]));
   for (const uid of allAssigneeIds) {
-    const u = await db.select().from(users).where(eq(users.id, uid)).limit(1);
-    if (u.length === 0) throw new Error("assignee_not_found");
-    const b: ActorContext = { id: u[0].id, position: u[0].position, departmentId: u[0].departmentId };
-    if (!(await canAssignTaskTo(a, b))) throw new Error(`forbidden_assign:${u[0].fullName}`);
+    const u = assigneeById.get(uid);
+    if (!u) throw new Error("assignee_not_found");
+    const b: ActorContext = { id: u.id, position: u.position, departmentId: u.departmentId };
+    if (!(await canAssignTaskTo(a, b))) throw new Error(`forbidden_assign:${u.fullName}`);
   }
 
   const regNum = await nextRegistrationNumber();

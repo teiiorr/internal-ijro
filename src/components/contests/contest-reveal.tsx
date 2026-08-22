@@ -3,11 +3,17 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import dynamic from "next/dynamic";
 import { IconPhotoPlus as ImagePlus, IconLoader2 as Loader2, IconTrash as Trash2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { WinnerReveal } from "@/components/contests/winner-reveal";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestLogo } from "@/server/actions/contests";
+
+// Canvas fireworks + confetti — only pulled in when a winner is revealed.
+const WinnerReveal = dynamic(
+  () => import("@/components/contests/winner-reveal").then((m) => m.WinnerReveal),
+  { ssr: false },
+);
 
 export function ContestReveal({
   contestId,

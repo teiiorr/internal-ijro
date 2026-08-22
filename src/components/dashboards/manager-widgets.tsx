@@ -12,9 +12,8 @@ import {
   getDepartmentWorkload,
 } from "@/server/queries/dashboards";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
-import { ProjectStatusDonut } from "@/components/dashboards/project-status-donut";
+import { ProjectStatusDonut, ProjectTypeBar } from "@/components/dashboards/lazy-charts";
 import { shortName } from "@/lib/names";
-import { ProjectTypeBar } from "@/components/dashboards/project-type-bar";
 import type { DerivedStatus } from "@/lib/projects/progress";
 import { IconTrophy as Trophy, IconAlertTriangle as AlertTriangle, IconStack2 as Layers, IconLayoutKanban as FolderKanban, IconCalendarClock as CalendarClock, IconCalendarX as CalendarX2, IconListCheck as ListChecks, IconChevronRight as ChevronRight, IconChartPie as PieChart, IconChartBar as BarChart3, IconWallet as Wallet } from "@tabler/icons-react";
 import { UserAvatar } from "@/components/ui/user-avatar";
