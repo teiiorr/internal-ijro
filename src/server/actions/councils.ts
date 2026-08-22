@@ -16,18 +16,23 @@ function revalidate(kind: string) {
 
 const meetingSchema = z.object({
   kind: z.enum(KINDS),
-  scheduledAt: z.string().min(1), // ISO datetime-local
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // YYYY-MM-DD
+  time: z.string().regex(/^\d{2}:\d{2}$/).nullable().optional(), // HH:mm (optional)
   title: z.string().max(255).nullable().optional(),
 });
 
 export async function createCouncilMeeting(input: z.infer<typeof meetingSchema>) {
   const me = await requirePosition([...MANAGERS]);
   const parsed = meetingSchema.parse(input);
+  // Build an unambiguous Tashkent-local instant (+05:00). Date-only meetings
+  // are stored at midnight Tashkent so the UI can render them time-free.
+  const time = parsed.time || "00:00";
+  const scheduledAt = new Date(`${parsed.date}T${time}:00+05:00`);
   const ins = await db
     .insert(councilMeetings)
     .values({
       kind: parsed.kind,
-      scheduledAt: new Date(parsed.scheduledAt),
+      scheduledAt,
       title: parsed.title || null,
       createdByUserId: me.id,
     })

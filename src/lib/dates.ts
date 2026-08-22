@@ -26,6 +26,20 @@ export function formatDateTime(d: Date | string, locale = "uz-latn") {
   return `${formatDate(d, locale)}, ${hh}:${mm}`;
 }
 
+/** True when the timestamp carries a meaningful (non-midnight Tashkent) time. */
+export function hasTime(d: Date | string): boolean {
+  const x = toTashkent(new Date(d));
+  return x.getUTCHours() !== 0 || x.getUTCMinutes() !== 0;
+}
+
+/**
+ * Show the date; append the time only when one was actually set.
+ * Lets date-only entries (stored at Tashkent midnight) render clean.
+ */
+export function formatDateMaybeTime(d: Date | string, locale = "uz-latn") {
+  return hasTime(d) ? formatDateTime(d, locale) : formatDate(d, locale);
+}
+
 export function deadlineRelative(
   deadline: Date | string | null | undefined,
   opts?: { completed?: boolean },

@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconLock as Lock, IconLoader2 as Loader2, IconCircleCheck as CheckCircle2, IconUser as User, IconInfoCircle as Info } from "@tabler/icons-react";
+import { IconLock as Lock, IconUser as User, IconInfoCircle as Info } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { getStage } from "@/server/queries/stages";
@@ -42,10 +42,10 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   const isLastCompleted = s.status === "completed" && lastCompleted?.id === s.id;
   const statusMeta =
     s.status === "completed"
-      ? { tone: "green" as StatusTone, icon: <CheckCircle2 className="size-3.5" />, label: t("projects.stagePath.done") }
+      ? { tone: "green" as StatusTone, label: t("projects.stagePath.done") }
       : s.status === "active"
-        ? { tone: "amber" as StatusTone, icon: <Loader2 className="size-3.5" />, label: t("projects.stagePath.active") }
-        : { tone: "red" as StatusTone, icon: <Lock className="size-3.5" />, label: t("projects.stagePath.locked") };
+        ? { tone: "amber" as StatusTone, label: t("projects.stagePath.active") }
+        : { tone: "red" as StatusTone, label: t("projects.stagePath.locked") };
 
   return (
     <div className="space-y-6">
@@ -60,7 +60,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
           </p>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
           <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
-            <StatusTag tone={statusMeta.tone}>{statusMeta.icon}{statusMeta.label}</StatusTag>
+            <StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag>
             {s.responsibleName && (
               <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{localizeName(s.responsibleName, locale)}</span>
             )}

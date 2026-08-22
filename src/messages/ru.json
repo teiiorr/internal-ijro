@@ -210,7 +210,9 @@
       "noAssignees": "Исполнители не выбраны",
       "addAssigneeBtn": "Добавить исполнителя",
       "selectAssigneeError": "Выберите хотя бы одного исполнителя",
-      "primaryAssigneeHint": "Первый выбранный — основной исполнитель"
+      "primaryAssigneeHint": "Первый выбранный — основной исполнитель",
+      "primary": "Основной",
+      "selectedCount": "Выбрано: {n}"
     },
     "view": {
       "list": "Список",
@@ -1021,7 +1023,9 @@
     "agenda": "Повестка дня",
     "noUpcoming": "Предстоящих заседаний нет",
     "createMeeting": "Добавить заседание",
-    "meetingDate": "Дата и время",
+    "meetingDate": "Дата",
+    "meetingDateRequired": "Выберите дату",
+    "addTime": "Добавить время",
     "meetingTitle": "Заголовок (необязательно)",
     "save": "Сохранить",
     "topic": "Тема",

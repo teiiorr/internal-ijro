@@ -198,8 +198,16 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
   void actorPosition;
   void actorDepartmentId;
   return db
-    .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId, avatarUrl: users.avatarUrl })
+    .select({
+      id: users.id,
+      fullName: users.fullName,
+      position: users.position,
+      departmentId: users.departmentId,
+      departmentName: departments.name,
+      avatarUrl: users.avatarUrl,
+    })
     .from(users)
+    .leftJoin(departments, eq(departments.id, users.departmentId))
     .where(sql`${users.status} = 'active' AND ${users.position} <> 'kontragent'`)
     .orderBy(users.fullName);
 }

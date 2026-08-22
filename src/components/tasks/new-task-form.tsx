@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -8,12 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createTask } from "@/server/actions/tasks";
-import { IconX as X, IconPlus as Plus, IconSearch as Search } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import { EmployeePicker, type PickerPerson } from "@/components/ui/employee-picker";
 import { shortName } from "@/lib/names";
-import { UserAvatar } from "@/components/ui/user-avatar";
 
-type Person = { id: string; fullName: string; position: string; avatarUrl?: string | null };
+type Person = PickerPerson;
 type Project = { id: string; name: string };
 
 const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
@@ -24,24 +22,9 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const [search, setSearch] = useState("");
-
-  const selectedPeople = useMemo(
-    () => selectedIds.map((id) => assignees.find((a) => a.id === id)).filter(Boolean) as Person[],
-    [selectedIds, assignees]
-  );
-
-  const filteredCandidates = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return assignees.filter((a) =>
-      !selectedIds.includes(a.id) &&
-      (term === "" || a.fullName.toLowerCase().includes(term))
-    );
-  }, [assignees, selectedIds, search]);
 
   function toggle(id: string) {
-    setSelectedIds((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
+    setSelectedIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
   }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -74,78 +57,40 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5 max-w-2xl">
-      <div className="space-y-2">
-        <Label htmlFor="title">{t("tasks.fields.title")}</Label>
-        <Input id="title" name="title" required minLength={2} maxLength={500} />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="description">{t("tasks.fields.description")}</Label>
-        <Textarea id="description" name="description" rows={4} />
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div className="grid max-w-2xl grid-cols-1 gap-5">
+        <div className="space-y-2">
+          <Label htmlFor="title">{t("tasks.fields.title")}</Label>
+          <Input id="title" name="title" required minLength={2} maxLength={500} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="description">{t("tasks.fields.description")}</Label>
+          <Textarea id="description" name="description" rows={4} />
+        </div>
       </div>
 
+      {/* Assignee picker — large employee cards */}
       <div className="space-y-2">
-        <Label>{t("tasks.fields.assignees")}</Label>
-        <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
-          {selectedPeople.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {selectedPeople.map((p, i) => (
-                <div key={p.id} className={cn(
-                  "inline-flex items-center gap-2 rounded-sm px-2.5 py-1 text-sm font-medium",
-                  i === 0
-                    ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-                    : "bg-[var(--surface-2)] text-[var(--foreground)] border border-[var(--border)]"
-                )}>
-                  <UserAvatar name={p.fullName} avatarUrl={p.avatarUrl} size="xs" clickable={false} />
-                  {shortName(p.fullName)}
-                  <button type="button" onClick={() => toggle(p.id)} className="opacity-70 hover:opacity-100">
-                    <X className="size-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-[var(--muted)]">{t("tasks.new.noAssignees")}</p>
-          )}
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => setPickerOpen((v) => !v)}>
-              <Plus className="size-4" /> {t("tasks.new.addAssigneeBtn")}
-            </Button>
-          </div>
-          {pickerOpen && (
-            <div className="mt-2 space-y-2">
-              <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
-                <input
-                  placeholder={t("common.search")}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="h-11 w-full rounded-md border border-[var(--border)] bg-[var(--surface-2)] pl-10 pr-3 text-[15px] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:ring-4 focus-visible:ring-[var(--primary)]/15"
-                />
-              </div>
-              <div className="max-h-56 overflow-y-auto rounded-md border border-[var(--border)] bg-[var(--surface)]/70 divide-y divide-[var(--border)]/60">
-                {filteredCandidates.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => { toggle(p.id); setSearch(""); }}
-                    className="w-full text-left px-4 py-3 hover:bg-[var(--surface-3)] text-sm transition-colors"
-                  >
-                    <span className="inline-flex items-center gap-1.5 font-semibold"><UserAvatar name={p.fullName} avatarUrl={p.avatarUrl} size="xs" clickable={false} />{shortName(p.fullName)}</span>
-                    <span className="text-[var(--muted)] ml-2 text-xs">{t(`positions.${p.position}` as "positions.direktor")}</span>
-                  </button>
-                ))}
-                {filteredCandidates.length === 0 && (
-                  <p className="text-center text-[var(--muted)] text-sm py-4">{t("common.noResults")}</p>
-                )}
-              </div>
-            </div>
+        <div className="flex items-baseline justify-between gap-2">
+          <Label>{t("tasks.fields.assignees")}</Label>
+          {selectedIds.length > 0 && (
+            <span className="text-xs font-medium text-[var(--muted)]">
+              {t("tasks.new.selectedCount", { n: selectedIds.length })}
+            </span>
           )}
         </div>
+        <EmployeePicker
+          people={assignees}
+          selectedIds={selectedIds}
+          onToggle={toggle}
+          primaryFirst
+          formatName={shortName}
+          positionLabel={(pos) => t(`positions.${pos}` as "positions.direktor")}
+        />
         <p className="text-xs text-[var(--muted)]">{t("tasks.new.primaryAssigneeHint")}</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label>{t("tasks.fields.project")}</Label>
           <Select name="projectId">
@@ -171,8 +116,14 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
       </div>
 
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-      <div className="flex justify-end pt-2">
-        <Button type="submit" disabled={pending} size="lg">{t("tasks.newTitle")}</Button>
+
+      {/* Submit — after the whole form; sticky at the bottom on mobile (safe-area aware) */}
+      <div className="sticky bottom-0 -mx-5 border-t border-[var(--border)] bg-[var(--card)]/85 px-5 py-3 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:pb-0 sm:backdrop-blur-none">
+        <div className="flex justify-end">
+          <Button type="submit" disabled={pending} size="lg" className="w-full sm:w-auto">
+            {t("tasks.newTitle")}
+          </Button>
+        </div>
       </div>
     </form>
   );

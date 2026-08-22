@@ -210,7 +210,9 @@
       "noAssignees": "Ijrochilar tanlanmagan",
       "addAssigneeBtn": "Ijrochi qo'shish",
       "selectAssigneeError": "Kamida bitta ijrochi tanlang",
-      "primaryAssigneeHint": "Birinchi tanlangan ijrochi — asosiy"
+      "primaryAssigneeHint": "Birinchi tanlangan ijrochi — asosiy",
+      "primary": "Asosiy",
+      "selectedCount": "{n} tanlandi"
     },
     "view": {
       "list": "Ro'yxat",
@@ -1021,7 +1023,9 @@
     "agenda": "Kun tartibi",
     "noUpcoming": "Kelayotgan majlis rejalashtirilmagan",
     "createMeeting": "Majlis qo'shish",
-    "meetingDate": "Sana va vaqt",
+    "meetingDate": "Sana",
+    "meetingDateRequired": "Sanani tanlang",
+    "addTime": "Vaqt qo'shish",
     "meetingTitle": "Sarlavha (ixtiyoriy)",
     "save": "Saqlash",
     "topic": "Mavzu",

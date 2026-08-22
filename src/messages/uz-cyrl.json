@@ -210,7 +210,9 @@
       "noAssignees": "Ижрочилар танланмаган",
       "addAssigneeBtn": "Ижрочи қўшиш",
       "selectAssigneeError": "Камида битта ижрочи танланг",
-      "primaryAssigneeHint": "Биринчи танланган ижрочи — асосий"
+      "primaryAssigneeHint": "Биринчи танланган ижрочи — асосий",
+      "primary": "Асосий",
+      "selectedCount": "{n} танланди"
     },
     "view": {
       "list": "Рўйхат",
@@ -1021,7 +1023,9 @@
     "agenda": "Кун тартиби",
     "noUpcoming": "Келаётган мажлис режалаштирилмаган",
     "createMeeting": "Мажлис қўшиш",
-    "meetingDate": "Сана ва вақт",
+    "meetingDate": "Сана",
+    "meetingDateRequired": "Санани танланг",
+    "addTime": "Вақт қўшиш",
     "meetingTitle": "Сарлавҳа (ихтиёрий)",
     "save": "Сақлаш",
     "topic": "Мавзу",
