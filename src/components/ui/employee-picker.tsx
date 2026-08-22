@@ -79,7 +79,9 @@ export function EmployeePicker({
                 onClick={() => onToggle(p.id)}
                 aria-pressed={selected}
                 className={cn(
-                  "group relative flex flex-col items-center rounded-2xl border p-3 text-center transition-all duration-200",
+                  // pt-9 reserves a top band for the primary badge + checkmark so
+                  // they never overlap the avatar or the text.
+                  "group relative flex flex-col items-center rounded-2xl border p-3 pt-9 text-center transition-all duration-200",
                   "hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)] active:scale-[0.98]",
                   selected
                     ? "border-[var(--primary)] bg-[var(--primary-soft)] shadow-[0_0_0_1px_var(--primary)]"
@@ -87,21 +89,14 @@ export function EmployeePicker({
                 )}
               >
                 {isPrimary && (
-                  <span className="absolute left-2 top-2 inline-flex items-center gap-0.5 rounded-full bg-[var(--primary)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--primary-foreground)]">
-                    <Star className="size-2.5 fill-current" />
-                    {t("tasks.new.primary")}
+                  <span className="absolute left-2 top-2 inline-flex max-w-[calc(100%-2.5rem)] items-center gap-0.5 rounded-full bg-[var(--primary)] px-1.5 py-0.5 text-[9px] font-bold text-[var(--primary-foreground)]">
+                    <Star className="size-2.5 shrink-0 fill-current" />
+                    <span className="truncate">{t("tasks.new.primary")}</span>
                   </span>
-                )}
-                <UserAvatar name={p.fullName} avatarUrl={p.avatarUrl} size="lg" clickable={false} />
-                <p className="mt-2 line-clamp-2 text-sm font-semibold leading-tight text-[var(--foreground)]">
-                  {formatName(p.fullName)}
-                </p>
-                {sub && (
-                  <p className="mt-0.5 line-clamp-2 text-[11px] leading-tight text-[var(--muted)]">{sub}</p>
                 )}
                 <span
                   className={cn(
-                    "absolute bottom-2 right-2 grid size-6 place-items-center rounded-full transition-all duration-200",
+                    "absolute right-2 top-2 grid size-6 place-items-center rounded-full transition-all duration-200",
                     selected
                       ? "scale-100 bg-[var(--primary)] text-[var(--primary-foreground)] opacity-100"
                       : "scale-50 bg-[var(--surface-3)] text-transparent opacity-0 group-hover:scale-75 group-hover:opacity-40",
@@ -109,6 +104,15 @@ export function EmployeePicker({
                 >
                   <Check className="size-4" strokeWidth={3} />
                 </span>
+                <UserAvatar name={p.fullName} avatarUrl={p.avatarUrl} size="lg" clickable={false} />
+                {/* Fixed heights keep names/roles on the same baseline across all
+                    cards (like table columns); break-words contains long surnames. */}
+                <p className="mt-2 line-clamp-2 min-h-[2.5em] w-full break-words text-sm font-semibold leading-tight text-[var(--foreground)] [overflow-wrap:anywhere]">
+                  {formatName(p.fullName)}
+                </p>
+                <p className="mt-0.5 line-clamp-2 min-h-[2.4em] w-full break-words text-[11px] leading-tight text-[var(--muted)]">
+                  {sub || " "}
+                </p>
               </button>
             );
           })}

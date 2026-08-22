@@ -31,14 +31,24 @@ export function CouncilMeetingForm({ kind }: { kind: "ekspert" | "smeta" }) {
 
   return (
     <div className="space-y-2">
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,180px)_1fr_auto] sm:items-end">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-end">
         <div className="space-y-1">
           <label className="text-xs font-medium text-[var(--muted)]">{t("kengash.meetingDate")}</label>
-          <div className="flex items-center gap-1.5">
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="min-w-0" />
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-[150px] shrink-0 px-3"
+            />
             {showTime ? (
-              <div className="flex items-center gap-1">
-                <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-[104px] shrink-0" />
+              <>
+                <Input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="w-[110px] shrink-0 px-3"
+                />
                 <button
                   type="button"
                   onClick={() => { setShowTime(false); setTime(""); }}
@@ -47,12 +57,12 @@ export function CouncilMeetingForm({ kind }: { kind: "ekspert" | "smeta" }) {
                 >
                   <X className="size-4" />
                 </button>
-              </div>
+              </>
             ) : (
               <button
                 type="button"
                 onClick={() => setShowTime(true)}
-                className="inline-flex shrink-0 items-center gap-1 rounded-xl px-2.5 py-2 text-xs font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95"
+                className="inline-flex h-11 shrink-0 items-center gap-1 rounded-xl px-2.5 text-xs font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95"
               >
                 <ClockPlus className="size-4" />{t("kengash.addTime")}
               </button>
@@ -63,7 +73,7 @@ export function CouncilMeetingForm({ kind }: { kind: "ekspert" | "smeta" }) {
           <label className="text-xs font-medium text-[var(--muted)]">{t("kengash.meetingTitle")}</label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
-        <Button onClick={submit} disabled={pending}><CalendarPlus className="size-4" />{t("kengash.createMeeting")}</Button>
+        <Button onClick={submit} disabled={pending} className="w-full sm:w-auto"><CalendarPlus className="size-4" />{t("kengash.createMeeting")}</Button>
       </div>
       {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
     </div>
