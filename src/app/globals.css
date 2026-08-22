@@ -225,6 +225,9 @@ body {
   font-weight: 500;
   letter-spacing: -0.005em;
   min-height: 100vh;
+  /* Guarantee no horizontal scroll app-wide (§1). `clip` (not `hidden`) so it
+     never creates a scroll container that would break position: sticky. */
+  overflow-x: clip;
 }
 
 ::selection { background: var(--primary); color: var(--primary-foreground); }
