@@ -807,3 +807,20 @@ html {
   .animate-send:active { animation: none; }
   html { scroll-behavior: auto; }
 }
+
+/* =========================================================================
+   UNIVERSAL prefers-reduced-motion reset — catch-all so EVERY animation and
+   transition (including component-level ones like the employee picker) is
+   neutralised for users who ask for reduced motion. This supersedes the
+   per-class list above and guarantees §16 compliance app-wide.
+   ========================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
