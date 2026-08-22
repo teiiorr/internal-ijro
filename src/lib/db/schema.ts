@@ -238,6 +238,26 @@ export const projects = pgTable(
   })
 );
 
+// ---------- 5.8b project curators (many-to-many) ----------
+// A project can have several curators. `projects.curator_user_id` is kept as the
+// "primary" curator for backward compat; this table holds the full set.
+export const projectCurators = pgTable(
+  "project_curators",
+  {
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    orderIndex: integer("order_index").default(0).notNull(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.projectId, t.userId] }),
+    projectIdx: index("project_curators_project_idx").on(t.projectId),
+  })
+);
+
 // ---------- 5.9 milestones (stages) ----------
 export const milestones = pgTable("milestones", {
   id: uuid("id").primaryKey().defaultRandom(),

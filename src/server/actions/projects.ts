@@ -5,6 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import {
   projects,
+  projectCurators,
   milestones,
   deliverables,
   projectMessages,
@@ -544,6 +545,8 @@ const updateProjectSchema = z.object({
   description: z.string().nullable().optional(),
   type: z.enum(["internal", "external"]),
   curatorUserId: z.string().uuid().nullable().optional(),
+  /** Full curator set (many-to-many). When present, supersedes curatorUserId. */
+  curatorUserIds: z.array(z.string().uuid()).optional(),
   startDate: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
   budget: z.number().nullable().optional(),
@@ -555,13 +558,23 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
   const parsed = updateProjectSchema.parse(input);
   const [existing] = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, id)).limit(1);
   if (!existing) throw new Error("not_found");
+
+  // Resolve the curator set. The first stays on projects.curator_user_id as the
+  // "primary" for backward compat; the whole set goes to the join table.
+  const curatorIds = parsed.curatorUserIds
+    ? Array.from(new Set(parsed.curatorUserIds))
+    : parsed.curatorUserId
+      ? [parsed.curatorUserId]
+      : [];
+  const primaryCurator = curatorIds[0] ?? null;
+
   await db
     .update(projects)
     .set({
       name: parsed.name.trim(),
       description: parsed.description?.trim() || null,
       type: parsed.type,
-      curatorUserId: parsed.curatorUserId ?? null,
+      curatorUserId: primaryCurator,
       startDate: parsed.startDate || null,
       deadline: parsed.deadline || null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -571,6 +584,21 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
       updatedAt: new Date(),
     })
     .where(eq(projects.id, id));
+
+  // Sync the many-to-many curators (guarded — the table may not be migrated yet).
+  if (parsed.curatorUserIds !== undefined) {
+    try {
+      await db.delete(projectCurators).where(eq(projectCurators.projectId, id));
+      if (curatorIds.length > 0) {
+        await db.insert(projectCurators).values(
+          curatorIds.map((uid, i) => ({ projectId: id, userId: uid, orderIndex: i })),
+        );
+      }
+    } catch {
+      /* project_curators not migrated yet — primary curator column still updated */
+    }
+  }
+
   await logActivity({ userId: me.id, action: "project.updated", entityType: "project", entityId: id, newValue: { name: parsed.name } });
   revalidatePath(`/projects/${id}`);
   revalidatePath("/projects");

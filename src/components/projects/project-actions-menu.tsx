@@ -28,7 +28,7 @@ export function ProjectActionsMenu({
   inProgress,
 }: {
   project: Project;
-  curators: { id: string; fullName: string }[];
+  curators: { id: string; fullName: string; avatarUrl?: string | null }[];
   canManage: boolean;
   canDelete: boolean;
   showInProgress: boolean;

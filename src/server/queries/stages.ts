@@ -12,6 +12,7 @@ import {
   externalCompanies,
   users,
 } from "@/lib/db/schema";
+import { fetchProjectCurators } from "@/server/queries/projects";
 
 // ---------- localization helpers ----------
 type LocalizedNames = { nameUzLatn: string; nameUzCyrl: string; nameRu: string };
@@ -65,6 +66,7 @@ export async function getStageProject(projectId: string, locale: string) {
   const curator = p[0].curatorUserId
     ? (await db.select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1))[0] ?? null
     : null;
+  const curators = await fetchProjectCurators(projectId, p[0].curatorUserId);
 
   const company = p[0].externalCompanyId
     ? (await db
@@ -164,6 +166,7 @@ export async function getStageProject(projectId: string, locale: string) {
     project: p[0],
     type: typeRow ? { ...typeRow, name: localizedTypeName(typeRow, locale) } : null,
     curator,
+    curators,
     company,
     stages,
     totals,

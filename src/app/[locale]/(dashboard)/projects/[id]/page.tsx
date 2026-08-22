@@ -55,6 +55,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     type: data.project.type,
     genre: data.project.genre,
     curatorUserId: data.project.curatorUserId,
+    curatorUserIds: data.curators.map((c) => c.id),
     startDate: data.project.startDate,
     deadline: data.project.deadline,
     budget: data.project.budget,
@@ -148,11 +149,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
                 <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
               </div>
-              {sp.curator && (
+              {sp.curators.length > 0 && (
                 <div>
                   <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
                   <dd className="mt-1 flex justify-center">
-                    <CuratorList curators={[sp.curator]} locale={locale} />
+                    <CuratorList curators={sp.curators} locale={locale} />
                   </dd>
                 </div>
               )}
@@ -317,11 +318,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
               <dd className="font-semibold mt-0.5 tabular-nums">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</dd>
             </div>
-            {data.curator && (
+            {data.curators.length > 0 && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
                 <dd className="mt-1 flex justify-center">
-                  <CuratorList curators={[data.curator]} locale={locale} />
+                  <CuratorList curators={data.curators} locale={locale} />
                 </dd>
               </div>
             )}

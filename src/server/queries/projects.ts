@@ -3,6 +3,7 @@ import { and, asc, desc, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   projects,
+  projectCurators,
   projectTypes,
   projectStages,
   stageDocuments,
@@ -14,6 +15,36 @@ import {
   users,
   tasks,
 } from "@/lib/db/schema";
+
+/**
+ * All curators for a project (avatar + name), ordered. Falls back to the legacy
+ * single `curator_user_id` when the join table is empty OR not migrated yet
+ * (so the app never crashes before 0022 is applied on the target DB).
+ */
+export async function fetchProjectCurators(
+  projectId: string,
+  fallbackCuratorUserId: string | null,
+): Promise<Array<{ id: string; fullName: string; avatarUrl: string | null }>> {
+  try {
+    const rows = await db
+      .select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl })
+      .from(projectCurators)
+      .innerJoin(users, eq(users.id, projectCurators.userId))
+      .where(eq(projectCurators.projectId, projectId))
+      .orderBy(asc(projectCurators.orderIndex), asc(users.fullName));
+    if (rows.length > 0) return rows;
+  } catch {
+    /* table not migrated yet — fall through to the single-curator column */
+  }
+  if (fallbackCuratorUserId) {
+    return db
+      .select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl })
+      .from(users)
+      .where(eq(users.id, fallbackCuratorUserId))
+      .limit(1);
+  }
+  return [];
+}
 
 export type ProjectFilters = {
   search?: string | null;
@@ -94,13 +125,14 @@ export async function listProjects(f: ProjectFilters, locale?: string) {
 export async function getProject(id: string) {
   const p = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
   if (p.length === 0) return null;
-  const [company, curator, mls, dlvs, msgs, prjTasks, rt] = await Promise.all([
+  const [company, curator, curators, mls, dlvs, msgs, prjTasks, rt] = await Promise.all([
     p[0].externalCompanyId
       ? db.select().from(externalCompanies).where(eq(externalCompanies.id, p[0].externalCompanyId)).limit(1)
       : Promise.resolve([]),
     p[0].curatorUserId
       ? db.select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1)
       : Promise.resolve([]),
+    fetchProjectCurators(id, p[0].curatorUserId),
     db.select().from(milestones).where(eq(milestones.projectId, id)).orderBy(asc(milestones.orderIndex)),
     db
       .select()
@@ -134,6 +166,7 @@ export async function getProject(id: string) {
     project: p[0],
     company: company[0] ?? null,
     curator: curator[0] ?? null,
+    curators,
     milestones: mls,
     deliverables: dlvs,
     messages: msgs,
