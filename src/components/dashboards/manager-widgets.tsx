@@ -83,9 +83,9 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
             <Link
               key={k.key}
               href={k.href}
-              className="group flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]"
+              className="group flex flex-col items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)] text-center"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between w-full">
                 <div className={`grid size-10 shrink-0 place-items-center rounded-xl ${tone.chip}`}>
                   <k.icon className={`size-5 ${tone.icon}`} />
                 </div>

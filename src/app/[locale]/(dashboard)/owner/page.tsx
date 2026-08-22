@@ -83,7 +83,7 @@ export default async function OwnerPage() {
         <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
           {tiles.map((tile) => (
             <Card key={tile.label}>
-              <CardContent className="p-4">
+              <CardContent className="p-4 text-center">
                 <p className="text-xs font-semibold text-[var(--muted)] leading-tight">{tile.label}</p>
                 <p className="text-2xl font-bold tabular-nums mt-1.5 break-words">{tile.value}</p>
                 {tile.sub && <p className="text-xs text-[var(--muted)] mt-0.5">{tile.sub}</p>}

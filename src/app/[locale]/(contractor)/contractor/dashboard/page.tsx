@@ -44,16 +44,16 @@ export default async function ContractorDashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.activeProjects")}</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-bold tabular">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>
+          <CardHeader className="text-center"><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.activeProjects")}</CardTitle></CardHeader>
+          <CardContent className="text-center"><p className="text-4xl font-bold tabular">{projects.filter((p) => p.status !== "completed").length}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.completed")}</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-bold tabular">{projects.filter((p) => p.status === "completed").length}</p></CardContent>
+          <CardHeader className="text-center"><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.completed")}</CardTitle></CardHeader>
+          <CardContent className="text-center"><p className="text-4xl font-bold tabular">{projects.filter((p) => p.status === "completed").length}</p></CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.total")}</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-bold tabular">{projects.length}</p></CardContent>
+          <CardHeader className="text-center"><CardTitle className="text-sm text-[var(--muted)] font-medium">{t("contractor.dashboard.total")}</CardTitle></CardHeader>
+          <CardContent className="text-center"><p className="text-4xl font-bold tabular">{projects.length}</p></CardContent>
         </Card>
       </div>
 

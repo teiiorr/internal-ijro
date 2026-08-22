@@ -10,7 +10,7 @@ function Stat({ label, value, tone = "default", href }: StatProps) {
   return (
     <Link href={href} className="block">
       <Card className="transition-colors hover:bg-[var(--glass-fill-strong)]">
-        <CardContent className="p-5">
+        <CardContent className="p-5 text-center">
           <p className="text-sm font-semibold text-[var(--muted)]">{label}</p>
           <p className={`text-4xl font-bold tabular mt-1.5 ${color}`}>{value}</p>
         </CardContent>
