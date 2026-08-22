@@ -57,53 +57,58 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start gap-3">
-        <BackButton fallbackHref={`/contractor/projects/${id}`} className="mt-0.5" />
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-[var(--muted)]">
-            <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
-            {" · "}
-            {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
-          </p>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
-          <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
-            <StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag>
-            {s.responsibleName && (
-              <EmployeeIdentity
-                name={localizeName(s.responsibleName, locale)}
-                avatarUrl={s.responsibleAvatarUrl}
-                subtitle={t("projects.fields.responsible")}
-                size="sm"
-              />
-            )}
-          </div>
-        </div>
-      </div>
-
+      {/* Unified stage header + schedule/budget — one combined card. */}
       <Card>
-        <CardContent className="p-5 sm:p-6 space-y-3">
-          <h3 className="text-base font-semibold">{t("projects.editStage.scheduleTitle")}</h3>
-          <dl className="detail-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm">
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.contractNumber")}</dt>
-              <dd className="font-semibold mt-0.5 break-words">{s.contractNumber || t("common.emptyValue")}</dd>
+        <CardContent className="p-5 sm:p-6 space-y-5">
+          <div className="flex items-start gap-3">
+            <BackButton fallbackHref={`/contractor/projects/${id}`} className="mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-[var(--muted)]">
+                <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
+                {" · "}
+                {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
+              </p>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
+              <div className="flex items-center gap-3 mt-3 flex-wrap text-sm">
+                <StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag>
+                {s.responsibleName && (
+                  <EmployeeIdentity
+                    name={localizeName(s.responsibleName, locale)}
+                    avatarUrl={s.responsibleAvatarUrl}
+                    subtitle={t("projects.fields.responsible")}
+                    size="sm"
+                  />
+                )}
+              </div>
             </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
-              <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate, locale) : t("common.emptyValue")}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
-              <dd className="font-semibold mt-0.5 flex flex-wrap items-center gap-2">
-                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : t("common.emptyValue")}</span>
-                {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
-              <dd className="font-semibold mt-0.5 tabular-nums whitespace-nowrap">{s.plannedAmount != null ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : t("common.emptyValue")}</dd>
-            </div>
-          </dl>
+          </div>
+
+          <div className="border-t border-[var(--border)]" />
+
+          <div className="space-y-3">
+            <h3 className="text-base font-semibold">{t("projects.editStage.scheduleTitle")}</h3>
+            <dl className="detail-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm">
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.contractNumber")}</dt>
+                <dd className="font-semibold mt-0.5 break-words">{s.contractNumber || t("common.emptyValue")}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
+                <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate, locale) : t("common.emptyValue")}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
+                <dd className="font-semibold mt-0.5 flex flex-wrap items-center gap-2">
+                  <span>{s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : t("common.emptyValue")}</span>
+                  {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
+                <dd className="font-semibold mt-0.5 tabular-nums whitespace-nowrap">{s.plannedAmount != null ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : t("common.emptyValue")}</dd>
+              </div>
+            </dl>
+          </div>
         </CardContent>
       </Card>
 

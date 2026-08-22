@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
@@ -31,8 +31,19 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
   const [lightbox, setLightbox] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
   const { container, text } = SIZE_MAP[size];
   const hasPhoto = !!avatarUrl && !imgError;
+
+  // Cached images can finish loading before React attaches onLoad, which would
+  // otherwise leave the avatar stuck at opacity-0 (e.g. the current user's own
+  // avatar in the navbar, cached across every page). Detect that on mount.
+  useEffect(() => {
+    setImgLoaded(false);
+    setImgError(false);
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth > 0) setImgLoaded(true);
+  }, [avatarUrl]);
 
   const handleClick = useCallback(() => {
     if (clickable && hasPhoto) setLightbox(true);
@@ -60,6 +71,7 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
               <div className="absolute inset-0 skeleton-shimmer rounded-full" />
             )}
             <img
+              ref={imgRef}
               src={avatarUrl!}
               alt={name}
               loading="lazy"

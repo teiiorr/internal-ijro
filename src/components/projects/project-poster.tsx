@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { IconPhotoPlus as ImagePlus, IconTrash as Trash2, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -18,8 +18,16 @@ export function ProjectPoster({
 }) {
   const t = useTranslations();
   const fileRef = useRef<HTMLInputElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [pending, start] = useTransition();
   const [imgLoaded, setImgLoaded] = useState(false);
+
+  // Detect cached posters that finish before onLoad attaches (else stuck hidden).
+  useEffect(() => {
+    setImgLoaded(false);
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth > 0) setImgLoaded(true);
+  }, [posterUrl]);
 
   function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -41,6 +49,7 @@ export function ProjectPoster({
             )}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              ref={imgRef}
               src={posterUrl}
               alt={name}
               loading="lazy"
