@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconLock as Lock, IconUser as User } from "@tabler/icons-react";
+import { IconLock as Lock } from "@tabler/icons-react";
+import { EmployeeIdentity } from "@/components/ui/employee-identity";
 import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -68,7 +69,12 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
           <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
             <StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag>
             {s.responsibleName && (
-              <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{localizeName(s.responsibleName, locale)}</span>
+              <EmployeeIdentity
+                name={localizeName(s.responsibleName, locale)}
+                avatarUrl={s.responsibleAvatarUrl}
+                subtitle={t("projects.fields.responsible")}
+                size="sm"
+              />
             )}
           </div>
         </div>

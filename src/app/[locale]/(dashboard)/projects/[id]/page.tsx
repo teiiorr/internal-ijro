@@ -25,8 +25,7 @@ import { derivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { formatDate } from "@/lib/dates";
-import { shortName } from "@/lib/names";
-import { UserAvatar } from "@/components/ui/user-avatar";
+import { CuratorList } from "@/components/ui/curator-list";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
@@ -152,9 +151,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               {sp.curator && (
                 <div>
                   <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                  <dd className="flex items-center gap-2 mt-0.5">
-                    <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="xs" clickable={false} />
-                    <span className="font-semibold truncate">{shortName(sp.curator.fullName)}</span>
+                  <dd className="mt-1 flex justify-center">
+                    <CuratorList curators={[sp.curator]} locale={locale} />
                   </dd>
                 </div>
               )}
@@ -322,7 +320,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {data.curator && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                <dd className="font-semibold mt-0.5 truncate inline-flex items-center gap-1.5"><UserAvatar name={data.curator.fullName} avatarUrl={data.curator.avatarUrl} size="xs" clickable={false} />{shortName(data.curator.fullName)}</dd>
+                <dd className="mt-1 flex justify-center">
+                  <CuratorList curators={[data.curator]} locale={locale} />
+                </dd>
               </div>
             )}
             {data.company && (
