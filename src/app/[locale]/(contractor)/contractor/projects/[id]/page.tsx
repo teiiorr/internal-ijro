@@ -117,11 +117,11 @@ export default async function ContractorProjectPage({ params }: { params: Promis
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate) : t("common.emptyValue")}</dd>
+                <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.deadline ? formatDate(sp.project.deadline) : t("common.emptyValue")}</dd>
+                <dd className="font-semibold mt-0.5">{sp.project.deadline ? formatDate(sp.project.deadline, locale) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
@@ -210,7 +210,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       <CalendarClock className="size-3.5 shrink-0 text-[var(--muted)]" />
                       <span className={`font-medium ${activeStage.plannedDeadline ? "" : "text-[var(--muted)]"}`}>
-                        {activeStage.plannedDeadline ? formatDate(activeStage.plannedDeadline) : t("projects.stageDeadline.notSet")}
+                        {activeStage.plannedDeadline ? formatDate(activeStage.plannedDeadline, locale) : t("projects.stageDeadline.notSet")}
                       </span>
                       {activeStage.plannedDeadline && <DeadlineCountdown deadline={activeStage.plannedDeadline} />}
                     </div>
@@ -262,13 +262,13 @@ export default async function ContractorProjectPage({ params }: { params: Promis
             {data.project.startDate && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="font-semibold mt-0.5">{formatDate(data.project.startDate)}</dd>
+                <dd className="font-semibold mt-0.5">{formatDate(data.project.startDate, locale)}</dd>
               </div>
             )}
             {data.project.deadline && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="font-semibold mt-0.5">{formatDate(data.project.deadline)}</dd>
+                <dd className="font-semibold mt-0.5">{formatDate(data.project.deadline, locale)}</dd>
               </div>
             )}
           </dl>
@@ -314,7 +314,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
         </TabsContent>
         <TabsContent value="chat">
           <Card><CardContent className="p-6">
-            <ProjectChat projectId={data.project.id} currentUserId={session.user.id} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
+            <ProjectChat projectId={data.project.id} currentUserId={session.user.id} currentUserName={session.user.fullName} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
           </CardContent></Card>
         </TabsContent>
       </Tabs>

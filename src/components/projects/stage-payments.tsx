@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ export function StagePayments({
   showMoney?: boolean;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const fmt = (amount: number, currency: string) => (showMoney ? money(amount, currency) : "***");
   const [pending, start] = useTransition();
   const [amount, setAmount] = useState("");
@@ -110,7 +111,7 @@ export function StagePayments({
                 </p>
                 <p className="text-xs text-[var(--muted)] truncate">
                   {p.note ? `${p.note} · ` : ""}
-                  {p.status === "paid" && p.paidAt ? formatDate(p.paidAt as Date) : formatDate(p.createdAt as Date)}
+                  {p.status === "paid" && p.paidAt ? formatDate(p.paidAt as Date, locale) : formatDate(p.createdAt as Date, locale)}
                 </p>
               </div>
               {canManage && (

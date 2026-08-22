@@ -43,6 +43,8 @@ export function ProjectPoster({
             <img
               src={posterUrl}
               alt={name}
+              loading="lazy"
+              decoding="async"
               className={`size-full object-cover transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
               onLoad={() => setImgLoaded(true)}
             />

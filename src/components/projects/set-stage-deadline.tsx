@@ -1,7 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { IconCalendarClock as CalendarClock } from "@tabler/icons-react";
@@ -25,6 +25,7 @@ export function SetStageDeadline({
   active: boolean;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [value, setValue] = useState(deadline ?? "");
@@ -46,7 +47,7 @@ export function SetStageDeadline({
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <CalendarClock className="size-4 shrink-0 text-[var(--muted)]" />
         <span className={`font-semibold ${deadline ? "" : "text-[var(--muted)]"}`}>
-          {deadline ? formatDate(deadline) : t("projects.stageDeadline.notSet")}
+          {deadline ? formatDate(deadline, locale) : t("projects.stageDeadline.notSet")}
         </span>
         {active && deadline && <DeadlineCountdown deadline={deadline} />}
       </div>

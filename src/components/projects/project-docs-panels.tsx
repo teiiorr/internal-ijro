@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { IconDownload as Download, IconTrash as Trash2, IconFileText as FileText, IconPlus as Plus, IconLoader2 as Loader2, IconChartBar as BarChart3, IconWorld as Globe2, IconChevronUp as ChevronUp } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { FileInput } from "@/components/ui/file-input";
@@ -63,6 +63,7 @@ function DocPanel({
   maxBytes: number;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const theme = THEME[kind];
   const Icon = theme.Icon;
@@ -155,7 +156,7 @@ function DocPanel({
         ) : (
           <ul className="space-y-2">
             {docs.map((d) => {
-              const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date)}`;
+              const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date, locale)}`;
               return (
                 <li
                   key={d.id}

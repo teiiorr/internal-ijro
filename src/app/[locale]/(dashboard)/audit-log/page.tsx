@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { listAudit } from "@/server/queries/audit";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +14,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
   const me = session.user;
   if (!["direktor", "orinbosar", "hr"].includes(me.position)) redirect("/dashboard");
 
@@ -50,7 +51,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
             <TableBody>
               {rows.map((r) => (
                 <TableRow key={r.id}>
-                  <TableCell className="text-xs tabular">{formatDateTime(r.createdAt)}</TableCell>
+                  <TableCell className="text-xs tabular">{formatDateTime(r.createdAt, locale)}</TableCell>
                   <TableCell><span className="inline-flex items-center gap-1.5">{r.userName && <UserAvatar name={r.userName} avatarUrl={r.userAvatarUrl} size="xs" clickable={false} />}{r.userName ?? "—"}</span></TableCell>
                   <TableCell><code className="text-xs">{r.action}</code></TableCell>
                   <TableCell className="text-xs text-[var(--muted)]">{r.entityType ?? "—"} {r.entityId ? r.entityId.slice(0, 8) : ""}</TableCell>

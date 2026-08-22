@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ export function DeliverablesList({
   milestones: { id: string; title: string }[];
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
   const [feedback, setFeedback] = useState<Record<string, string>>({});
@@ -70,7 +71,7 @@ export function DeliverablesList({
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
                 <a href={d.fileUrl} className="font-semibold hover:underline">{d.fileName}</a>
-                <p className="text-xs text-[var(--muted)]">{t(`projects.deliverable.types.${d.type}` as "projects.deliverable.types.document")} · {formatDateTime(d.submittedAt)}</p>
+                <p className="text-xs text-[var(--muted)]">{t(`projects.deliverable.types.${d.type}` as "projects.deliverable.types.document")} · {formatDateTime(d.submittedAt, locale)}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={d.status === "approved" ? "success" : d.status === "rejected" ? "danger" : d.status === "revision_requested" ? "warning" : "secondary"}>

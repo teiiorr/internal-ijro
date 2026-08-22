@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { IconSearch as Search, IconRosetteDiscountCheck as BadgeCheck, IconChevronDown as ChevronDown, IconClock as Clock4, IconFileText as FileText, IconAlertCircle as AlertCircle } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -50,6 +50,7 @@ export function AssigneesCard({
   items: AssigneeItem[];
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -65,7 +66,7 @@ export function AssigneesCard({
     });
   }, [items, q, filter]);
 
-  const fmt = (d: Date | string | null) => (d ? formatDateTime(d) : "—");
+  const fmt = (d: Date | string | null) => (d ? formatDateTime(d, locale) : "—");
 
   async function review(userId: string, decision: "completed" | "rejected") {
     try {

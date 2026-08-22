@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { IconBell as Bell, IconChecks as CheckCheck } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import { markAllRead } from "@/server/actions/notifications";
 import { formatDateTime } from "@/lib/dates";
@@ -19,6 +19,7 @@ type Item = {
 
 export function NotificationBell() {
   const t = useTranslations();
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(0);
   const [items, setItems] = useState<Item[]>([]);
@@ -107,7 +108,7 @@ export function NotificationBell() {
                   {!n.isRead && <span className="absolute left-2 top-1/2 -translate-y-1/2 size-2 rounded-full bg-[var(--primary)]" />}
                   <p className="text-[14px] font-bold leading-snug pl-3">{n.title}</p>
                   {n.message && <p className="text-[12px] text-[var(--muted)] mt-1 leading-snug line-clamp-2 pl-3 font-medium">{n.message}</p>}
-                  <p className="text-[11px] text-[var(--subtle)] mt-1 tabular pl-3 font-medium">{formatDateTime(n.createdAt)}</p>
+                  <p className="text-[11px] text-[var(--subtle)] mt-1 tabular pl-3 font-medium">{formatDateTime(n.createdAt, locale)}</p>
                 </Link>
               ))
             )}

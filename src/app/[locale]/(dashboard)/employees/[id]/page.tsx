@@ -21,6 +21,7 @@ import { sql } from "drizzle-orm";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { shortName } from "@/lib/names";
 import { formatDate } from "@/lib/dates";
+import { getLocale } from "next-intl/server";
 import { AvatarUpload } from "@/components/hr/avatar-upload";
 
 export default async function EmployeePage({ params }: { params: Promise<{ id: string }> }) {
@@ -32,6 +33,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
   if (!data) notFound();
 
   const t = await getTranslations();
+  const locale = await getLocale();
   const [docs, history, leaves] = await Promise.all([
     listEmployeeDocuments(id),
     listPositionHistory(id),
@@ -137,7 +139,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
                 <TableBody>
                   {history.map((h) => (
                     <TableRow key={h.id}>
-                      <TableCell>{formatDate(h.changeDate)}</TableCell>
+                      <TableCell>{formatDate(h.changeDate, locale)}</TableCell>
                       <TableCell>{h.oldPosition ? t(`positions.${h.oldPosition}` as `positions.direktor`) : "—"}</TableCell>
                       <TableCell>{t(`positions.${h.newPosition}` as `positions.direktor`)}</TableCell>
                       <TableCell className="text-[var(--muted)]">{h.reason ?? "—"}</TableCell>

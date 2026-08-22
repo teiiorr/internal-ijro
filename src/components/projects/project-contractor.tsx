@@ -99,7 +99,7 @@ export function ProjectContractor({
           <div className="space-y-1">
             {company.logoUrl && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={company.logoUrl} alt="" className="mb-2 h-16 w-auto max-w-[160px] rounded-lg border border-[var(--border)] object-contain bg-[var(--surface-2)] p-1" />
+              <img src={company.logoUrl} alt="" loading="lazy" decoding="async" className="mb-2 h-16 w-auto max-w-[160px] rounded-lg border border-[var(--border)] object-contain bg-[var(--surface-2)] p-1" />
             )}
             <p className="font-semibold">{company.name}</p>
             {company.contactPerson && (

@@ -129,7 +129,7 @@ export default async function OwnerPage() {
                         {c.entityType ?? "—"}{c.entityId ? ` · ${c.entityId.slice(0, 8)}` : ""}
                       </p>
                     </div>
-                    <span className="text-xs text-[var(--muted)] tabular-nums shrink-0">{formatDateTime(c.createdAt as Date)}</span>
+                    <span className="text-xs text-[var(--muted)] tabular-nums shrink-0">{formatDateTime(c.createdAt as Date, locale)}</span>
                   </li>
                 );
               })}
@@ -170,7 +170,7 @@ export default async function OwnerPage() {
                 )}
                 {logs.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell className="text-xs tabular-nums whitespace-nowrap">{formatDateTime(r.createdAt as Date)}</TableCell>
+                    <TableCell className="text-xs tabular-nums whitespace-nowrap">{formatDateTime(r.createdAt as Date, locale)}</TableCell>
                     <TableCell className="text-sm"><span className="inline-flex items-center gap-1.5">{r.userName && <UserAvatar name={r.userName} avatarUrl={r.userAvatarUrl} size="xs" clickable={false} />}{r.userName ? localizeName(r.userName, locale) : "—"}</span></TableCell>
                     <TableCell><code className="text-xs">{r.action}</code></TableCell>
                     <TableCell className="text-xs text-[var(--muted)]">{r.entityType ?? "—"}{r.entityId ? ` ${r.entityId.slice(0, 8)}` : ""}</TableCell>
@@ -233,7 +233,7 @@ export default async function OwnerPage() {
               {sys.backup.ok ? (
                 sys.backup.latest ? (
                   <dl className="detail-grid grid grid-cols-1 min-[400px]:grid-cols-2 gap-2 sm:gap-x-4 sm:gap-y-1.5 text-sm">
-                    <InfoRow k={t("owner.system.backupLatest")} v={formatDateTime(sys.backup.latest.mtime)} />
+                    <InfoRow k={t("owner.system.backupLatest")} v={formatDateTime(sys.backup.latest.mtime, locale)} />
                     <InfoRow k={t("owner.system.backupSize")} v={`${sys.backup.latest.sizeMb} MB`} />
                     <InfoRow k={t("owner.system.backupCount")} v={String(sys.backup.count)} />
                     <InfoRow k={t("owner.system.backupTotal")} v={`${sys.backup.totalMb} MB`} />

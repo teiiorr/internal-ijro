@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { IconUsers as Users, IconCalendar as CalendarDays } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
@@ -22,6 +22,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
   const { id } = await params;
   const c = await getContest(id);
   if (!c) notFound();
@@ -37,7 +38,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
           <h1 className="text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{c.name}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--muted)]">
             <span className="inline-flex items-center gap-1.5"><Users className="size-4" />{c.participantsCount} {t("tanlov.participantsShort")}</span>
-            {c.heldAt && <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-4" />{formatDate(c.heldAt)}</span>}
+            {c.heldAt && <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-4" />{formatDate(c.heldAt, locale)}</span>}
           </div>
         </div>
         {canManage && (

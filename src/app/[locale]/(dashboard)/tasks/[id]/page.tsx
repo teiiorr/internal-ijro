@@ -46,7 +46,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   }));
 
   const allUsers = await db
-    .select({ id: usersTbl.id, fullName: usersTbl.fullName })
+    .select({ id: usersTbl.id, fullName: usersTbl.fullName, avatarUrl: usersTbl.avatarUrl })
     .from(usersTbl)
     .where(sql`${usersTbl.status} = 'active'`)
     .orderBy(usersTbl.fullName);

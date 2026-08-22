@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { eq } from "drizzle-orm";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +41,7 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "warning" | "succ
 
 export async function TaskHeaderCard({ creator, task, projectName }: Props) {
   const t = await getTranslations();
+  const locale = await getLocale();
   let creatorPosition: string | null = null;
   let creatorDept: string | null = null;
   let creatorAvatar: string | null = null;
@@ -57,12 +58,10 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
   }
 
   const isCompleted = ["completed", "rejected"].includes(task.status);
-  const rel = deadlineRelative(task.deadline, { completed: isCompleted });
+  const rel = deadlineRelative(task.deadline, { completed: isCompleted }, locale);
   const overdue = rel.tone === "overdue";
   const soon = rel.tone === "soon" || rel.tone === "today";
-  // deadlineRelative falls back to formatDate(d) for deadlines >14d away —
-  // suppress the duplicate "11-sentabr 2026 · 11-sentabr 2026" tail.
-  const formattedDeadline = task.deadline ? formatDate(task.deadline) : "";
+  const formattedDeadline = task.deadline ? formatDate(task.deadline, locale) : "";
   const relIsSameAsDate = rel.text === formattedDeadline;
 
   return (
@@ -96,7 +95,7 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
             {creatorDept ? <span> · {creatorDept}</span> : null}
           </p>
         </div>
-        <span className="text-xs text-[var(--muted)] tabular shrink-0">{formatDate(task.createdAt)}</span>
+        <span className="text-xs text-[var(--muted)] tabular shrink-0">{formatDate(task.createdAt, locale)}</span>
       </div>
 
       {task.description && (

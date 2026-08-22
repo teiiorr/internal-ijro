@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { IconFileText as FileText, IconDownload as Download, IconTrash as Trash2, IconPlus as Plus, IconLoader2 as Loader2, IconPaperclip as Paperclip } from "@tabler/icons-react";
 import { compressImage } from "@/lib/images/compress";
@@ -18,6 +18,7 @@ function humanSize(bytes: number | null): string {
 
 export function ContestFiles({ contestId, files, canManage }: { contestId: string; files: ContestFile[]; canManage: boolean }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
   const [pending, start] = useTransition();
@@ -77,7 +78,7 @@ export function ContestFiles({ contestId, files, canManage }: { contestId: strin
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold" title={f.fileName}>{f.fileName}</p>
                 <p className="truncate text-xs text-[var(--muted)]">
-                  {humanSize(f.fileSize)}{f.uploaderName ? ` · ${f.uploaderName}` : ""} · {formatDate(f.uploadedAt as Date)}
+                  {humanSize(f.fileSize)}{f.uploaderName ? ` · ${f.uploaderName}` : ""} · {formatDate(f.uploadedAt as Date, locale)}
                 </p>
               </div>
               <a href={f.fileUrl} download className="grid size-8 shrink-0 place-items-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]" title={t("common.download")}>

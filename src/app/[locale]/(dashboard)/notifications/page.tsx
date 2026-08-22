@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
 import { desc, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
@@ -15,6 +15,7 @@ export default async function NotificationsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
 
   const rows = await db
     .select()
@@ -45,7 +46,7 @@ export default async function NotificationsPage() {
                   {n.message && <p className="text-sm text-[var(--muted)] mt-1">{n.message}</p>}
                 </div>
                 <div className="flex flex-col items-end gap-2 shrink-0">
-                  <span className="text-xs text-[var(--muted)] whitespace-nowrap tabular">{formatDateTime(n.createdAt)}</span>
+                  <span className="text-xs text-[var(--muted)] whitespace-nowrap tabular">{formatDateTime(n.createdAt, locale)}</span>
                   {n.link && (
                     <Button asChild size="sm" variant="outline">
                       <Link href={n.link}>{t("notifications.open")}</Link>

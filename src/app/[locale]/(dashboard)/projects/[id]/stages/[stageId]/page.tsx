@@ -17,6 +17,7 @@ import { ReopenStageButton } from "@/components/projects/reopen-stage-button";
 import { EditStageDialog } from "@/components/projects/edit-stage-dialog";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
+import { localizeName } from "@/lib/names";
 
 export default async function StageDetailPage({ params }: { params: Promise<{ id: string; stageId: string }> }) {
   const session = await auth();
@@ -61,7 +62,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
           <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
             <StatusTag tone={statusMeta.tone}>{statusMeta.icon}{statusMeta.label}</StatusTag>
             {s.responsibleName && (
-              <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{s.responsibleName}</span>
+              <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{localizeName(s.responsibleName, locale)}</span>
             )}
           </div>
         </div>
@@ -85,12 +86,12 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
-              <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate) : t("common.emptyValue")}</dd>
+              <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate, locale) : t("common.emptyValue")}</dd>
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
               <dd className="font-semibold mt-0.5 flex flex-wrap items-center gap-2">
-                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline) : t("common.emptyValue")}</span>
+                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : t("common.emptyValue")}</span>
                 {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
               </dd>
             </div>

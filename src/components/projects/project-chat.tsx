@@ -1,6 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition, useCallback } from "react";
 import { postProjectMessage } from "@/server/actions/projects";
 import {
   IconSend2 as Send,
@@ -24,16 +24,6 @@ type Msg = {
   userAvatarUrl?: string | null;
   attachments?: unknown;
 };
-
-const AVATAR_COLORS = [
-  "bg-blue-500", "bg-emerald-500", "bg-violet-500", "bg-amber-500",
-  "bg-rose-500", "bg-cyan-500", "bg-indigo-500", "bg-teal-500",
-];
-function avatarColor(userId: string): string {
-  let h = 0;
-  for (let i = 0; i < userId.length; i++) h = ((h << 5) - h + userId.charCodeAt(i)) | 0;
-  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
-}
 
 function humanSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -72,26 +62,39 @@ export function ProjectChat({
   stageId,
   messages,
   currentUserId,
+  currentUserName,
+  currentUserAvatar,
   maxBytes = 104857600,
 }: {
   projectId: string;
   stageId?: string | null;
   messages: Msg[];
   currentUserId: string;
+  currentUserName?: string;
+  currentUserAvatar?: string | null;
   maxBytes?: number;
 }) {
   const t = useTranslations();
-  const [pending, start] = useTransition();
+  const [, start] = useTransition();
   const [text, setText] = useState("");
   const [staged, setStaged] = useState<Staged | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [optimistic, setOptimistic] = useState<Msg[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  const allMessages = [...messages, ...optimistic.filter(o => !messages.some(m => m.content === o.content && m.userId === o.userId && Math.abs(new Date(m.createdAt).getTime() - new Date(o.createdAt).getTime()) < 5000))];
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "instant" });
-  }, [messages.length]);
+  }, [allMessages.length]);
+
+  useEffect(() => {
+    if (messages.length > 0 && optimistic.length > 0) {
+      setOptimistic([]);
+    }
+  }, [messages.length, optimistic.length]);
 
   useEffect(() => {
     return () => {
@@ -135,10 +138,25 @@ export function ProjectChat({
     return res.json();
   }
 
-  async function send() {
+  const send = useCallback(async () => {
     const hasText = text.trim().length > 0;
     const hasFile = !!staged;
     if (!hasText && !hasFile) return;
+
+    const msgText = text.trim() || " ";
+
+    const optimisticMsg: Msg = {
+      id: `optimistic-${Date.now()}`,
+      content: msgText,
+      createdAt: new Date(),
+      userId: currentUserId,
+      userName: currentUserName ?? "",
+      userAvatarUrl: currentUserAvatar,
+      attachments: [],
+    };
+    setOptimistic(prev => [...prev, optimisticMsg]);
+    setText("");
+    inputRef.current?.focus();
 
     let attachments: Attachment[] | undefined;
     if (staged) {
@@ -147,6 +165,7 @@ export function ProjectChat({
       setUploading(false);
       if (!att) {
         toast.error(t("projects.chat.uploadError"));
+        setOptimistic(prev => prev.filter(m => m.id !== optimisticMsg.id));
         return;
       }
       attachments = [att];
@@ -154,41 +173,43 @@ export function ProjectChat({
     }
 
     start(async () => {
-      await postProjectMessage({
-        projectId,
-        ...(stageId ? { stageId } : {}),
-        content: text.trim() || " ",
-        attachments,
-      });
-      setText("");
-      inputRef.current?.focus();
+      try {
+        await postProjectMessage({
+          projectId,
+          ...(stageId ? { stageId } : {}),
+          content: msgText,
+          attachments,
+        });
+      } catch {
+        setOptimistic(prev => prev.filter(m => m.id !== optimisticMsg.id));
+        toast.error(t("projects.chat.sendError"));
+      }
     });
-  }
+  }, [text, staged, currentUserId, currentUserName, currentUserAvatar, projectId, stageId, t]);
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (!pending && !uploading) send();
+      if (!uploading) send();
     }
   }
-
-  const busy = pending || uploading;
 
   return (
     <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden" style={{ height: "min(560px, 50dvh)", maxHeight: "560px" }}>
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto overscroll-contain px-2.5 py-3 sm:px-4 space-y-0.5">
-        {messages.length === 0 && (
+        {allMessages.length === 0 && (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-[var(--muted)]">{t("projects.chat.noMessages")}</p>
           </div>
         )}
-        {messages.map((m, i) => {
+        {allMessages.map((m, i) => {
           const mine = m.userId === currentUserId;
-          const prev = i > 0 ? messages[i - 1] : null;
+          const prev = i > 0 ? allMessages[i - 1] : null;
           const showDate = shouldShowSeparator(m.createdAt, prev?.createdAt ?? null);
           const sameUser = prev?.userId === m.userId && !showDate;
           const atts = (m.attachments ?? []) as Attachment[];
+          const isOptimistic = m.id.startsWith("optimistic-");
 
           return (
             <div key={m.id}>
@@ -200,16 +221,14 @@ export function ProjectChat({
                 </div>
               )}
               <div className={`flex items-end gap-1.5 sm:gap-2 ${mine ? "flex-row-reverse" : ""} ${sameUser ? "mt-0.5" : "mt-3"}`}>
-                {/* Avatar — hidden on own messages, collapsed if same user */}
                 {!mine && (
-                  <div className="w-7 sm:w-8 shrink-0 self-end">
+                  <div className="w-8 sm:w-9 shrink-0 self-end">
                     {!sameUser && (
                       <UserAvatar name={m.userName} avatarUrl={m.userAvatarUrl} size="xs" clickable={false} />
                     )}
                   </div>
                 )}
 
-                {/* Bubble */}
                 <div className={`max-w-[80%] sm:max-w-[70%] min-w-[72px]`}>
                   {!sameUser && !mine && (
                     <p className="mb-0.5 px-1 text-[11px] font-semibold text-[var(--primary)]">{m.userName}</p>
@@ -219,10 +238,10 @@ export function ProjectChat({
                       "rounded-2xl px-3 py-1.5 sm:py-2 text-[13px] sm:text-sm leading-relaxed break-words " +
                       (mine
                         ? "bg-[var(--primary)] text-white " + (sameUser ? "rounded-tr-md" : "rounded-br-md")
-                        : "bg-[var(--card)] text-[var(--foreground)] shadow-[0_1px_2px_rgba(0,0,0,0.06)] " + (sameUser ? "rounded-tl-md" : "rounded-bl-md"))
+                        : "bg-[var(--card)] text-[var(--foreground)] shadow-[0_1px_2px_rgba(0,0,0,0.06)] " + (sameUser ? "rounded-tl-md" : "rounded-bl-md")) +
+                      (isOptimistic ? " opacity-70" : "")
                     }
                   >
-                    {/* Attachments */}
                     {atts.length > 0 && (
                       <div className="space-y-1.5 mb-1">
                         {atts.map((a, j) =>
@@ -258,13 +277,12 @@ export function ProjectChat({
                     )}
                     {m.content.trim() && <p className="whitespace-pre-wrap">{m.content}</p>}
                     <p className={`mt-0.5 text-right text-[10px] leading-none ${mine ? "text-white/55" : "text-[var(--muted)]"}`}>
-                      {timeOnly(m.createdAt)}
+                      {isOptimistic ? "..." : timeOnly(m.createdAt)}
                     </p>
                   </div>
                 </div>
 
-                {/* Spacer for own messages (keeps alignment without avatar) */}
-                {mine && <div className="w-7 sm:w-8 shrink-0" />}
+                {mine && <div className="w-8 sm:w-9 shrink-0" />}
               </div>
             </div>
           );
@@ -299,7 +317,7 @@ export function ProjectChat({
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            disabled={busy}
+            disabled={uploading}
             className="grid size-9 sm:size-10 shrink-0 place-items-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95 disabled:opacity-50"
           >
             <Paperclip className="size-[18px] sm:size-5" />
@@ -317,10 +335,10 @@ export function ProjectChat({
           <button
             type="button"
             onClick={send}
-            disabled={busy || (!text.trim() && !staged)}
+            disabled={uploading || (!text.trim() && !staged)}
             className="grid size-9 sm:size-10 shrink-0 place-items-center rounded-full bg-[var(--primary)] text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-40"
           >
-            {busy ? <Loader className="size-[18px] sm:size-5 animate-spin" /> : <Send className="size-[18px] sm:size-5" />}
+            {uploading ? <Loader className="size-[18px] sm:size-5 animate-spin" /> : <Send className="size-[18px] sm:size-5" />}
           </button>
         </div>
       </div>

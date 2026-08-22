@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { IconTrophy as Trophy, IconUsers as Users } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { canEditProjects } from "@/lib/permissions/project-editors";
@@ -16,6 +16,7 @@ export default async function TanlovPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
   const canManage = canEditProjects(session.user.email);
   const contests = await listContests();
 
@@ -45,7 +46,7 @@ export default async function TanlovPage() {
                 <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
                   {hero ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={hero.fileUrl} alt={c.name} className="size-full object-cover" />
+                    <img src={hero.fileUrl} alt={c.name} loading="lazy" decoding="async" className="size-full object-cover" />
                   ) : (
                     <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
                       <span className="select-none text-5xl font-black text-[var(--subtle)]">{c.name.trim().charAt(0).toUpperCase()}</span>
@@ -64,7 +65,7 @@ export default async function TanlovPage() {
                   <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug transition-colors duration-300 group-hover:text-[var(--primary-foreground)]">{c.name}</p>
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate text-xs text-[var(--muted)] transition-colors duration-300 group-hover:text-[var(--primary-foreground)] group-hover:opacity-80">
-                      {c.heldAt ? formatDate(c.heldAt) : `${c.participantsCount} ${t("tanlov.participantsShort")}`}
+                      {c.heldAt ? formatDate(c.heldAt, locale) : `${c.participantsCount} ${t("tanlov.participantsShort")}`}
                     </span>
                     <StatusTag
                       tone={hasWinner ? "green" : "muted"}

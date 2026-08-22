@@ -40,6 +40,8 @@ export function StageChatAccordion({
   countsByStage,
   generalMessages,
   currentUserId,
+  currentUserName,
+  currentUserAvatar,
 }: {
   projectId: string;
   stages: StageInfo[];
@@ -47,6 +49,8 @@ export function StageChatAccordion({
   countsByStage: CountsByStage;
   generalMessages: Msg[];
   currentUserId: string;
+  currentUserName?: string;
+  currentUserAvatar?: string | null;
 }) {
   const t = useTranslations("contractors.detail");
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
@@ -78,6 +82,8 @@ export function StageChatAccordion({
           stageId={null}
           messages={generalMessages}
           currentUserId={currentUserId}
+          currentUserName={currentUserName}
+          currentUserAvatar={currentUserAvatar}
         />
       </AccordionItem>
 
@@ -99,6 +105,8 @@ export function StageChatAccordion({
               stageId={stage.id}
               messages={msgs}
               currentUserId={currentUserId}
+              currentUserName={currentUserName}
+              currentUserAvatar={currentUserAvatar}
             />
           </AccordionItem>
         );

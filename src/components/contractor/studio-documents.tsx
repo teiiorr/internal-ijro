@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -48,6 +48,7 @@ export function StudioDocuments({
   maxBytes: number;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [category, setCategory] = useState("");
@@ -155,7 +156,7 @@ export function StudioDocuments({
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold" title={d.fileName}>{d.fileName}</p>
                       <p className="truncate text-xs text-[var(--muted)]">
-                        {humanSize(d.fileSize)}{` · ${formatDate(d.uploadedAt as Date)}`}
+                        {humanSize(d.fileSize)}{` · ${formatDate(d.uploadedAt as Date, locale)}`}
                       </p>
                     </div>
                     <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>

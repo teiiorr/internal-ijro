@@ -1,11 +1,11 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useState, useTransition } from "react";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { addComment } from "@/server/actions/tasks";
 import { formatDateTime } from "@/lib/dates";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { MentionTextarea, type MentionUser } from "@/components/ui/mention-textarea";
 
 type C = {
   id: string;
@@ -16,21 +16,32 @@ type C = {
   userAvatarUrl?: string | null;
   parentCommentId: string | null;
 };
-type User = { id: string; fullName: string };
 
-export function CommentsSection({ taskId, comments }: { taskId: string; comments: C[]; users?: User[] }) {
+export function CommentsSection({ taskId, comments, users = [] }: { taskId: string; comments: C[]; users?: MentionUser[] }) {
   const t = useTranslations();
+  const locale = useLocale();
   const [pending, start] = useTransition();
   const [text, setText] = useState("");
+  const [mentions, setMentions] = useState<string[]>([]);
 
   function send() {
     if (!text.trim()) return;
     start(async () => {
-      await addComment({ taskId, content: text });
+      await addComment({ taskId, content: text, mentions: mentions.length > 0 ? mentions : undefined });
       setText("");
+      setMentions([]);
     });
   }
 
+  function renderContent(content: string) {
+    const parts = content.split(/(@[\wЀ-ӿ']+(?:\s[\wЀ-ӿ']+)?)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith("@") && users.some((u) => `@${u.fullName}` === part)) {
+        return <span key={i} className="font-semibold text-[var(--primary)]">{part}</span>;
+      }
+      return part;
+    });
+  }
 
   return (
     <div className="space-y-5">
@@ -41,18 +52,20 @@ export function CommentsSection({ taskId, comments }: { taskId: string; comments
             <div className="flex-1 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] p-3.5">
               <div className="flex justify-between items-baseline mb-1">
                 <span className="font-semibold text-sm">{c.userName}</span>
-                <span className="text-[12px] text-[var(--muted)] tabular">{formatDateTime(c.createdAt)}</span>
+                <span className="text-[12px] text-[var(--muted)] tabular">{formatDateTime(c.createdAt, locale)}</span>
               </div>
-              <p className="text-sm whitespace-pre-wrap leading-relaxed">{c.content}</p>
+              <p className="text-sm whitespace-pre-wrap leading-relaxed">{renderContent(c.content)}</p>
             </div>
           </div>
         ))}
         {comments.length === 0 && <p className="text-sm text-[var(--muted)] py-2">{t("tasks.sections.noComments")}</p>}
       </div>
       <div className="space-y-2">
-        <Textarea
+        <MentionTextarea
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={setText}
+          onMentionsChange={setMentions}
+          users={users}
           placeholder={t("tasks.sections.writeComment")}
           rows={3}
         />

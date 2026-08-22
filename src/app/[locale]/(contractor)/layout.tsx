@@ -19,7 +19,7 @@ export default async function ContractorLayout({ children }: { children: React.R
   const t = await getTranslations();
 
   const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);
-  const company = await db.select().from(externalCompanies).where(eq(externalCompanies.contactEmail, session.user.email)).limit(1);
+  const company = await db.select({ name: externalCompanies.name, status: externalCompanies.status, rejectionReason: externalCompanies.rejectionReason, ndaAcceptedAt: externalCompanies.ndaAcceptedAt }).from(externalCompanies).where(eq(externalCompanies.contactEmail, session.user.email)).limit(1);
   if (company.length > 0 && company[0].status !== "approved") {
     return (
       <SessionProvider>

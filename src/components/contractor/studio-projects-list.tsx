@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDate } from "@/lib/dates";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,7 @@ const STATUS_VARIANT: Record<string, "success" | "warning" | "danger" | "seconda
 
 export function StudioProjectsList({ projects }: { projects: Project[] }) {
   const t = useTranslations();
+  const locale = useLocale();
 
   if (projects.length === 0) {
     return (
@@ -64,7 +66,7 @@ export function StudioProjectsList({ projects }: { projects: Project[] }) {
               {p.deadline && (
                 <span className="flex items-center gap-1">
                   <Calendar className="size-3.5" />
-                  {new Date(p.deadline).toLocaleDateString("uz-Latn", { day: "2-digit", month: "short", year: "numeric" })}
+                  {formatDate(p.deadline, locale)}
                 </span>
               )}
             </div>

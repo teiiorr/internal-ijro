@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TaskPriorityBadge, TaskStatusBadge } from "./task-status-badge";
@@ -30,6 +30,7 @@ function DeadlinePill({ deadline, completed }: { deadline: Date | string | null;
 
 export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
   const t = useTranslations();
+  const locale = useLocale();
   const [view, setView] = useState<"list" | "calendar">("list");
 
   return (
@@ -106,7 +107,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
               <TableBody>
                 {tasks.map((row) => {
                   const completed = ["completed", "rejected"].includes(row.status);
-                  const rel = deadlineRelative(row.deadline, { completed });
+                  const rel = deadlineRelative(row.deadline, { completed }, locale);
                   return (
                     <TableRow key={row.id} className={cn(rel.tone === "overdue" && "bg-[var(--danger-soft)]/40")}>
                       <TableCell><Link href={`/tasks/${row.id}`} className="font-medium hover:underline">{row.title}</Link></TableCell>

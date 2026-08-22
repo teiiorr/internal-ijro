@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDate } from "@/lib/dates";
 import { IconPhoto as PhotoIcon } from "@tabler/icons-react";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 
@@ -20,6 +21,7 @@ export function StudioGallery({
   projects: { id: string; name: string }[];
 }) {
   const t = useTranslations("contractors.detail.gallery");
+  const locale = useLocale();
   const [filter, setFilter] = useState<string>("all");
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
@@ -28,7 +30,7 @@ export function StudioGallery({
   const lightboxImages = filtered.map((i) => ({
     url: i.fileUrl,
     name: i.fileName,
-    date: new Date(i.uploadedAt).toLocaleDateString("uz-Latn", { day: "2-digit", month: "short", year: "numeric" }),
+    date: formatDate(i.uploadedAt, locale),
   }));
 
   return (

@@ -15,6 +15,7 @@ import { StagePayments } from "@/components/projects/stage-payments";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
+import { localizeName } from "@/lib/names";
 import { eq } from "drizzle-orm";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 
@@ -67,7 +68,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
           <div className="flex items-center gap-3 mt-2 flex-wrap text-sm">
             <StatusTag tone={statusMeta.tone}>{statusMeta.icon}{statusMeta.label}</StatusTag>
             {s.responsibleName && (
-              <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{s.responsibleName}</span>
+              <span className="text-[var(--muted)] inline-flex items-center gap-1"><User className="size-3.5" />{localizeName(s.responsibleName, locale)}</span>
             )}
           </div>
         </div>
@@ -83,12 +84,12 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
-              <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate) : t("common.emptyValue")}</dd>
+              <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate, locale) : t("common.emptyValue")}</dd>
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
               <dd className="font-semibold mt-0.5 flex flex-wrap items-center gap-2">
-                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline) : t("common.emptyValue")}</span>
+                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : t("common.emptyValue")}</span>
                 {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
               </dd>
             </div>
@@ -128,7 +129,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-4">
           <h3 className="text-base font-semibold">{t("projects.tabs.chat")}</h3>
-          <ProjectChat projectId={id} stageId={stageId} currentUserId={session.user.id} messages={messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
+          <ProjectChat projectId={id} stageId={stageId} currentUserId={session.user.id} currentUserName={session.user.fullName} messages={messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
         </CardContent>
       </Card>
     </div>

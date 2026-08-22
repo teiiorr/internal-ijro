@@ -72,7 +72,7 @@ export function ContractorRow({ c, canManageLogo }: { c: C; canManageLogo: boole
             <div className="grid size-14 place-items-center overflow-hidden rounded-xl bg-[var(--surface-3)] text-[var(--muted)]">
               {logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={logoUrl} alt="" className="size-full object-cover" />
+                <img src={logoUrl} alt="" loading="lazy" decoding="async" className="size-full object-cover" />
               ) : (
                 <span className="text-sm font-bold">{initial(c.name)}</span>
               )}

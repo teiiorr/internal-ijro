@@ -1,7 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { IconMessage as MessageSquare, IconSend as Send, IconTrash as Trash2, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,7 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 
 export function ContestComments({ contestId, comments, canModerate }: { contestId: string; comments: ContestComment[]; canModerate: boolean }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [body, setBody] = useState("");
   const [pending, start] = useTransition();
@@ -53,7 +54,7 @@ export function ContestComments({ contestId, comments, canModerate }: { contestI
             <li key={c.id} className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 truncate text-sm font-semibold">{c.userName && <UserAvatar name={c.userName} avatarUrl={c.userAvatarUrl} size="xs" clickable={false} />}{c.userName ?? "—"}</span>
-                <span className="shrink-0 text-xs text-[var(--muted)] tabular-nums">{formatDateTime(c.createdAt as Date)}</span>
+                <span className="shrink-0 text-xs text-[var(--muted)] tabular-nums">{formatDateTime(c.createdAt as Date, locale)}</span>
               </div>
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-[var(--foreground)]">{c.body}</p>
               {canModerate && (

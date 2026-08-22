@@ -6,10 +6,10 @@ import { cn } from "@/lib/utils";
 type Size = "xs" | "sm" | "md" | "lg";
 
 const SIZE_MAP: Record<Size, { container: string; text: string }> = {
-  xs: { container: "size-7", text: "text-[10px]" },
-  sm: { container: "size-9", text: "text-xs" },
-  md: { container: "size-10", text: "text-sm" },
-  lg: { container: "size-14", text: "text-lg" },
+  xs: { container: "size-8", text: "text-[11px]" },
+  sm: { container: "size-10", text: "text-sm" },
+  md: { container: "size-12", text: "text-base" },
+  lg: { container: "size-16", text: "text-xl" },
 };
 
 function getInitials(name: string) {
@@ -30,6 +30,7 @@ interface UserAvatarProps {
 export function UserAvatar({ name, avatarUrl, size = "md", className, clickable = true, department, position }: UserAvatarProps) {
   const [lightbox, setLightbox] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const { container, text } = SIZE_MAP[size];
   const hasPhoto = !!avatarUrl && !imgError;
 
@@ -45,7 +46,7 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
         onClick={handleClick}
         onKeyDown={(e) => { if (e.key === "Enter") handleClick(); }}
         className={cn(
-          "rounded-full shrink-0 flex items-center justify-center font-semibold overflow-hidden",
+          "rounded-full shrink-0 flex items-center justify-center font-semibold overflow-hidden relative",
           hasPhoto ? "ring-2 ring-[var(--border)]" : "bg-[var(--primary-soft)] text-[var(--primary)]",
           clickable && hasPhoto && "cursor-pointer hover:ring-[var(--primary)] transition-all",
           container,
@@ -54,7 +55,20 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
         )}
       >
         {hasPhoto ? (
-          <img src={avatarUrl!} alt={name} className="size-full object-cover" onError={() => setImgError(true)} />
+          <>
+            {!imgLoaded && (
+              <div className="absolute inset-0 skeleton-shimmer rounded-full" />
+            )}
+            <img
+              src={avatarUrl!}
+              alt={name}
+              loading="lazy"
+              decoding="async"
+              className={cn("size-full object-cover transition-opacity duration-300", imgLoaded ? "opacity-100" : "opacity-0")}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgError(true)}
+            />
+          </>
         ) : (
           getInitials(name)
         )}

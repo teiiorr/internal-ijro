@@ -88,16 +88,20 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
           >
-            {/* Cross-fade stack: all photos rendered, only the active one opaque. */}
-            {photos.map((p, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={p.id}
-                src={p.fileUrl}
-                alt={p.caption ?? ""}
-                className={`absolute inset-0 size-full object-contain transition-opacity duration-700 ${i === active ? "opacity-100" : "opacity-0"}`}
-              />
-            ))}
+            {photos.map((p, i) => {
+              const near = i === active || i === (active + 1) % count || i === (active - 1 + count) % count;
+              if (!near) return null;
+              return (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={p.id}
+                  src={p.fileUrl}
+                  alt={p.caption ?? ""}
+                  decoding="async"
+                  className={`absolute inset-0 size-full object-contain transition-opacity duration-700 ${i === active ? "opacity-100" : "opacity-0"}`}
+                />
+              );
+            })}
 
             {count > 1 && (
               <>

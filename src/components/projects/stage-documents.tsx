@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -43,6 +43,7 @@ export function StageDocuments({
   maxBytes: number;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
@@ -184,7 +185,7 @@ export function StageDocuments({
                       <p className="truncate text-xs text-[var(--muted)]">
                         {humanSize(d.fileSize)}
                         {d.uploaderName ? ` · ${d.uploaderName}` : ""}
-                        {` · ${formatDate(d.uploadedAt as Date)}`}
+                        {` · ${formatDate(d.uploadedAt as Date, locale)}`}
                       </p>
                     </div>
                     {canManage && folderNames.length > 0 && (

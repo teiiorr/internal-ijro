@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { formatDateTime } from "@/lib/dates";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -43,6 +44,7 @@ type Stats = {
 
 export function StudioInfoCard({ company, stats }: { company: Company; stats: Stats }) {
   const t = useTranslations("contractors.detail");
+  const locale = useLocale();
   const router = useRouter();
   const [notes, setNotes] = useState(company.notes ?? "");
   const [saved, setSaved] = useState(true);
@@ -89,7 +91,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
           className="group relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-3)] cursor-pointer"
         >
           {company.logoUrl ? (
-            <img src={company.logoUrl} alt="" className="size-full object-cover" />
+            <img src={company.logoUrl} alt="" loading="lazy" decoding="async" className="size-full object-cover" />
           ) : (
             <span className="text-xl font-bold text-[var(--muted)]">
               {company.name.charAt(0).toUpperCase()}
@@ -191,9 +193,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
         <div className="rounded-xl bg-[var(--surface-2)] py-3 px-2">
           <p className="text-xs font-bold text-[var(--foreground)]">
             {stats.lastActivity
-              ? new Date(stats.lastActivity).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit", year: "numeric" }) +
-                " " +
-                new Date(stats.lastActivity).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })
+              ? formatDateTime(stats.lastActivity, locale)
               : "—"}
           </p>
           <p className="text-[11px] font-medium text-[var(--muted)]">{t("statsLastActivity")}</p>

@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ const TYPES = [
 
 export function DocumentsTab({ userId, documents, canEdit }: { userId: string; documents: Doc[]; canEdit: boolean }) {
   const t = useTranslations();
+  const locale = useLocale();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
   const [docType, setDocType] = useState<string>("contract");
@@ -86,7 +87,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
               <TableCell>{d.title}</TableCell>
               <TableCell>{d.documentType}</TableCell>
               <TableCell>{d.fileSize ? `${Math.round(d.fileSize / 1024)} KB` : "—"}</TableCell>
-              <TableCell>{formatDate(d.uploadedAt)}</TableCell>
+              <TableCell>{formatDate(d.uploadedAt, locale)}</TableCell>
               <TableCell className="text-right">
                 <Button asChild variant="ghost" size="icon">
                   <a href={d.fileUrl}><Download className="size-4" /></a>

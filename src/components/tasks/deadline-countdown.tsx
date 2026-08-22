@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 import { StatusTag } from "@/components/ui/status-tag";
 
@@ -9,41 +10,49 @@ type Props = {
   className?: string;
 };
 
+const LABELS: Record<string, { day: string; hour: string; min: string; sec: string; overdue: string }> = {
+  "uz-latn": { day: "kun", hour: "soat", min: "minut", sec: "son.", overdue: "Kechikdi" },
+  "uz-cyrl": { day: "кун", hour: "соат", min: "минут", sec: "сон.", overdue: "Кечикди" },
+  ru: { day: "дн.", hour: "ч.", min: "мин.", sec: "сек.", overdue: "Просрочено" },
+};
+
 function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
-/**
- * Live countdown chip with verbose Uzbek units that collapse as time runs out:
- *   23 kun 4 soat 12 minut    — many days remain
- *   4 soat 12 minut           — under a day (kun dropped)
- *   12:45                     — under an hour (now ticking by second)
- *   45 son.                   — under a minute
- *   Kechikdi                  — deadline passed
- *
- * The component re-renders every second so the seconds tick visibly when it
- * matters (last hour) without thrashing render the rest of the time —
- * setInterval is a 1Hz tick either way; React skips no-op renders cheaply.
- */
+function tickInterval(diffMs: number): number {
+  if (diffMs <= 0) return 0;
+  const totalSec = Math.floor(diffMs / 1000);
+  const days = Math.floor(totalSec / 86_400);
+  const hours = Math.floor((totalSec % 86_400) / 3_600);
+  if (days > 0) return 60_000;
+  if (hours > 0) return 30_000;
+  return 1_000;
+}
+
 export function DeadlineCountdown({ deadline, completed = false, className }: Props) {
+  const locale = useLocale();
   const [now, setNow] = useState<number>(() => Date.now());
 
+  const target = deadline ? new Date(deadline).getTime() : NaN;
+  const diffMs = Number.isNaN(target) ? 0 : target - now;
+  const interval = tickInterval(diffMs);
+
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
+    if (!interval) return;
+    const id = setInterval(() => setNow(Date.now()), interval);
     return () => clearInterval(id);
-  }, []);
+  }, [interval]);
 
   if (!deadline || completed) return null;
-
-  const target = new Date(deadline).getTime();
   if (Number.isNaN(target)) return null;
 
-  const diffMs = target - now;
+  const l = LABELS[locale] ?? LABELS["uz-latn"];
 
   if (diffMs <= 0) {
     return (
       <StatusTag tone="red" className={cn("tabular-nums", className)}>
-        Kechikdi
+        {l.overdue}
       </StatusTag>
     );
   }
@@ -54,23 +63,19 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
   const mins = Math.floor((totalSec % 3_600) / 60);
   const secs = totalSec % 60;
 
-  // Traffic-light tone: red if < 6h, amber if < 3 days, green otherwise.
   const urgent = days === 0 && hours < 6;
   const soon = days < 3;
   const tone = urgent ? "red" : soon ? "amber" : "green";
 
   let text: string;
   if (days > 0) {
-    text = `${days} kun`;
+    text = `${days} ${l.day}`;
   } else if (hours > 0) {
-    // "4 soat 12 minut" — kun dropped
-    text = `${hours} soat ${mins} minut`;
+    text = `${hours} ${l.hour} ${mins} ${l.min}`;
   } else if (mins > 0) {
-    // "12:45" — last hour, real-time MM:SS ticker
     text = `${pad(mins)}:${pad(secs)}`;
   } else {
-    // "45 son." — last minute, count seconds
-    text = `${secs} son.`;
+    text = `${secs} ${l.sec}`;
   }
 
   return (

@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown } from "@tabler/icons-react";
 import { sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
@@ -14,11 +14,11 @@ import { formatDate } from "@/lib/dates";
 const KINDS = ["ekspert", "smeta"] as const;
 type Kind = (typeof KINDS)[number];
 
-function dateTime(d: Date | string): string {
+function dateTime(d: Date | string, locale = "uz-latn"): string {
   const date = new Date(new Date(d).getTime() + 5 * 60 * 60 * 1000);
   const hh = String(date.getUTCHours()).padStart(2, "0");
   const mm = String(date.getUTCMinutes()).padStart(2, "0");
-  return `${formatDate(d)} · ${hh}:${mm}`;
+  return `${formatDate(d, locale)} · ${hh}:${mm}`;
 }
 
 export default async function CouncilPage({ params }: { params: Promise<{ kind: string }> }) {
@@ -27,6 +27,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
   const { kind } = await params;
   if (!KINDS.includes(kind as Kind)) notFound();
   const t = await getTranslations();
+  const locale = await getLocale();
 
   const me = session.user;
   const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
@@ -55,7 +56,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
             <div className="flex items-center gap-2 text-sm">
               <CalendarClock className="size-4 text-[var(--primary)]" />
               <span className="font-semibold">{upcoming.title || t("kengash.agenda")}</span>
-              <span className="text-[var(--muted)]">· {dateTime(upcoming.scheduledAt)}</span>
+              <span className="text-[var(--muted)]">· {dateTime(upcoming.scheduledAt, locale)}</span>
             </div>
             <CouncilAgenda
               meetingId={upcoming.id}
@@ -95,7 +96,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
                     <summary className="flex cursor-pointer list-none items-center gap-2 text-sm sm:gap-3 [&::-webkit-details-marker]:hidden">
                       <CalendarClock className="size-4 shrink-0 text-[var(--subtle)]" />
                       <span className="min-w-0 flex-1 truncate font-medium">{m.title || t("kengash.agenda")}</span>
-                      <span className="shrink-0 text-xs text-[var(--muted)] sm:text-sm">{dateTime(m.scheduledAt)}</span>
+                      <span className="shrink-0 text-xs text-[var(--muted)] sm:text-sm">{dateTime(m.scheduledAt, locale)}</span>
                       <ChevronDown className="size-4 shrink-0 text-[var(--muted)] transition-transform group-open:rotate-180" />
                     </summary>
                     <ol className="mt-3 space-y-2 border-t border-[var(--border)] pt-3 text-sm">

@@ -139,11 +139,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate) : t("common.emptyValue")}</dd>
+                <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.deadline ? formatDate(sp.project.deadline) : t("common.emptyValue")}</dd>
+                <dd className="font-semibold mt-0.5">{sp.project.deadline ? formatDate(sp.project.deadline, locale) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
@@ -227,7 +227,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                   <div className="flex flex-wrap items-center gap-2 text-sm">
                     <CalendarClock className="size-3.5 shrink-0 text-[var(--muted)]" />
                     <span className={`font-medium ${activeStage.plannedDeadline ? "" : "text-[var(--muted)]"}`}>
-                      {activeStage.plannedDeadline ? formatDate(activeStage.plannedDeadline) : t("projects.stageDeadline.notSet")}
+                      {activeStage.plannedDeadline ? formatDate(activeStage.plannedDeadline, locale) : t("projects.stageDeadline.notSet")}
                     </span>
                     {activeStage.plannedDeadline && <DeadlineCountdown deadline={activeStage.plannedDeadline} />}
                   </div>
@@ -309,11 +309,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             )}
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-              <dd className="font-semibold mt-0.5">{data.project.startDate ? formatDate(data.project.startDate) : t("common.emptyValue")}</dd>
+              <dd className="font-semibold mt-0.5">{data.project.startDate ? formatDate(data.project.startDate, locale) : t("common.emptyValue")}</dd>
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-              <dd className="font-semibold mt-0.5">{data.project.deadline ? formatDate(data.project.deadline) : t("common.emptyValue")}</dd>
+              <dd className="font-semibold mt-0.5">{data.project.deadline ? formatDate(data.project.deadline, locale) : t("common.emptyValue")}</dd>
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>

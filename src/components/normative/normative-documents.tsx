@@ -1,5 +1,5 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -40,6 +40,7 @@ export function NormativeDocuments({
   maxBytes: number;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [folder, setFolder] = useState("");
@@ -175,7 +176,7 @@ export function NormativeDocuments({
               </div>
               <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2 sm:pl-6">
                 {g.docs.map((d) => {
-                  const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date)}`;
+                  const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date, locale)}`;
                   return (
                     <li key={d.id} className="flex min-w-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5">
                       <div className={`grid size-9 shrink-0 place-items-center rounded-lg ${d.isLink ? "bg-[var(--accent-soft,var(--primary-soft))] text-[var(--accent,var(--primary))]" : "bg-[var(--primary-soft)] text-[var(--primary)]"}`}>

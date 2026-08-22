@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { IconCheck as Check, IconLock as Lock, IconChevronRight as ChevronRight } from "@tabler/icons-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
@@ -25,6 +25,7 @@ export type StagePathItem = {
  */
 export function StagePath({ projectId, stages, basePath }: { projectId: string; stages: StagePathItem[]; basePath?: string }) {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <ol>
@@ -36,7 +37,7 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
 
         const tone: StatusTone = isCompleted ? "green" : isActive ? "amber" : "red";
         const label = isCompleted ? t("projects.stagePath.done") : isActive ? t("projects.stagePath.active") : t("projects.stagePath.locked");
-        const meta = [s.responsibleName, s.plannedDeadline ? formatDate(s.plannedDeadline) : null].filter(Boolean).join(" · ");
+        const meta = [s.responsibleName, s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : null].filter(Boolean).join(" · ");
 
         return (
           <li key={s.id}>
@@ -77,7 +78,7 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
                 </div>
                 {(s.responsibleName || s.plannedDeadline) && (
                   <p className="mt-1 text-sm text-[var(--muted)] truncate">
-                    {[shortName(s.responsibleName), s.plannedDeadline ? formatDate(s.plannedDeadline) : null].filter(Boolean).join(" · ")}
+                    {[shortName(s.responsibleName), s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : null].filter(Boolean).join(" · ")}
                   </p>
                 )}
               </div>

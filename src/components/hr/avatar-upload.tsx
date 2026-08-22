@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IconCamera, IconLoader2 } from "@tabler/icons-react";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { compressImage } from "@/lib/images/compress";
 
 interface Props {
   userId: string;
@@ -19,9 +20,10 @@ export function AvatarUpload({ userId, name, avatarUrl, canEdit, department, pos
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  async function handleFile(file: File) {
+  async function handleFile(raw: File) {
     setUploading(true);
     try {
+      const { file } = await compressImage(raw, { targetBytes: 200 * 1024, maxDimension: 512 });
       const res = await fetch(`/api/files/avatar?userId=${userId}&name=${encodeURIComponent(file.name)}`, {
         method: "POST",
         body: file,

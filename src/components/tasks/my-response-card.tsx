@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,7 @@ type Props = {
 
 export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl, responseFileName, responseSubmittedAt }: Props) {
   const t = useTranslations();
+  const locale = useLocale();
   const [text, setText] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
@@ -43,7 +44,7 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
     });
   }
 
-  const fmt = (d: Date | string | null) => (d ? formatDateTime(d) : "—");
+  const fmt = (d: Date | string | null) => (d ? formatDateTime(d, locale) : "—");
 
   return (
     <Card className="overflow-hidden">

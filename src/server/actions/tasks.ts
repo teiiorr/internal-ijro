@@ -163,6 +163,7 @@ const commentSchema = z.object({
   taskId: z.string().uuid(),
   content: z.string().min(1).max(5000),
   parentCommentId: z.string().uuid().nullable().optional(),
+  mentions: z.array(z.string().uuid()).optional(),
 });
 
 export async function addComment(input: z.infer<typeof commentSchema>) {
@@ -175,6 +176,7 @@ export async function addComment(input: z.infer<typeof commentSchema>) {
       userId: me.id,
       content: parsed.content,
       parentCommentId: parsed.parentCommentId ?? null,
+      mentions: parsed.mentions?.length ? parsed.mentions : null,
     })
     .returning({ id: taskComments.id });
   await logActivity({
@@ -184,12 +186,14 @@ export async function addComment(input: z.infer<typeof commentSchema>) {
     entityId: parsed.taskId,
     newValue: { commentId: inserted[0].id },
   });
-  // Notify task assignee + creator
   const t = await db.select().from(tasks).where(eq(tasks.id, parsed.taskId)).limit(1);
   if (t.length > 0) {
     const recipients = new Set<string>();
     recipients.add(t[0].assignedToUserId);
     recipients.add(t[0].createdByUserId);
+    if (parsed.mentions?.length) {
+      for (const uid of parsed.mentions) recipients.add(uid);
+    }
     recipients.delete(me.id);
     if (recipients.size > 0) {
       await notify({
