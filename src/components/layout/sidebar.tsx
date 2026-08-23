@@ -1,7 +1,7 @@
 "use client";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, IconLayoutKanban as FolderKanban, IconUsers as Users, IconBuilding as Building2, IconHeartHandshake as Handshake, IconBell as Bell, IconFileText as ScrollText, IconSettings as Settings, IconPresentation as Presentation, IconCoins as Coins, IconShieldCheck as ShieldCheck, IconFileCheck as FileCheck2, IconTrophy as Trophy } from "@tabler/icons-react";
+import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, IconLayoutKanban as FolderKanban, IconUsers as Users, IconBuilding as Building2, IconHeartHandshake as Handshake, IconBell as Bell, IconFileText as ScrollText, IconSettings as Settings, IconPresentation as Presentation, IconCoins as Coins, IconShieldCheck as ShieldCheck, IconFileCheck as FileCheck2, IconCertificate as Certificate } from "@tabler/icons-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ const ITEMS: Item[] = [
   { href: "/dashboard",         icon: LayoutDashboard, key: "dashboard",      allowed: ALL,                                                                section: "primary" },
   { href: "/tasks",             icon: ListTodo,        key: "tasks",          allowed: STAFF,                                                              section: "primary" },
   { href: "/projects",          icon: FolderKanban,    key: "projects",       allowed: ALL,                                                                section: "primary" },
-  { href: "/tanlov",            icon: Trophy,          key: "tanlov",         allowed: ALL,                                                                section: "work" },
+  { href: "/tanlov",            icon: Certificate,          key: "tanlov",         allowed: ALL,                                                                section: "work" },
   { href: "/kengashlar/ekspert", icon: Presentation,   key: "ekspertKengash", allowed: STAFF,                                                              section: "work" },
   { href: "/kengashlar/smeta",   icon: Coins,          key: "smetaKengash",   allowed: STAFF,                                                              section: "work" },
   { href: "/employees",         icon: Users,           key: "employees",      allowed: HR_ROLES,                                                           section: "work" },

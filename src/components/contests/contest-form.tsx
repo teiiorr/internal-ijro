@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { IconPlus as Plus, IconPencil as Pencil, IconLoader2 as Loader2, IconTrophy as Trophy } from "@tabler/icons-react";
+import { IconPlus as Plus, IconPencil as Pencil, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -69,8 +69,7 @@ export function ContestForm({ contest }: { contest?: Contest }) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Trophy className="size-5 text-[var(--warning)]" />
+          <DialogTitle>
             {isEdit ? t("tanlov.editTitle") : t("tanlov.createTitle")}
           </DialogTitle>
         </DialogHeader>
