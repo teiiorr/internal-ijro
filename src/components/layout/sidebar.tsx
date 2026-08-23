@@ -74,7 +74,7 @@ export function Sidebar({ position, userId, isOwner }: { position: Position; use
                       )}
                     >
                       <Icon className={cn("size-[22px] shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
-                      <span>{t(key)}</span>
+                      <span className="min-w-0 truncate">{t(key)}</span>
                     </Link>
                   );
                 })}
