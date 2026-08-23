@@ -60,16 +60,17 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
       {/* Unified stage header + schedule/budget — one combined card. */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <div className="flex items-center justify-between gap-2">
-            <BackButton fallbackHref={`/contractor/projects/${id}`} />
-          </div>
-          <div className="text-center">
-            <p className="text-xs font-medium text-[var(--muted)]">
-              <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
-              {" · "}
-              {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
-            </p>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
+          {/* Balanced header bar: back + title (left) on one row. */}
+          <div className="flex items-start gap-3 sm:gap-4">
+            <BackButton fallbackHref={`/contractor/projects/${id}`} className="mt-0.5 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-medium text-[var(--muted)]">
+                <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
+                {" · "}
+                {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
+              </p>
+              <h1 className="mt-1 text-xl font-bold tracking-tight leading-snug break-words sm:text-2xl">{s.name}</h1>
+            </div>
           </div>
 
           <div className="border-t border-[var(--border)]" />
