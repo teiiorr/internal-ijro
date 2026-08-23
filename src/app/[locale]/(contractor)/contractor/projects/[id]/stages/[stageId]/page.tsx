@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
 import { IconLock as Lock } from "@tabler/icons-react";
-import { EmployeeIdentity } from "@/components/ui/employee-identity";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -60,55 +60,56 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
       {/* Unified stage header + schedule/budget — one combined card. */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <div className="flex items-start gap-3">
-            <BackButton fallbackHref={`/contractor/projects/${id}`} className="mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-[var(--muted)]">
+          <div className="flex items-center gap-3">
+            <BackButton fallbackHref={`/contractor/projects/${id}`} />
+            <div className="min-w-0 flex-1 text-center">
+              <p className="text-xs font-medium text-[var(--muted)] truncate">
                 <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
                 {" · "}
                 {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
               </p>
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
-              <div className="flex items-center gap-3 mt-3 flex-wrap text-sm">
-                <StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag>
-                {s.responsibleName && (
-                  <EmployeeIdentity
-                    name={localizeName(s.responsibleName, locale)}
-                    avatarUrl={s.responsibleAvatarUrl}
-                    subtitle={t("projects.fields.responsible")}
-                    size="sm"
-                  />
-                )}
-              </div>
             </div>
+            <div className="size-11 shrink-0" aria-hidden />
           </div>
 
           <div className="border-t border-[var(--border)]" />
 
-          <div className="space-y-3">
-            <h3 className="text-base font-semibold">{t("projects.editStage.scheduleTitle")}</h3>
-            <dl className="detail-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm">
+          {/* All stage facts as one uniform horizontal row of cards. */}
+          <dl className="detail-grid grid grid-cols-2 gap-3 text-sm sm:grid-cols-3 lg:grid-cols-6">
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
+              <dd className="mt-1 flex justify-center"><StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag></dd>
+            </div>
+            {s.responsibleName && (
               <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.contractNumber")}</dt>
-                <dd className="font-semibold mt-0.5 break-words">{s.contractNumber || t("common.emptyValue")}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
-                <dd className="font-semibold mt-0.5">{s.plannedStartDate ? formatDate(s.plannedStartDate, locale) : t("common.emptyValue")}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
-                <dd className="font-semibold mt-0.5 flex flex-wrap items-center gap-2">
-                  <span>{s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : t("common.emptyValue")}</span>
-                  {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
+                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.responsible")}</dt>
+                <dd className="mt-1 flex items-center justify-center gap-1.5">
+                  <UserAvatar name={localizeName(s.responsibleName, locale)} avatarUrl={s.responsibleAvatarUrl} size="xs" clickable={false} />
+                  <span className="truncate font-semibold">{localizeName(s.responsibleName, locale)}</span>
                 </dd>
               </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
-                <dd className="font-semibold mt-0.5 tabular-nums whitespace-nowrap">{s.plannedAmount != null ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : t("common.emptyValue")}</dd>
-              </div>
-            </dl>
-          </div>
+            )}
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.contractNumber")}</dt>
+              <dd className="font-semibold mt-1 break-words">{s.contractNumber || t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.startDate")}</dt>
+              <dd className="font-semibold mt-1">{s.plannedStartDate ? formatDate(s.plannedStartDate, locale) : t("common.emptyValue")}</dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.endDate")}</dt>
+              <dd className="font-semibold mt-1 flex flex-wrap items-center justify-center gap-2">
+                <span>{s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : t("common.emptyValue")}</span>
+                {s.status === "active" && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.editStage.budget")}</dt>
+              <dd className="font-semibold mt-1 tabular-nums whitespace-nowrap">{s.plannedAmount != null ? `${s.plannedAmount.toLocaleString("ru-RU")} UZS` : t("common.emptyValue")}</dd>
+            </div>
+          </dl>
         </CardContent>
       </Card>
 

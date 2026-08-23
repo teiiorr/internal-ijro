@@ -80,8 +80,8 @@ export default async function ContractorProjectPage({ params }: { params: Promis
 
     return (
       <div className="space-y-6 stagger-children">
-        <div className="flex items-start gap-3">
-          <BackButton fallbackHref="/contractor/projects" className="mt-0.5" />
+        <div className="flex items-center gap-3">
+          <BackButton fallbackHref="/contractor/projects" />
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
           </div>
@@ -236,8 +236,8 @@ export default async function ContractorProjectPage({ params }: { params: Promis
 
   return (
     <div className="space-y-6 stagger-children">
-      <div className="flex items-start gap-3">
-        <BackButton fallbackHref="/contractor/projects" className="mt-0.5" />
+      <div className="flex items-center gap-3">
+        <BackButton fallbackHref="/contractor/projects" />
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{data.project.name}</h1>
         </div>

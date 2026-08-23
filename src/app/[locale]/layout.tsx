@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { Montserrat, JetBrains_Mono, Cinzel_Decorative } from "next/font/google";
+import { Montserrat, JetBrains_Mono, Cinzel_Decorative, Unbounded } from "next/font/google";
 
 const montserrat = Montserrat({
   // weight 300 (font-light) is unused in the app; cyrillic-ext is required for
@@ -11,6 +11,16 @@ const montserrat = Montserrat({
   subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
   weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+// Unbounded — a rounded geometric display face for page titles/headings.
+// Ships Cyrillic + Latin so it covers uz-latn / uz-cyrl / ru. Self-hosted by
+// next/font (no runtime request → CSP `font-src 'self'` stays valid).
+const unbounded = Unbounded({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  weight: ["600", "700", "800"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -48,7 +58,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       data-locale={locale}
-      className={`${montserrat.variable} ${jbMono.variable} ${cinzel.variable}`}
+      className={`${montserrat.variable} ${jbMono.variable} ${cinzel.variable} ${unbounded.variable}`}
       suppressHydrationWarning
     >
       <body>

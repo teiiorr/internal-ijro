@@ -89,8 +89,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     return (
       <div className="space-y-6 stagger-children">
         {/* header (full width) */}
-        <div className="flex items-start gap-3">
-          <BackButton fallbackHref="/projects" className="mt-0.5" />
+        <div className="flex items-center gap-3">
+          <BackButton fallbackHref="/projects" />
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
           </div>
@@ -259,8 +259,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="space-y-6 max-w-5xl stagger-children">
-      <div className="flex items-start gap-2 flex-wrap">
-        <BackButton fallbackHref="/projects" className="mt-0.5" />
+      <div className="flex items-center gap-2 flex-wrap">
+        <BackButton fallbackHref="/projects" />
         <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{data.project.name}</h1>
         </div>
