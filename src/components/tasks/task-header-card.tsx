@@ -1,7 +1,7 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { eq } from "drizzle-orm";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { TaskStatusBadge, TaskPriorityBadge } from "@/components/tasks/task-status-badge";
 import { CopyRegistration } from "@/components/copy-registration";
 import { deadlineRelative, formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
@@ -23,21 +23,6 @@ type Props = {
   projectName?: string | null;
 };
 
-
-const PRIORITY_VARIANT: Record<string, "default" | "secondary" | "warning" | "danger"> = {
-  urgent: "danger",
-  high: "warning",
-  medium: "default",
-  low: "secondary",
-};
-
-const STATUS_VARIANT: Record<string, "default" | "secondary" | "warning" | "success" | "danger"> = {
-  todo: "secondary",
-  in_progress: "default",
-  under_review: "warning",
-  completed: "success",
-  rejected: "danger",
-};
 
 export async function TaskHeaderCard({ creator, task, projectName }: Props) {
   const t = await getTranslations();
@@ -68,12 +53,8 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
     <Card className="overflow-hidden">
       <div className="px-5 sm:px-6 py-4 flex items-center gap-3 flex-wrap">
         {task.registrationNumber && <CopyRegistration regNum={task.registrationNumber} />}
-        <Badge variant={STATUS_VARIANT[task.status] ?? "secondary"}>
-          {t(`tasks.status.${task.status}` as "tasks.status.todo")}
-        </Badge>
-        <Badge variant={PRIORITY_VARIANT[task.priority] ?? "default"}>
-          {t(`tasks.priority.${task.priority}` as "tasks.priority.low")}
-        </Badge>
+        <TaskStatusBadge status={task.status} />
+        <TaskPriorityBadge priority={task.priority} />
         {projectName && (
           <span className="text-xs font-medium text-[var(--muted)]">
             <span className="text-[var(--subtle)]">{t("common.project")}:</span> {projectName}

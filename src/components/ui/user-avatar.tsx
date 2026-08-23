@@ -12,6 +12,17 @@ const SIZE_MAP: Record<Size, { container: string; text: string }> = {
   lg: { container: "size-16", text: "text-xl" },
 };
 
+// Resized thumbnail width per size (~2-3x the display px for retina). The file
+// route serves these via ?w= (webp) so we don't ship the full 512px avatar for
+// a 32px chip. Must match RESIZE_WIDTHS in api/files/[...path]/route.ts.
+const SIZE_WIDTH: Record<Size, number> = { xs: 96, sm: 128, md: 128, lg: 256 };
+
+/** Append ?w= only for local file-route URLs; leave anything else untouched. */
+function thumbUrl(url: string, width: number): string {
+  if (!url.startsWith("/")) return url;
+  return `${url}${url.includes("?") ? "&" : "?"}w=${width}`;
+}
+
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/).slice(0, 2);
   return parts.map((p) => p[0]?.toUpperCase()).join("") || "?";
@@ -34,6 +45,8 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
   const imgRef = useRef<HTMLImageElement>(null);
   const { container, text } = SIZE_MAP[size];
   const hasPhoto = !!avatarUrl && !imgError;
+  // Small chips load a resized webp thumbnail; the lightbox uses the original.
+  const displaySrc = hasPhoto ? thumbUrl(avatarUrl!, SIZE_WIDTH[size]) : "";
 
   // Cached images can finish loading before React attaches onLoad, which would
   // otherwise leave the avatar stuck at opacity-0 (e.g. the current user's own
@@ -72,7 +85,7 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
             )}
             <img
               ref={imgRef}
-              src={avatarUrl!}
+              src={displaySrc}
               alt={name}
               loading="lazy"
               decoding="async"

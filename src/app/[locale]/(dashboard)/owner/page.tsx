@@ -65,11 +65,11 @@ export default async function OwnerPage() {
   return (
     <div className="space-y-8">
       {/* header */}
-      <div className="flex items-start gap-3">
+      <div className="flex flex-col items-center gap-2 text-center">
         <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--primary)] text-white shadow-[var(--shadow-2)]">
           <ShieldCheck className="size-6" />
         </div>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("owner.title")}</h1>
           <p className="text-[var(--muted)] mt-1 text-sm font-medium">
             {localizeName(user.fullName, locale)} <span className="godfather-title align-middle text-lg sm:text-xl">{OWNER_TITLE}</span>
@@ -115,21 +115,22 @@ export default async function OwnerPage() {
               {changes.map((c) => {
                 const meta = kindMeta[changeKind(c.action)];
                 return (
-                  <li key={c.id} className="flex items-center gap-3 px-4 py-2.5">
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold shrink-0 ${meta.cls}`}>
-                      {meta.icon}{meta.label}
+                  <li key={c.id} className="flex items-start gap-2.5 px-4 py-3">
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold shrink-0 ${meta.cls}`}>
+                      {meta.icon}<span className="hidden min-[420px]:inline">{meta.label}</span>
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate inline-flex items-center gap-1.5">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex min-w-0 items-center gap-1.5">
                         {c.userName && <UserAvatar name={c.userName} avatarUrl={c.userAvatarUrl} size="xs" clickable={false} />}
-                        {c.userName ? localizeName(c.userName, locale) : "—"}
-                        <code className="ml-2 text-xs text-[var(--muted)]">{c.action}</code>
-                      </p>
-                      <p className="text-xs text-[var(--muted)] truncate">
-                        {c.entityType ?? "—"}{c.entityId ? ` · ${c.entityId.slice(0, 8)}` : ""}
+                        <span className="truncate text-sm font-medium">{c.userName ? localizeName(c.userName, locale) : "—"}</span>
+                      </div>
+                      <p className="mt-0.5 truncate text-xs text-[var(--muted)]">
+                        <code className="text-[var(--muted)]">{c.action}</code>
+                        {c.entityType ? ` · ${c.entityType}` : ""}
+                        <span className="mx-1 opacity-50">·</span>
+                        <span className="tabular-nums">{formatDateTime(c.createdAt as Date, locale)}</span>
                       </p>
                     </div>
-                    <span className="text-xs text-[var(--muted)] tabular-nums shrink-0">{formatDateTime(c.createdAt as Date, locale)}</span>
                   </li>
                 );
               })}

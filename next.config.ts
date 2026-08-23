@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   // direct per-module imports so only what's used ships. lucide-react / date-fns
   // are in Next's default list; recharts (dashboard charts) is not, so it matters
   // most here.
-  serverExternalPackages: ["exceljs", "@react-pdf/renderer", "rimraf"],
+  serverExternalPackages: ["exceljs", "@react-pdf/renderer", "rimraf", "sharp"],
   experimental: {
     optimizePackageImports: ["recharts", "date-fns", "@tabler/icons-react"],
     // Server Actions buffer the ENTIRE request body in memory before our code
