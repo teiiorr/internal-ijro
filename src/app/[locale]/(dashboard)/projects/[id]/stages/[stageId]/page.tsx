@@ -6,6 +6,7 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { getStage } from "@/server/queries/stages";
+import { listAssignableUsers } from "@/server/queries/tasks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
@@ -36,6 +37,8 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   const canManagePayments = canManage;
   // Budgets & payment sums shown to the money allowlist OR granted users.
   const showMoney = canViewMoney(me.email) || (await hasGrant(me.id, "money.view"));
+  // Assignable users for the "Mas'ul" (responsible) picker — managers only.
+  const assignable = canManage ? await listAssignableUsers(me.id, me.position, me.departmentId) : [];
 
   const s = data.stage;
   const total = data.siblings.length;
@@ -68,7 +71,8 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
             {canManage && (
               <div className="shrink-0">
                 <EditStageDialog
-                  stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount, contractNumber: s.contractNumber }}
+                  stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount, contractNumber: s.contractNumber, responsibleUserId: s.responsibleUserId }}
+                  users={assignable}
                 />
               </div>
             )}

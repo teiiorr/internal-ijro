@@ -56,7 +56,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
 
       {/* Official result. */}
       <div className="mt-6">
-        <ContestReveal contestId={c.id} contestName={c.name} winnerName={winner} logoUrl={c.winnerLogoUrl} canManage={canManage} />
+        <ContestReveal contestId={c.id} winnerName={winner} logoUrl={c.winnerLogoUrl} canManage={canManage} />
       </div>
 
       {/* Description as readable prose. */}
