@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
-import { IconPhotoPlus as ImagePlus, IconLoader2 as Loader2, IconTrash as Trash2 } from "@tabler/icons-react";
+import { IconPhotoPlus as ImagePlus, IconLoader2 as Loader2, IconTrash as Trash2, IconSpeakerphone as Announce } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
+import { StatusTag } from "@/components/ui/status-tag";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestLogo } from "@/server/actions/contests";
 
-// Canvas fireworks + confetti — only pulled in when a winner is revealed.
+// Ceremony modal — only pulled in when the winner is announced.
 const WinnerReveal = dynamic(
   () => import("@/components/contests/winner-reveal").then((m) => m.WinnerReveal),
   { ssr: false },
@@ -59,20 +60,42 @@ export function ContestReveal({
     }
   }
 
+  const hasWinner = !!winnerName;
+
   return (
-    <div className="space-y-3">
-      {winnerName ? (
-        <Button variant="accent" size="lg" className="w-full" onClick={() => setOpen(true)}>
-          {t("tanlov.revealWinner")}
-        </Button>
+    <div>
+      {hasWinner ? (
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-5 sm:p-6">
+          {/* soft accent wash — a specific effect, not decoration */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--success-soft)] to-transparent opacity-60" aria-hidden />
+          <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+            <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-2)] ring-1 ring-[var(--border)]">
+              {logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logoUrl} alt={winnerName} className="size-full object-contain p-1.5" />
+              ) : (
+                <span className="text-3xl font-bold text-[var(--muted)]">{winnerName.trim().charAt(0).toUpperCase()}</span>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                <StatusTag tone="green">{t("tanlov.winner")}</StatusTag>
+              </div>
+              <h2 className="mt-1.5 break-words text-xl font-bold leading-tight sm:text-2xl">{winnerName}</h2>
+            </div>
+            <Button variant="outline" onClick={() => setOpen(true)} className="shrink-0">
+              <Announce className="size-4" />{t("tanlov.revealWinner")}
+            </Button>
+          </div>
+        </div>
       ) : (
-        <p className="rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-3 text-center text-sm text-[var(--muted)]">
+        <div className="rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-8 text-center text-sm text-[var(--muted)]">
           {t("tanlov.noWinner")}
-        </p>
+        </div>
       )}
 
       {canManage && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
@@ -97,7 +120,7 @@ export function ContestReveal({
         </div>
       )}
 
-      {open && winnerName && (
+      {open && hasWinner && (
         <WinnerReveal contestName={contestName} winnerName={winnerName} logoUrl={logoUrl} onClose={() => setOpen(false)} />
       )}
     </div>

@@ -89,7 +89,7 @@ export function PermissionsManager({
                 </p>
               </div>
             </div>
-            <div className="mt-3 flex flex-wrap gap-1.5">
+            <div className="-mx-1 mt-3 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {capabilities.map((c) => {
                 const on = (grants[e.id] ?? []).includes(c.key);
                 const key = `${e.id}:${c.key}`;
@@ -101,7 +101,7 @@ export function PermissionsManager({
                     onClick={() => toggle(e.id, c.key, on)}
                     aria-pressed={on}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50",
+                      "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold transition-all active:scale-95 disabled:opacity-50",
                       on
                         ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-1)]"
                         : "bg-[var(--surface-3)] text-[var(--muted)] hover:text-[var(--foreground)]",
