@@ -82,11 +82,11 @@ export default async function OwnerPage() {
   return (
     <div className="space-y-8">
       {/* header */}
-      <div className="flex flex-col items-center gap-2 text-center">
+      <div className="flex items-start gap-3">
         <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--primary)] text-white shadow-[var(--shadow-2)]">
           <ShieldCheck className="size-6" />
         </div>
-        <div className="min-w-0">
+        <div className="flex-1 min-w-0">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("owner.title")}</h1>
           <p className="text-[var(--muted)] mt-1 text-sm font-medium">
             {localizeName(user.fullName, locale)} <span className="godfather-title align-middle text-lg sm:text-xl">{OWNER_TITLE}</span>

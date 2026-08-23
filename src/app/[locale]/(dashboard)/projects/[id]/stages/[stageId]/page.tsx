@@ -85,9 +85,9 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
             {s.responsibleName && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.responsible")}</dt>
-                <dd className="mt-1 flex items-center justify-center gap-1.5">
+                <dd className="mt-1 flex flex-col items-center gap-1">
                   <UserAvatar name={localizeName(s.responsibleName, locale)} avatarUrl={s.responsibleAvatarUrl} size="xs" clickable={false} />
-                  <span className="truncate font-semibold">{localizeName(s.responsibleName, locale)}</span>
+                  <span className="font-semibold leading-tight break-words">{localizeName(s.responsibleName, locale)}</span>
                 </dd>
               </div>
             )}

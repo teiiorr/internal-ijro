@@ -145,10 +145,9 @@ export default async function ProjectsPage({
     <div className="space-y-5 sm:space-y-6 stagger-children">
       {/* Restores the list scroll position when returning from a project. */}
       <ScrollMemory />
-      <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
-        <div className="hidden sm:block sm:flex-1" aria-hidden />
-        <h1 className="shrink-0 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
-        <div className="flex flex-wrap justify-center gap-2 sm:flex-1 sm:justify-end">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
+        <div className="flex gap-2 shrink-0">
           {canExport && (
             <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
               <a href={exportHref}><Download className="size-4" /> Excel hisoboti</a>

@@ -41,9 +41,9 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
       </div>
 
       {/* Masthead — the contest title leads. */}
-      <header className="mt-5 text-center">
-        <h1 className="mx-auto max-w-3xl text-2xl font-bold leading-tight tracking-tight break-words sm:text-3xl md:text-4xl">{c.name}</h1>
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-sm text-[var(--muted)]">
+      <header className="mt-5">
+        <h1 className="text-2xl font-bold leading-tight tracking-tight break-words sm:text-3xl md:text-4xl">{c.name}</h1>
+        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-[var(--muted)]">
           <span className="inline-flex items-center gap-1.5"><Users className="size-4" />{c.participantsCount} {t("tanlov.participantsShort")}</span>
           {c.heldAt && <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-4" />{formatDate(c.heldAt, locale)}</span>}
         </div>

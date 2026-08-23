@@ -22,15 +22,12 @@ export default async function TanlovPage() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
-        <div className="hidden sm:block sm:flex-1" aria-hidden />
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("tanlov.title")}</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">{t("tanlov.subtitle")}</p>
         </div>
-        <div className="flex justify-center sm:flex-1 sm:justify-end">
-          {canManage && <ContestForm />}
-        </div>
+        {canManage && <div className="shrink-0"><ContestForm /></div>}
       </div>
 
       {contests.length === 0 ? (
