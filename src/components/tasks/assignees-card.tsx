@@ -94,7 +94,7 @@ export function AssigneesCard({
             className="h-11 w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface-2)] pl-10 pr-3 text-[14px] placeholder:text-[var(--subtle)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-soft)] transition-[border-color,box-shadow] duration-150"
           />
         </div>
-        <div className="flex gap-1 ml-auto bg-[var(--surface-3)] rounded-[10px] p-1">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-[10px] bg-[var(--surface-3)] p-1 md:ml-auto md:w-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {([
             ["all", t("common.all"), "text-[var(--foreground)]"],
             ["in_progress", t("status.in_progress"), "text-[var(--primary)]"],
@@ -104,7 +104,7 @@ export function AssigneesCard({
               key={k}
               onClick={() => setFilter(k)}
               className={cn(
-                "px-4 py-1.5 rounded-[8px] text-sm font-semibold transition-all",
+                "shrink-0 whitespace-nowrap rounded-[8px] px-3 py-1.5 text-sm font-semibold transition-all sm:px-4",
                 filter === k
                   ? `bg-[var(--surface)] shadow-[var(--shadow-1)] ${color}`
                   : "text-[var(--muted)] hover:text-[var(--foreground)]"

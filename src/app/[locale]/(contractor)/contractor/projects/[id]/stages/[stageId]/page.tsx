@@ -60,17 +60,16 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
       {/* Unified stage header + schedule/budget — one combined card. */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-2">
             <BackButton fallbackHref={`/contractor/projects/${id}`} />
-            <div className="min-w-0 flex-1 text-center">
-              <p className="text-xs font-medium text-[var(--muted)] truncate">
-                <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
-                {" · "}
-                {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
-              </p>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
-            </div>
-            <div className="size-11 shrink-0" aria-hidden />
+          </div>
+          <div className="text-center">
+            <p className="text-xs font-medium text-[var(--muted)]">
+              <Link href={`/contractor/projects/${id}`} className="hover:underline">{s.projectName}</Link>
+              {" · "}
+              {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
+            </p>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
           </div>
 
           <div className="border-t border-[var(--border)]" />

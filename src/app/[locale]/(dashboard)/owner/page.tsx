@@ -111,10 +111,10 @@ export default async function OwnerPage() {
               (font shrinks to fit rather than wrapping). */}
           {moneyTiles.map((tile) => (
             <Card key={tile.label} className="col-span-full">
-              <CardContent className="flex items-center justify-between gap-4 p-4">
+              <CardContent className="flex flex-col gap-1 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <p className="shrink-0 text-xs font-semibold text-[var(--muted)] leading-tight">{tile.label}</p>
-                <div className="min-w-0 flex-1 text-right">
-                  <FitText className="font-bold tabular-nums" maxPx={26} minPx={15}>{tile.value}</FitText>
+                <div className="min-w-0 w-full sm:flex-1 sm:text-right">
+                  <FitText className="font-bold tabular-nums" maxPx={26} minPx={13}>{tile.value}</FitText>
                 </div>
               </CardContent>
             </Card>

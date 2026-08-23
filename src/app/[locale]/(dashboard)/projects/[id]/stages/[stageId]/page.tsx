@@ -54,25 +54,22 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
       {/* Unified stage header + schedule/budget — one combined card. */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <div className="flex items-center gap-3">
+          {/* Back + edit on their own row so the title always gets full width. */}
+          <div className="flex items-center justify-between gap-2">
             <BackButton fallbackHref={`/projects/${id}`} />
-            <div className="min-w-0 flex-1 text-center">
-              <p className="text-xs font-medium text-[var(--muted)] truncate">
-                <Link href={`/projects/${id}`} className="hover:underline">{s.projectName}</Link>
-                {" · "}
-                {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
-              </p>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
-            </div>
-            {canManage ? (
-              <div className="shrink-0">
-                <EditStageDialog
-                  stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount, contractNumber: s.contractNumber }}
-                />
-              </div>
-            ) : (
-              <div className="size-11 shrink-0" aria-hidden />
+            {canManage && (
+              <EditStageDialog
+                stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount, contractNumber: s.contractNumber }}
+              />
             )}
+          </div>
+          <div className="text-center">
+            <p className="text-xs font-medium text-[var(--muted)]">
+              <Link href={`/projects/${id}`} className="hover:underline">{s.projectName}</Link>
+              {" · "}
+              {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
+            </p>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words mt-1">{s.name}</h1>
           </div>
 
           <div className="border-t border-[var(--border)]" />
