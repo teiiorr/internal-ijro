@@ -11,6 +11,7 @@
     "hint": "Ulanish qaytarilganda sahifa avtomatik yangilanadi."
   },
   "common": {
+    "error": "Xatolik yuz berdi",
     "loading": "Yuklanmoqda...",
     "save": "Saqlash",
     "saved": "Saqlandi",
@@ -1043,6 +1044,15 @@
   },
   "owner": {
     "title": "Egasi paneli",
+    "permissions": {
+      "title": "Ruxsatlar",
+      "subtitle": "Xodimlarga qo'shimcha huquqlar bering yoki oling. Ro'yxatdagi asosiy huquqlar saqlanadi.",
+      "caps": {
+        "projects_edit": "Loyihalarni tahrirlash",
+        "money_view": "Moliyani ko'rish",
+        "projects_upload_docs": "Hujjat yuklash"
+      }
+    },
     "statsTitle": "Tizim statistikasi",
     "stats": {
       "users": "Foydalanuvchilar",

@@ -149,6 +149,26 @@ export const positionHistory = pgTable("position_history", {
   changeDate: timestamp("change_date", { withTimezone: true }).defaultNow().notNull(),
 });
 
+// ---------- 5.6b user_permissions (owner-granted capability overrides) ----------
+// Additive grants on top of the built-in position/allowlist rules. The owner
+// toggles these from the admin panel to give a specific person a capability
+// (e.g. edit projects, view money) they wouldn't otherwise have.
+export const userPermissions = pgTable(
+  "user_permissions",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    capability: varchar("capability", { length: 50 }).notNull(),
+    grantedByUserId: uuid("granted_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.userId, t.capability] }),
+    userIdx: index("user_permissions_user_idx").on(t.userId),
+  })
+);
+
 // ---------- 5.6 coordinator_assignments ----------
 export const coordinatorAssignments = pgTable(
   "coordinator_assignments",

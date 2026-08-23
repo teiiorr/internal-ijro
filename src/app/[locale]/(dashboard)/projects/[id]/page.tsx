@@ -24,6 +24,7 @@ import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
 import { derivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from "@/lib/permissions/project-editors";
+import { hasGrant } from "@/lib/permissions/grants";
 import { formatDate } from "@/lib/dates";
 import { CuratorList } from "@/components/ui/curator-list";
 import { db } from "@/lib/db";
@@ -61,15 +62,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     budget: data.project.budget,
     budgetCurrency: data.project.budgetCurrency,
   };
-  // Project changes are restricted to the fixed project-editor allowlist; everyone else is read-only.
-  const editor = canEditProjects(me.email);
+  // Editing = the fixed allowlist OR an owner-granted capability; else read-only.
+  const editor = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
   const canManage = editor;
   const canDelete = editor;
   // Deleting a whole project is irreversible → editor + senior management only.
   const canDeleteProject = editor && ["direktor", "orinbosar", "koordinator"].includes(me.position);
   const canTogglePayment = editor;
-  // Budgets & payment sums are visible only to the money allowlist; others see ***.
-  const showMoney = canViewMoney(me.email);
+  // Budgets & payment sums are visible to the money allowlist OR granted users.
+  const showMoney = canViewMoney(me.email) || (await hasGrant(me.id, "money.view"));
+  const canUpload = canUploadProjectDocs(me.email) || editor || (await hasGrant(me.id, "projects.upload_docs"));
 
   // ---- Typed (template-driven) project → serpentine stage view ----
   if (data.project.projectTypeId) {
@@ -174,7 +176,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {/* Project-level document buckets — fills the space under the stages. */}
             <ProjectDocsPanels
               projectId={sp.project.id}
-              canManage={canUploadProjectDocs(me.email)}
+              canManage={canUpload}
               canDelete={editor}
               maxBytes={MAX_UPLOAD_BYTES}
               tahlil={sp.documents.tahlil.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}

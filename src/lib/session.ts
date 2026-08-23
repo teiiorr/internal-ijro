@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import type { Position, UserStatus } from "@/lib/db/schema";
 import { canEditProjects } from "@/lib/permissions/project-editors";
+import { hasGrant } from "@/lib/permissions/grants";
 
 export type SessionUser = {
   id: string;
@@ -32,9 +33,10 @@ export async function requirePosition(allowed: Position[]): Promise<SessionUser>
   return user;
 }
 
-/** Only the fixed project-editor allowlist may mutate projects/stages. */
+/** Project-editor allowlist OR an owner-granted `projects.edit` capability. */
 export async function requireProjectEditor(): Promise<SessionUser> {
   const user = await requireUser();
-  if (!canEditProjects(user.email)) redirect("/projects");
-  return user;
+  if (canEditProjects(user.email)) return user;
+  if (await hasGrant(user.id, "projects.edit")) return user;
+  redirect("/projects");
 }

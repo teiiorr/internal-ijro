@@ -12,6 +12,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { canEditProjects, canViewMoney, MONEY_MASK } from "@/lib/permissions/project-editors";
+import { hasGrant } from "@/lib/permissions/grants";
 import { StagePayments } from "@/components/projects/stage-payments";
 import { CompleteStageButton } from "@/components/projects/complete-stage-button";
 import { ReopenStageButton } from "@/components/projects/reopen-stage-button";
@@ -30,11 +31,11 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   if (!data || data.stage.projectId !== id) notFound();
 
   const me = session.user;
-  // Stage changes restricted to the fixed project-editor allowlist.
-  const canManage = canEditProjects(me.email);
+  // Stage changes = the fixed allowlist OR an owner-granted capability.
+  const canManage = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
   const canManagePayments = canManage;
-  // Budgets & payment sums shown only to the money allowlist; others see ***.
-  const showMoney = canViewMoney(me.email);
+  // Budgets & payment sums shown to the money allowlist OR granted users.
+  const showMoney = canViewMoney(me.email) || (await hasGrant(me.id, "money.view"));
 
   const s = data.stage;
   const total = data.siblings.length;

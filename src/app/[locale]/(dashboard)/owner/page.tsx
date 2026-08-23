@@ -7,6 +7,9 @@ import { localizeName } from "@/lib/names";
 import { formatDateTime } from "@/lib/dates";
 import { getSystemStats, getRecentChanges, getSystemInfo, changeKind } from "@/server/queries/owner";
 import { listAudit } from "@/server/queries/audit";
+import { listEmployees } from "@/server/queries/employees";
+import { listAllGrants, MANAGED_CAPABILITIES } from "@/lib/permissions/grants";
+import { PermissionsManager } from "@/components/owner/permissions-manager";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -28,12 +31,26 @@ export default async function OwnerPage() {
   const t = await getTranslations();
   const locale = await getLocale();
 
-  const [stats, changes, logs, sys] = await Promise.all([
+  const [stats, changes, logs, sys, emps, grants] = await Promise.all([
     getSystemStats(),
     getRecentChanges(40),
     listAudit({ scope: "all" }),
     getSystemInfo(),
+    listEmployees({ status: "active" }),
+    listAllGrants(),
   ]);
+
+  const permCapabilities = MANAGED_CAPABILITIES.map((key) => ({
+    key,
+    label: t(`owner.permissions.caps.${key.replace(/\./g, "_")}` as "owner.permissions.caps.projects_edit"),
+  }));
+  const permEmployees = emps.rows.map((e) => ({
+    id: e.id,
+    fullName: localizeName(e.fullName, locale),
+    avatarUrl: e.avatarUrl,
+    positionLabel: t(`positions.${e.position}` as "positions.direktor"),
+    departmentName: e.departmentName,
+  }));
 
   // Count tiles — small numbers, fit the narrow grid cells.
   const tiles: { label: string; value: string | number; sub?: string }[] = [
@@ -105,7 +122,18 @@ export default async function OwnerPage() {
         </div>
       </section>
 
-      {/* 2. Recent changes — who added / deleted / changed */}
+      {/* 2. Access control — grant/revoke capabilities per employee */}
+      <section className="space-y-3">
+        <div>
+          <h2 className="flex items-center gap-2 text-base font-semibold">
+            <KeyRound className="size-4 text-[var(--muted)]" />{t("owner.permissions.title")}
+          </h2>
+          <p className="mt-0.5 text-xs text-[var(--muted)]">{t("owner.permissions.subtitle")}</p>
+        </div>
+        <PermissionsManager employees={permEmployees} grants={grants} capabilities={permCapabilities} />
+      </section>
+
+      {/* 3. Recent changes — who added / deleted / changed */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">{t("owner.changes.title")}</h2>
         <Card>
