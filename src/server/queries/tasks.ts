@@ -190,13 +190,18 @@ export async function getOverdueTaskCount(actorId: string, actorPosition: Positi
   return Number(rows[0]?.c ?? 0);
 }
 
+// Specific bosses who must never appear as executors (matched by name,
+// case-insensitive) — other staff, including other deputies, stay assignable.
+const NON_ASSIGNABLE_NAME_PATTERNS = ["%jahongir%", "%zafar%"];
+
 export async function listAssignableUsers(actorId: string, actorPosition: Position, actorDepartmentId: string | null) {
   // Open assignment policy (user directive): anyone can assign a task to any
-  // internal staff member, so the dropdown lists every active non-contractor.
+  // internal staff member. Excludes contractors and the named bosses below.
   // canAssignTaskTo still runs on the server as a final guard.
   void actorId;
   void actorPosition;
   void actorDepartmentId;
+  const excluded = NON_ASSIGNABLE_NAME_PATTERNS.map((p) => sql`${users.fullName} NOT ILIKE ${p}`);
   return db
     .select({
       id: users.id,
@@ -208,7 +213,7 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
     })
     .from(users)
     .leftJoin(departments, eq(departments.id, users.departmentId))
-    .where(sql`${users.status} = 'active' AND ${users.position} <> 'kontragent'`)
+    .where(and(sql`${users.status} = 'active'`, sql`${users.position} <> 'kontragent'`, ...excluded))
     .orderBy(users.fullName);
 }
 
