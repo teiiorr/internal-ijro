@@ -71,7 +71,7 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
         onKeyDown={(e) => { if (e.key === "Enter") handleClick(); }}
         className={cn(
           "rounded-full shrink-0 flex items-center justify-center font-semibold overflow-hidden relative",
-          hasPhoto ? "ring-2 ring-[var(--border)] bg-[var(--surface-2)]" : "bg-[var(--primary-soft)] text-[var(--primary)]",
+          hasPhoto ? "ring-2 ring-[var(--border)]" : "bg-[var(--primary-soft)] text-[var(--primary)]",
           clickable && hasPhoto && "cursor-pointer hover:ring-[var(--primary)] transition-all",
           container,
           text,
@@ -89,7 +89,7 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
               alt={name}
               loading="lazy"
               decoding="async"
-              className={cn("size-full object-contain transition-opacity duration-300", imgLoaded ? "opacity-100" : "opacity-0")}
+              className={cn("size-full object-cover object-[center_25%] transition-opacity duration-300", imgLoaded ? "opacity-100" : "opacity-0")}
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgError(true)}
             />
