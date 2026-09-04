@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown } from "@tabler/icons-react";
+import Link from "next/link";
+import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown, IconArchive as Archive } from "@tabler/icons-react";
 import { sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -40,7 +41,18 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{heading}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{heading}</h1>
+        {kind === "smeta" && (
+          <Link
+            href={`/kengashlar/${kind}/arxiv`}
+            className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-95"
+          >
+            <Archive className="size-4 text-[var(--primary)]" />
+            {t("kengash.archiveButton")}
+          </Link>
+        )}
+      </div>
 
       {/* upcoming meeting + its agenda */}
       {upcoming ? (

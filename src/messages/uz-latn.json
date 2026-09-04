@@ -1021,6 +1021,19 @@
   "kengash": {
     "ekspertHeading": "Kelayotgan Ekspertlar Kengashining kun tartibi",
     "smetaHeading": "Kelayotgan Smeta Komissiyasining kun tartibi",
+    "archiveButton": "Arxiv",
+    "archive": {
+      "title": "Smeta komissiyasi arxivi",
+      "meetings": "majlis",
+      "documents": "hujjat",
+      "searchPlaceholder": "Loyiha, studiya yoki matn bo'yicha qidirish…",
+      "xulosalar": "Xulosalar",
+      "bayonlar": "Bayonnomalar",
+      "found": "{n} ta hujjat topildi",
+      "meetingNo": "{n}-yig'ilish",
+      "bayon": "Bayon",
+      "empty": "Bu bo'lim uchun arxiv hali mavjud emas"
+    },
     "agenda": "Kun tartibi",
     "noUpcoming": "Kelayotgan majlis rejalashtirilmagan",
     "createMeeting": "Majlis qo'shish",
