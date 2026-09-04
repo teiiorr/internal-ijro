@@ -10,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 import { formatDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
+import { DocMarkdown } from "@/components/councils/doc-markdown";
 import archive from "@/data/smeta-archive.json";
 
 type Item = {
@@ -176,8 +177,8 @@ export function SmetaArchive() {
                                 {it.sourceFile && <span className="inline-flex items-center gap-1 font-mono opacity-80"><FileText className="size-3" />{it.sourceFile}</span>}
                               </p>
                             )}
-                            <div className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words rounded-lg bg-[var(--surface-2)] p-3 text-[13px] leading-relaxed text-[var(--foreground)]">
-                              {it.text || "—"}
+                            <div className="max-h-[65vh] overflow-y-auto rounded-lg bg-[var(--surface-2)] p-3 sm:p-4">
+                              {it.text ? <DocMarkdown>{it.text}</DocMarkdown> : <p className="text-sm text-[var(--muted)]">—</p>}
                             </div>
                           </div>
                         )}
