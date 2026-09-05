@@ -10,7 +10,7 @@ import { Header } from "@/components/layout/header";
 import { ContractorMobileNav } from "@/components/layout/contractor-mobile-nav";
 import { AppFooter } from "@/components/layout/app-footer";
 import { RouteProgress } from "@/components/layout/route-progress";
-import { IconFolder as Folder, IconLayoutDashboard as LayoutDashboard, IconUser as UserIcon, IconSettings as Settings, IconFileText as FileText } from "@tabler/icons-react";
+import { IconFolder as Folder, IconLayoutDashboard as LayoutDashboard, IconMessageCircle as MessageCircle, IconUser as UserIcon, IconSettings as Settings, IconFileText as FileText } from "@tabler/icons-react";
 
 export default async function ContractorLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -45,6 +45,7 @@ export default async function ContractorLayout({ children }: { children: React.R
   const NAV = [
     { href: "/contractor/dashboard", icon: LayoutDashboard, label: t("nav.dashboard") },
     { href: "/contractor/projects", icon: Folder, label: t("nav.projects") },
+    { href: "/contractor/chats", icon: MessageCircle, label: t("nav.chats") },
     { href: "/contractor/profile", icon: UserIcon, label: t("nav.profile") },
     { href: "/notifications", icon: FileText, label: t("nav.notifications") },
     { href: "/settings", icon: Settings, label: t("nav.settings") },

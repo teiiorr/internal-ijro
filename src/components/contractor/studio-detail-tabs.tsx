@@ -39,20 +39,20 @@ export function StudioDetailTabs({
   return (
     <Tabs defaultValue="projects" className="w-full">
       <TabsList className="w-full flex-nowrap overflow-x-auto scrollbar-none no-scrollbar">
-        <TabsTrigger value="projects" className="gap-1.5 px-3 text-sm sm:px-4">
-          <Projects className="size-4" />{t("projects")}<Count n={c.projects} />
+        <TabsTrigger value="projects" className="flex-1 gap-1.5 px-3 text-sm sm:px-4" aria-label={t("projects")}>
+          <Projects className="size-5 sm:size-4" /><span className="hidden sm:inline">{t("projects")}</span><Count n={c.projects} />
         </TabsTrigger>
-        <TabsTrigger value="chat" className="gap-1.5 px-3 text-sm sm:px-4">
-          <Chat className="size-4" />{t("chat")}<Count n={c.chat} unread />
+        <TabsTrigger value="chat" className="flex-1 gap-1.5 px-3 text-sm sm:px-4" aria-label={t("chat")}>
+          <Chat className="size-5 sm:size-4" /><span className="hidden sm:inline">{t("chat")}</span><Count n={c.chat} unread />
         </TabsTrigger>
-        <TabsTrigger value="docs" className="gap-1.5 px-3 text-sm sm:px-4">
-          <Docs className="size-4" />{t("docs")}<Count n={c.docs} />
+        <TabsTrigger value="docs" className="flex-1 gap-1.5 px-3 text-sm sm:px-4" aria-label={t("docs")}>
+          <Docs className="size-5 sm:size-4" /><span className="hidden sm:inline">{t("docs")}</span><Count n={c.docs} />
         </TabsTrigger>
-        <TabsTrigger value="gallery" className="gap-1.5 px-3 text-sm sm:px-4">
-          <Gallery className="size-4" />{t("gallery")}<Count n={c.gallery} />
+        <TabsTrigger value="gallery" className="flex-1 gap-1.5 px-3 text-sm sm:px-4" aria-label={t("gallery")}>
+          <Gallery className="size-5 sm:size-4" /><span className="hidden sm:inline">{t("gallery")}</span><Count n={c.gallery} />
         </TabsTrigger>
-        <TabsTrigger value="info" className="gap-1.5 px-3 text-sm sm:px-4">
-          <Info className="size-4" />{t("info")}
+        <TabsTrigger value="info" className="flex-1 gap-1.5 px-3 text-sm sm:px-4" aria-label={t("info")}>
+          <Info className="size-5 sm:size-4" /><span className="hidden sm:inline">{t("info")}</span>
         </TabsTrigger>
       </TabsList>
 

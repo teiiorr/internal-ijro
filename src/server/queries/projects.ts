@@ -203,6 +203,55 @@ export async function getContractor(id: string) {
   return r[0] ?? null;
 }
 
+/**
+ * Telegram-style chat list for a studio: one thread per project, each with the
+ * project's curator (our side — the person they talk to) and the last message.
+ */
+export async function getContractorChatProjects(contractorUserId: string) {
+  const me = await db.select({ email: users.email }).from(users).where(eq(users.id, contractorUserId)).limit(1);
+  if (me.length === 0) return { company: null, chats: [] as const };
+  const [company] = await db
+    .select({ id: externalCompanies.id, name: externalCompanies.name })
+    .from(externalCompanies)
+    .where(eq(externalCompanies.contactEmail, me[0].email))
+    .limit(1);
+  if (!company) return { company: null, chats: [] as const };
+
+  const prjs = await db
+    .select({ id: projects.id, name: projects.name, posterUrl: projects.posterUrl, curatorUserId: projects.curatorUserId })
+    .from(projects)
+    .where(eq(projects.externalCompanyId, company.id))
+    .orderBy(desc(projects.createdAt));
+
+  const ids = prjs.map((p) => p.id);
+  const lastByProject = new Map<string, { content: string; createdAt: Date | string; userName: string | null }>();
+  const curatorIds = Array.from(new Set(prjs.map((p) => p.curatorUserId).filter((x): x is string => !!x)));
+  const curById = new Map<string, { fullName: string; avatarUrl: string | null }>();
+
+  if (ids.length) {
+    const msgs = await db
+      .select({ projectId: projectMessages.projectId, content: projectMessages.content, createdAt: projectMessages.createdAt, userName: users.fullName })
+      .from(projectMessages)
+      .innerJoin(users, eq(users.id, projectMessages.userId))
+      .where(and(inArray(projectMessages.projectId, ids), sql`${projectMessages.stageId} is null`))
+      .orderBy(desc(projectMessages.createdAt));
+    for (const m of msgs) if (!lastByProject.has(m.projectId)) lastByProject.set(m.projectId, { content: m.content, createdAt: m.createdAt, userName: m.userName });
+  }
+  if (curatorIds.length) {
+    const curs = await db.select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl }).from(users).where(inArray(users.id, curatorIds));
+    for (const c of curs) curById.set(c.id, { fullName: c.fullName, avatarUrl: c.avatarUrl });
+  }
+
+  const chats = prjs.map((p) => ({
+    id: p.id,
+    name: p.name,
+    posterUrl: p.posterUrl,
+    curator: p.curatorUserId ? curById.get(p.curatorUserId) ?? null : null,
+    lastMessage: lastByProject.get(p.id) ?? null,
+  }));
+  return { company, chats };
+}
+
 export async function listProjectsForContractor(contractorUserId: string, locale = "uz-latn") {
   // Resolve company by contractor user (uses email match — simplest reliable join for self-registered contractors)
   const me = await db.select({ email: users.email }).from(users).where(eq(users.id, contractorUserId)).limit(1);

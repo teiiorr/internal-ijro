@@ -414,8 +414,69 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
     content: parsed.content,
     attachments: parsed.attachments?.length ? parsed.attachments : undefined,
   });
+
+  // Notify the other side so the chat has real participants. Curators (our
+  // side) are mandatory participants — they are always pinged when a studio
+  // writes; the studio's contact user is pinged when our side writes.
+  const [prj] = await db
+    .select({ name: projects.name, curatorUserId: projects.curatorUserId, ec: projects.externalCompanyId })
+    .from(projects)
+    .where(eq(projects.id, parsed.projectId))
+    .limit(1);
+  if (prj) {
+    const curatorIds = new Set<string>();
+    if (prj.curatorUserId) curatorIds.add(prj.curatorUserId);
+    try {
+      const rows = await db
+        .select({ userId: projectCurators.userId })
+        .from(projectCurators)
+        .where(eq(projectCurators.projectId, parsed.projectId));
+      for (const r of rows) curatorIds.add(r.userId);
+    } catch {
+      /* projectCurators not migrated yet — single-curator column already added */
+    }
+
+    let recipients: string[];
+    if (me.position === "kontragent") {
+      // studio wrote → notify our-side curators
+      recipients = [...curatorIds].filter((id) => id !== me.id);
+    } else {
+      // our side wrote → notify the studio's contact user
+      recipients = [];
+      if (prj.ec) {
+        const [company] = await db
+          .select({ email: externalCompanies.contactEmail })
+          .from(externalCompanies)
+          .where(eq(externalCompanies.id, prj.ec))
+          .limit(1);
+        if (company?.email) {
+          const [contact] = await db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.email, company.email))
+            .limit(1);
+          if (contact && contact.id !== me.id) recipients = [contact.id];
+        }
+      }
+    }
+
+    if (recipients.length) {
+      const preview = parsed.content.length > 120 ? `${parsed.content.slice(0, 117)}…` : parsed.content;
+      await notify({
+        userIds: recipients,
+        type: "project.message",
+        title: `${me.fullName} · ${prj.name}`,
+        message: preview,
+        link: me.position === "kontragent" ? `/projects/${parsed.projectId}` : `/contractor/chats/${parsed.projectId}`,
+        entityType: "project",
+        entityId: parsed.projectId,
+      });
+    }
+  }
+
   revalidatePath(`/projects/${parsed.projectId}`);
   revalidatePath(`/contractor/projects/${parsed.projectId}`);
+  revalidatePath(`/contractor/chats/${parsed.projectId}`);
 }
 
 // Deliverables (contractor uploads)

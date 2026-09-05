@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { IconLayoutDashboard as LayoutDashboard, IconFolder as Folder, IconUser as UserIcon, IconBell as Bell, IconSettings as Settings, IconMenu2 as Menu, IconX as X } from "@tabler/icons-react";
+import { IconLayoutDashboard as LayoutDashboard, IconFolder as Folder, IconMessageCircle as MessageCircle, IconUser as UserIcon, IconBell as Bell, IconSettings as Settings, IconMenu2 as Menu, IconX as X } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string };
@@ -10,12 +10,13 @@ type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>
 const ITEMS: NavItem[] = [
   { href: "/contractor/dashboard", icon: LayoutDashboard, key: "dashboard" },
   { href: "/contractor/projects", icon: Folder, key: "projects" },
+  { href: "/contractor/chats", icon: MessageCircle, key: "chats" },
   { href: "/contractor/profile", icon: UserIcon, key: "profile" },
   { href: "/notifications", icon: Bell, key: "notifications" },
   { href: "/settings", icon: Settings, key: "settings" },
 ];
 
-const PINNED = ["/contractor/dashboard", "/contractor/projects", "/contractor/profile"];
+const PINNED = ["/contractor/dashboard", "/contractor/projects", "/contractor/chats"];
 
 export function ContractorMobileNav() {
   const t = useTranslations("nav");
