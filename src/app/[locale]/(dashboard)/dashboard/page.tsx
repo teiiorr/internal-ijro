@@ -10,6 +10,7 @@ import { HrWidgets } from "@/components/dashboards/hr-widgets";
 import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
 import { InboxWidget } from "@/components/dashboards/inbox-widget";
+import { ProjectStatusBoard } from "@/components/dashboards/project-status-board";
 
 function WidgetSkeleton() {
   return <div className="h-32 rounded-2xl bg-[var(--surface-2)] animate-pulse" />;
@@ -64,6 +65,12 @@ export default async function DashboardPage() {
       <Suspense fallback={<WidgetSkeleton />}>
         <ManagerWidgets showPayments={showPayments} />
       </Suspense>
+
+      {(isManager || owner) && (
+        <Suspense fallback={<WidgetSkeleton />}>
+          <ProjectStatusBoard />
+        </Suspense>
+      )}
 
       {isHr && <Suspense fallback={<WidgetSkeleton />}><HrWidgets /></Suspense>}
       {!isManager && !isHr && <Suspense fallback={<WidgetSkeleton />}><SpecialistWidgets userId={user.id} /></Suspense>}

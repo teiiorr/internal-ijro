@@ -342,6 +342,8 @@
       "projectType": "Loyiha turi",
       "projectTypePlaceholder": "Turini tanlang (bosqichlar avtomatik yaratiladi)",
       "projectTypeHint": "Tur tanlansa, ushbu turga mos bosqichlar avtomatik qo'shiladi.",
+      "currentStatus": "Joriy holat",
+      "currentStatusPlaceholder": "Loyihaning hozirgi holati haqida qisqacha…",
       "responsible": "Mas'ul",
       "responsibleHint": "Barcha bosqichlarga qo'llanadi (keyin alohida o'zgartirish mumkin).",
       "nameRequired": "Nomni kiriting",
@@ -983,7 +985,15 @@
       "evening": "Xayrli kech",
       "night": "Xayrli tun"
     },
-    "ownerRole": "Platforma egasi"
+    "ownerRole": "Platforma egasi",
+    "currentStatus": {
+      "title": "Loyihalar joriy holati",
+      "subtitle": "Har bir loyihaning hozirgi holati",
+      "search": "Loyiha nomi yoki holat bo'yicha qidirish…",
+      "empty": "Hali joriy holat kiritilmagan",
+      "notSet": "Holat kiritilmagan",
+      "count": "{n} ta loyiha"
+    }
   },
   "commandPalette": {
     "placeholder": "Buyruq yoki sahifa nomini kiriting...",

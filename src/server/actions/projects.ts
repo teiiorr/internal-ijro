@@ -552,6 +552,7 @@ const updateProjectSchema = z.object({
   budget: z.number().nullable().optional(),
   budgetCurrency: z.string().min(1).max(10).optional(),
   genre: z.string().max(40).nullable().optional(),
+  currentStatus: z.string().max(5000).nullable().optional(),
 });
 export async function updateProject(id: string, input: z.infer<typeof updateProjectSchema>) {
   const me = await requireProjectEditor();
@@ -581,6 +582,7 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
       budget: parsed.budget != null ? (String(parsed.budget) as any) : null,
       budgetCurrency: parsed.budgetCurrency || "UZS",
       ...(parsed.genre !== undefined && { genre: parsed.genre?.trim() || null }),
+      ...(parsed.currentStatus !== undefined && { currentStatus: parsed.currentStatus?.trim() || null }),
       updatedAt: new Date(),
     })
     .where(eq(projects.id, id));

@@ -61,6 +61,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     deadline: data.project.deadline,
     budget: data.project.budget,
     budgetCurrency: data.project.budgetCurrency,
+    currentStatus: data.project.currentStatus,
   };
   // Editing = the fixed allowlist OR an owner-granted capability; else read-only.
   const editor = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
@@ -113,6 +114,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         {sp.project.description && (
           <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
+        )}
+
+        {sp.project.currentStatus && (
+          <Card>
+            <CardContent className="p-5 sm:p-6">
+              <h3 className="mb-2 text-base font-semibold">{t("projects.fields.currentStatus")}</h3>
+              <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--foreground)]">{sp.project.currentStatus}</p>
+            </CardContent>
+          </Card>
         )}
 
         <Card>
@@ -285,6 +295,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <Card>
           <CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">
             {data.project.description}
+          </CardContent>
+        </Card>
+      )}
+
+      {data.project.currentStatus && (
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="mb-2 text-base font-semibold">{t("projects.fields.currentStatus")}</h3>
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--foreground)]">{data.project.currentStatus}</p>
           </CardContent>
         </Card>
       )}

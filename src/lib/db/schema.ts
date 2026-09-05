@@ -244,6 +244,8 @@ export const projects = pgTable(
     progressPercentage: integer("progress_percentage").default(0).notNull(),
     /** Manual override — currently only "on_hold". Derived status takes precedence when null. */
     statusOverride: varchar("status_override", { length: 20 }),
+    /** Free-text "current state" (joriy holat) — a short note managers keep updated. */
+    currentStatus: text("current_status"),
     createdByUserId: uuid("created_by_user_id").references(() => users.id, {
       onDelete: "set null",
     }),

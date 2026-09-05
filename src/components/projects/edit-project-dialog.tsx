@@ -27,6 +27,7 @@ type Project = {
   genre: string | null;
   curatorUserId: string | null;
   curatorUserIds?: string[];
+  currentStatus?: string | null;
   startDate: string | null;
   deadline: string | null;
   budget: string | number | null;
@@ -73,6 +74,7 @@ export function EditProjectDialog({
   const [deadline, setDeadline] = useState(project.deadline ?? "");
   const [budget, setBudget] = useState(project.budget != null ? String(project.budget) : "");
   const [currency, setCurrency] = useState(project.budgetCurrency || "UZS");
+  const [currentStatus, setCurrentStatus] = useState(project.currentStatus ?? "");
 
   const selectedCurators = useMemo(
     () => curatorIds.map((id) => curators.find((c) => c.id === id)).filter(Boolean) as CuratorOption[],
@@ -102,6 +104,7 @@ export function EditProjectDialog({
           deadline: deadline || null,
           budget: budget ? Number(budget) : null,
           budgetCurrency: currency.trim() || "UZS",
+          currentStatus: currentStatus.trim() || null,
         });
         setOpen(false);
         router.refresh();
@@ -216,6 +219,17 @@ export function EditProjectDialog({
               <MoneyInput id="ep-budget" value={budget} onValueChange={setBudget} className="flex-1 min-w-0" />
               <Input value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-20 shrink-0" />
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="ep-current-status">{t("projects.fields.currentStatus")}</Label>
+            <Textarea
+              id="ep-current-status"
+              value={currentStatus}
+              onChange={(e) => setCurrentStatus(e.target.value)}
+              rows={3}
+              maxLength={5000}
+              placeholder={t("projects.fields.currentStatusPlaceholder")}
+            />
           </div>
           {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
           <DialogFooter>

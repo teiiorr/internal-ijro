@@ -169,6 +169,13 @@
       "when": 1787479453837,
       "tag": "0023_overrated_veda",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1788607545570,
+      "tag": "0024_aspiring_boomer",
+      "breakpoints": true
     }
   ]
 }
