@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { projects, projectStages, stageDocuments, externalCompanies } from "@/lib/db/schema";
@@ -62,13 +62,26 @@ export async function POST(req: NextRequest) {
     .limit(1);
   if (!project || project.ec !== company.id) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
-  // Attach to the active stage, else the first stage.
-  const stages = await db
-    .select({ id: projectStages.id, status: projectStages.status })
-    .from(projectStages)
-    .where(eq(projectStages.projectId, projectId))
-    .orderBy(asc(projectStages.orderIndex));
-  const target = stages.find((s) => s.status === "active") ?? stages[0];
+  // Target the explicit stage when given (verified to belong to this project),
+  // else fall back to the active stage, else the first stage.
+  const stageId = (url.searchParams.get("stageId") ?? "").trim();
+  let target: { id: string } | undefined;
+  if (stageId) {
+    const [st] = await db
+      .select({ id: projectStages.id })
+      .from(projectStages)
+      .where(and(eq(projectStages.id, stageId), eq(projectStages.projectId, projectId)))
+      .limit(1);
+    if (!st) return NextResponse.json({ error: "not_found" }, { status: 404 });
+    target = st;
+  } else {
+    const stages = await db
+      .select({ id: projectStages.id, status: projectStages.status })
+      .from(projectStages)
+      .where(eq(projectStages.projectId, projectId))
+      .orderBy(asc(projectStages.orderIndex));
+    target = stages.find((s) => s.status === "active") ?? stages[0];
+  }
   if (!target) return NextResponse.json({ error: "no_stage" }, { status: 400 });
 
   const declared = Number(req.headers.get("content-length"));
@@ -105,5 +118,6 @@ export async function POST(req: NextRequest) {
   });
 
   revalidatePath(`/contractor/projects/${projectId}`);
+  revalidatePath(`/contractor/projects/${projectId}/stages/${target.id}`);
   return NextResponse.json({ ok: true });
 }

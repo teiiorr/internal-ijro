@@ -12,6 +12,7 @@ import { getStageMessages } from "@/server/queries/projects";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
+import { StudioStageUpload } from "@/components/contractor/studio-stage-upload";
 import { StagePayments } from "@/components/projects/stage-payments";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
@@ -125,7 +126,10 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 items-start">
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-4">
-            <h3 className="text-base font-semibold">{t("projects.stageDocs.title")}</h3>
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-base font-semibold">{t("projects.stageDocs.title")}</h3>
+              {s.status !== "locked" && <StudioStageUpload projectId={id} stageId={s.id} maxBytes={MAX_UPLOAD_BYTES} />}
+            </div>
             <StageDocuments stageId={s.id} documents={data.documents} canManage={false} suggestions={data.categorySuggestions} maxBytes={MAX_UPLOAD_BYTES} />
           </CardContent>
         </Card>
