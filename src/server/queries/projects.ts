@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   projects,
@@ -232,7 +232,38 @@ export async function listProjectsForContractor(contractorUserId: string, locale
     .leftJoin(projectTypes, eq(projectTypes.id, projects.projectTypeId))
     .where(eq(projects.externalCompanyId, company[0].id))
     .orderBy(desc(projects.createdAt));
-  return { company: company[0], projects: prjs.map((r) => ({ ...r, projectTypeName: typeLabel(r, locale) })) };
+
+  // Enrich with the active stage name + "stage X of N" — the "where am I" signal.
+  const ids = prjs.map((p) => p.id);
+  const activeByProject = new Map<string, { name: string; orderIndex: number }>();
+  const countByProject = new Map<string, number>();
+  if (ids.length) {
+    const act = await db
+      .select({ projectId: projectStages.projectId, name: projectStages.name, orderIndex: projectStages.orderIndex })
+      .from(projectStages)
+      .where(and(inArray(projectStages.projectId, ids), eq(projectStages.status, "active")));
+    for (const a of act) if (!activeByProject.has(a.projectId)) activeByProject.set(a.projectId, a);
+    const cnt = await db
+      .select({ projectId: projectStages.projectId, c: sql<number>`count(*)::int` })
+      .from(projectStages)
+      .where(inArray(projectStages.projectId, ids))
+      .groupBy(projectStages.projectId);
+    for (const c of cnt) countByProject.set(c.projectId, Number(c.c));
+  }
+
+  return {
+    company: company[0],
+    projects: prjs.map((r) => {
+      const a = activeByProject.get(r.id);
+      return {
+        ...r,
+        projectTypeName: typeLabel(r, locale),
+        activeStageName: a?.name ?? null,
+        activeStageIndex: a ? a.orderIndex + 1 : null,
+        totalStages: countByProject.get(r.id) ?? 0,
+      };
+    }),
+  };
 }
 
 /**
