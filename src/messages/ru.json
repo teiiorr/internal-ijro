@@ -764,7 +764,15 @@
         "cancel": "Отмена",
         "createBtn": "Создать"
       }
-    }
+    },
+    "total": "Всего",
+    "approvedTitle": "Одобренные",
+    "rejectedTitle": "Отклонённые",
+    "approve": "Одобрить",
+    "reject": "Отклонить",
+    "rejectReasonPlaceholder": "Причина отклонения…",
+    "reasonLabel": "Причина",
+    "ratingScale": "{r} / 5"
   },
   "reports": {
     "standupTitle": "Ежедневный standup",

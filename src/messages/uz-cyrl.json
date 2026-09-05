@@ -764,7 +764,15 @@
         "cancel": "Бекор қилиш",
         "createBtn": "Яратиш"
       }
-    }
+    },
+    "total": "Жами",
+    "approvedTitle": "Тасдиқланган",
+    "rejectedTitle": "Рад этилган",
+    "approve": "Тасдиқлаш",
+    "reject": "Рад этиш",
+    "rejectReasonPlaceholder": "Рад этиш сабаби…",
+    "reasonLabel": "Сабаб",
+    "ratingScale": "{r} / 5"
   },
   "reports": {
     "standupTitle": "Кунлик стендап",

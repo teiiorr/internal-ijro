@@ -1,10 +1,19 @@
 "use client";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useTransition } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
-import { IconSearch, IconFolder, IconChevronRight } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { toast } from "sonner";
+import {
+  IconSearch, IconFolder, IconStarFilled, IconMail, IconPhone, IconCheck, IconX, IconChevronRight, IconCalendarEvent,
+} from "@tabler/icons-react";
 import { SmoothImage } from "@/components/ui/smooth-image";
-import { Badge } from "@/components/ui/badge";
+import { StatCard } from "@/components/ui/stat-card";
+import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/dates";
+import { approveContractor, rejectContractor } from "@/server/actions/projects";
+import { cn } from "@/lib/utils";
 
 type Proj = { id: string; name: string; status: string };
 type Studio = {
@@ -12,182 +21,201 @@ type Studio = {
   name: string;
   contactPerson: string | null;
   contactEmail: string | null;
+  contactPhone: string | null;
   status: string;
   rating: string | null;
   logoUrl: string | null;
+  rejectionReason: string | null;
+  createdAt: Date | string;
   projects: Proj[];
 };
 
-const initial = (name: string) =>
-  name.replace(/["'«»“”]/g, "").trim().charAt(0).toUpperCase() || "?";
+const STATUS_TONE: Record<string, StatusTone> = { approved: "green", pending: "amber", rejected: "red" };
+const initial = (name: string) => name.replace(/["'«»“”]/g, "").trim().charAt(0).toUpperCase() || "?";
 
-const COLORS = [
-  "from-indigo-500/20 to-purple-500/20",
-  "from-emerald-500/20 to-teal-500/20",
-  "from-amber-500/20 to-orange-500/20",
-  "from-rose-500/20 to-pink-500/20",
-  "from-sky-500/20 to-cyan-500/20",
-  "from-violet-500/20 to-fuchsia-500/20",
-];
-
-function colorFor(id: string) {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
-  return COLORS[Math.abs(h) % COLORS.length];
-}
+type Filter = "all" | "pending" | "approved" | "rejected";
 
 export function StudioGrid({ studios }: { studios: Studio[] }) {
   const t = useTranslations();
+  const locale = useLocale();
+  const router = useRouter();
   const [query, setQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [filter, setFilter] = useState<Filter>("all");
+
+  const counts = useMemo(() => ({
+    total: studios.length,
+    pending: studios.filter((s) => s.status === "pending").length,
+    approved: studios.filter((s) => s.status === "approved").length,
+    rejected: studios.filter((s) => s.status === "rejected").length,
+  }), [studios]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    if (!q) return studios;
-    return studios.filter(
-      (s) =>
+    return studios.filter((s) => {
+      if (filter !== "all" && s.status !== filter) return false;
+      if (!q) return true;
+      return (
         s.name.toLowerCase().includes(q) ||
         s.contactPerson?.toLowerCase().includes(q) ||
-        s.projects.some((p) => p.name.toLowerCase().includes(q)),
-    );
-  }, [query, studios]);
+        s.projects.some((p) => p.name.toLowerCase().includes(q))
+      );
+    });
+  }, [query, filter, studios]);
+
+  const toggle = (f: Filter) => setFilter((c) => (c === f ? "all" : f));
 
   return (
-    <div className="space-y-6">
-      {/* Search */}
-      <div className="relative max-w-md">
-        <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-[var(--muted)]" />
-        <input
-          ref={inputRef}
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("common.search") + "..."}
-          className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 pl-11 pr-4 text-sm font-medium placeholder:text-[var(--subtle)] transition-all duration-300 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary-glow)] focus:outline-none"
-        />
-        {query && (
-          <button
-            type="button"
-            onClick={() => {
-              setQuery("");
-              inputRef.current?.focus();
-            }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
-          >
-            &times;
-          </button>
-        )}
+    <div className="space-y-5">
+      {/* Triage KPI band */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <StatCard label={t("contractors.total")} value={counts.total} />
+        <button type="button" onClick={() => toggle("pending")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "pending" && "rounded-2xl ring-2 ring-[var(--warning)]")}>
+          <StatCard label={t("contractors.pendingTitle")} value={counts.pending} tone="warning" filled={counts.pending > 0} />
+        </button>
+        <button type="button" onClick={() => toggle("approved")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "approved" && "rounded-2xl ring-2 ring-[var(--success)]")}>
+          <StatCard label={t("contractors.approvedTitle")} value={counts.approved} tone="success" />
+        </button>
+        <button type="button" onClick={() => toggle("rejected")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "rejected" && "rounded-2xl ring-2 ring-[var(--danger)]")}>
+          <StatCard label={t("contractors.rejectedTitle")} value={counts.rejected} tone="danger" />
+        </button>
       </div>
 
-      {/* Results count */}
-      {query && (
-        <p className="text-sm text-[var(--muted)] animate-[item-enter_0.3s_ease_both]">
-          {filtered.length === 0
-            ? t("contractors.none")
-            : `${filtered.length} ${t("contractors.projectsCount", { n: filtered.length }).split(" ").slice(-1)}`}
-        </p>
-      )}
+      {/* Search + tabs */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("common.search")}
+            className="h-11 w-full rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
+          />
+        </div>
+        <div className="flex gap-1 overflow-x-auto rounded-[10px] bg-[var(--surface-3)] p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {([
+            ["all", t("common.all")],
+            ["pending", t("contractors.pendingTitle")],
+            ["approved", t("contractors.approvedTitle")],
+            ["rejected", t("contractors.rejectedTitle")],
+          ] as const).map(([k, label]) => (
+            <button key={k} type="button" onClick={() => setFilter(k)}
+              className={cn("shrink-0 whitespace-nowrap rounded-[8px] px-3 py-1.5 text-sm font-semibold transition-all sm:px-4",
+                filter === k ? "bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-1)]" : "text-[var(--muted)] hover:text-[var(--foreground)]")}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--border)] py-20 text-[var(--muted)]">
-          <IconSearch className="size-10 mb-3 opacity-40" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--border)] py-16 text-[var(--muted)]">
+          <IconSearch className="mb-3 size-10 opacity-40" />
           <p className="text-sm font-medium">{t("contractors.none")}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 stagger-children">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((s) => (
-            <Link
-              key={s.id}
-              href={`/contractors/${s.id}`}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)]"
-            >
-              {/* Hero area — square logo */}
-              <div className={`relative aspect-[4/3] sm:aspect-square bg-gradient-to-br ${colorFor(s.id)} overflow-hidden transition-all duration-500`}>
-                {s.logoUrl ? (
-                  <SmoothImage
-                    src={s.logoUrl}
-                    alt={s.name}
-                    className="size-full object-cover opacity-90 transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="flex size-full items-center justify-center">
-                    <span className="select-none text-5xl sm:text-7xl font-black text-[var(--foreground)] opacity-15 transition-all duration-500 group-hover:scale-110 group-hover:opacity-20">
-                      {initial(s.name)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Status badge overlay */}
-                {s.status !== "approved" && (
-                  <div className="absolute right-2.5 top-2.5">
-                    <Badge variant={s.status === "rejected" ? "danger" : "warning"}>
-                      {t(`status.${s.status}` as "status.pending")}
-                    </Badge>
-                  </div>
-                )}
-                {s.rating && (
-                  <div className="absolute left-2.5 top-2.5">
-                    <span className="inline-flex items-center gap-1 rounded-lg bg-black/30 px-2 py-0.5 text-xs font-bold text-white backdrop-blur-sm">
-                      ⭐ {s.rating}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="flex flex-1 flex-col p-4 pt-3.5">
-                <h3 className="text-base font-bold leading-snug line-clamp-2 transition-colors duration-300 group-hover:text-[var(--primary)]">
-                  {s.name}
-                </h3>
-
-                {s.contactPerson && (
-                  <p className="mt-1 text-xs text-[var(--muted)] truncate">{s.contactPerson}</p>
-                )}
-
-                {/* Projects preview */}
-                <div className="mt-auto pt-3">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--primary)]">
-                    <IconFolder className="size-3.5" />
-                    <span>{t("contractors.projectsCount", { n: s.projects.length })}</span>
-                  </div>
-                  {s.projects.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {s.projects.slice(0, 3).map((p) => (
-                        <div
-                          key={p.id}
-                          className="flex items-center justify-between gap-2 rounded-lg bg-[var(--surface-2)] px-2.5 py-1.5 text-xs transition-colors duration-300 group-hover:bg-[var(--surface-3)]"
-                        >
-                          <span className="truncate font-medium">{p.name}</span>
-                          <Badge
-                            variant={p.status === "completed" ? "success" : "secondary"}
-                            className="shrink-0 text-[10px]"
-                          >
-                            {t(`status.${p.status}` as "status.planning")}
-                          </Badge>
-                        </div>
-                      ))}
-                      {s.projects.length > 3 && (
-                        <p className="text-center text-[10px] font-medium text-[var(--muted)]">
-                          +{s.projects.length - 3}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Bottom accent bar */}
-              <div className="flex items-center justify-end border-t border-[var(--border)] px-4 py-2.5 transition-colors duration-300 group-hover:border-[var(--primary)]/20 group-hover:bg-[var(--primary-soft)]">
-                <span className="flex items-center gap-1 text-xs font-semibold text-[var(--muted)] transition-all duration-300 group-hover:text-[var(--primary)] group-hover:translate-x-0.5">
-                  {t("common.open")}
-                  <IconChevronRight className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-                </span>
-              </div>
-            </Link>
+            <StudioCard key={s.id} s={s} t={t} locale={locale} router={router} />
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof useTranslations>; locale: string; router: ReturnType<typeof useRouter> }) {
+  const [pending, start] = useTransition();
+  const [rejecting, setRejecting] = useState(false);
+  const [reason, setReason] = useState("");
+  const tone = STATUS_TONE[s.status] ?? "muted";
+
+  function approve() {
+    start(async () => {
+      try { await approveContractor(s.id); toast.success(t("common.saved")); router.refresh(); }
+      catch { toast.error(t("common.error")); }
+    });
+  }
+  function reject() {
+    if (!reason.trim()) return;
+    start(async () => {
+      try { await rejectContractor(s.id, reason.trim()); toast.success(t("common.saved")); setRejecting(false); setReason(""); router.refresh(); }
+      catch { toast.error(t("common.error")); }
+    });
+  }
+
+  return (
+    <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]">
+      {/* Header: logo + name + status */}
+      <div className="flex items-start gap-3">
+        <Link href={`/contractors/${s.id}`} className="shrink-0">
+          <div className="grid size-14 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-2)] ring-1 ring-[var(--border)]">
+            {s.logoUrl ? (
+              <SmoothImage src={s.logoUrl} alt={s.name} className="size-full object-contain p-1" />
+            ) : (
+              <span className="text-2xl font-black text-[var(--subtle)]">{initial(s.name)}</span>
+            )}
+          </div>
+        </Link>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <Link href={`/contractors/${s.id}`} className="min-w-0">
+              <h3 className="line-clamp-2 text-base font-bold leading-snug tracking-tight transition-colors hover:text-[var(--primary)]">{s.name}</h3>
+            </Link>
+            <StatusTag tone={tone} size="sm" className="shrink-0">{t(`status.${s.status}` as "status.pending")}</StatusTag>
+          </div>
+          {s.contactPerson && <p className="mt-0.5 truncate text-xs font-medium text-[var(--muted)]">{s.contactPerson}</p>}
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-[var(--subtle)]">
+            {s.contactEmail && <span className="inline-flex items-center gap-1 truncate"><IconMail className="size-3 shrink-0" />{s.contactEmail}</span>}
+            {s.contactPhone && <span className="inline-flex items-center gap-1"><IconPhone className="size-3 shrink-0" />{s.contactPhone}</span>}
+          </div>
+        </div>
+      </div>
+
+      {/* Meta row */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--muted)]">
+        <span className="inline-flex items-center gap-1 font-semibold text-[var(--primary)]"><IconFolder className="size-3.5" />{t("contractors.projectsCount", { n: s.projects.length })}</span>
+        {s.rating && <span className="inline-flex items-center gap-1 font-semibold text-[var(--warning)]"><IconStarFilled className="size-3.5" />{t("contractors.ratingScale", { r: Number(s.rating).toFixed(1) })}</span>}
+        <span className="inline-flex items-center gap-1"><IconCalendarEvent className="size-3.5" />{formatDate(s.createdAt as string, locale)}</span>
+      </div>
+
+      {/* Rejection reason */}
+      {s.status === "rejected" && s.rejectionReason && (
+        <p className="mt-2 rounded-lg bg-[var(--danger-soft)] px-2.5 py-1.5 text-xs text-[var(--danger)]">
+          <span className="font-semibold">{t("contractors.reasonLabel")}:</span> {s.rejectionReason}
+        </p>
+      )}
+
+      {/* Footer actions */}
+      <div className="mt-3 flex items-center justify-between gap-2 border-t border-[var(--border)] pt-3">
+        {s.status === "pending" ? (
+          <div className="flex flex-1 flex-wrap items-center gap-2">
+            {rejecting ? (
+              <div className="flex w-full flex-col gap-2">
+                <input
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder={t("contractors.rejectReasonPlaceholder")}
+                  className="h-9 w-full rounded-lg border border-[var(--input)] bg-[var(--surface)] px-2.5 text-xs focus-visible:border-[var(--danger)] focus-visible:outline-none"
+                />
+                <div className="flex gap-2">
+                  <Button size="sm" variant="ghost" onClick={() => { setRejecting(false); setReason(""); }}>{t("common.cancel")}</Button>
+                  <Button size="sm" variant="destructive" onClick={reject} disabled={pending || !reason.trim()}>{t("contractors.reject")}</Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <Button size="sm" variant="outline" onClick={() => setRejecting(true)} disabled={pending} className="text-[var(--danger)]"><IconX className="size-4" />{t("contractors.reject")}</Button>
+                <Button size="sm" variant="success" onClick={approve} disabled={pending}><IconCheck className="size-4" />{t("contractors.approve")}</Button>
+              </>
+            )}
+          </div>
+        ) : (
+          <span />
+        )}
+        <Link href={`/contractors/${s.id}`} className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:text-[var(--primary)]">
+          {t("common.open")}<IconChevronRight className="size-3.5" />
+        </Link>
+      </div>
     </div>
   );
 }

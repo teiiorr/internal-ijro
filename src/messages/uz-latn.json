@@ -764,7 +764,15 @@
         "cancel": "Bekor qilish",
         "createBtn": "Yaratish"
       }
-    }
+    },
+    "total": "Jami",
+    "approvedTitle": "Tasdiqlangan",
+    "rejectedTitle": "Rad etilgan",
+    "approve": "Tasdiqlash",
+    "reject": "Rad etish",
+    "rejectReasonPlaceholder": "Rad etish sababi…",
+    "reasonLabel": "Sabab",
+    "ratingScale": "{r} / 5"
   },
   "reports": {
     "standupTitle": "Kunlik standup",
