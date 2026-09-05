@@ -3,13 +3,14 @@ import * as React from "react";
 export type StatusTone = "green" | "amber" | "red" | "muted";
 export type StatusSize = "sm" | "md" | "lg";
 
-// `tone` drives the fill color; the chip is a static solid fill with white
-// text (see .status-tag in globals.css) — no animation.
+// `tone` drives the solid fill; the chip has white text (see .status-tag in
+// globals.css) — no animation. Fixed, vivid, clearly-distinct colors chosen so
+// white stays legible on each (green / amber-gold / red / slate).
 const TONE: Record<StatusTone, string> = {
-  green: "var(--success)",
-  amber: "var(--warning)",
-  red:   "var(--danger)",
-  muted: "var(--muted)",
+  green: "#16A34A",
+  amber: "#E08C10",
+  red:   "#E02424",
+  muted: "#64748B",
 };
 
 const SIZE: Record<StatusSize, { box: string; ch: string }> = {
