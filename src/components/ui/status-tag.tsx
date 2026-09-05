@@ -3,14 +3,13 @@ import * as React from "react";
 export type StatusTone = "green" | "amber" | "red" | "muted";
 export type StatusSize = "sm" | "md" | "lg";
 
-// `tone` drives a solid color + its high-contrast on-color. The chip hard-flips
-// between an outline state and a solid fill (see .status-flash in globals.css),
-// so it snaps on/off like an alarm rather than glowing.
-const TONE: Record<StatusTone, { tone: string; on: string }> = {
-  green: { tone: "var(--success)", on: "#04231a" },
-  amber: { tone: "var(--warning)", on: "#241a02" },
-  red:   { tone: "var(--danger)",  on: "#ffffff" },
-  muted: { tone: "var(--muted)",   on: "var(--foreground)" },
+// `tone` drives the fill color; the chip is a static solid fill with white
+// text (see .status-tag in globals.css) — no animation.
+const TONE: Record<StatusTone, string> = {
+  green: "var(--success)",
+  amber: "var(--warning)",
+  red:   "var(--danger)",
+  muted: "var(--muted)",
 };
 
 const SIZE: Record<StatusSize, { box: string; ch: string }> = {
@@ -20,15 +19,13 @@ const SIZE: Record<StatusSize, { box: string; ch: string }> = {
 };
 
 /**
- * Angular status "signal tag": chamfered corners, uppercase, and a hard
- * on/off flash between an outline and a solid fill. `live` toggles the flash
- * (on by default for every tone except the neutral `muted`). Animation lives
- * in globals.css (.status-tag / .status-flash) and honors reduced-motion.
+ * Angular status "signal tag": chamfered corners, uppercase, solid color fill.
+ * Static (no animation). `live` is accepted for API compatibility but ignored.
  */
 export function StatusTag({
   tone,
   size = "md",
-  live,
+  live: _live,
   children,
   className = "",
 }: {
@@ -38,13 +35,11 @@ export function StatusTag({
   children: React.ReactNode;
   className?: string;
 }) {
-  const t = TONE[tone];
   const s = SIZE[size];
-  const isLive = live ?? tone !== "muted";
   return (
     <span
-      style={{ ["--tone" as string]: t.tone, ["--on" as string]: t.on, ["--ch" as string]: s.ch }}
-      className={`status-tag ${isLive ? "status-flash" : ""} ${s.box} inline-flex items-center justify-center font-extrabold uppercase leading-none whitespace-nowrap ${className}`}
+      style={{ ["--tone" as string]: TONE[tone], ["--ch" as string]: s.ch }}
+      className={`status-tag ${s.box} inline-flex items-center justify-center font-extrabold uppercase leading-none whitespace-nowrap ${className}`}
     >
       {children}
     </span>
