@@ -3,26 +3,27 @@ import * as React from "react";
 export type StatusTone = "green" | "amber" | "red" | "muted";
 export type StatusSize = "sm" | "md" | "lg";
 
-// Tone drives both the text color and the glow: the animated shadow uses
-// currentColor, so the chip lights up in its own tone with no per-tone CSS.
-const TONE: Record<StatusTone, string> = {
-  green: "text-[var(--success)] bg-[var(--success)]/12",
-  amber: "text-[var(--warning)] bg-[var(--warning)]/12",
-  red:   "text-[var(--danger)]  bg-[var(--danger)]/12",
-  muted: "text-[var(--muted)]   bg-[var(--surface-3)]",
+// `tone` drives a solid color + its high-contrast on-color. The chip hard-flips
+// between an outline state and a solid fill (see .status-flash in globals.css),
+// so it snaps on/off like an alarm rather than glowing.
+const TONE: Record<StatusTone, { tone: string; on: string }> = {
+  green: { tone: "var(--success)", on: "#04231a" },
+  amber: { tone: "var(--warning)", on: "#241a02" },
+  red:   { tone: "var(--danger)",  on: "#ffffff" },
+  muted: { tone: "var(--muted)",   on: "var(--foreground)" },
 };
 
-const SIZE: Record<StatusSize, string> = {
-  sm: "px-2 py-[3px] text-[11px] rounded-[5px]",
-  md: "px-2.5 py-1 text-xs rounded-md",
-  lg: "px-3.5 py-1.5 text-sm rounded-[7px]",
+const SIZE: Record<StatusSize, { box: string; ch: string }> = {
+  sm: { box: "px-2 py-[3px] text-[10px] tracking-[0.05em]", ch: "4px" },
+  md: { box: "px-2.5 py-1 text-[11px] tracking-[0.06em]", ch: "5px" },
+  lg: { box: "px-3.5 py-1.5 text-[13px] tracking-[0.06em]", ch: "7px" },
 };
 
 /**
- * Rectangular status chip that breathes in its own tone (a "lit sign"). No dot.
- * `live` toggles the animated glow — on by default for every tone except the
- * neutral `muted` placeholder. The animation is defined in globals.css
- * (`.status-live` / `@keyframes status-blink`) and honors prefers-reduced-motion.
+ * Angular status "signal tag": chamfered corners, uppercase, and a hard
+ * on/off flash between an outline and a solid fill. `live` toggles the flash
+ * (on by default for every tone except the neutral `muted`). Animation lives
+ * in globals.css (.status-tag / .status-flash) and honors reduced-motion.
  */
 export function StatusTag({
   tone,
@@ -37,10 +38,13 @@ export function StatusTag({
   children: React.ReactNode;
   className?: string;
 }) {
+  const t = TONE[tone];
+  const s = SIZE[size];
   const isLive = live ?? tone !== "muted";
   return (
     <span
-      className={`inline-flex items-center justify-center font-bold leading-none whitespace-nowrap ${TONE[tone]} ${SIZE[size]} ${isLive ? "status-live" : "status-chip"} ${className}`}
+      style={{ ["--tone" as string]: t.tone, ["--on" as string]: t.on, ["--ch" as string]: s.ch }}
+      className={`status-tag ${isLive ? "status-flash" : ""} ${s.box} inline-flex items-center justify-center font-extrabold uppercase leading-none whitespace-nowrap ${className}`}
     >
       {children}
     </span>
