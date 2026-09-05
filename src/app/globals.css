@@ -579,14 +579,15 @@ input:focus, textarea:focus, select:focus {
 
 /* --- Status "signal tag" (components/ui/status-tag.tsx) ---
    Angular chamfered chip driven by two custom props: --tone (the color) and
-   --on (high-contrast text on the solid fill). Resting state is an outline;
-   .status-flash hard-flips to a solid fill on a 1.1s square loop, so it snaps
-   on/off like an alarm light rather than glowing. --ch = corner chamfer size. */
+   --on (high-contrast text on the solid fill). The resting look is the SOLID
+   fill; once every 3s it winks to an outline for ~0.2s (one blink per cycle),
+   so it draws the eye periodically instead of flashing constantly. --ch =
+   corner chamfer size. */
 .status-tag {
   border-radius: 0;
-  color: var(--tone);
-  background: color-mix(in srgb, var(--tone) 14%, transparent);
-  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--tone) 55%, transparent);
+  color: var(--on);
+  background: var(--tone);
+  box-shadow: inset 0 0 0 1.5px var(--tone);
   clip-path: polygon(
     var(--ch, 5px) 0, 100% 0,
     100% calc(100% - var(--ch, 5px)), calc(100% - var(--ch, 5px)) 100%,
@@ -594,19 +595,19 @@ input:focus, textarea:focus, select:focus {
   );
 }
 @keyframes status-flash {
-  0%, 49.99% {
-    color: var(--tone);
-    background: color-mix(in srgb, var(--tone) 14%, transparent);
-    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--tone) 55%, transparent);
-  }
-  50%, 100% {
+  0%, 85%, 92.01%, 100% {
     color: var(--on);
     background: var(--tone);
     box-shadow: inset 0 0 0 1.5px var(--tone);
   }
+  85.01%, 92% {
+    color: var(--tone);
+    background: color-mix(in srgb, var(--tone) 14%, transparent);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--tone) 55%, transparent);
+  }
 }
 .status-flash {
-  animation: status-flash 1.1s steps(1, end) infinite;
+  animation: status-flash 3s steps(1, end) infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .status-flash { animation: none; }
@@ -633,6 +634,14 @@ input:focus, textarea:focus, select:focus {
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* A status chip is inline-flex; text-align:center doesn't reliably center it,
+   so flex-center any value cell that holds one (plain-text cells keep their
+   text-align + ellipsis behavior untouched). */
+.detail-grid > div > dd:has(.status-tag) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .detail-grid > div:last-child:nth-child(odd) {
   grid-column: 1 / -1;
