@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { IconCalendarClock as CalendarClock } from "@tabler/icons-react";
+import Link from "next/link";
+import { IconCalendarClock as CalendarClock, IconArrowRight as ArrowRight } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
@@ -86,6 +87,39 @@ export default async function ContractorProjectPage({ params }: { params: Promis
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
           </div>
         </div>
+
+        {/* Current stage — the studio's "what do I do next" */}
+        {activeStage && (
+          <Card>
+            <CardContent className="p-5 sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusTag tone="amber" size="sm">{t("projects.stagePath.currentStage")}</StatusTag>
+                    <span className="text-xs font-medium text-[var(--muted)] tabular-nums">
+                      {t("projects.stagePath.stageOf", { n: activeStage.orderIndex + 1, total: sp.stages.length })}
+                    </span>
+                  </div>
+                  <h2 className="mt-1.5 text-xl font-bold tracking-tight break-words sm:text-2xl">{activeStage.name}</h2>
+                  {activeStage.plannedDeadline && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[var(--muted)]">
+                      <CalendarClock className="size-4 shrink-0" />
+                      <span className="font-medium">{formatDate(activeStage.plannedDeadline, locale)}</span>
+                      <DeadlineCountdown deadline={activeStage.plannedDeadline} />
+                    </div>
+                  )}
+                </div>
+                <Link
+                  href={`/contractor/projects/${id}/stages/${activeStage.id}`}
+                  className="inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl bg-[var(--primary)] px-5 text-[15px] font-semibold text-[var(--primary-foreground)] shadow-[var(--shadow-1)] transition-all hover:brightness-110 hover:shadow-[var(--shadow-2)] active:scale-95"
+                >
+                  {t("common.open")}
+                  <ArrowRight className="size-4" />
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {sp.project.description && (
           <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
