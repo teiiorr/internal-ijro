@@ -66,11 +66,9 @@ export default async function DashboardPage() {
         <ManagerWidgets showPayments={showPayments} />
       </Suspense>
 
-      {(isManager || owner) && (
-        <Suspense fallback={<WidgetSkeleton />}>
-          <ProjectStatusBoard />
-        </Suspense>
-      )}
+      <Suspense fallback={<WidgetSkeleton />}>
+        <ProjectStatusBoard />
+      </Suspense>
 
       {isHr && <Suspense fallback={<WidgetSkeleton />}><HrWidgets /></Suspense>}
       {!isManager && !isHr && <Suspense fallback={<WidgetSkeleton />}><SpecialistWidgets userId={user.id} /></Suspense>}
