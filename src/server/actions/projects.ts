@@ -21,6 +21,8 @@ import {
 } from "@/lib/db/schema";
 import { redirect } from "next/navigation";
 import { requireUser, requireProjectEditor } from "@/lib/session";
+import { canEditProjects } from "@/lib/permissions/project-editors";
+import { hasGrant } from "@/lib/permissions/grants";
 import { logActivity } from "@/lib/audit";
 import { hashPassword } from "@/lib/auth/password";
 import { notify } from "@/lib/notifications";
@@ -387,6 +389,7 @@ const msgSchema = z.object({
   stageId: z.string().uuid().optional(),
   content: z.string().min(1).max(5000),
   attachments: z.array(attachmentSchema).optional(),
+  replyToId: z.string().uuid().optional().nullable(),
 });
 /** A kontragent may only act on a project that belongs to their own studio
  *  (resolved by email → company → project). Staff pass through unchanged. */
@@ -413,6 +416,7 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
     userId: me.id,
     content: parsed.content,
     attachments: parsed.attachments?.length ? parsed.attachments : undefined,
+    replyToId: parsed.replyToId ?? null,
   });
 
   // Notify the other side so the chat has real participants. Curators (our
@@ -493,6 +497,40 @@ export async function markProjectRead(projectId: string) {
   revalidatePath("/contractor/chats");
   revalidatePath("/contractor", "layout"); // refresh the bottom-nav unread badge
   revalidatePath("/contractors");
+}
+
+function revalidateMessageSurfaces(projectId: string, stageId: string | null) {
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath(`/contractor/projects/${projectId}`);
+  revalidatePath(`/contractor/chats/${projectId}`);
+  if (stageId) {
+    revalidatePath(`/projects/${projectId}/stages/${stageId}`);
+    revalidatePath(`/contractor/projects/${projectId}/stages/${stageId}`);
+  }
+  revalidatePath(`/contractors`);
+}
+
+/** Edit own message (Telegram-style). Author only. */
+export async function editProjectMessage(messageId: string, content: string) {
+  const me = await requireUser();
+  const text = content.trim();
+  if (text.length < 1 || text.length > 5000) throw new Error("invalid");
+  const [msg] = await db.select().from(projectMessages).where(eq(projectMessages.id, messageId)).limit(1);
+  if (!msg) throw new Error("not_found");
+  if (msg.userId !== me.id) throw new Error("forbidden");
+  await db.update(projectMessages).set({ content: text, editedAt: new Date() }).where(eq(projectMessages.id, messageId));
+  revalidateMessageSurfaces(msg.projectId, msg.stageId);
+}
+
+/** Delete a message. Author, or a project editor (moderation). */
+export async function deleteProjectMessage(messageId: string) {
+  const me = await requireUser();
+  const [msg] = await db.select().from(projectMessages).where(eq(projectMessages.id, messageId)).limit(1);
+  if (!msg) throw new Error("not_found");
+  const isEditor = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
+  if (msg.userId !== me.id && !isEditor) throw new Error("forbidden");
+  await db.delete(projectMessages).where(eq(projectMessages.id, messageId));
+  revalidateMessageSurfaces(msg.projectId, msg.stageId);
 }
 
 // Deliverables (contractor uploads)

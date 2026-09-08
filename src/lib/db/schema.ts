@@ -600,6 +600,10 @@ export const projectMessages = pgTable("project_messages", {
     .references(() => users.id),
   content: text("content").notNull(),
   attachments: jsonb("attachments"),
+  /** Reply target (Telegram-style). Nulled if the quoted message is deleted. */
+  replyToId: uuid("reply_to_id").references((): AnyPgColumn => projectMessages.id, { onDelete: "set null" }),
+  /** Set when the message was edited. */
+  editedAt: timestamp("edited_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   readByCuratorAt: timestamp("read_by_curator_at", { withTimezone: true }),
   readByContractorAt: timestamp("read_by_contractor_at", { withTimezone: true }),

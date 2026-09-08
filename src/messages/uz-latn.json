@@ -400,7 +400,15 @@
       "placeholder": "Xabar yozing...",
       "noMessages": "Xabarlar yo'q.",
       "fileTooLarge": "Fayl juda katta",
-      "uploadError": "Faylni yuklashda xatolik"
+      "uploadError": "Faylni yuklashda xatolik",
+      "reply": "Javob berish",
+      "edit": "Tahrirlash",
+      "delete": "Oʻchirish",
+      "copy": "Nusxa olish",
+      "copied": "Nusxa olindi",
+      "edited": "tahrirlandi",
+      "editing": "Tahrirlash",
+      "deletePrompt": "Xabar oʻchirilsinmi?"
     },
     "studioFiles": {
       "title": "Studiya hujjatlari",

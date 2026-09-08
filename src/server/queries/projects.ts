@@ -1,5 +1,6 @@
 import "server-only";
 import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { db } from "@/lib/db";
 import {
   projects,
@@ -593,6 +594,8 @@ export async function getStageMessages(projectId: string, stageId: string | null
   const cond = stageId
     ? and(eq(projectMessages.projectId, projectId), eq(projectMessages.stageId, stageId))
     : and(eq(projectMessages.projectId, projectId), sql`${projectMessages.stageId} is null`);
+  const replyMsg = alias(projectMessages, "reply_msg");
+  const replyUser = alias(users, "reply_user");
   return db
     .select({
       id: projectMessages.id,
@@ -602,9 +605,15 @@ export async function getStageMessages(projectId: string, stageId: string | null
       userName: users.fullName,
       userAvatarUrl: users.avatarUrl,
       attachments: projectMessages.attachments,
+      editedAt: projectMessages.editedAt,
+      replyToId: projectMessages.replyToId,
+      replyToContent: replyMsg.content,
+      replyToUserName: replyUser.fullName,
     })
     .from(projectMessages)
     .innerJoin(users, eq(users.id, projectMessages.userId))
+    .leftJoin(replyMsg, eq(replyMsg.id, projectMessages.replyToId))
+    .leftJoin(replyUser, eq(replyUser.id, replyMsg.userId))
     .where(cond)
     .orderBy(asc(projectMessages.createdAt));
 }
