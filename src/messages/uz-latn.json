@@ -333,7 +333,7 @@
       "name": "Loyiha nomi",
       "description": "Tavsif",
       "type": "Turi",
-      "curator": "Kurator",
+      "curator": "Nazoratchi mas'ul",
       "contractor": "Studiya",
       "startDate": "Boshlanish sanasi",
       "deadline": "Tugatish muddati",
@@ -426,7 +426,7 @@
     "headers": {
       "name": "Nomi",
       "type": "Turi",
-      "curator": "Kurator",
+      "curator": "Nazoratchi mas'ul",
       "company": "Kompaniya",
       "progress": "Bajarilish",
       "deadline": "Muddat",
@@ -444,7 +444,7 @@
       "removed": "Studiya olib tashlandi",
       "hint": "Ro'yxatdan o'tmagan studiyani ham qo'lda qo'shishingiz mumkin"
     },
-    "curatorLabel": "Kurator",
+    "curatorLabel": "Nazoratchi mas'ul",
     "deliverable": {
       "types": {
         "document": "Hujjat",
@@ -952,10 +952,10 @@
     "chats": {
       "title": "Chatlar",
       "empty": "Hozircha loyiha chatlari yo'q",
-      "curator": "Kurator",
-      "noCurator": "Kurator tayinlanmagan",
+      "curator": "Nazoratchi mas'ul",
+      "noCurator": "Nazoratchi mas'ul tayinlanmagan",
       "noMessages": "Xabar yo’q",
-      "subtitle": "Loyihalar bo’yicha kuratoringiz bilan yozishing",
+      "subtitle": "Loyihalar bo’yicha nazoratchi mas'ul bilan yozishing",
       "openProject": "Loyihani ochish"
     },
     "submitWork": "Ishni topshirish",
@@ -1249,7 +1249,7 @@
   "conversation": {
     "participants": "ishtirokchi",
     "members": "Ishtirokchilar",
-    "curator": "Kurator",
+    "curator": "Nazoratchi mas'ul",
     "studio": "Studiya",
     "you": "Siz",
     "group": "Guruh"

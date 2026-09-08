@@ -53,9 +53,9 @@ export function StageRequirementsEditor({ stageId, initial }: { stageId: string;
         placeholder={t("review.requirements")}
         className="w-full resize-y rounded-xl border border-[var(--input)] bg-[var(--surface-1)] p-3 text-sm text-[var(--foreground)] placeholder:text-[var(--subtle)] focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
       />
-      <div className="flex items-center gap-2">
-        <Button onClick={save} disabled={pending} size="sm"><Save className="size-4" />{t("common.save")}</Button>
+      <div className="flex items-center justify-end gap-2">
         <Button onClick={() => { setEditing(false); setVal(initial ?? ""); }} disabled={pending} variant="ghost" size="sm">{t("common.cancel")}</Button>
+        <Button onClick={save} disabled={pending} size="sm"><Save className="size-4" />{t("common.save")}</Button>
       </div>
     </div>
   );

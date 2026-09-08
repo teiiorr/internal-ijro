@@ -122,7 +122,6 @@ export default async function ContractorDetailPage({
         }
         projectsSlot={
           <StudioProjectsList
-            companyId={company.id}
             projects={reviewProjects}
             isEditor={isEditor}
             autoExpandProjectId={autoExpandProjectId}

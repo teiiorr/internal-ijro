@@ -333,7 +333,7 @@
       "name": "Название проекта",
       "description": "Описание",
       "type": "Тип",
-      "curator": "Куратор",
+      "curator": "Nazoratchi mas'ul",
       "contractor": "Студия",
       "startDate": "Дата начала",
       "deadline": "Срок завершения",
@@ -426,7 +426,7 @@
     "headers": {
       "name": "Название",
       "type": "Тип",
-      "curator": "Куратор",
+      "curator": "Nazoratchi mas'ul",
       "company": "Компания",
       "progress": "Прогресс",
       "deadline": "Срок",
@@ -444,7 +444,7 @@
       "removed": "Студия убран",
       "hint": "Можно вручную добавить и незарегистрированную студию"
     },
-    "curatorLabel": "Куратор",
+    "curatorLabel": "Nazoratchi mas'ul",
     "deliverable": {
       "types": {
         "document": "Документ",
@@ -952,10 +952,10 @@
     "chats": {
       "title": "Чаты",
       "empty": "Пока нет чатов по проектам",
-      "curator": "Куратор",
-      "noCurator": "Куратор не назначен",
+      "curator": "Nazoratchi mas'ul",
+      "noCurator": "Nazoratchi mas'ul не назначен",
       "noMessages": "Нет сообщений",
-      "subtitle": "Переписка с куратором по проектам",
+      "subtitle": "Переписка с Nazoratchi mas'ul по проектам",
       "openProject": "Открыть проект"
     },
     "submitWork": "Отправить работу",
@@ -1249,7 +1249,7 @@
   "conversation": {
     "participants": "участник(ов)",
     "members": "Участники",
-    "curator": "Куратор",
+    "curator": "Nazoratchi mas'ul",
     "studio": "Студия",
     "you": "Вы",
     "group": "Группа"

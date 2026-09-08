@@ -1,8 +1,7 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
-import { IconChevronDown as Chevron, IconFolder as Folder, IconMessageCircle as Msg, IconArrowRight as ArrowRight, IconClockHour4 as Clock } from "@tabler/icons-react";
+import { IconChevronDown as Chevron, IconFolder as Folder, IconClockHour4 as Clock } from "@tabler/icons-react";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { StageDocuments } from "@/components/projects/stage-documents";
@@ -26,13 +25,11 @@ export type ReviewProject = {
 };
 
 export function StudioProjectsList({
-  companyId,
   projects,
   isEditor,
   autoExpandProjectId,
   maxBytes,
 }: {
-  companyId: string;
   projects: ReviewProject[];
   isEditor: boolean;
   autoExpandProjectId?: string;
@@ -114,15 +111,6 @@ export function StudioProjectsList({
                 ) : (
                   <p className="text-sm text-[var(--muted)]">{t("review.status.accepted")}</p>
                 )}
-
-                <Link
-                  href={`/contractors/${companyId}/chat/${p.id}`}
-                  className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold transition-colors hover:border-[var(--primary)]"
-                >
-                  <Msg className="size-4 text-[var(--primary)]" />
-                  <span className="flex-1">{t("projects.tabs.chat")}</span>
-                  <ArrowRight className="size-4 text-[var(--subtle)]" />
-                </Link>
               </div>
             )}
           </div>
