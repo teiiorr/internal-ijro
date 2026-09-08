@@ -80,9 +80,7 @@ export default async function ContractorDetailPage({
                 <h1 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">{company.name}</h1>
                 <StatusTag tone={statusTone} size="lg">{t(`status.${company.status}` as "status.pending")}</StatusTag>
                 {company.rating && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--warning)]/15 px-2.5 py-1 text-sm font-bold text-[var(--warning)]">
-                    <Star className="size-4" />{Number(company.rating).toFixed(1)}
-                  </span>
+                  <StatusTag tone="amber" size="lg"><Star className="size-4" />{Number(company.rating).toFixed(1)}</StatusTag>
                 )}
               </div>
               {company.contactPerson && <p className="mt-1 text-sm font-medium text-[var(--muted)]">{company.contactPerson}</p>}

@@ -778,7 +778,8 @@
       "title": "Ждут вас",
       "submitted": "отправлено",
       "count": "на проверке"
-    }
+    },
+    "inReview": "На проверке"
   },
   "reports": {
     "standupTitle": "Ежедневный standup",

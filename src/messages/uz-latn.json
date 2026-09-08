@@ -778,7 +778,8 @@
       "title": "Sizni kutmoqda",
       "submitted": "yuborildi",
       "count": "ta koʻrib chiqish"
-    }
+    },
+    "inReview": "Koʻrib chiqish"
   },
   "reports": {
     "standupTitle": "Kunlik standup",

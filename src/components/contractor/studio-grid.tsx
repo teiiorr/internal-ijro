@@ -10,6 +10,7 @@ import {
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { StatCard } from "@/components/ui/stat-card";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Marquee } from "@/components/ui/marquee";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/dates";
 import { approveContractor, rejectContractor } from "@/server/actions/projects";
@@ -28,12 +29,13 @@ type Studio = {
   rejectionReason: string | null;
   createdAt: Date | string;
   projects: Proj[];
+  waiting: number;
 };
 
 const STATUS_TONE: Record<string, StatusTone> = { approved: "green", pending: "amber", rejected: "red" };
 const initial = (name: string) => name.replace(/["'«»“”]/g, "").trim().charAt(0).toUpperCase() || "?";
 
-type Filter = "all" | "pending" | "approved" | "rejected";
+type Filter = "all" | "review" | "pending" | "approved" | "rejected";
 
 export function StudioGrid({ studios }: { studios: Studio[] }) {
   const t = useTranslations();
@@ -44,6 +46,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
 
   const counts = useMemo(() => ({
     total: studios.length,
+    review: studios.filter((s) => s.waiting > 0).length,
     pending: studios.filter((s) => s.status === "pending").length,
     approved: studios.filter((s) => s.status === "approved").length,
     rejected: studios.filter((s) => s.status === "rejected").length,
@@ -51,23 +54,29 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
-    return studios.filter((s) => {
-      if (filter !== "all" && s.status !== filter) return false;
-      if (!q) return true;
-      return (
-        s.name.toLowerCase().includes(q) ||
-        s.contactPerson?.toLowerCase().includes(q) ||
-        s.projects.some((p) => p.name.toLowerCase().includes(q))
-      );
-    });
+    return studios
+      .filter((s) => {
+        if (filter === "review" ? s.waiting === 0 : filter !== "all" && s.status !== filter) return false;
+        if (!q) return true;
+        return (
+          s.name.toLowerCase().includes(q) ||
+          s.contactPerson?.toLowerCase().includes(q) ||
+          s.projects.some((p) => p.name.toLowerCase().includes(q))
+        );
+      })
+      // Studios awaiting review float to the top.
+      .sort((a, b) => (b.waiting > 0 ? 1 : 0) - (a.waiting > 0 ? 1 : 0));
   }, [query, filter, studios]);
 
   const toggle = (f: Filter) => setFilter((c) => (c === f ? "all" : f));
 
   return (
     <div className="space-y-5">
-      {/* Triage KPI band */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+      {/* Triage KPI band — "awaiting your review" first (the actionable one) */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+        <button type="button" onClick={() => toggle("review")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "review" && "rounded-2xl ring-2 ring-[var(--primary)]")}>
+          <StatCard label={t("contractors.inReview")} value={counts.review} tone="primary" filled={counts.review > 0} />
+        </button>
         <StatCard label={t("contractors.total")} value={counts.total} />
         <button type="button" onClick={() => toggle("pending")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "pending" && "rounded-2xl ring-2 ring-[var(--warning)]")}>
           <StatCard label={t("contractors.pendingTitle")} value={counts.pending} tone="warning" filled={counts.pending > 0} />
@@ -144,7 +153,7 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
   }
 
   return (
-    <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]">
+    <div className={cn("flex flex-col rounded-2xl border bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]", s.waiting > 0 ? "border-[var(--warning)]/55" : "border-[var(--border)]")}>
       {/* Header: logo + name + status */}
       <div className="flex items-start gap-3">
         <Link href={`/contractors/${s.id}`} className="shrink-0">
@@ -158,21 +167,25 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
         </Link>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <Link href={`/contractors/${s.id}`} className="min-w-0">
-              <h3 className="line-clamp-2 text-base font-bold leading-snug tracking-tight transition-colors hover:text-[var(--primary)]">{s.name}</h3>
+            <Link href={`/contractors/${s.id}`} className="min-w-0 flex-1">
+              {/* Long names scroll (marquee) instead of clipping — like the projects list. */}
+              <Marquee className="text-base font-bold leading-snug tracking-tight transition-colors hover:text-[var(--primary)]">{s.name}</Marquee>
             </Link>
             <StatusTag tone={tone} size="sm" className="shrink-0">{t(`status.${s.status}` as "status.pending")}</StatusTag>
           </div>
-          {s.contactPerson && <p className="mt-0.5 truncate text-xs font-medium text-[var(--muted)]">{s.contactPerson}</p>}
+          {s.contactPerson && <Marquee className="mt-0.5 text-xs font-medium text-[var(--muted)]">{s.contactPerson}</Marquee>}
           <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-[var(--subtle)]">
-            {s.contactEmail && <span className="inline-flex items-center gap-1 truncate"><IconMail className="size-3 shrink-0" />{s.contactEmail}</span>}
+            {s.contactEmail && <span className="inline-flex min-w-0 max-w-full items-center gap-1 truncate"><IconMail className="size-3 shrink-0" />{s.contactEmail}</span>}
             {s.contactPhone && <span className="inline-flex items-center gap-1"><IconPhone className="size-3 shrink-0" />{s.contactPhone}</span>}
           </div>
         </div>
       </div>
 
-      {/* Meta row */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--muted)]">
+      {/* Meta row — awaiting-review tag first (project-style rectangular tag) */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[var(--muted)]">
+        {s.waiting > 0 && (
+          <StatusTag tone="amber" size="sm">{s.waiting} {t("contractors.inReview")}</StatusTag>
+        )}
         <span className="inline-flex items-center gap-1 font-semibold text-[var(--primary)]"><IconFolder className="size-3.5" />{t("contractors.projectsCount", { n: s.projects.length })}</span>
         {s.rating && <span className="inline-flex items-center gap-1 font-semibold text-[var(--warning)]"><IconStarFilled className="size-3.5" />{t("contractors.ratingScale", { r: Number(s.rating).toFixed(1) })}</span>}
         <span className="inline-flex items-center gap-1"><IconCalendarEvent className="size-3.5" />{formatDate(s.createdAt as string, locale)}</span>

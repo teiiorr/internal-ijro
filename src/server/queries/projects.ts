@@ -196,7 +196,17 @@ export async function listContractorsWithProjects() {
     arr.push({ id: p.id, name: p.name, status: p.status });
     byCompany.set(p.ec, arr);
   }
-  return companies.map((c) => ({ ...c, projects: byCompany.get(c.id) ?? [] }));
+  // Per-studio "awaiting your review" count (active stages submitted for review).
+  const waiting = new Map<string, number>();
+  for (const r of await db
+    .select({ ec: projects.externalCompanyId, c: sql<number>`count(*)::int` })
+    .from(projectStages)
+    .innerJoin(projects, eq(projects.id, projectStages.projectId))
+    .where(and(eq(projectStages.status, "active"), eq(projectStages.reviewStatus, "submitted"), sql`${projects.externalCompanyId} is not null`))
+    .groupBy(projects.externalCompanyId)) {
+    if (r.ec) waiting.set(r.ec, Number(r.c));
+  }
+  return companies.map((c) => ({ ...c, projects: byCompany.get(c.id) ?? [], waiting: waiting.get(c.id) ?? 0 }));
 }
 
 export async function getContractor(id: string) {
