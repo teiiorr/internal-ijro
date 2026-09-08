@@ -7,7 +7,7 @@ import { IconUpload as Upload, IconLoader2 as Loader } from "@tabler/icons-react
 import { Button } from "@/components/ui/button";
 import { compressImage } from "@/lib/images/compress";
 
-/** Lets a studio upload a deliverable directly to the stage they're viewing. */
+/** Studiyaga körib turgan bosqiçiga töğridan-töğri natija faylini yuklaş imkonini beradi. */
 export function StudioStageUpload({
   projectId,
   stageId,
@@ -38,7 +38,7 @@ export function StudioStageUpload({
     try {
       let f = file;
       if (file.type.startsWith("image/")) {
-        try { const r = await compressImage(file); f = r.file; } catch { /* keep original */ }
+        try { const r = await compressImage(file); f = r.file; } catch { /* asl nusxa qoladi */ }
       }
       if (f.size > maxBytes) { toast.error(t("projects.chat.fileTooLarge")); return; }
       const qs = new URLSearchParams({ projectId, stageId, name: f.name });

@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (session.user.position === "kontragent") redirect("/contractor/projects");
   const owner = isOwner(session.user.email);
   const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);
-  // "Waiting on you" review count — only for staff who can open the Студии section.
+  // "Sizni kutmoqda" — körib çiqiş kutayotgan bosqiçlar soni; faqat Studiyalar bölimini köra oladigan xodimlar uçun.
   const canSeeStudios = STUDIO_VIEWERS.includes(session.user.position) || STUDIO_EXTRA_USERS.includes(session.user.id);
   const reviewCount = canSeeStudios ? await getReviewQueueCount() : 0;
 

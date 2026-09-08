@@ -6,17 +6,17 @@ import { Toaster } from "sonner";
 import { Montserrat, JetBrains_Mono, Cinzel_Decorative, Unbounded } from "next/font/google";
 
 const montserrat = Montserrat({
-  // weight 300 (font-light) is unused in the app; cyrillic-ext is required for
-  // Uzbek Cyrillic (қ ғ ҳ …), so those subsets stay.
+  // weight 300 (font-light) ilovada işlatilmaydi; özbek kirillçasi (қ ғ ҳ …) uçun
+  // cyrillic-ext talab qilinadi, şuning uçun öşa subsetlar qoldiriladi.
   subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
   weight: ["400", "500", "600", "700", "800", "900"],
   variable: "--font-sans",
   display: "swap",
 });
 
-// Unbounded — a rounded geometric display face for page titles/headings.
-// Ships Cyrillic + Latin so it covers uz-latn / uz-cyrl / ru. Self-hosted by
-// next/font (no runtime request → CSP `font-src 'self'` stays valid).
+// Unbounded — sahifa sarlavhalari/başlovlari uçun yumaloq geometrik display şrift.
+// Kirill + Lotinni öz içiga oladi, şuning uçun uz-latn / uz-cyrl / ru ni qoplaydi. next/font
+// tomonidan self-hosted (runtime sörov yöq → CSP `font-src 'self'` amal qilaveradi).
 const unbounded = Unbounded({
   subsets: ["latin", "latin-ext", "cyrillic"],
   weight: ["600", "700", "800"],
@@ -24,8 +24,8 @@ const unbounded = Unbounded({
   display: "swap",
 });
 
-// Cinzel Decorative — engraved Roman caps that evoke the Godfather title card;
-// used only for the owner's honorific. Latin-only (the honorific is Latin).
+// Cinzel Decorative — "Godfather" sarlavha kartasini eslatuvçi öyilgan Rim bosh harflari;
+// faqat owner unvoni uçun işlatiladi. Faqat Lotin (unvon Lotinda).
 const cinzel = Cinzel_Decorative({
   subsets: ["latin"],
   weight: ["700", "900"],

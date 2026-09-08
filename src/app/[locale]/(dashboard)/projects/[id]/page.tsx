@@ -31,7 +31,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
 
-// Amounts are rendered inside whitespace-nowrap containers so "… UZS" never breaks onto its own line.
+// Summalar whitespace-nowrap konteynerlar içida körsatiladi, şunda "… UZS" heç qaçon alohida qatorga tuşmaydi.
 const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,7 +43,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const data = await getProject(id);
   if (!data) notFound();
   const me = session.user;
-  // Curator picker options for the edit dialog (all active internal staff).
+  // Tahrirlaş oynasidagi kurator tanlagiçi uçun variantlar (barça faol içki xodimlar).
   const curatorOptions = await db
     .select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl })
     .from(users)
@@ -63,18 +63,18 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     budgetCurrency: data.project.budgetCurrency,
     currentStatus: data.project.currentStatus,
   };
-  // Editing = the fixed allowlist OR an owner-granted capability; else read-only.
+  // Tahrirlaş = qat'iy allowlist YOKI owner bergan huquq; aks holda faqat öqiş uçun.
   const editor = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
   const canManage = editor;
   const canDelete = editor;
-  // Deleting a whole project is irreversible → editor + senior management only.
+  // Butun loyihani öçiriş qaytarib bölmaydi → faqat editor + yuqori rahbariyat.
   const canDeleteProject = editor && ["direktor", "orinbosar", "koordinator"].includes(me.position);
   const canTogglePayment = editor;
-  // Budgets & payment sums are visible to the money allowlist OR granted users.
+  // Byudjet va tölov summalarini faqat "money" allowlistidagilar YOKI huquq berilgan foydalanuvçilar köradi.
   const showMoney = canViewMoney(me.email) || (await hasGrant(me.id, "money.view"));
   const canUpload = canUploadProjectDocs(me.email) || editor || (await hasGrant(me.id, "projects.upload_docs"));
 
-  // ---- Typed (template-driven) project → serpentine stage view ----
+  // ---- Turi belgilangan (şablon asosidagi) loyiha → ilonsimon bosqiç körinişi ----
   if (data.project.projectTypeId) {
     const sp = await getStageProject(id, locale);
     if (!sp) notFound();
@@ -91,7 +91,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
     return (
       <div className="space-y-6 stagger-children">
-        {/* header (full width) */}
+        {/* sarlavha (töliq kenglik) */}
         <div className="flex items-center gap-3">
           <BackButton fallbackHref="/projects" />
           <div className="flex-1 min-w-0">
@@ -173,7 +173,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </CardContent>
         </Card>
 
-        {/* stage list (main) + payment rollup (sidebar) — fills the full width */}
+        {/* bosqiçlar röyxati (asosiy) + tölov jamlanmasi (yon panel) — töliq kenglikni egallaydi */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
           <div className="space-y-6 order-2 lg:order-1 min-w-0">
             <Card>
@@ -183,7 +183,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </CardContent>
             </Card>
 
-            {/* Project-level document buckets — fills the space under the stages. */}
+            {/* Loyiha darajasidagi hujjat bölimlari — bosqiçlar ostidagi böş joyni töldiradi. */}
             <ProjectDocsPanels
               projectId={sp.project.id}
               canManage={canUpload}
@@ -222,7 +222,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     <FitText>{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</FitText>
                   </dd>
                 </div>
-                {/* Remaining = planned − paid (never below zero). */}
+                {/* Qoldiq = rejalaştirilgan − tölangan (heç qaçon noldan past emas). */}
                 <div className="flex items-baseline gap-2">
                   <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.remaining")}</dt>
                   <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums text-[var(--warning)]">
@@ -308,7 +308,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </Card>
       )}
 
-      {/* Tafsilotlar — all details in one section */}
+      {/* Tafsilotlar — barça ma'lumotlar bitta bölimda */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-4">
           <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
@@ -357,7 +357,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </CardContent>
       </Card>
 
-      {/* Bosqichlar */}
+      {/* Bosqiçlar */}
       <Card>
         <CardContent className="p-5 sm:p-6">
           <StagesList projectId={data.project.id} items={stages} canManage={canManage} canDelete={canDelete} />
@@ -378,7 +378,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </CardContent>
       </Card>
 
-      {/* unused parameter satisfied */}
+      {/* işlatilmagan parametrni qanoatlantiriş uçun */}
       <span className="hidden">{canTogglePayment ? "" : ""}</span>
     </div>
   );

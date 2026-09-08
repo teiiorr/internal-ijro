@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   const isManager = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(user.position);
   const isHr = user.position === "hr";
 
-  // Toshkent vaqti (UTC+5, yozgi vaqtsiz) bo'yicha salomlashuv.
+  // Toşkent vaqti (UTC+5, yozgi vaqtsiz) böyicha salomlaşuv.
   const hour = (new Date().getUTCHours() + 5) % 24;
   const greetKey = hour < 5 ? "night" : hour < 11 ? "morning" : hour < 18 ? "afternoon" : hour < 22 ? "evening" : "night";
   const greet = t(`dashboard.greeting.${greetKey}` as "dashboard.greeting.morning");
@@ -35,7 +35,7 @@ export default async function DashboardPage() {
     .leftJoin(departments, eq(departments.id, users.departmentId))
     .where(eq(users.id, user.id))
     .limit(1);
-  // Payments overview: director, anyone in the Finance (Moliya) department, and every department head.
+  // Tölovlar körinişi: direktor, Moliya bölimidagi har kim va har bir bölim boşliği.
   const showPayments =
     user.position === "direktor" ||
     user.position === "bolim_boshligi" ||

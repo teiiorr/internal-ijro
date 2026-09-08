@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { setProjectInProgress } from "@/server/actions/projects";
 
 /**
- * Manually mark a (single-stage) project as "in progress" — or clear it back.
- * Single-stage projects otherwise jump straight from "not started" to "completed".
+ * Bir bosqiçli loyihani qölda "jarayonda" holatiga ötkazadi — yoki bu holatni bekor qiladi.
+ * Aks holda bir bosqiçli loyihalar "boşlanmagan" holatidan töğridan-töğri "yakunlangan" holatiga ötib ketadi.
  */
 export function InProgressToggle({ projectId, active }: { projectId: string; active: boolean }) {
   const t = useTranslations();

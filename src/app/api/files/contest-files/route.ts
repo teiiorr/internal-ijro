@@ -20,7 +20,7 @@ function sameOrigin(req: NextRequest): boolean {
   }
 }
 
-/** Streaming document upload for a contest (Tanlov). Editor allowlist only. */
+/** Tanlov uçun hujjatni oqim orqali yuklash. Faqat muharrirlar röyxatidagilar uçun. */
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

@@ -1,15 +1,16 @@
 /**
- * Telegram delivery seam (Phase 2).
+ * Telegram orqali yetkazib beriş nuqtasi (2-bosqiç).
  *
- * The user→chat linking flow (bot, webhook, /start capture of chat_id) is NOT
- * built yet. This function is the single integration point: it stays dormant
- * until a bot token is configured AND the recipient has a linked
- * `notificationSettings.telegramChatId`, at which point notify() will deliver
- * through it with no further wiring. Best-effort; never throws to the caller.
+ * Foydalanuvçi→chat boğlaş oqimi (bot, webhook, /start orqali chat_id ni oliş)
+ * hali qurilmagan. Bu funksiya yagona integratsiya nuqtasi: bot token
+ * sozlanmaguncha VA qabul qiluvçining boğlangan
+ * `notificationSettings.telegramChatId` si bölmaguncha u uyqu holatida turadi;
+ * şu ondan boşlab notify() hech qanday qöşimça sozlaşsiz şu orqali yetkazadi.
+ * Iloji boriça işlaydi; çaqiruvçiga hech qaçon exception qaytarmaydi.
  */
 export async function sendTelegram(chatId: string, title: string, message?: string, link?: string): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  if (!token || !chatId) return; // not configured / not linked → no-op
+  if (!token || !chatId) return; // sozlanmagan / boğlanmagan → hech nima qilmaydi
   const base = process.env.APP_URL ?? "http://localhost:3000";
   const text = [title, message, link ? `${base}${link}` : null].filter(Boolean).join("\n");
   try {
@@ -19,6 +20,6 @@ export async function sendTelegram(chatId: string, title: string, message?: stri
       body: JSON.stringify({ chat_id: chatId, text }),
     });
   } catch {
-    // best-effort — a Telegram outage must never break in-app notifications
+    // iloji boriça — Telegram uzilib qolsa ham ilova içidagi bildirişnomalar buzilmasligi kerak
   }
 }

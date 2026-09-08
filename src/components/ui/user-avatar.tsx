@@ -12,12 +12,12 @@ const SIZE_MAP: Record<Size, { container: string; text: string }> = {
   lg: { container: "size-16", text: "text-xl" },
 };
 
-// Resized thumbnail width per size (~2-3x the display px for retina). The file
-// route serves these via ?w= (webp) so we don't ship the full 512px avatar for
-// a 32px chip. Must match RESIZE_WIDTHS in api/files/[...path]/route.ts.
+// Har bir ölçam uçun ölçamlangan miniatyura kengligi (retina uçun körinuvçi px'dan ~2-3
+// barobar). Fayl route'i ularni ?w= orqali (webp) beradi, şunda 32px chip uçun töliq 512px
+// avatarni yubormaymiz. api/files/[...path]/route.ts'dagi RESIZE_WIDTHS bilan mos böliş kerak.
 const SIZE_WIDTH: Record<Size, number> = { xs: 96, sm: 128, md: 128, lg: 256 };
 
-/** Append ?w= only for local file-route URLs; leave anything else untouched. */
+/** ?w= faqat lokal file-route URL'lariga qöşiladi; qolgan hamma narsa tegilmasdan qoldiriladi. */
 function thumbUrl(url: string, width: number): string {
   if (!url.startsWith("/")) return url;
   return `${url}${url.includes("?") ? "&" : "?"}w=${width}`;
@@ -45,12 +45,12 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
   const imgRef = useRef<HTMLImageElement>(null);
   const { container, text } = SIZE_MAP[size];
   const hasPhoto = !!avatarUrl && !imgError;
-  // Small chips load a resized webp thumbnail; the lightbox uses the original.
+  // Kiçik chiplar ölçamlangan webp miniatyurani yuklaydi; lightbox esa asl nusxadan foydalanadi.
   const displaySrc = hasPhoto ? thumbUrl(avatarUrl!, SIZE_WIDTH[size]) : "";
 
-  // Cached images can finish loading before React attaches onLoad, which would
-  // otherwise leave the avatar stuck at opacity-0 (e.g. the current user's own
-  // avatar in the navbar, cached across every page). Detect that on mount.
+  // Keşdagi rasmlar React onLoad'ni ulaguniga qadar yuklanib bölişi mumkin, aks holda
+  // avatar opacity-0 holatida qotib qolardi (masalan, joriy foydalanuvçining navbardagi
+  // avatari har bir sahifada keşlangan böladi). Şuni mount paytida aniqlaymiz.
   useEffect(() => {
     setImgLoaded(false);
     setImgError(false);

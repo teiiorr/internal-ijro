@@ -16,7 +16,7 @@ type Doc = {
   fileUrl: string;
   fileName: string;
   fileSize: number | null;
-  category: string | null; // = folder
+  category: string | null; // = papka
   isLink: boolean;
   uploadedAt: Date | string;
   uploaderName: string | null;
@@ -48,7 +48,7 @@ export function NormativeDocuments({
   const [preparing, setPreparing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
-  const [open, setOpen] = useState(false); // upload form collapsed by default (like Tahlil)
+  const [open, setOpen] = useState(false); // yuklaş formasi standart holda yiğilgan (Tahlil kabi)
   const [linkTitle, setLinkTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const uncategorized = t("projects.stageDocs.uncategorized");
@@ -125,7 +125,7 @@ export function NormativeDocuments({
       }
       setStaged(null);
       setPickerKey((k) => k + 1);
-      setOpen(false); // collapse again after a successful add
+      setOpen(false); // muvaffaqiyatli qöşilgach yana yiğamiz
       toast.success(t("projects.stageDocs.added"));
       router.refresh();
     } catch {
@@ -143,7 +143,7 @@ export function NormativeDocuments({
     const title = linkTitle.trim();
     let url = linkUrl.trim();
     if (!title || !url) return;
-    if (!/^https?:\/\//i.test(url)) url = `https://${url}`; // be forgiving
+    if (!/^https?:\/\//i.test(url)) url = `https://${url}`; // protokolsiz kiritilsa ham qabul qilamiz
     start(async () => {
       try {
         await addNormativeLink({ title, url, folder: folder.trim() || null });
@@ -234,7 +234,7 @@ export function NormativeDocuments({
 
       {canManage && (
         <div className="max-w-lg">
-          {/* Collapsed by default: a button reveals the folder + file upload form (like Tahlil). */}
+          {/* Standart holda yiğiq: tugma bosilganda papka + fayl yuklaş formasi ochiladi (Tahlil kabi). */}
           <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}>
             <div className="overflow-hidden">
               <button
@@ -305,7 +305,7 @@ export function NormativeDocuments({
             </Button>
           </div>
 
-          {/* Or add an external link instead of a file. */}
+          {/* Yoki fayl örniga taşqi havola qöşiş. */}
           <div className="flex items-center gap-2 pt-1 text-[11px] font-bold uppercase tracking-wide text-[var(--muted)]">
             <span className="h-px flex-1 bg-[var(--border)]" />
             {t("normative.orLink")}

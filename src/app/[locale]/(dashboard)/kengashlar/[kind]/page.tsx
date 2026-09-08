@@ -54,7 +54,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
         )}
       </div>
 
-      {/* upcoming meeting + its agenda */}
+      {/* yaqinlaşayotgan yiğiliş + uning kun tartibi */}
       {upcoming ? (
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-5">
@@ -78,7 +78,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
         </Card>
       )}
 
-      {/* schedule a new meeting */}
+      {/* yangi yiğiliş belgilaş */}
       {canManage && (
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-3">
@@ -88,7 +88,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
         </Card>
       )}
 
-      {/* archive — each past meeting expands to show its own agenda (kun tartibi) */}
+      {/* arxiv — har bir ötgan yiğiliş öz kun tartibini körsatiş uchun ochiladi */}
       {pastMeetings.length > 0 && (
         <Card>
           <CardContent className="p-4 sm:p-6 space-y-3">

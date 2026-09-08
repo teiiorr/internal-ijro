@@ -52,7 +52,7 @@ export default async function OwnerPage() {
     departmentName: e.departmentName,
   }));
 
-  // Count tiles — small numbers, fit the narrow grid cells.
+  // Sanoq kartalari — kiçik sonlar, tor grid katakçalariga siğadi.
   const tiles: { label: string; value: string | number; sub?: string }[] = [
     { label: t("owner.stats.users"), value: stats.users, sub: `${stats.activeUsers} ${t("owner.stats.activeSuffix")}` },
     { label: t("owner.stats.projects"), value: stats.projects, sub: `${stats.activeProjects} ${t("owner.stats.activeSuffix")}` },
@@ -66,8 +66,8 @@ export default async function OwnerPage() {
     { label: t("owner.stats.dbSize"), value: stats.dbSize },
     { label: t("owner.stats.connections"), value: sys.connections },
   ];
-  // Money tiles — big sums; rendered last as full-width cards so the whole
-  // figure fits on one line instead of wrapping in a narrow cell.
+  // Pul kartalari — katta summalar; töliq kenglikdagi kartalar sifatida eng oxirida çiziladi,
+  // şunda butun raqam tor katakda ikki qatorga bölinmasdan bitta qatorga siğadi.
   const moneyTiles: { label: string; value: string }[] = [
     { label: t("owner.stats.paid"), value: money(stats.paid) },
     { label: t("owner.stats.pending"), value: money(stats.pending) },
@@ -81,7 +81,7 @@ export default async function OwnerPage() {
 
   return (
     <div className="space-y-8">
-      {/* header */}
+      {/* sarlavha */}
       <div className="flex items-start gap-3">
         <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--primary)] text-white shadow-[var(--shadow-2)]">
           <ShieldCheck className="size-6" />
@@ -94,7 +94,7 @@ export default async function OwnerPage() {
         </div>
       </div>
 
-      {/* 1. System statistics */}
+      {/* 1. Tizim statistikasi */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">{t("owner.statsTitle")}</h2>
         <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
@@ -107,8 +107,8 @@ export default async function OwnerPage() {
               </CardContent>
             </Card>
           ))}
-          {/* Money tiles last, stretched full width — the sum fits on one line
-              (font shrinks to fit rather than wrapping). */}
+          {/* Pul kartalari eng oxirida, töliq kenglikka çözilgan — summa bitta qatorga siğadi
+              (şrift ikki qatorga bölinmay, siğiş uçun kiçrayadi). */}
           {moneyTiles.map((tile) => (
             <Card key={tile.label} className="col-span-full">
               <CardContent className="flex flex-col gap-1 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
@@ -122,7 +122,7 @@ export default async function OwnerPage() {
         </div>
       </section>
 
-      {/* 2. Access control — grant/revoke capabilities per employee */}
+      {/* 2. Kiriş nazorati — har bir xodim uçun huquqlarni beriş/bekor qiliş */}
       <section className="space-y-3">
         <div>
           <h2 className="flex items-center gap-2 text-base font-semibold">
@@ -133,7 +133,7 @@ export default async function OwnerPage() {
         <PermissionsManager employees={permEmployees} grants={grants} capabilities={permCapabilities} />
       </section>
 
-      {/* 3. Recent changes — who added / deleted / changed */}
+      {/* 3. Sönggi özgarişlar — kim qöşdi / öçirdi / özgartirdi */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">{t("owner.changes.title")}</h2>
         <Card>
@@ -167,7 +167,7 @@ export default async function OwnerPage() {
         </Card>
       </section>
 
-      {/* 3. All logs */}
+      {/* 3. Barça loglar */}
       <section className="space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
@@ -212,7 +212,7 @@ export default async function OwnerPage() {
         </Card>
       </section>
 
-      {/* 4. Dev tools / system info */}
+      {/* 4. Dasturçi vositalari / tizim ma'lumoti */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">{t("owner.system.title")}</h2>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -233,7 +233,7 @@ export default async function OwnerPage() {
             </CardContent>
           </Card>
 
-          {/* Database */}
+          {/* Ma'lumotlar bazasi */}
           <Card>
             <CardContent className="p-5 space-y-2.5">
               <div className="flex items-center gap-2 text-sm font-semibold"><Database className="size-4 text-[var(--muted)]" />{t("owner.system.database")}</div>
@@ -255,7 +255,7 @@ export default async function OwnerPage() {
             </CardContent>
           </Card>
 
-          {/* Backup */}
+          {/* Zaxira nusxa */}
           <Card>
             <CardContent className="p-5 space-y-2.5">
               <div className="flex items-center gap-2 text-sm font-semibold"><HardDriveDownload className="size-4 text-[var(--muted)]" />{t("owner.system.backup")}</div>
@@ -276,7 +276,7 @@ export default async function OwnerPage() {
             </CardContent>
           </Card>
 
-          {/* Environment */}
+          {/* Muhit */}
           <Card>
             <CardContent className="p-5 space-y-2.5">
               <div className="flex items-center gap-2 text-sm font-semibold"><KeyRound className="size-4 text-[var(--muted)]" />{t("owner.system.env")}</div>

@@ -11,7 +11,7 @@ function token() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-// --- Forgot password ---
+// --- Parolni unutdim ---
 const forgotSchema = z.object({ email: z.string().email() });
 export async function requestPasswordReset(formData: FormData) {
   const parsed = forgotSchema.safeParse({ email: String(formData.get("email") ?? "").toLowerCase() });
@@ -33,7 +33,7 @@ export async function requestPasswordReset(formData: FormData) {
   return { ok: true } as const;
 }
 
-// --- Reset password ---
+// --- Parolni tiklaş ---
 const resetSchema = z.object({
   token: z.string().min(10),
   password: z.string().min(8).max(128),
@@ -64,7 +64,7 @@ export async function resetPassword(formData: FormData) {
   return { ok: true } as const;
 }
 
-// --- Accept invitation ---
+// --- Taklifni qabul qiliş ---
 const inviteSchema = z.object({
   token: z.string().min(10),
   password: z.string().min(8).max(128),
@@ -108,7 +108,7 @@ export async function acceptInvitation(formData: FormData) {
   return { ok: true } as const;
 }
 
-// --- Contractor self-registration ---
+// --- Kontragentning özini röyxatdan ötkazişi ---
 const contractorSchema = z.object({
   companyName: z.string().min(2).max(255),
   contactPerson: z.string().min(2).max(255),
@@ -159,7 +159,7 @@ export async function registerContractor(formData: FormData) {
   return { ok: true } as const;
 }
 
-// --- Create invitation (used in Stage 2 — HR add employee) ---
+// --- Taklif yaratiş (2-bosqiçda işlatiladi — HR xodim qöşadi) ---
 const createInviteSchema = z.object({
   email: z.string().email(),
   fullName: z.string().min(2).max(255),

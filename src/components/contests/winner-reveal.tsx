@@ -4,9 +4,9 @@ import { useTranslations } from "next-intl";
 import { IconX as X } from "@tabler/icons-react";
 
 /**
- * Official winner announcement — a restrained, professional modal (no canvas,
- * no confetti). Uses the app's surface/border tokens so it matches the rest of
- * the UI in both themes.
+ * Ğolibning rasmiy eʼloni — vazmin, professional modal (canvas yöq,
+ * konfetti yöq). Ilovaning surface/border tokenlaridan foydalanadi, şu bois
+ * ikkala mavzuda ham qolgan UI bilan mos keladi.
  */
 export function WinnerReveal({
   contestName,

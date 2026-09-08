@@ -35,7 +35,7 @@ function sameOrigin(req: NextRequest): boolean {
   }
 }
 
-/** Streaming upload for organisation-wide normative documents ("Me'yoriy hujjatlar"). */
+/** Tashkilot böyiça me'yoriy hujjatlarni ("Me'yoriy hujjatlar") oqim orqali yuklash. */
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

@@ -12,7 +12,7 @@ type Item = {
   allowed: Position[];
   allowedUserIds?: string[];
   section: "primary" | "work" | "system";
-  /** Shown only to the platform owner (by email), regardless of position. */
+  /** Lavozimidan qatʼi nazar, faqat platforma egasiga (email böyicha) körinadi. */
   ownerOnly?: boolean;
 };
 type IntlNav = {

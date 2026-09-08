@@ -14,7 +14,7 @@ const ADMIN: Position[] = ["direktor", "orinbosar"];
 const HR_ROLES: Position[] = ["direktor", "orinbosar", "hr"];
 const CONTRACTORS_EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
 
-// Full menu (same as the desktop sidebar).
+// Töliq menyu (desktop sidebar bilan bir xil).
 const ITEMS: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, key: "dashboard", allowed: ALL },
   { href: "/tasks", icon: ListTodo, key: "tasks", allowed: STAFF },
@@ -32,7 +32,7 @@ const ITEMS: NavItem[] = [
   { href: "/owner", icon: ShieldCheck, key: "owner", allowed: [], ownerOnly: true },
 ];
 
-// The three destinations that stay pinned in the bar (+ a More button).
+// Panelda doimiy qadab qöyilgan uchta bölim (+ "Yana" tugmasi).
 const PINNED = ["/dashboard", "/tasks", "/projects"];
 
 export function MobileNav({ position, userId, isOwner, reviewCount = 0 }: { position: Position; userId: string; isOwner?: boolean; reviewCount?: number }) {
@@ -53,14 +53,14 @@ export function MobileNav({ position, userId, isOwner, reviewCount = 0 }: { posi
 
   return (
     <>
-      {/* dim overlay */}
+      {/* xira fon qoplamasi */}
       <div
         className={cn("md:hidden fixed inset-0 z-40 bg-black/40 transition-opacity duration-200", open ? "opacity-100" : "pointer-events-none opacity-0")}
         onClick={() => setOpen(false)}
         aria-hidden
       />
 
-      {/* slide-up sheet with the full menu */}
+      {/* töliq menyuli, pastdan kötariladigan varaq */}
       <div
         className={cn(
           "md:hidden fixed inset-x-0 bottom-0 z-40 rounded-t-3xl glass-strong p-4 pb-8 transition-transform duration-300 ease-out",
@@ -99,7 +99,7 @@ export function MobileNav({ position, userId, isOwner, reviewCount = 0 }: { posi
         </div>
       </div>
 
-      {/* bottom bar: pinned items + More */}
+      {/* pastki panel: qadab qöyilgan elementlar + Yana */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-3 pt-1">
         <ul className="grid grid-cols-4 rounded-3xl glass-strong overflow-hidden">
           {pinned.map(({ href, icon: Icon, key }) => {

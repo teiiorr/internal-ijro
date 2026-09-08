@@ -4,9 +4,10 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 export type DonutSlice = { key: string; name: string; value: number; color: string };
 
 /**
- * Donut of projects by status with the total in the middle and a compact
- * legend below. Colours are passed in as hex (recharts doesn't resolve CSS
- * vars for SVG fills) to stay in sync with the traffic-light palette.
+ * Loyihalarni holat böyicha körsatuvchi donut: örtada umumiy soni,
+ * pastda ixçam legend. Ranglar hex körinişida uzatiladi (recharts SVG
+ * fill uçun CSS özgaruvçilarini hisoblamaydi) — svetofor palitrasi bilan
+ * mos bölişi uçun.
  */
 export function ProjectStatusDonut({ data, centerLabel }: { data: DonutSlice[]; centerLabel: string }) {
   const rows = data.filter((d) => d.value > 0);

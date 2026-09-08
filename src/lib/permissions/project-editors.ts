@@ -1,7 +1,8 @@
 /**
- * Only a fixed set of senior staff may create / edit / delete projects and stages.
- * Everyone else has read-only access to projects. Matched by the surname part of
- * the corporate email (`surname.name@bkrm.uz`); spelling variants (x/h) included.
+ * Faqat belgilangan katta xodimlar töplami loyiha va bosqiçlarni yaratiş / tahrirlaş /
+ * öçiriş huquqiga ega. Qolganlar loyihalarni faqat köriş huquqiga ega. Korporativ
+ * email'ning familiya qismi böyiça (`surname.name@bkrm.uz`) moslaştiriladi; imlo
+ * variantlari (x/h) ham kiritilgan.
  */
 const PROJECT_EDITOR_SURNAMES = new Set([
   "murodxojayev",
@@ -27,9 +28,9 @@ export function canEditProjects(email: string | null | undefined): boolean {
 }
 
 /**
- * Extra staff (beyond the editor allowlist) allowed to ADD the project-level
- * document panels — "Loyiha bo'yicha tahlil" + "Xalqaro tajriba". They can
- * upload but not delete (delete stays editor-only).
+ * Loyiha darajasidagi hujjat panellarini — "Loyiha bo'yicha tahlil" + "Xalqaro
+ * tajriba" — QÖŞIŞga ruxsat etilgan qöşimça xodimlar (muharrir allowlist'idan
+ * taşqari). Ular yuklay oladi, biroq öçira olmaydi (öçiriş faqat muharrirlarga qoladi).
  */
 const PROJECT_DOC_UPLOADER_SURNAMES = new Set(["matyakubov", "matyoqubov"]);
 
@@ -40,14 +41,14 @@ export function canUploadProjectDocs(email: string | null | undefined): boolean 
 }
 
 /**
- * Money visibility. Budgets and payment sums (in figures) are shown ONLY to this
- * same fixed allowlist; everyone else sees {@link MONEY_MASK} instead. The one
- * exception is the dashboard "To'lovlar ko'rinishi" card, which keeps its own
- * broader audience (director + Moliya dept + department heads).
+ * Pul körinişi. Byudjetlar va tölov summalari (raqamlarda) FAQAT şu belgilangan
+ * allowlist'ga körsatiladi; qolganlar örniga {@link MONEY_MASK} ni köradi. Yagona
+ * istisno — boşqaruv panelidagi "To'lovlar ko'rinishi" kartasi, u öz kengroq
+ * auditoriyasini saqlaydi (direktor + Moliya bölimi + bölim boşliqlari).
  */
 export function canViewMoney(email: string | null | undefined): boolean {
   return canEditProjects(email);
 }
 
-/** Placeholder shown in place of any budget/amount for users without money access. */
+/** Pul köriş huquqiga ega bölmagan foydalanuvçilar uçun byudjet/summa örniga körsatiladigan öringazar. */
 export const MONEY_MASK = "***";

@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
   const prev = target.avatarUrl;
   await db.update(users).set({ avatarUrl: stored.url }).where(eq(users.id, userId));
   if (prev && prev !== stored.url) {
-    try { await deleteFileByUrl(prev); } catch { /* ignore orphan */ }
+    try { await deleteFileByUrl(prev); } catch { /* yetim faylni e'tiborsiz qoldiramiz */ }
   }
   await logActivity({
     userId: session.user.id,

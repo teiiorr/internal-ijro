@@ -5,9 +5,9 @@ import { Font } from "@react-pdf/renderer";
 let registered = false;
 
 /**
- * Registers Montserrat variable TTFs for @react-pdf/renderer.
- * Idempotent — first call registers, subsequent calls no-op.
- * Use { fontFamily: "Montserrat" } and fontWeight: 400|500|600|700 in styles.
+ * @react-pdf/renderer uçun Montserrat variable TTF'larini röyxatdan ötkazadi.
+ * Idempotent — birinçi çaqiruv röyxatga oladi, keyingilari heç narsa qilmaydi.
+ * Uslublarda { fontFamily: "Montserrat" } va fontWeight: 400|500|600|700 dan foydalaning.
  */
 export function registerMontserrat() {
   if (registered) return;

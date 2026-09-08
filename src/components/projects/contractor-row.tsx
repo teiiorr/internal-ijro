@@ -67,7 +67,7 @@ export function ContractorRow({ c, canManageLogo }: { c: C; canManageLogo: boole
     <div className="rounded-lg border border-[var(--border)] p-3">
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          {/* Logo avatar (+ upload for managers) */}
+          {/* Logo avatari (+ menejerlar uchun yuklaş) */}
           <div className="relative shrink-0">
             <div className="grid size-14 place-items-center overflow-hidden rounded-xl bg-[var(--surface-3)] text-[var(--muted)]">
               {logoUrl ? (

@@ -51,7 +51,7 @@ export async function listEmployees(filters: EmployeeListFilters = {}): Promise<
   if (filters.status) where.push(eq(users.status, filters.status));
   if (filters.hireDateFrom) where.push(gte(users.hireDate, filters.hireDateFrom));
   if (filters.hireDateTo) where.push(lte(users.hireDate, filters.hireDateTo));
-  // Internal staff only — HR registry never shows contractors
+  // Faqat içki xodimlar — HR reyestri heç qaçon kontragentlarni körsatmaydi
   where.push(sql`${users.position} <> 'kontragent'`);
 
   const condition = where.length > 0 ? and(...where) : undefined;

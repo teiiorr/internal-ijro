@@ -22,10 +22,10 @@ function sameOrigin(req: NextRequest): boolean {
 }
 
 /**
- * Studio logo upload. Staff who manage studios may set any studio's logo; a
- * studio (kontragent) may set only its own (matched by email). The client
- * compresses the image before sending; the body streams to disk. Replaces any
- * previous logo file.
+ * Studiya logotipini yuklash. Studiyalarni boşqaradigan xodimlar istalgan
+ * studiya logotipini qöya oladi; studiya (kontragent) esa faqat özinikini
+ * (email orqali moslashtiriladi). Mijoz rasmni yuborişdan oldin siqadi; tana
+ * diskka oqadi. Har qanday oldingi logotip faylini almaştiradi.
  */
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   const prev = company.logoUrl;
   await db.update(externalCompanies).set({ logoUrl: stored.url }).where(eq(externalCompanies.id, companyId));
   if (prev && prev !== stored.url) {
-    try { await deleteFileByUrl(prev); } catch { /* ignore orphan */ }
+    try { await deleteFileByUrl(prev); } catch { /* yetim faylni e'tiborsiz qoldiramiz */ }
   }
   await logActivity({
     userId: session.user.id,

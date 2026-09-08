@@ -3,9 +3,9 @@ import * as React from "react";
 export type StatusTone = "green" | "amber" | "red" | "muted";
 export type StatusSize = "sm" | "md" | "lg";
 
-// `tone` drives the solid fill; the chip has white text (see .status-tag in
-// globals.css) — no animation. Fixed, vivid, clearly-distinct colors chosen so
-// white stays legible on each (green / amber-gold / red / slate).
+// `tone` töliq töldirish rangini belgilaydi; chip'da oq matn böladi (globals.css'dagi
+// .status-tag'ga qarang) — animatsiyasiz. Har birida oq rang öqişli qolişi uçun qat'iy,
+// yorqin va bir-biridan aniq farqlanadigan ranglar tanlangan (yaşil / amber-oltin / qizil / slate).
 const TONE: Record<StatusTone, string> = {
   green: "#16A34A",
   amber: "#E08C10",
@@ -20,8 +20,8 @@ const SIZE: Record<StatusSize, { box: string; ch: string }> = {
 };
 
 /**
- * Angular status "signal tag": chamfered corners, uppercase, solid color fill.
- * Static (no animation). `live` is accepted for API compatibility but ignored.
+ * Burçakli status "signal yorliği": qirqilgan burçaklar, bosh harflar, töliq rang bilan
+ * töldirilgan. Statik (animatsiyasiz). `live` API mosligi uçun qabul qilinadi, biroq e'tiborsiz qoldiriladi.
  */
 export function StatusTag({
   tone,

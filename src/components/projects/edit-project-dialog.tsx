@@ -42,7 +42,7 @@ export function EditProjectDialog({
 }: {
   project: Project;
   curators: CuratorOption[];
-  /** Controlled mode — when provided, the built-in trigger button is hidden. */
+  /** Boşqariladigan rejim — berilganda, ichki trigger tugmasi yaşiriladi. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {

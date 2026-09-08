@@ -54,7 +54,7 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
         )}
       </div>
       <EmployeesFilterBar departments={departments.map((d) => ({ id: d.id, name: d.name }))} />
-      {/* Mobile cards */}
+      {/* Mobil kartalar */}
       <div className="md:hidden space-y-2">
         {rows.map((r) => (
           <Link
@@ -85,7 +85,7 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
         )}
       </div>
 
-      {/* Desktop table */}
+      {/* Desktop jadvali */}
       <Card className="hidden md:block">
         <CardContent className="p-0">
           <Table>

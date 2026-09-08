@@ -40,8 +40,8 @@ export function CouncilAgenda({
   function add() {
     setError(null);
     if (!topic.trim()) { setError(t("kengash.newTopic")); return; }
-    // A typed value that matches a registered project/employee gets linked by id;
-    // otherwise it is stored as a free-text name.
+    // Kiritilgan qiymat röyxatdagi loyiha/xodimga mos kelsa, id böyicha boğlanadi;
+    // aks holda erkin matn körinişida nom sifatida saqlanadi.
     const proj = projects.find((p) => p.name.trim().toLowerCase() === projectText.trim().toLowerCase());
     const pres = employees.find((u) => u.name.trim().toLowerCase() === presenterText.trim().toLowerCase());
     start(async () => {
@@ -61,7 +61,7 @@ export function CouncilAgenda({
 
   return (
     <div className="space-y-4">
-      {/* desktop table */}
+      {/* desktop jadvali */}
       <div className="hidden overflow-x-auto sm:block">
         <table className="w-full text-sm">
           <thead>
@@ -96,7 +96,7 @@ export function CouncilAgenda({
         </table>
       </div>
 
-      {/* mobile cards */}
+      {/* mobil kartalar */}
       <div className="space-y-2 sm:hidden">
         {items.map((row, i) => (
           <div key={row.id} className="rounded-xl border border-dashed border-[var(--border)] p-3">
@@ -124,7 +124,7 @@ export function CouncilAgenda({
         {items.length === 0 && <p className="py-8 text-center text-[var(--muted)]">{t("kengash.noItems")}</p>}
       </div>
 
-      {/* add row */}
+      {/* qator qöşiş */}
       {canManage && (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_200px_200px_auto] sm:items-center">
           <Input placeholder={t("kengash.topic")} value={topic} onChange={(e) => setTopic(e.target.value)} />

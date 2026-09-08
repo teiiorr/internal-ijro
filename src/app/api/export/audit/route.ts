@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   if (!owner && !["direktor", "orinbosar", "hr"].includes(session.user.position)) return new NextResponse("forbidden", { status: 403 });
 
   const sp = req.nextUrl.searchParams;
-  // Owner/managers get the full log; export is not capped at the on-page 500.
+  // Owner/menejerlar töliq logni oladi; eksport sahifadagi 500 lik çeklov bilan çeklanmaydi.
   const rows = await listAudit(
     {
       userId: sp.get("userId"),

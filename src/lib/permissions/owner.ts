@@ -1,11 +1,12 @@
 /**
- * Platform owner(s). They are treated as directors (top role → all capabilities)
- * and get a personalized greeting on the dashboard. Keyed by email so it survives
- * account rebuilds. Pure module (no DB / no server-only) — safe to import anywhere.
+ * Platforma egasi(lari). Ular direktor sifatida qaraladi (eng yuqori rol → barça
+ * qobiliyatlar) va boşqaruv panelida şaxsiylaştirilgan salomlaşuv oladi. Email
+ * böyiça kalitlanadi, şuning uçun akkaunt qayta qurilsa ham saqlanib qoladi. Sof
+ * modul (DB yöq / server-only yöq) — istalgan joyda import qiliş xavfsiz.
  */
 export const OWNER_EMAILS = ["murodxojayev.baxtiyorxoja@bkrm.uz"];
 
-/** Honorific shown after the owner's name in the dashboard greeting. */
+/** Boşqaruv panelidagi salomlaşuvda egasining ismidan keyin körsatiladigan sharafli unvon. */
 export const OWNER_TITLE = "The Godfather";
 
 export function isOwner(email: string | null | undefined): boolean {

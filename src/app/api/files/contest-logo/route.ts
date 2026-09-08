@@ -20,7 +20,7 @@ function sameOrigin(req: NextRequest): boolean {
   }
 }
 
-/** Upload/replace the winner logo shown on the reveal screen. Editor allowlist only. */
+/** Natija ekranida körsatiladigan ğolib logotipini yuklash/almaştirish. Faqat muharrirlar röyxatidagilar uçun. */
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: known ? code : "upload_failed" }, { status: known ? 400 : 500 });
   }
 
-  if (c.logo) await deleteFileByUrl(c.logo); // replace old logo
+  if (c.logo) await deleteFileByUrl(c.logo); // eski logotipni almaştiramiz
   await db.update(contests).set({ winnerLogoUrl: stored.url, updatedAt: new Date() }).where(eq(contests.id, contestId));
   await logActivity({ userId: session.user.id, action: "contest.logo_set", entityType: "contest", entityId: contestId });
 

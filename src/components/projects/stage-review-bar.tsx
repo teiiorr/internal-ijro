@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { acceptStage, completeStage, requestStageChanges } from "@/server/actions/stages";
 
 /**
- * Staff review controls for an ACTIVE stage. When the studio has submitted, the
- * bar leads with Accept & advance + Request changes; otherwise it falls back to
- * a plain Complete (staff can still advance internal stages).
+ * FAOL bosqiç uçun xodimlar körib çiqiş boşqaruvlari. Studiya işni topşirgan bölsa,
+ * panelda avval "Qabul qilib ötkazish" va "Özgartirish söraş" turadi; aks holda oddiy
+ * "Yakunlash"ga qaytadi (xodimlar içki bosqiçlarni baribir ötkaza oladi).
  */
 export function StageReviewBar({ stageId, reviewStatus }: { stageId: string; reviewStatus: string }) {
   const t = useTranslations();

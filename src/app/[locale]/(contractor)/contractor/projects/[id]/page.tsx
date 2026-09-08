@@ -77,7 +77,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
 
     return (
       <div className="space-y-5 stagger-children">
-        {/* Header — back + poster thumb + name */}
+        {/* Sarlavha — orqaga + poster miniatyurasi + nom */}
         <div className="flex items-center gap-3">
           <BackButton fallbackHref="/contractor/projects" />
           <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -90,7 +90,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </div>
         </div>
 
-        {/* HERO — the one thing that matters: the active stage + submit in place */}
+        {/* HERO — eng muhim narsa: faol bosqich + şu yerning özida topşiriş */}
         {activeStage ? (
           <Card className="border-[var(--warning)]/45">
             <CardContent className="space-y-4 p-5 sm:p-6">
@@ -99,7 +99,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                 <span className="text-xs font-medium tabular-nums text-[var(--muted)]">
                   {t("projects.stagePath.stageOf", { n: activeStage.orderIndex + 1, total: sp.stages.length })}
                 </span>
-                {/* Whose turn — submission status */}
+                {/* Navbat kimda — topşiriş holati */}
                 {activeStage.reviewStatus === "submitted" ? (
                   <StatusTag tone="muted" size="sm">{t("review.status.submitted")}</StatusTag>
                 ) : activeStage.reviewStatus === "changes_requested" ? (
@@ -146,7 +146,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </Card>
         )}
 
-        {/* Where am I — stage stepper */}
+        {/* Qayerdaman — bosqichlar körsatkichi */}
         <Card>
           <CardContent className="p-5 sm:p-6">
             <h3 className="mb-4 text-base font-semibold">{t("projects.stagePath.title")}</h3>
@@ -154,7 +154,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </CardContent>
         </Card>
 
-        {/* Talk to your curator — opens the full-screen conversation */}
+        {/* Kurator bilan suhbat — töliq ekranli suhbatni ochadi */}
         <Link
           href={`/contractor/chats/${id}`}
           className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-[0.995]"
@@ -169,7 +169,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           <ArrowRight className="size-4 shrink-0 text-[var(--subtle)]" />
         </Link>
 
-        {/* All delivered files */}
+        {/* Topşirilgan barcha fayllar */}
         <Card>
           <CardContent className="p-5 sm:p-6">
             <h3 className="mb-4 text-base font-semibold">{t("contractor.tabs.docs")}</h3>
@@ -177,7 +177,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </CardContent>
         </Card>
 
-        {/* Compact context — status, dates, curator, description. No internal money. */}
+        {/* Ixcham ma'lumot — holat, sanalar, kurator, tavsif. Ichki moliya körsatilmaydi. */}
         <Card>
           <CardContent className="space-y-4 p-5 sm:p-6">
             <dl className="detail-grid grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
@@ -216,7 +216,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
     );
   }
 
-  // Legacy (milestone) project — same declutter: no internal money shown.
+  // Eski (milestone) usuldagi loyiha — aynan şu soddalaştiriş: ichki moliya körsatilmaydi.
   const stages = data.milestones.map((m) => ({
     id: m.id,
     title: m.title,

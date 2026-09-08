@@ -4,8 +4,8 @@ import ExcelJS from "exceljs";
 export const EXCEL_FONT = "Montserrat";
 
 /**
- * Applies Montserrat font to every cell in the worksheet, with
- * extra weight on the header row. Call AFTER all rows have been added.
+ * Iş varağidagi har bir katakka Montserrat şriftini qöllaydi,
+ * sarlavha qatoriga esa qöşimça qalinlik beradi. Barça qatorlar qöşilgandan SÖNG çaqiring.
  */
 export function applyMontserrat(ws: ExcelJS.Worksheet) {
   ws.eachRow({ includeEmpty: false }, (row, rowNumber) => {

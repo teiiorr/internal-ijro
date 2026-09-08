@@ -22,7 +22,7 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
   const [q, setQ] = useState("");
   const router = useRouter();
   const pathname = usePathname();
-  // Task search belongs to the Tasks section only — hide it everywhere else.
+  // Vazifa qidiruvi faqat Vazifalar bölimiga tegişli — boşqa joylarda yaşiriladi.
   const onTasks = pathname === "/tasks" || pathname.startsWith("/tasks/");
   const menuRef = useRef<HTMLDivElement>(null);
 

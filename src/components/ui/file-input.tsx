@@ -7,22 +7,23 @@ import { cn } from "@/lib/utils";
 type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "className"> & {
   className?: string;
   /**
-   * Fires with the picked File (or null when cleared). Lets a parent own the
-   * selection — e.g. to stage it behind an explicit "Add" button or to compress
-   * it before upload — without re-reading input.files. `onChange` still fires too.
+   * Tanlangan File bilan işga tuşadi (yoki tozalanganda null bilan). Ota komponentga
+   * tanlovni özi boshqariş imkonini beradi — masalan, uni alohida "Add" tugmasi
+   * ortida saqlab turiş yoki yuklaşdan oldin siqiş uçun — input.files ni qayta
+   * öqimasdan. `onChange` ham baribir işga tuşadi.
    */
   onFileChange?: (file: File | null) => void;
 };
 
 /**
- * Two-state file picker:
+ * Ikki holatli fayl tanlagiç:
  *
- *   empty  → full-width dashed dropzone (click anywhere / drag a file in)
- *   filled → compact row: file icon · filename · replace · clear
+ *   böş   → töliq kenglikdagi çiziqli dropzone (istalgan joyga bosing / faylni tortib taşlang)
+ *   töla  → ixcham qator: fayl belgisi · fayl nomi · almaştiriş · tozalaş
  *
- * One mechanism, one place for each piece of UI to live. No native browser
- * "Choose File / No file chosen" leaks; no separate placeholder line that
- * sits awkwardly next to the button.
+ * Bitta mexanizm, UI ning har bir qismi uçun aniq bitta joy. Brauzerning öziga
+ * xos "Choose File / No file chosen" körinişi çiqib qolmaydi; tugma yonida
+ * noqulay turadigan alohida placeholder qatori ham yöq.
  */
 export const FileInput = React.forwardRef<HTMLInputElement, Props>(
   ({ className, onChange, onFileChange, ...props }, ref) => {
@@ -60,14 +61,14 @@ export const FileInput = React.forwardRef<HTMLInputElement, Props>(
       setDragging(false);
       const file = e.dataTransfer.files?.[0];
       if (!file || !internalRef.current) return;
-      // Sync the File into the input.files via DataTransfer so consumers
-      // that read input.files keep working unchanged.
+      // Faylni DataTransfer orqali input.files ga joylaymiz, şunda input.files ni
+      // öqiydigan kod özgarişsiz işlayveradi.
       const dt = new DataTransfer();
       dt.items.add(file);
       internalRef.current.files = dt.files;
       setFileName(file.name);
-      // The dispatched 'change' triggers handleChange, which fires onChange +
-      // onFileChange — so we don't call them directly here (avoids double-firing).
+      // Yuborilgan 'change' handleChange ni işga tuşiradi, u esa onChange +
+      // onFileChange ni çaqiradi — şu bois ularni bu yerda töğridan-töğri çaqirmaymiz (ikki marta işga tuşişining oldini oladi).
       internalRef.current.dispatchEvent(new Event("change", { bubbles: true }));
     }
 

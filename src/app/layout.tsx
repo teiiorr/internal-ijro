@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   description: "Corporate task, project and HR management",
 };
 
-// viewportFit:'cover' is required for env(safe-area-inset-*) to resolve to real
-// values on notched phones — without it every safe-area inset is 0.
+// viewportFit:'cover' env(safe-area-inset-*) qiymatlari notchli telefonlarda
+// haqiqiy qiymatga aylanişi uçun kerak — usiz har bir safe-area inset 0 böladi.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -18,7 +18,7 @@ export const viewport: Viewport = {
   ],
 };
 
-// Root layout must just pass through — locale layout is responsible for <html>/<body>.
+// Root layout shunçaki ötkazib yuborişi kerak — <html>/<body> uçun locale layout javobgar.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

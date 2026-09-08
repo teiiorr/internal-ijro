@@ -32,9 +32,9 @@ function humanSize(bytes: number | null): string {
 const isImage = (m: string | null) => !!m && m.startsWith("image/");
 
 /**
- * Studio-facing document + media uploader. Studios file documents/photos into
- * named folders; big images are re-rendered smaller client-side before they hit
- * the wire. Everything is scoped to the studio's own project by the API route.
+ * Studiya uçun hujjat + media yuklagiç. Studiyalar hujjat/rasmlarni nomlangan
+ * papkalarga joylaydi; katta rasmlar tarmoqqa jönatilişdan oldin client tomonda
+ * kiçikroq qilib qayta çiziladi. Hammasi API route orqali studiyaning öz loyihasi bilan çeklanadi.
  */
 export function StudioDocuments({
   projectId,

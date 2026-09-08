@@ -11,7 +11,7 @@ export default async function NewTaskPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
-  // Open assignment: any internal staff member can create/assign tasks (contractors excluded).
+  // Oçiq tayinlaş: har qanday içki xodim vazifa yaratişi/tayinlaşi mumkin (kontragentlar bundan mustasno).
   if (session.user.position === "kontragent") redirect("/tasks");
 
   const [assignees, prjs] = await Promise.all([

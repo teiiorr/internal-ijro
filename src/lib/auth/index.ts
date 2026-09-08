@@ -90,7 +90,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           .set({ failedLoginCount: 0, lockedUntil: null, lastLoginAt: new Date() })
           .where(eq(users.id, user.id));
 
-        // Fire-and-forget new-device email (also writes auth.login_success to activity_log)
+        // Yuborib, natijasini kutmaydigan yangi qurilma xati (auth.login_success'ni ham activity_log'ga yozadi)
         void maybeSendNewDeviceEmail({
           userId: user.id,
           email: user.email,

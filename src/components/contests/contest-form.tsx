@@ -19,7 +19,7 @@ type Contest = {
   heldAt: string | null;
 };
 
-/** Create (no `contest`) or edit (with `contest`) a contest. */
+/** Tanlov yaratiş (`contest` bölmasa) yoki tahrirlaş (`contest` bölsa). */
 export function ContestForm({ contest }: { contest?: Contest }) {
   const t = useTranslations();
   const router = useRouter();

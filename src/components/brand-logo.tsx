@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Full BKRM logo — emblem + "Bolalar Kontentini Rivojlantirish Markazi".
- * Height is set via className (e.g. "h-12"); width scales to the SVG's 220:81
- * ratio. Ships a light (blue) and a dark (white) variant; the `.dark` class
- * swaps them via CSS (see globals.css .brand-logo-*).
+ * Töliq BKRM logotipi — emblema + "Bolalar Kontentini Rivojlantirish Markazi".
+ * Balandlik className orqali beriladi (masalan, "h-12"); kenglik SVG'ning 220:81
+ * nisbatiga moslaşadi. Yoruğ (kök) va töq (oq) variantlari bor; `.dark` klassi
+ * ularni CSS orqali almaştiradi (qarang: globals.css .brand-logo-*).
  */
 export function BrandLogo({ className }: { className?: string }) {
   return (

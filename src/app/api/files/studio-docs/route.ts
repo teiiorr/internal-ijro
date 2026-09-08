@@ -9,7 +9,7 @@ import { logActivity } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
-/** Trim, collapse whitespace, cap at 120; empty → null. */
+/** Boşliqlarni yiğib/kesib, uzunlikni 120 gaça çeklaydi; böş → null. */
 function normalizeCategory(raw: string | null): string | null {
   if (!raw) return null;
   const v = raw.replace(/\s+/g, " ").trim().slice(0, 120);
@@ -27,11 +27,11 @@ function sameOrigin(req: NextRequest): boolean {
 }
 
 /**
- * Studio (kontragent) document upload — mirrors the staff stage-docs endpoint but
- * takes a projectId and hard-scopes to the caller's OWN studio: the project must
- * belong to the company resolved from the caller's email. Documents attach to the
- * project's active stage (or its first stage), filed under the chosen folder.
- * The client compresses images before sending; the body streams straight to disk.
+ * Studiya (kontragent) hujjatini yuklash — xodimlarning stage-docs endpointini
+ * takrorlaydi, ammo projectId oladi va faqat çaqiruvçining ÖZ studiyasi bilan
+ * çeklanadi: loyiha çaqiruvçining emailidan aniqlangan kompaniyaga tegişli bölişi
+ * şart. Hujjatlar loyihaning faol bosqichiga (yoki birinçi bosqichiga) biriktirilib,
+ * tanlangan papkaga joylanadi. Mijoz rasmlarni yuborişdan oldin siqadi; tana diskka oqadi.
  */
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
   if (!projectId || !name) return NextResponse.json({ error: "bad_request" }, { status: 400 });
   if (isForbiddenExt(name)) return NextResponse.json({ error: "ext_forbidden" }, { status: 400 });
 
-  // Resolve the caller's studio by email (the portal's link model).
+  // Çaqiruvçining studiyasini email böyiça aniqlaymiz (portalning boğlanish modeli).
   const [company] = await db
     .select({ id: externalCompanies.id })
     .from(externalCompanies)
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     .limit(1);
   if (!company) return NextResponse.json({ error: "no_company" }, { status: 403 });
 
-  // The project must belong to THIS studio.
+  // Loyiha aynan ŞU studiyaga tegişli bölişi kerak.
   const [project] = await db
     .select({ id: projects.id, ec: projects.externalCompanyId })
     .from(projects)
@@ -62,8 +62,8 @@ export async function POST(req: NextRequest) {
     .limit(1);
   if (!project || project.ec !== company.id) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
-  // Target the explicit stage when given (verified to belong to this project),
-  // else fall back to the active stage, else the first stage.
+  // Aniq bosqich berilgan bölsa öşani olamiz (loyihaga tegişli ekani tekşirilgan),
+  // aks holda faol bosqichga, u ham bölmasa birinçi bosqichga qaytamiz.
   const stageId = (url.searchParams.get("stageId") ?? "").trim();
   let target: { id: string } | undefined;
   if (stageId) {

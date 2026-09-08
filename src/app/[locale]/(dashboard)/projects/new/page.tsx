@@ -14,13 +14,13 @@ export default async function NewProjectPage() {
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
   const locale = await getLocale();
-  // Open to all internal staff (temporary — refine later). Only external contractors are blocked.
+  // Barça içki xodimlarga oçiq (vaqtinçalik — keyinroq aniqlaştiriladi). Faqat taşqi kontragentlar bloklanadi.
   if (session.user.position === "kontragent") redirect("/projects");
   if (!canEditProjects(session.user.email)) redirect("/projects");
   const [companies, curators, responsibles, typeRows] = await Promise.all([
     db.select({ id: externalCompanies.id, name: externalCompanies.name }).from(externalCompanies).where(eq(externalCompanies.status, "approved")).orderBy(externalCompanies.name),
     db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`).orderBy(users.fullName),
-    // mas'ul can be any active internal employee (not external contractors)
+    // mas'ul har qanday faol içki xodim böla oladi (taşqi kontragentlar emas)
     db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`).orderBy(users.fullName),
     db.select().from(projectTypes).where(eq(projectTypes.isActive, true)).orderBy(projectTypes.orderIndex),
   ]);

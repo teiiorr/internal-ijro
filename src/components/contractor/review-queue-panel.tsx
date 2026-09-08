@@ -9,8 +9,8 @@ import { formatDate } from "@/lib/dates";
 type Stage = { stageId: string; projectId: string; projectName: string; stageName: string; submittedAt: Date | string | null; submittedByName: string | null };
 type Group = { studioId: string; studioName: string; studioLogo: string | null; oldestSubmittedAt: Date | string | null; stages: Stage[] };
 
-/** "Waiting on you" — every studio submission awaiting BKRM review, oldest first.
- *  Hidden when the queue is empty. Rows deep-link into the studio review workspace. */
+/** "Sizni kutmoqda" — BKRM körigini kutayotgan barcha studiya topşiriqlari, eng eskisi birinchi.
+ *  Navbat boş bölsa yaşiriladi. Qatorlar studiya köriş iş maydoniga deep-link qiladi. */
 export async function ReviewQueuePanel({ groups }: { groups: Group[] }) {
   if (groups.length === 0) return null;
   const t = await getTranslations();

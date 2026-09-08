@@ -4,9 +4,10 @@ import { db } from "@/lib/db";
 import { userPermissions } from "@/lib/db/schema";
 
 /**
- * Owner-managed capability grants. These are ADDITIVE: they widen what a user
- * can do on top of the built-in position/allowlist rules — they never remove
- * access. Enforcement combines `canEditProjects(email) || hasGrant(...)`.
+ * Egasi tomonidan boşqariladigan qobiliyat grantlari. Bular QÖŞIMÇA: ular
+ * foydalanuvçi qila oladigan işlarni örnatilgan lavozim/allowlist qoidalari
+ * ustiga kengaytiradi — heç qaçon kirişni olib taşlamaydi. Nazorat
+ * `canEditProjects(email) || hasGrant(...)` ni birlaştiradi.
  */
 export const MANAGED_CAPABILITIES = [
   "projects.edit",
@@ -20,7 +21,7 @@ export function isManagedCapability(x: string): x is ManagedCapability {
   return (MANAGED_CAPABILITIES as readonly string[]).includes(x);
 }
 
-/** All capabilities granted to a user. Guarded: table absent → empty set. */
+/** Foydalanuvçiga berilgan barça qobiliyatlar. Himoyalangan: jadval yöq bölsa → böş töplam. */
 export async function getUserGrants(userId: string): Promise<Set<string>> {
   try {
     const rows = await db
@@ -29,17 +30,17 @@ export async function getUserGrants(userId: string): Promise<Set<string>> {
       .where(eq(userPermissions.userId, userId));
     return new Set(rows.map((r) => r.capability));
   } catch {
-    return new Set(); // migration 0023 not applied yet — no grants
+    return new Set(); // 0023 migratsiyasi hali qöllanmagan — grantlar yöq
   }
 }
 
-/** Whether a user has a specific capability grant. */
+/** Foydalanuvçida muayyan qobiliyat granti bor-yöqligini tekşiradi. */
 export async function hasGrant(userId: string, capability: ManagedCapability): Promise<boolean> {
   const grants = await getUserGrants(userId);
   return grants.has(capability);
 }
 
-/** Every grant row, for the admin UI. Guarded. Returns userId → capability[]. */
+/** Admin UI uçun har bir grant qatori. Himoyalangan. userId → capability[] qaytaradi. */
 export async function listAllGrants(): Promise<Record<string, string[]>> {
   try {
     const rows = await db

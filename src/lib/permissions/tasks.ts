@@ -7,9 +7,9 @@ export const TASK_PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 export type TaskPriority = (typeof TASK_PRIORITIES)[number];
 
 /**
- * Allowed status transitions, role-aware.
- *  - assignee/creator can move forward
- *  - creator can reject/approve from under_review
+ * Ruxsat etilgan holat ötişlari, rolni hisobga oladi.
+ *  - assignee/creator oldinga sura oladi
+ *  - creator under_review dan rad etiş/tasdiqlaş qila oladi
  */
 export function canTransition(
   current: TaskStatus,
@@ -18,7 +18,7 @@ export function canTransition(
 ): boolean {
   if (current === next) return false;
 
-  // Anyone allowed in the task can move todo↔in_progress
+  // Topşiriqqa ruxsati bor har kim todo↔in_progress ni ötkaza oladi
   if (actor.isAssignee || actor.isCreator) {
     if (current === "todo" && next === "in_progress") return true;
     if (current === "in_progress" && next === "under_review") return true;
@@ -29,7 +29,7 @@ export function canTransition(
     if (current === "under_review" && (next === "completed" || next === "rejected")) return true;
   }
 
-  // Direktor and O'rinbosar can move anything anywhere (override)
+  // Direktor va Örinbosar hamma narsani istalgan holatga ötkaza oladi (override)
   if (actor.position === "direktor" || actor.position === "orinbosar") return true;
 
   return false;

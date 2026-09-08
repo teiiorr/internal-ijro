@@ -57,7 +57,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
 
       {view === "list" && (
         <>
-          {/* Mobile card view */}
+          {/* Mobil karta körinişi */}
           <div className="md:hidden space-y-2">
             {tasks.map((row) => {
               const completed = ["completed", "rejected"].includes(row.status);
@@ -91,7 +91,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
             )}
           </div>
 
-          {/* Desktop table view */}
+          {/* Desktop jadval körinişi */}
           <div className="hidden md:block">
             <Table>
               <TableHeader>

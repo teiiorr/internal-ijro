@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { IconArrowBackUp as Undo2, IconLoader2 as Loader2 } from "@tabler/icons-react";
 import { reopenStage } from "@/server/actions/stages";
 
-/** Undo an accidental "complete stage": reverts the last completed stage back to
- *  active (and relocks the next). Two-step to avoid stray clicks. Open to all staff. */
+/** Tasodifan bosilgan "bosqiçni yakunlash"ni bekor qiladi: oxirgi yakunlangan bosqiçni yana
+ *  faol holatga qaytaradi (va keyingisini qayta qulflaydi). Xato bosişlarning oldini olish uçun ikki bosqiçli. Barcha xodimlar uçun oçiq. */
 export function ReopenStageButton({ stageId }: { stageId: string }) {
   const t = useTranslations();
   const router = useRouter();

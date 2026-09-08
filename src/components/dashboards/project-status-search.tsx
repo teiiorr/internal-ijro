@@ -31,7 +31,7 @@ export function ProjectStatusSearch({ projects }: { projects: ProjectStatusRow[]
         (p) => p.name.toLowerCase().includes(term) || (p.currentStatus ?? "").toLowerCase().includes(term),
       );
     }
-    // Default view: only projects that actually have a current-status note.
+    // Standart köriniş: faqat joriy holat izohi mavjud loyihalar.
     return projects.filter((p) => (p.currentStatus ?? "").trim() !== "");
   }, [projects, term]);
 

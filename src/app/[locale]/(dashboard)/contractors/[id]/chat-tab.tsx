@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { IconMessageCircle as Msg, IconChevronRight as Chevron } from "@tabler/icons-react";
 
-/** List-that-links: each project opens its full-screen conversation route.
- *  No inline accordion — chats never expand top-to-bottom. */
+/** Havolali röyxat: har bir loyiha özining töliq ekranli suhbat sahifasini ochadi.
+ *  Ichki akkordeon yöq — suhbatlar hech qachon yuqoridan pastga ochilmaydi. */
 export function StudioChatTab({
   companyId,
   projects,

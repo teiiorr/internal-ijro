@@ -11,7 +11,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
   if (!session?.user?.id) return new NextResponse("unauthorized", { status: 401 });
   const { id } = await ctx.params;
 
-  // Authorization: only people involved in the task (creator/assignee) or director/orinbosar
+  // Ruxsat: topshiriqni faqat unga aloqador xodimlar (yaratuvçi/ijroçi) yoki direktor/orinbosar köra oladi
   const t = await db.select({ createdBy: tasks.createdByUserId, regNum: tasks.registrationNumber }).from(tasks).where(eq(tasks.id, id)).limit(1);
   if (t.length === 0) return new NextResponse("not_found", { status: 404 });
   const isManager = ["direktor", "orinbosar"].includes(session.user.position);
@@ -19,7 +19,7 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string
   if (!isCreator && !isManager) {
     const involved = await db.select().from(taskAssignees).where(eq(taskAssignees.taskId, id)).limit(1);
     if (involved.length === 0 || !involved.some(() => true)) {
-      // Re-fetch focused on me
+      // Özimga qaratib qayta sörov qilamiz
     }
     const me = await db
       .select()

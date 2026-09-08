@@ -4,9 +4,9 @@ import { getLocale } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
 
 /**
- * Root → straight to login (or to the appropriate home if already signed in).
- * No marketing landing; this is an internal tool. Uses next-intl's redirect
- * so the locale prefix is preserved end-to-end.
+ * Root → töğridan-töğri login sahifasiga (yoki tizimga allaqaçon kirilgan bölsa, mos bosh sahifaga).
+ * Marketing lendingi yöq; bu içki vosita. next-intl'ning redirect'idan foydalanadi,
+ * şunda lokal prefiksi boşidan oxirigaça saqlanib qoladi.
  */
 export default async function IndexPage() {
   const session = await auth();

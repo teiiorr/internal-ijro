@@ -43,9 +43,9 @@ export default async function ContractorLayout({ children }: { children: React.R
     redirect("/contractor-nda");
   }
 
-  // Two destinations only: the work (Projects) and communication (Chats).
-  // Notifications + Settings live in the Header (bell + avatar menu); Profile is
-  // a menu link (below) + the mobile bottom bar.
+  // Faqat ikkita yönaliş: iş (Loyihalar) va muloqot (Suhbatlar).
+  // Bildirişnomalar + Sozlamalar Header'da (qönğiroq + avatar menyusi) joylaşgan; Profil esa
+  // menyu havolasi (quyida) + mobil pastki panelda.
   const NAV = [
     { href: "/contractor/projects", icon: Folder, label: t("nav.projects") },
     { href: "/contractor/chats", icon: MessageCircle, label: t("nav.chats") },

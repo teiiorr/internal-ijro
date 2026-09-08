@@ -23,9 +23,9 @@ import { nextRegistrationNumber } from "@/lib/tasks/registration-number";
 const createSchema = z.object({
   title: z.string().min(2).max(500),
   description: z.string().nullable().optional(),
-  /** Primary assignee (kept for compat; also added to task_assignees). */
+  /** Asosiy ijroçi (moslik uçun saqlangan; task_assignees'ga ham qöşiladi). */
   assignedToUserId: z.string().uuid(),
-  /** Additional assignees (multi-ijrochi). Combined with primary, deduped. */
+  /** Qöşimça ijroçilar (köp ijroçili). Asosiy ijroçi bilan birlaştirilib, takrorlari olib taşlanadi. */
   additionalAssigneeIds: z.array(z.string().uuid()).optional(),
   projectId: z.string().uuid().nullable().optional(),
   milestoneId: z.string().uuid().nullable().optional(),
@@ -41,7 +41,7 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
   const allAssigneeIds = Array.from(new Set([parsed.assignedToUserId, ...(parsed.additionalAssigneeIds ?? [])]));
   const a: ActorContext = { id: me.id, position: me.position, departmentId: me.departmentId };
 
-  // Verify each assignee is allowed — one batched fetch (no per-assignee query).
+  // Har bir ijroçiga ruxsat borligini tekşiramiz — bitta guruhli sörov bilan (har ijroçi uçun alohida sörovsiz).
   const assigneeRows = await db
     .select({ id: users.id, fullName: users.fullName, position: users.position, departmentId: users.departmentId })
     .from(users)
@@ -70,7 +70,7 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
         parentTaskId: parsed.parentTaskId ?? null,
         priority: parsed.priority,
         deadline: parsed.deadline ? new Date(parsed.deadline) : null,
-        // Skip the manual "Boshlash" step — tasks open in_progress right away.
+        // Qölda "Boşlaş" bosqiçini ötkazib yuboramiz — topşiriqlar darrov in_progress holatida oçiladi.
         status: "in_progress",
       })
       .returning({ id: tasks.id });
@@ -115,7 +115,7 @@ export async function changeTaskStatus(taskId: string, nextStatus: (typeof TASK_
     throw new Error("forbidden_transition");
   }
 
-  // Block starting if there are open dependencies
+  // Oçiq boğliqliklar bölsa, boşlaşni bloklaymiz
   if (nextStatus === "in_progress" && t.status === "todo") {
     const deps = await db
       .select({ status: tasks.status })
@@ -266,7 +266,7 @@ export async function removeAttachment(attachmentId: string, taskId: string) {
   revalidatePath(`/tasks/${taskId}`);
 }
 
-// ---------- Multi-assignee: submit javob (response) ----------
+// ---------- Köp ijroçili: javob topşiriş ----------
 const responseSchema = z.object({
   taskId: z.string().uuid(),
   responseText: z.string().min(1).max(5000),
@@ -276,7 +276,7 @@ export async function submitTaskResponse(input: z.infer<typeof responseSchema>, 
   const me = await requireUser();
   const parsed = responseSchema.parse(input);
 
-  // Ensure caller is an assignee
+  // Çaqiruvçi ijroçi ekanligiga işonç hosil qilamiz
   const a = await db
     .select()
     .from(taskAssignees)
@@ -304,9 +304,9 @@ export async function submitTaskResponse(input: z.infer<typeof responseSchema>, 
     })
     .where(and(eq(taskAssignees.taskId, parsed.taskId), eq(taskAssignees.userId, me.id)));
 
-  // Skip the explicit "Tekshiruvga yuborish" step: parent task moves to
-  // under_review on the very first javob so the creator sees it in their
-  // inbox without anyone touching the Holat panel.
+  // Alohida "Tekşiruvga yuboriş" bosqiçini ötkazib yuboramiz: ota topşiriq
+  // birinçi javob kelişi bilanoq under_review holatiga ötadi, şunda yaratuvçi uni
+  // heç kim Holat paneliga tegmasdan öz kiruv qutisida köradi.
   await db
     .update(tasks)
     .set({ status: "under_review", updatedAt: new Date() })
@@ -319,7 +319,7 @@ export async function submitTaskResponse(input: z.infer<typeof responseSchema>, 
     entityId: parsed.taskId,
   });
 
-  // Notify the creator
+  // Yaratuvçiga xabar beramiz
   const t = await db.select().from(tasks).where(eq(tasks.id, parsed.taskId)).limit(1);
   if (t.length > 0) {
     await notify({
@@ -335,7 +335,7 @@ export async function submitTaskResponse(input: z.infer<typeof responseSchema>, 
   revalidatePath(`/tasks/${parsed.taskId}`);
 }
 
-// Creator approves / rejects an individual assignee's response
+// Yaratuvçi ayrim ijroçining javobini tasdiqlaydi / rad etadi
 export async function reviewAssigneeResponse(
   taskId: string,
   assigneeUserId: string,
@@ -357,10 +357,10 @@ export async function reviewAssigneeResponse(
     })
     .where(and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, assigneeUserId)));
 
-  // Auto-sync the parent task: if all assignees are completed, mark the
-  // whole task completed; if anyone got rejected, push the task back to
-  // in_progress so the rejected assignee can re-submit without a manual
-  // status nudge from the creator.
+  // Ota topşiriqni avtomatik sinxronlaymiz: agar barça ijroçilar yakunlagan bölsa,
+  // butun topşiriqni yakunlangan deb belgilaymiz; agar kimdir rad etilgan bölsa,
+  // topşiriqni yana in_progress holatiga qaytaramiz — şunda rad etilgan ijroçi
+  // yaratuvçidan qölda holat özgartirişini kutmasdan qayta javob topşira oladi.
   const all = await db
     .select({ status: taskAssignees.status })
     .from(taskAssignees)
@@ -375,7 +375,7 @@ export async function reviewAssigneeResponse(
       .update(tasks)
       .set({ status: "in_progress", updatedAt: new Date() })
       .where(eq(tasks.id, taskId));
-    // The rejected assignee is reactivated so they can write a new javob.
+    // Rad etilgan ijroçi qayta faollaştiriladi — u yangi javob yoza olsin.
     await db
       .update(taskAssignees)
       .set({ status: "in_progress", updatedAt: new Date() })
@@ -402,7 +402,7 @@ export async function reviewAssigneeResponse(
   revalidatePath(`/tasks/${taskId}`);
 }
 
-// Assignee marks themselves "in_progress" (started)
+// Ijroçi özini "in_progress" (boşladi) deb belgilaydi
 export async function setMyAssigneeStatus(taskId: string, next: "in_progress" | "todo") {
   const me = await requireUser();
   await db

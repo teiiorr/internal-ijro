@@ -1,17 +1,17 @@
 /**
- * Pure overall-progress calculation for a project.
+ * Loyihaning umumiy bajariliş foizini hisoblovçi sof (pure) funksiya.
  *
  * overallProgress(stages) =
  *   stages.length === 0
  *     ? 0
  *     : round( Σ(stage.progress × stage.weight) / Σ(stage.weight) )
  *
- * Invariants the function tolerates safely:
- *   - empty list → 0
- *   - any stage.progress outside 0..100 → clamped before averaging
- *   - any stage.weight <= 0 → treated as 1 (defensive; server actions should also reject)
- *   - non-finite numbers → coerced to 0/1
- * The result is always an integer in [0, 100].
+ * Funksiya bexatar qabul qiladigan holatlar (invariantlar):
+ *   - boş röyxat → 0
+ *   - stage.progress 0..100 oraliğidan çiqsa → örtaçani hisoblaşdan oldin çegaralanadi
+ *   - stage.weight <= 0 bölsa → 1 deb qabul qilinadi (himoya çorasi; server action'lar ham buni rad etişi kerak)
+ *   - çekli bölmagan (Infinity/NaN) sonlar → 0/1 ga keltiriladi
+ * Natija hamişa [0, 100] oraliğidagi butun son böladi.
  */
 export type StageInput = { progress: number | null | undefined; weight: number | null | undefined };
 
@@ -37,8 +37,8 @@ export function overallProgress(stages: StageInput[]): number {
 }
 
 /**
- * Progress for a typed (template-driven) project = share of completed stages.
- * Unweighted, per spec: 1 of 4 stages done = 25%. Empty list → 0.
+ * Turlangan (şablonga asoslangan) loyiha uçun progress = tugallangan bosqiçlar ulushi.
+ * Vaznsiz, texnik topşiriqqa köra: 4 bosqiçdan 1 tasi bajarilsa = 25%. Boş röyxat → 0.
  */
 export type StageStatusInput = { status: "locked" | "active" | "completed" | string };
 
@@ -50,35 +50,35 @@ export function stageProgress(stages: StageStatusInput[]): number {
 
 export type DerivedStatus = "on_hold" | "not_started" | "in_progress" | "completed";
 
-/** Derived status used to drive the badge so it can never contradict the bar. */
+/** Badge'ni boşqariş uçun hosila status — u hech qaçon progress bar bilan ziddiyatga tuşmaydi. */
 export function derivedStatus(
   progress: number,
   statusOverride?: string | null
 ): DerivedStatus {
   if (statusOverride === "on_hold") return "on_hold";
   if (progress >= 100) return "completed";
-  // Manual "in progress" override — mainly for single-stage projects, whose
-  // progress can only be 0% (active) or 100% (done), so they'd otherwise never
-  // show as "in progress". Ignored once the project actually completes.
+  // Qölda «in progress» qilib belgilaş — asosan bitta bosqiçli loyihalar uçun,
+  // çunki ularning progressi faqat 0% (active) yoki 100% (done) böladi, aks holda
+  // ular hech qaçon «in progress» körinmasdi. Loyiha haqiqatan tugagach, e'tiborga olinmaydi.
   if (statusOverride === "in_progress") return "in_progress";
   if (progress <= 0) return "not_started";
   return "in_progress";
 }
 
 /**
- * Whose court is the ball in — the single source of truth for the "your turn"
- * signal on BOTH the studio and staff sides. Meaningful only for typed
- * (stage-based) projects; every surface derives from these two helpers so no
- * two views can disagree.
+ * Töp kimning maydonida — «sizning navbatingiz» signali uçun yagona haqiqat
+ * manbai, HAM studiya, HAM xodimlar tomonida. Faqat turlangan (bosqiçga
+ * asoslangan) loyihalar uçun ma'noga ega; har bir köriniş şu ikki yordamçi
+ * funksiyadan kelib çiqadi, şuning uçun ikki köriniş bir-biriga zid böla olmaydi.
  *
- *   'studio'  — the studio owes work (drafting or fixing after changes requested)
- *   'bkrm'    — BKRM owes a review (studio has submitted)
- *   'nobody'  — nothing to do here (future/locked, or completed)
+ *   'studio'  — navbat studiyada (tayyorlaş yoki özgartiriş söralgach tuzatiş)
+ *   'bkrm'    — navbat BKRMda, körib çiqiş kerak (studiya topşirgan)
+ *   'nobody'  — bu yerda qiladigan iş yöq (kelajakdagi/qulflangan yoki tugallangan)
  */
 export type Turn = "studio" | "bkrm" | "nobody";
 
 export function stageTurn(stage: { status: string; reviewStatus?: string | null }): Turn {
-  if (stage.status !== "active") return "nobody"; // locked (future) or completed (done)
+  if (stage.status !== "active") return "nobody"; // qulflangan (kelajak) yoki tugallangan (bajarilgan)
   return stage.reviewStatus === "submitted" ? "bkrm" : "studio";
 }
 

@@ -19,23 +19,23 @@ function guessMime(name: string): string {
   return MIME[ext] ?? "application/octet-stream";
 }
 
-// Allowed resize widths (opt-in via ?w=). Clamped so callers can't request
-// arbitrary sizes and blow up CPU/cache.
+// Ruxsat etilgan ölçamlar (faqat ?w= orqali). Cheklab qöyildi — çaqiruvçilar
+// ixtiyoriy ölçam sörab, CPU/keşni ortiqça yuklab yubormasligi uçun.
 const RESIZE_WIDTHS = new Set([64, 96, 128, 256]);
 
 /**
- * On-the-fly thumbnail for raster images, opt-in via `?w=<n>`. Fully guarded:
- * any failure (sharp missing, decode error, non-resizable type) falls through
- * to the normal full-file stream below, so image serving can never break.
+ * Rasterli tasvirlar uçun tezkor miniatura, `?w=<n>` orqali ixtiyoriy. Töliq
+ * himoyalangan: har qanday xatolik (sharp yöq, dekod xatosi, ölçab bölmaydigan tur)
+ * quyidagi oddiy töliq-fayl oqimiga ötadi, şunda rasm uzatish hech qaçon buzilmaydi.
  */
 async function tryResize(filePath: string, mime: string, width: number): Promise<NextResponse | null> {
   if (!RESIZE_WIDTHS.has(width)) return null;
-  if (!/^image\/(jpe?g|png|webp)$/.test(mime)) return null; // skip svg/gif/bmp/video
+  if (!/^image\/(jpe?g|png|webp)$/.test(mime)) return null; // svg/gif/bmp/video ni ötkazib yuboramiz
   try {
     const { default: sharp } = await import("sharp");
     const input = await readFile(filePath);
     const out = await sharp(input)
-      .rotate() // honour EXIF orientation
+      .rotate() // EXIF orientatsiyasini hisobga olamiz
       .resize(width, width, { fit: "inside", withoutEnlargement: true })
       .webp({ quality: 78 })
       .toBuffer();
@@ -45,7 +45,7 @@ async function tryResize(filePath: string, mime: string, width: number): Promise
     headers.set("Cache-Control", "public, max-age=31536000, immutable");
     return new NextResponse(new Uint8Array(out), { headers });
   } catch {
-    return null; // fall back to full stream
+    return null; // töliq oqimga qaytamiz
   }
 }
 
@@ -63,15 +63,15 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
 
   const mime = guessMime(fileName);
 
-  // Opt-in resized thumbnail (avatars etc.). Never fatal — null → full stream.
+  // Ixtiyoriy ölçamlangan miniatura (avatarlar va h.k.). Hech qaçon halokatli emas — null → töliq oqim.
   const width = Number(req.nextUrl.searchParams.get("w"));
   if (width) {
     const resized = await tryResize(f.path, mime, width);
     if (resized) return resized;
   }
 
-  // Stream the file from disk instead of loading it into a Buffer — a large
-  // download must not cost its full size in RAM on the 2GB box.
+  // Faylni Buffer ga yuklash örniga diskdan oqim qilib uzatamiz — katta
+  // yuklab olish 2GB li serverda öz hajmiça RAM egallamasligi kerak.
   const body = Readable.toWeb(createReadStream(f.path)) as unknown as ReadableStream<Uint8Array>;
   const isMedia = mime.startsWith("image/") || mime.startsWith("video/");
   const headers = new Headers();

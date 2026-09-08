@@ -48,16 +48,16 @@ export function StageDocuments({
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
   const [category, setCategory] = useState("");
-  // Add flow: a picked file is staged (and images compressed) behind an explicit
-  // "Add" button — nothing uploads until the user confirms.
+  // Qöşiş jarayoni: tanlangan fayl "Qöşiş" tugmasi ortida tayyorlab qöyiladi
+  // (rasmlar siqiladi) — foydalanuvçi tasdiqlamaguncha heç narsa yuklanmaydi.
   const [staged, setStaged] = useState<Staged | null>(null);
   const [preparing, setPreparing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [pickerKey, setPickerKey] = useState(0); // bump to reset the FileInput after a successful add
+  const [pickerKey, setPickerKey] = useState(0); // muvaffaqiyatli qöşilgandan söng FileInput ni tozalash uçun oşiramiz
   const uncategorized = t("projects.stageDocs.uncategorized");
   const dlId = `folders-${stageId}`;
 
-  // Group documents by folder: named folders A→Z first, the "uncategorized" bucket last.
+  // Hujjatlarni papkalar böyicha guruhlaymiz: avval nomlangan papkalar A→Z, oxirida "kategoriyasiz" bölimi.
   const groups = useMemo(() => {
     const map = new Map<string, Doc[]>();
     for (const d of documents) {
@@ -75,15 +75,15 @@ export function StageDocuments({
     return out;
   }, [documents, uncategorized]);
 
-  // Every folder name that exists — powers the chips, the datalist and the move menu.
+  // Mavjud barcha papka nomlari — çiplar, datalist va köçiriş menyusini ta'minlaydi.
   const folderNames = useMemo(() => {
     const set = new Set<string>(suggestions);
     for (const d of documents) if (d.category) set.add(d.category);
     return [...set].sort((a, b) => a.localeCompare(b));
   }, [documents, suggestions]);
 
-  // Pick (or drop) a file → stage it. Big raster images are re-rendered smaller
-  // client-side so they never hit the wire (or the server) at full size.
+  // Faylni tanlash (yoki taşlash) → uni tayyorlab qöyamiz. Katta rasterli rasmlar mijoz
+  // tomonida kiçikroq ölçamda qayta çiziladi — şunda ular töliq ölçamda tarmoqqa (yoki serverga) tuşmaydi.
   async function onFileChange(file: File | null) {
     if (!file) {
       setStaged(null);
@@ -133,7 +133,7 @@ export function StageDocuments({
         toast.error(errorMessage(body.error ?? ""));
         return;
       }
-      // Keep the folder selected so several files can be filed in a row; reset the picker.
+      // Papkani tanlangan holida qoldiramiz — şunda ketma-ket bir neça faylni joylaştirish mumkin; tanlagiçni tozalaymiz.
       setStaged(null);
       setPickerKey((k) => k + 1);
       toast.success(t("projects.stageDocs.added"));
@@ -262,7 +262,7 @@ export function StageDocuments({
 
           <FileInput key={pickerKey} ref={fileRef} onFileChange={onFileChange} disabled={busy} />
 
-          {/* Staged-file feedback: final size + a note when we shrank an image. */}
+          {/* Tayyorlangan fayl haqida ma'lumot: yakuniy ölçam va rasm siqilgan bölsa izoh. */}
           {preparing && (
             <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
               <Loader2 className="size-3.5 animate-spin" />

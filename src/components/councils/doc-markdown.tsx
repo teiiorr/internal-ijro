@@ -4,9 +4,10 @@ import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 
 /**
- * Renders a protocol/xulosa document (markdown extracted from .docx) with real
- * structure — headings, bold, lists and bordered tables — instead of a raw text
- * dump. GFM enables tables; breaks preserve the document's line layout.
+ * Bayonnoma/xulosa hujjatini (.docx dan ajratib olingan markdown) oddiy matn
+ * uyumi sifatida emas, haqiqiy tuzilma bilan — sarlavhalar, qalin matn,
+ * röyxatlar va çegarali jadvallar bilan — körsatadi. GFM jadvallarni yoqadi;
+ * breaks esa hujjatdagi qatorlar joylaşuvini saqlaydi.
  */
 export function DocMarkdown({ children }: { children: string }) {
   return (

@@ -12,21 +12,21 @@ export interface ContractorProjectCardProps {
   statusLabel: string;
   statusTone: StatusTone;
   typeName?: string | null;
-  /** e.g. "3/5 · Montaj" — current stage. */
+  /** masalan, "3/5 · Montaj" — joriy bosqiç. */
   stageLabel?: string | null;
   deadlineLabel?: string | null;
   overdue?: boolean;
   overdueLabel?: string;
-  /** "Whose turn" signal — the studio's most actionable cue. */
+  /** "Navbat kimda" signali — studiya uçun eng muhim harakat işorasi. */
   turnLabel?: string | null;
   turnTone?: StatusTone;
 }
 
-/** Telegram-style project row for the studio portal: poster, two-line content,
- *  the actionable signal (your turn / overdue) promoted via a leading accent
- *  stripe + a loud pill; long text scrolls (Marquee) so rows keep even height. */
+/** Studiya portali uçun Telegram uslubidagi loyiha qatori: poster, ikki qatorli
+ *  kontent, harakat signali (navbatingiz / muddati ötgan) çapdagi urğu çiziği
+ *  + yorqin pill orqali ajratiladi; uzun matn siljiydi (Marquee), şu bois qatorlar bir xil balandlikda qoladi. */
 export function ContractorProjectCard(p: ContractorProjectCardProps) {
-  // The one thing that matters most on this row, loudest.
+  // Bu qatorda eng muhim yagona narsa, eng közga taşlanadigan tarzda.
   const accent = p.overdue ? "bg-[var(--danger)]" : p.turnTone === "amber" ? "bg-[var(--warning)]" : null;
 
   return (
@@ -56,7 +56,7 @@ export function ContractorProjectCard(p: ContractorProjectCardProps) {
           )}
         </div>
 
-        {/* Subtitle: where am I (stage) or type. */}
+        {/* Subtitr: qayerdaman (bosqiç) yoki tur. */}
         {(p.stageLabel || p.typeName) && (
           <div className="mt-0.5 flex items-center gap-1 text-xs text-[var(--muted)]">
             {p.stageLabel && <Layers className="size-3.5 shrink-0" />}
@@ -64,7 +64,7 @@ export function ContractorProjectCard(p: ContractorProjectCardProps) {
           </div>
         )}
 
-        {/* Progress + the actionable pill. */}
+        {/* Progress + harakat pill'i. */}
         <div className="mt-2 flex items-center gap-2">
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-3)]">
             <div className="h-full rounded-full bg-[var(--success)]" style={{ width: `${p.progress}%` }} />

@@ -15,8 +15,8 @@ const itemClass =
   "flex w-full cursor-pointer select-none items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium outline-none transition-colors data-[highlighted]:bg-[var(--surface-2)]";
 
 /**
- * One compact "⋯" menu for all project management actions, so the header stays
- * clean on both desktop and mobile instead of a stack of mismatched buttons.
+ * Loyihani boşqarish amallarining barchasi uchun bitta ixcham "⋯" menyu — bir-biriga
+ * mos kelmaydigan tugmalar uyumi örniga sarlavha desktopda ham, mobilda ham toza turadi.
  */
 export function ProjectActionsMenu({
   project,
@@ -54,7 +54,7 @@ export function ProjectActionsMenu({
         router.push("/projects");
         router.refresh();
       } catch {
-        /* handled by revalidate/redirect */
+        /* revalidate/redirect orqali hal qilinadi */
       }
     });
   }
@@ -107,10 +107,10 @@ export function ProjectActionsMenu({
         </DropdownMenu.Portal>
       </DropdownMenu.Root>
 
-      {/* Controlled edit dialog opened from the menu */}
+      {/* Menyudan ochiladigan boşqariladigan tahrirlash oynasi */}
       {canManage && <EditProjectDialog project={project} curators={curators} open={editOpen} onOpenChange={setEditOpen} />}
 
-      {/* Delete confirmation */}
+      {/* Öçirishni tasdiqlash */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

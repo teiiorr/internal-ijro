@@ -8,9 +8,10 @@ import { deliverNotification, type DeliverArgs } from "./deliver";
 export type NotifyArgs = DeliverArgs;
 
 /**
- * App-side notify: delivers in-app + email + Telegram via the shared core,
- * using the request-scoped db singleton and the SMTP mailer. The cron worker
- * calls deliverNotification() directly with its own db (see scripts/worker.ts).
+ * Ilova tomonidagi notify: umumiy yadro orqali ilova içida + email + Telegram
+ * yetkazib beradi, soröv doirasidagi db singletoni va SMTP mailer'dan
+ * foydalanadi. Cron worker deliverNotification() ni öz db'si bilan
+ * töğridan-töğri çaqiradi (qarang: scripts/worker.ts).
  */
 export async function notify(args: NotifyArgs): Promise<void> {
   await deliverNotification(db, args, (opts) => sendMail(opts));

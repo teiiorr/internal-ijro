@@ -33,12 +33,12 @@ const projectSchema = z.object({
   name: z.string().min(2).max(255),
   description: z.string().nullable().optional(),
   type: z.enum(["internal", "external"]),
-  /** One of the 9 seeded project_types. Non-null → auto-build the stage pipeline. */
+  /** Boşlanğiç 9 ta project_types'dan biri. Boş bölmasa → bosqiçlar zanjiri avtomatik quriladi. */
   projectTypeId: z.string().uuid().nullable().optional(),
   genre: z.string().max(40).nullable().optional(),
   externalCompanyId: z.string().uuid().nullable().optional(),
   curatorUserId: z.string().uuid().nullable().optional(),
-  /** mas'ul — applied to every generated stage (editable per stage later). */
+  /** mas'ul — yaratilgan har bir bosqiçga qöllanadi (keyinroq har bir bosqiç uçun tahrirlanadi). */
   responsibleUserId: z.string().uuid().nullable().optional(),
   startDate: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
@@ -74,7 +74,7 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
 
     let first: { id: string; name: string; responsibleUserId: string | null } | null = null;
 
-    // Auto-build the ordered stage pipeline from the type's template.
+    // Tur şablonidan tartiblangan bosqiçlar zanjirini avtomatik quramiz.
     if (parsed.projectTypeId) {
       const type = await tx
         .select({ stageTemplateId: projectTypes.stageTemplateId })
@@ -91,7 +91,7 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
 
       const responsible = parsed.responsibleUserId ?? parsed.curatorUserId ?? me.id;
       const now = new Date();
-      // Cumulative planned deadlines from startDate + each item's default duration (when defined).
+      // startDate'dan boşlab har bir elementning standart davomiyligi qöşilib, rejadagi muddatlar töplanib boradi (agar belgilangan bölsa).
       let cursor = parsed.startDate ? new Date(parsed.startDate) : null;
       const rows = items.map((it, i) => {
         let plannedDeadline: string | null = null;
@@ -136,7 +136,7 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
     newValue: { name: parsed.name, type: parsed.type, projectTypeId: parsed.projectTypeId ?? null },
   });
 
-  // Notify the responsible of the first (already active) stage.
+  // Birinçi (allaqaçon faol) bosqiçning mas'uliga xabar beramiz.
   if (firstStage?.responsibleUserId) {
     await notify({
       userIds: [firstStage.responsibleUserId],
@@ -219,13 +219,13 @@ export async function setMilestonePaymentStatus(milestoneId: string, paymentStat
 }
 
 
-/** Set a stage's progress (0..100). Server clamps; never trust client. */
+/** Bosqiç jarayonini belgilaydi (0..100). Server qiymatni çeklaydi; mijozga heç qaçon işonilmaydi. */
 export async function setMilestoneProgress(milestoneId: string, progress: number) {
   const me = await requireProjectEditor();
   const value = Math.max(0, Math.min(100, Math.round(Number(progress) || 0)));
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) throw new Error("not_found");
-  // Keep legacy `status` in sync so other parts of the app that still read it stay coherent.
+  // Eski `status` maydonini mos holda saqlaymiz — uni hali öqiydigan boşqa qismlar izçil işlaşi uçun.
   const status = value >= 100 ? "completed" : value > 0 ? "in_progress" : "pending";
   await db
     .update(milestones)
@@ -281,7 +281,7 @@ export async function updateMilestone(
 }
 
 export async function deleteMilestone(milestoneId: string) {
-  // Bo'lim boshlig'i can create + edit + reorder stages but NOT delete.
+  // Bölim boşliği bosqiçlarni yarata, tahrirlay va qayta tartiblay oladi, ammo öçira OLMAYDI.
   const me = await requireProjectEditor();
   const row = await db.select().from(milestones).where(eq(milestones.id, milestoneId)).limit(1);
   if (row.length === 0) return;
@@ -296,7 +296,7 @@ export async function deleteMilestone(milestoneId: string) {
   revalidatePath(`/projects/${row[0].projectId}`);
 }
 
-/** Apply a new ordering to the project's stages. orderedIds must be a full list. */
+/** Loyiha bosqiçlariga yangi tartibni qöllaydi. orderedIds töliq röyxat bölişi şart. */
 export async function reorderMilestones(projectId: string, orderedIds: string[]) {
   const me = await requireProjectEditor();
   await db.transaction(async (tx) => {
@@ -317,7 +317,7 @@ export async function reorderMilestones(projectId: string, orderedIds: string[])
   revalidatePath(`/projects/${projectId}`);
 }
 
-/** Toggle the manual on-hold override for a project. */
+/** Loyiha uçun qölda "töxtatib turiş" holatini yoqadi yoki öçiradi. */
 export async function setProjectOnHold(projectId: string, onHold: boolean) {
   const me = await requireProjectEditor();
   await db
@@ -334,9 +334,10 @@ export async function setProjectOnHold(projectId: string, onHold: boolean) {
 }
 
 /**
- * Manually mark a project as "in progress" (or clear it). Meant for single-stage
- * projects, whose derived status can only be not_started/completed. Writes the
- * same statusOverride field, so it and on-hold are mutually exclusive.
+ * Loyihani qölda "jarayonda" deb belgilaydi (yoki tozalaydi). Bu bitta bosqiçli
+ * loyihalar uçun möljallangan — ularning hosilaviy holati faqat not_started/completed
+ * böla oladi. Xuddi şu statusOverride maydoniga yozadi, şu bois bu holat va
+ * "töxtatib turiş" biri-birini istisno qiladi.
  */
 export async function setProjectInProgress(projectId: string, on: boolean) {
   const me = await requireProjectEditor();
@@ -354,7 +355,7 @@ export async function setProjectInProgress(projectId: string, on: boolean) {
   revalidatePath(`/projects/${projectId}`);
 }
 
-// Project poster (square cover image)
+// Loyiha posteri (kvadrat muqova rasmi)
 export async function setProjectPoster(projectId: string, file: File) {
   const me = await requireProjectEditor();
   if (!file.type.startsWith("image/")) throw new Error("image_required");
@@ -377,7 +378,7 @@ export async function removeProjectPoster(projectId: string) {
   revalidatePath(`/projects/${projectId}`);
 }
 
-// Project messages (chat)
+// Loyiha xabarlari (çat)
 const attachmentSchema = z.object({
   url: z.string(),
   name: z.string(),
@@ -391,8 +392,8 @@ const msgSchema = z.object({
   attachments: z.array(attachmentSchema).optional(),
   replyToId: z.string().uuid().optional().nullable(),
 });
-/** A kontragent may only act on a project that belongs to their own studio
- *  (resolved by email → company → project). Staff pass through unchanged. */
+/** Kontragent faqat öz studiyasiga tegişli loyiha üstida amal bajara oladi
+ *  (email → kompaniya → loyiha orqali aniqlanadi). Xodimlar heç qanday çeklovsiz ötadi. */
 async function assertProjectAccess(me: { position: string; email: string }, projectId: string) {
   if (me.position !== "kontragent") return;
   const [c] = await db
@@ -419,9 +420,9 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
     replyToId: parsed.replyToId ?? null,
   });
 
-  // Notify the other side so the chat has real participants. Curators (our
-  // side) are mandatory participants — they are always pinged when a studio
-  // writes; the studio's contact user is pinged when our side writes.
+  // Ikkinçi tomonga xabar beramiz — çatda haqiqiy iştirokçilar bölişi uçun.
+  // Kuratorlar (bizning tomon) majburiy iştirokçilar — studiya yozganda ular
+  // doim ogohlantiriladi; biz yozganimizda esa studiyaning aloqa foydalanuvçisi ogohlantiriladi.
   const [prj] = await db
     .select({ name: projects.name, curatorUserId: projects.curatorUserId, ec: projects.externalCompanyId })
     .from(projects)
@@ -437,15 +438,15 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
         .where(eq(projectCurators.projectId, parsed.projectId));
       for (const r of rows) curatorIds.add(r.userId);
     } catch {
-      /* projectCurators not migrated yet — single-curator column already added */
+      /* projectCurators hali migratsiya qilinmagan — bitta kurator ustuni allaqaçon qöşilgan */
     }
 
     let recipients: string[];
     if (me.position === "kontragent") {
-      // studio wrote → notify our-side curators
+      // studiya yozdi → bizning tomon kuratorlariga xabar beramiz
       recipients = [...curatorIds].filter((id) => id !== me.id);
     } else {
-      // our side wrote → notify the studio's contact user
+      // bizning tomon yozdi → studiyaning aloqa foydalanuvçisiga xabar beramiz
       recipients = [];
       if (prj.ec) {
         const [company] = await db
@@ -483,8 +484,8 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
   revalidatePath(`/contractor/chats/${parsed.projectId}`);
 }
 
-/** Mark a project's incoming messages as read for the caller's side (studio →
- *  read_by_contractor, staff → read_by_curator). Called when a group is opened. */
+/** Loyihaga kelgan xabarlarni çaqiruvçi tomon uçun öqilgan deb belgilaydi (studiya →
+ *  read_by_contractor, xodim → read_by_curator). Guruh oçilganda çaqiriladi. */
 export async function markProjectRead(projectId: string) {
   const me = await requireUser();
   await assertProjectAccess(me, projectId);
@@ -495,7 +496,7 @@ export async function markProjectRead(projectId: string) {
     .set(isKontragent ? { readByContractorAt: new Date() } : { readByCuratorAt: new Date() })
     .where(and(eq(projectMessages.projectId, projectId), sql`${projectMessages.userId} <> ${me.id}`, sql`${readCol} is null`));
   revalidatePath("/contractor/chats");
-  revalidatePath("/contractor", "layout"); // refresh the bottom-nav unread badge
+  revalidatePath("/contractor", "layout"); // pastki navigatsiyadagi öqilmagan xabar belgisini yangilaymiz
   revalidatePath("/contractors");
 }
 
@@ -510,7 +511,7 @@ function revalidateMessageSurfaces(projectId: string, stageId: string | null) {
   revalidatePath(`/contractors`);
 }
 
-/** Edit own message (Telegram-style). Author only. */
+/** Öz xabarini tahrirlaydi (Telegram uslubida). Faqat muallif uçun. */
 export async function editProjectMessage(messageId: string, content: string) {
   const me = await requireUser();
   const text = content.trim();
@@ -522,7 +523,7 @@ export async function editProjectMessage(messageId: string, content: string) {
   revalidateMessageSurfaces(msg.projectId, msg.stageId);
 }
 
-/** Delete a message. Author, or a project editor (moderation). */
+/** Xabarni öçiradi. Muallif yoki loyiha muharriri (moderatsiya) böla oladi. */
 export async function deleteProjectMessage(messageId: string) {
   const me = await requireUser();
   const [msg] = await db.select().from(projectMessages).where(eq(projectMessages.id, messageId)).limit(1);
@@ -533,7 +534,7 @@ export async function deleteProjectMessage(messageId: string) {
   revalidateMessageSurfaces(msg.projectId, msg.stageId);
 }
 
-// Deliverables (contractor uploads)
+// Topşiriladigan işlar (kontragent yuklamalari)
 export async function submitDeliverable(opts: {
   projectId: string;
   milestoneId?: string | null;
@@ -565,7 +566,7 @@ export async function submitDeliverable(opts: {
     entityId: ins[0].id,
     newValue: { milestoneId: opts.milestoneId, fileName: stored.originalName },
   });
-  // Notify curator
+  // Kuratorga xabar beramiz
   const prj = await db.select().from(projects).where(eq(projects.id, opts.projectId)).limit(1);
   if (prj.length > 0 && prj[0].curatorUserId) {
     await notify({
@@ -619,12 +620,12 @@ export async function reviewDeliverable(deliverableId: string, status: "approved
 
 const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 
-// Permanently delete a project. Irreversible → limited to senior management.
-// FK cascade removes stages/documents/payments/milestones/messages/ratings;
-// tasks & council-agenda references are set null (they survive). Uploaded files
-// (stage docs + poster) are cleaned off disk best-effort before the row is dropped.
+// Loyihani butunlay öçiradi. Qaytarib bölmaydi → faqat yuqori rahbariyat uçun.
+// FK cascade bosqiçlar/hujjatlar/tölovlar/bosqiçlar/xabarlar/baholarni öçiradi;
+// tasks va kengaş kun tartibi havolalari null qilinadi (ular saqlanib qoladi). Yuklangan fayllar
+// (bosqiç hujjatlari + poster) qator öçirilişidan oldin imkon qadar diskdan tozalanadi.
 export async function deleteProject(projectId: string) {
-  // Deletion needs BOTH the project-editor allowlist AND a director-level position.
+  // Öçiriş uçun HAM loyiha-muharrir röyxatida böliş, HAM direktor darajasidagi lavozim kerak.
   const me = await requireProjectEditor();
   if (!["direktor", "orinbosar", "koordinator"].includes(me.position)) redirect("/projects");
   const [prj] = await db
@@ -634,17 +635,17 @@ export async function deleteProject(projectId: string) {
     .limit(1);
   if (!prj) return;
 
-  // Best-effort file cleanup (never blocks the delete).
+  // Imkon qadar fayllarni tozalaymiz (bu heç qaçon öçirişni töxtatmaydi).
   const docs = await db
     .select({ fileUrl: stageDocuments.fileUrl })
     .from(stageDocuments)
     .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
     .where(eq(projectStages.projectId, projectId));
   for (const d of docs) {
-    try { await deleteFileByUrl(d.fileUrl); } catch { /* orphan file — ignore */ }
+    try { await deleteFileByUrl(d.fileUrl); } catch { /* egasiz fayl — e'tiborsiz qoldiramiz */ }
   }
   if (prj.posterUrl) {
-    try { await deleteFileByUrl(prj.posterUrl); } catch { /* ignore */ }
+    try { await deleteFileByUrl(prj.posterUrl); } catch { /* e'tiborsiz qoldiramiz */ }
   }
 
   await db.delete(projects).where(eq(projects.id, projectId));
@@ -652,15 +653,15 @@ export async function deleteProject(projectId: string) {
   revalidatePath("/projects");
 }
 
-// Edit an existing project's core fields (all staff — see access policy). The
-// production type (projectTypeId) is intentionally NOT editable here: changing
-// it would orphan/rebuild the stage pipeline. Files (poster/documents) excluded.
+// Mavjud loyihaning asosiy maydonlarini tahrirlaydi (barça xodimlar — kiriş siyosatiga qarang).
+// Işlab çiqariş turi (projectTypeId) bu yerda ataylab tahrirlanMAYDI: uni özgartiriş
+// bosqiçlar zanjirini egasiz qoldiradi/qayta quradi. Fayllar (poster/hujjatlar) bunga kirmaydi.
 const updateProjectSchema = z.object({
   name: z.string().min(2).max(255),
   description: z.string().nullable().optional(),
   type: z.enum(["internal", "external"]),
   curatorUserId: z.string().uuid().nullable().optional(),
-  /** Full curator set (many-to-many). When present, supersedes curatorUserId. */
+  /** Töliq kurator töplami (köpga-köp). Mavjud bölsa, curatorUserId'dan üstun turadi. */
   curatorUserIds: z.array(z.string().uuid()).optional(),
   startDate: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
@@ -675,8 +676,8 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
   const [existing] = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, id)).limit(1);
   if (!existing) throw new Error("not_found");
 
-  // Resolve the curator set. The first stays on projects.curator_user_id as the
-  // "primary" for backward compat; the whole set goes to the join table.
+  // Kurator töplamini aniqlaymiz. Birinçisi eski moslik uçun projects.curator_user_id'da
+  // "asosiy" sifatida qoladi; butun töplam esa boğlovçi jadvalga yoziladi.
   const curatorIds = parsed.curatorUserIds
     ? Array.from(new Set(parsed.curatorUserIds))
     : parsed.curatorUserId
@@ -702,7 +703,7 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
     })
     .where(eq(projects.id, id));
 
-  // Sync the many-to-many curators (guarded — the table may not be migrated yet).
+  // Köpga-köp kuratorlarni sinxronlaymiz (himoyalangan — jadval hali migratsiya qilinmagan bölişi mumkin).
   if (parsed.curatorUserIds !== undefined) {
     try {
       await db.delete(projectCurators).where(eq(projectCurators.projectId, id));
@@ -712,7 +713,7 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
         );
       }
     } catch {
-      /* project_curators not migrated yet — primary curator column still updated */
+      /* project_curators hali migratsiya qilinmagan — asosiy kurator ustuni baribir yangilandi */
     }
   }
 
@@ -721,7 +722,7 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
   revalidatePath("/projects");
 }
 
-// Create a contractor directly (no self-registration / account) and auto-approve it.
+// Kontragentni bevosita yaratadi (özi röyxatdan ötmasdan / akkauntsiz) va avtomatik tasdiqlaydi.
 const contractorSchema = z.object({
   name: z.string().min(2).max(255),
   contactPerson: z.string().max(255).nullable().optional(),
@@ -750,7 +751,7 @@ export async function createContractor(input: z.infer<typeof contractorSchema>) 
   return ins[0];
 }
 
-// Assign, change or clear the contractor on a project (managers or the curator).
+// Loyihadagi kontragentni tayinlaydi, özgartiradi yoki oçiradi (rahbarlar yoki kurator).
 export async function setProjectContractor(projectId: string, companyId: string | null) {
   const me = await requireUser();
   const [prj] = await db.select({ id: projects.id, curatorUserId: projects.curatorUserId }).from(projects).where(eq(projects.id, projectId)).limit(1);
@@ -762,7 +763,7 @@ export async function setProjectContractor(projectId: string, companyId: string 
   revalidatePath(`/projects/${projectId}`);
 }
 
-// Approve/reject contractor (external_companies + user activation)
+// Kontragentni tasdiqlaydi/rad etadi (external_companies + foydalanuvçini faollaştiriş)
 export async function approveContractor(companyId: string) {
   const me = await requireProjectEditor();
   const company = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
@@ -799,7 +800,7 @@ export async function rejectContractor(companyId: string, reason: string) {
   revalidatePath("/contractors");
 }
 
-// Finish project + rate contractor
+// Loyihani yakunlaydi + kontragentni baholaydi
 const ratingSchema = z.object({
   projectId: z.string().uuid(),
   externalCompanyId: z.string().uuid().nullable().optional(),
@@ -822,7 +823,7 @@ export async function completeProjectWithRating(input: z.infer<typeof ratingSche
       notes: parsed.notes ?? null,
     });
     if (parsed.externalCompanyId) {
-      // recalc average
+      // öртaça bahoni qayta hisoblaymiz
       const rows = await tx
         .select({ avg: sql<number>`avg(score)` })
         .from(ratings)
@@ -845,7 +846,7 @@ export async function completeProjectWithRating(input: z.infer<typeof ratingSche
   revalidatePath(`/projects/${parsed.projectId}`);
 }
 
-// Accept NDA
+// NDA'ni qabul qiliş
 export async function acceptNda() {
   const me = await requireUser();
   if (me.position !== "kontragent") throw new Error("forbidden");
@@ -857,9 +858,9 @@ export async function acceptNda() {
   revalidatePath("/contractor/dashboard");
 }
 
-// ---------- project documents (analysis / international experience) ----------
-// Uploads go through the streaming route /api/files/project-docs; this only
-// removes an existing file. Open to all internal staff (matches upload access).
+// ---------- loyiha hujjatlari (tahlil / xalqaro tajriba) ----------
+// Yuklaşlar /api/files/project-docs oqim yöli orqali ötadi; bu funksiya faqat
+// mavjud faylni öçiradi. Barça içki xodimlar uçun oçiq (yuklaş huquqiga mos keladi).
 export async function removeProjectDocument(documentId: string) {
   const me = await requireProjectEditor();
   const [doc] = await db.select().from(projectDocuments).where(eq(projectDocuments.id, documentId)).limit(1);
@@ -870,7 +871,7 @@ export async function removeProjectDocument(documentId: string) {
   revalidatePath(`/projects/${doc.projectId}`);
 }
 
-// Re-file a payment document into another (or no) folder.
+// Tölov hujjatini boşqa jildga (yoki jildsiz holatga) köçiradi.
 export async function setProjectDocumentFolder(documentId: string, folder: string | null) {
   const me = await requireProjectEditor();
   const [doc] = await db.select().from(projectDocuments).where(eq(projectDocuments.id, documentId)).limit(1);
@@ -925,7 +926,7 @@ export async function loadStageMessagesForProject(projectId: string) {
   return { byStage, general };
 }
 
-// --- Studio CRUD ---
+// --- Studiya CRUD ---
 
 export async function renameContractor(companyId: string, name: string) {
   const me = await requireProjectEditor();

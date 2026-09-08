@@ -2,9 +2,10 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Fixed-size 24px chip with a min-width so chips in the same column line up.
- * Text is centered, "borders" are inset box-shadows so outlined variants don't
- * grow the box — every variant has identical outer dimensions.
+ * Belgilangan 24px ölçamli çip, min-width bilan — şunda bir ustundagi çiplar bir
+ * tekisda turadi. Matn markazlaştirilgan, "border"lar esa inset box-shadow, şu
+ * bois outline variantlar qutini kengaytirmaydi — har bir variant bir xil taşqi
+ * ölçamga ega.
  */
 const badgeVariants = cva(
   "inline-flex items-center justify-center gap-1.5 h-6 min-w-[7.5rem] rounded-[6px] px-2.5 text-[11.5px] font-bold leading-none whitespace-nowrap select-none",

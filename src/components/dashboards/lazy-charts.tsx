@@ -1,16 +1,16 @@
 "use client";
 import dynamic from "next/dynamic";
 
-/** Placeholder while the recharts chunk loads (keeps layout height stable). */
+/** recharts bölagi yuklanguncha turuvçi placeholder (layout balandligini barqaror uşlab turadi). */
 function ChartSkeleton({ h }: { h: number }) {
   return <div className="skeleton-shimmer w-full rounded-xl" style={{ height: h }} />;
 }
 
 /**
- * recharts is heavy (~hundreds of KB). These wrappers keep it out of the
- * initial dashboard bundle — the chart chunk loads on the client after paint.
- * The dynamic() calls live in this client module so code-splitting works
- * (a Server Component dynamically importing a Client Component would not split).
+ * recharts oğir (~yuzlab KB). Bu wrapperlar uni boşlanğiç dashboard bundlega
+ * qöşmaydi — grafik bölagi mijoz tomonida, paintdan keyin yuklanadi.
+ * dynamic() çaqiruvlari şu client modulda turadi, şunda code-splitting işlaydi
+ * (Server Component içida Client Componentni dinamik import qilsa, bölinmaydi).
  */
 export const ProjectStatusDonut = dynamic(
   () => import("./project-status-donut").then((m) => m.ProjectStatusDonut),

@@ -1,6 +1,6 @@
-/** Content genres for a project (mainly for "Eksklyuziv loyihalar", whose
- *  pipeline type doesn't say whether it's a film, a book, a cartoon, etc.).
- *  Labels live under i18n `projects.genre.<code>`. */
+/** Loyihaning kontent janri (asosan «Eksklyuziv loyihalar» uçun, çunki bu
+ *  turdagi loyihaning pipeline turi uni film, kitob, multfilm va hokazolardan
+ *  ajratmaydi). Yorliqlar i18n `projects.genre.<code>` ostida saqlanadi. */
 export const PROJECT_GENRES = [
   "film",
   "multserial",

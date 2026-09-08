@@ -17,7 +17,7 @@ export type InboxItem = {
 };
 
 /**
- * "Tasdiq kutmoqda" — responses where I am the creator and an assignee has submitted javob.
+ * "Tasdiq kutmoqda" — men yaratuvçi bölgan va ijroçi javob topşirgan topşiriqlar.
  */
 export async function inboxAwaitingMyApproval(userId: string): Promise<InboxItem[]> {
   const rows = await db
@@ -43,7 +43,7 @@ export async function inboxAwaitingMyApproval(userId: string): Promise<InboxItem
 }
 
 /**
- * "Bajarish kerak" — open assignments to me (todo / in_progress / rejected).
+ * "Bajariş kerak" — menga biriktirilgan oçiq topşiriqlar (todo / in_progress / rejected).
  */
 export async function inboxMyActive(userId: string): Promise<InboxItem[]> {
   const rows = await db

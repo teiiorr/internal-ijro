@@ -45,7 +45,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
 
   const s = data.stage;
   const total = data.siblings.length;
-  // Review-aware badge: while active it reflects whose turn it is.
+  // Körib chiqişni hisobga oluvchi belgi: faol paytda navbat kimdaligini körsatadi.
   const statusMeta: { tone: StatusTone; label: string } =
     s.status === "completed"
       ? { tone: "green", label: t("review.status.accepted") }
@@ -63,7 +63,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
 
   return (
     <div className="space-y-5">
-      {/* Header — title + status, deadline as the first big fact */}
+      {/* Sarlavha — nom + holat, muddat esa birinchi muhim ma'lumot sifatida */}
       <Card>
         <CardContent className="space-y-4 p-5 sm:p-6">
           <div className="flex items-start gap-3 sm:gap-4">
@@ -100,7 +100,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
         </CardContent>
       </Card>
 
-      {/* What BKRM expects this stage */}
+      {/* BKRM bu bosqichda nimani kutayotgani */}
       {s.requirements && (
         <Card>
           <CardContent className="space-y-2 p-5 sm:p-6">
@@ -110,7 +110,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
         </Card>
       )}
 
-      {/* Changes requested — what to fix, then resubmit */}
+      {/* Özgartiriş söralgan — nimani tuzatiş, söngra qayta topşiriş */}
       {changesRequested && s.reviewNote && (
         <Card className="border-[var(--danger)]/45">
           <CardContent className="space-y-1 p-5 sm:p-6">
@@ -123,7 +123,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
         </Card>
       )}
 
-      {/* Submit your work — add files, then hand off for review */}
+      {/* İşingizni topşiriş — fayl qöşing, söngra körib chiqişga uzating */}
       <Card>
         <CardContent className="space-y-4 p-5 sm:p-6">
           <h3 className="text-base font-semibold">{t("projects.stageDocs.title")}</h3>
@@ -142,7 +142,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
         </CardContent>
       </Card>
 
-      {/* Chat with your curator, scoped to this stage */}
+      {/* Kurator bilan suhbat, faqat şu bosqich doirasida */}
       <Card>
         <CardContent className="space-y-4 p-5 sm:p-6">
           <h3 className="text-base font-semibold">{t("projects.tabs.chat")}</h3>

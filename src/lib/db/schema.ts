@@ -17,7 +17,7 @@ import {
   AnyPgColumn,
 } from "drizzle-orm/pg-core";
 
-// ---------- Positions / Roles ----------
+// ---------- Lavozimlar / Rollar ----------
 export const POSITIONS = [
   "direktor",
   "orinbosar",
@@ -62,8 +62,8 @@ export const users = pgTable(
     phone: varchar("phone", { length: 50 }),
     avatarUrl: text("avatar_url"),
     position: varchar("position", { length: 50 }).notNull().$type<Position>(),
-    /** Free-text job title shown instead of the position label when set (e.g. "Ijrochi direktor").
-     *  `position` still drives permissions; this is display-only. */
+    /** Berilganda lavozim yorliği örniga körsatiladigan erkin matnli lavozim nomi (masalan, "Ijrochi direktor").
+     *  Ruxsatlarni baribir `position` boşqaradi; bu faqat körsatiş uçun. */
     positionTitle: varchar("position_title", { length: 200 }),
     departmentId: uuid("department_id").references(() => departments.id, { onDelete: "set null" }),
     reportsToUserId: uuid("reports_to_user_id").references((): AnyPgColumn => users.id, {
@@ -149,10 +149,10 @@ export const positionHistory = pgTable("position_history", {
   changeDate: timestamp("change_date", { withTimezone: true }).defaultNow().notNull(),
 });
 
-// ---------- 5.6b user_permissions (owner-granted capability overrides) ----------
-// Additive grants on top of the built-in position/allowlist rules. The owner
-// toggles these from the admin panel to give a specific person a capability
-// (e.g. edit projects, view money) they wouldn't otherwise have.
+// ---------- 5.6b user_permissions (egasi bergan qöşimça ruxsatlar) ----------
+// Örnatilgan lavozim/allowlist qoidalari ustiga qöşiladigan ruxsatlar. Egasi
+// aynan bir odamga u aks holda ega bölmaydigan imkoniyatni (masalan, loyihalarni
+// tahrirlaş, pulni köriş) beriş uçun bularni admin paneldan yoqadi.
 export const userPermissions = pgTable(
   "user_permissions",
   {
@@ -218,19 +218,19 @@ export const projects = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
-    /** Square poster/cover image shown in the project grid (nullable → placeholder). */
+    /** Loyiha törida körsatiladigan kvadrat poster/muqova rasmi (null bölsa → placeholder). */
     posterUrl: text("poster_url"),
     type: varchar("type", { length: 20 }).notNull(),
     /**
-     * Production type (one of the 9 seeded `project_types`). NULL = legacy
-     * project that uses the free-form `milestones` UI. A non-null value is the
-     * sole discriminator for the template-driven stage system.
+     * Işlab çiqariş turi (9 ta seed qilingan `project_types`dan biri). NULL = erkin
+     * şaklli `milestones` UI'sidan foydalanadigan eski loyiha. NULL bölmagan qiymat esa
+     * şablonga asoslangan bosqiç tizimining yagona ajratuvçi belgisidir.
      */
     projectTypeId: uuid("project_type_id").references((): AnyPgColumn => projectTypes.id, {
       onDelete: "set null",
     }),
-    /** Content genre (film / multserial / kitob …). Mainly for "Eksklyuziv
-     *  loyihalar" projects whose pipeline type doesn't say what the content is. */
+    /** Kontent janri (film / multserial / kitob …). Asosan pipeline turi kontent
+     *  nima ekanini körsatmaydigan "Eksklyuziv loyihalar" loyihalari uçun. */
     genre: varchar("genre", { length: 40 }),
     externalCompanyId: uuid("external_company_id").references(() => externalCompanies.id, {
       onDelete: "set null",
@@ -242,9 +242,9 @@ export const projects = pgTable(
     budget: decimal("budget", { precision: 15, scale: 2 }),
     budgetCurrency: varchar("budget_currency", { length: 10 }).default("UZS").notNull(),
     progressPercentage: integer("progress_percentage").default(0).notNull(),
-    /** Manual override — currently only "on_hold". Derived status takes precedence when null. */
+    /** Qölda özgartiriş — hozirça faqat "on_hold". Null bölsa, hisoblab çiqarilgan status ustun turadi. */
     statusOverride: varchar("status_override", { length: 20 }),
-    /** Free-text "current state" (joriy holat) — a short note managers keep updated. */
+    /** Erkin matnli "joriy holat" (current state) — menejerlar yangilab turadigan qisqa izoh. */
     currentStatus: text("current_status"),
     createdByUserId: uuid("created_by_user_id").references(() => users.id, {
       onDelete: "set null",
@@ -260,9 +260,9 @@ export const projects = pgTable(
   })
 );
 
-// ---------- 5.8b project curators (many-to-many) ----------
-// A project can have several curators. `projects.curator_user_id` is kept as the
-// "primary" curator for backward compat; this table holds the full set.
+// ---------- 5.8b loyiha kuratorlari (many-to-many) ----------
+// Bir loyihada bir neça kurator bölişi mumkin. `projects.curator_user_id` eskisiga
+// moslik uçun "asosiy" kurator sifatida saqlanadi; bu jadval esa töliq röyxatni tutadi.
 export const projectCurators = pgTable(
   "project_curators",
   {
@@ -280,7 +280,7 @@ export const projectCurators = pgTable(
   })
 );
 
-// ---------- 5.9 milestones (stages) ----------
+// ---------- 5.9 milestones (bosqiçlar) ----------
 export const milestones = pgTable("milestones", {
   id: uuid("id").primaryKey().defaultRandom(),
   projectId: uuid("project_id")
@@ -291,7 +291,7 @@ export const milestones = pgTable("milestones", {
   orderIndex: integer("order_index").default(0).notNull(),
   deadline: date("deadline"),
   weight: integer("weight").default(1).notNull(),
-  /** Stage completion 0..100. Source of truth for project progress derivation. */
+  /** Bosqiç bajarilişi 0..100. Loyiha progressini hisoblaş uçun asosiy manba. */
   progress: integer("progress").default(0).notNull(),
   paymentAmount: decimal("payment_amount", { precision: 15, scale: 2 }),
   paymentStatus: varchar("payment_status", { length: 20 }).default("pending").notNull(),
@@ -305,7 +305,7 @@ export const tasks = pgTable(
   "tasks",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    /** Official registration number, e.g. 2026/05/18-01. Generated on insert. */
+    /** Rasmiy röyxatga oliş raqami, masalan 2026/05/18-01. Insert paytida yaratiladi. */
     registrationNumber: varchar("registration_number", { length: 32 }),
     title: varchar("title", { length: 500 }).notNull(),
     description: text("description"),
@@ -314,7 +314,7 @@ export const tasks = pgTable(
     parentTaskId: uuid("parent_task_id").references((): AnyPgColumn => tasks.id, {
       onDelete: "set null",
     }),
-    /** Primary assignee — kept for backward compat. Source of truth for status per person is `taskAssignees`. */
+    /** Asosiy mas'ul — eskisiga moslik uçun saqlanadi. Har bir odam böyiça status uçun asosiy manba `taskAssignees`. */
     assignedToUserId: uuid("assigned_to_user_id")
       .notNull()
       .references(() => users.id),
@@ -343,7 +343,7 @@ export const tasks = pgTable(
   })
 );
 
-// ---------- 5.10b task_assignees — multi-assignee with per-person status + javob ----------
+// ---------- 5.10b task_assignees — köp mas'ulli, har bir odam uçun alohida status + javob ----------
 export const taskAssignees = pgTable(
   "task_assignees",
   {
@@ -354,7 +354,7 @@ export const taskAssignees = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     status: varchar("status", { length: 20 }).default("todo").notNull(),
-    /** Javob — response submitted by the assignee */
+    /** Javob — mas'ul topşirgan javob */
     responseText: text("response_text"),
     responseFileUrl: text("response_file_url"),
     responseFileName: varchar("response_file_name", { length: 255 }),
@@ -369,7 +369,7 @@ export const taskAssignees = pgTable(
   })
 );
 
-// ---------- 5.11 task auxiliary ----------
+// ---------- 5.11 task yordamçi jadvallari ----------
 export const taskDependencies = pgTable(
   "task_dependencies",
   {
@@ -507,7 +507,7 @@ export const leaves = pgTable("leaves", {
   statusIdx: index("leaves_status_idx").on(t.status),
 }));
 
-// ---------- 5.15 notifications & settings ----------
+// ---------- 5.15 bildirişnomalar va sozlamalar ----------
 export const notifications = pgTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
@@ -559,7 +559,7 @@ export const invitations = pgTable("invitations", {
   tokenIdx: uniqueIndex("invitations_token_idx").on(t.token),
 }));
 
-// ---------- Password reset tokens ----------
+// ---------- Parolni tiklaş tokenlari ----------
 export const passwordResetTokens = pgTable("password_reset_tokens", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -600,9 +600,9 @@ export const projectMessages = pgTable("project_messages", {
     .references(() => users.id),
   content: text("content").notNull(),
   attachments: jsonb("attachments"),
-  /** Reply target (Telegram-style). Nulled if the quoted message is deleted. */
+  /** Javob beriladigan xabar (Telegram uslubida). Iqtibos qilingan xabar öçirilsa, null qilinadi. */
   replyToId: uuid("reply_to_id").references((): AnyPgColumn => projectMessages.id, { onDelete: "set null" }),
-  /** Set when the message was edited. */
+  /** Xabar tahrirlanganda örnatiladi. */
   editedAt: timestamp("edited_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   readByCuratorAt: timestamp("read_by_curator_at", { withTimezone: true }),
@@ -626,8 +626,8 @@ export const ratings = pgTable("ratings", {
 }));
 
 // ---------- 5.19 stage_templates ----------
-// Ordered stage blueprints. A template is reused by several project types
-// (types 1&2 share one, 4&5 share another) → 7 templates for 9 types.
+// Tartiblangan bosqiç andozalari. Bitta şablon bir neça loyiha turi uçun
+// qayta işlatiladi (1&2-turlar bittasini, 4&5 boşqasini birga işlatadi) → 9 turga 7 şablon.
 export const stageTemplates = pgTable(
   "stage_templates",
   {
@@ -662,7 +662,7 @@ export const stageTemplateItems = pgTable(
 );
 
 // ---------- 5.21 project_types ----------
-// The 9 production types. `code` is the stable slug; localized names for the UI.
+// 9 ta işlab çiqariş turi. `code` — barqaror slug; UI uçun lokallaştirilgan nomlar.
 export const projectTypes = pgTable(
   "project_types",
   {
@@ -684,8 +684,8 @@ export const projectTypes = pgTable(
 );
 
 // ---------- 5.22 project_stages ----------
-// One row per stage of a typed project. Strict sequential state machine:
-// exactly one 'active' stage at a time; 'locked' stages unlock in order.
+// Turi belgilangan loyihaning har bir bosqiçi uçun bitta qator. Qat'iy ketma-ket
+// holat maşinasi: bir vaqtda aynan bitta 'active' bosqiç; 'locked' bosqiçlar navbatma-navbat oçiladi.
 export const projectStages = pgTable(
   "project_stages",
   {
@@ -697,36 +697,36 @@ export const projectStages = pgTable(
       onDelete: "set null",
     }),
     orderIndex: integer("order_index").notNull(),
-    /** Snapshot of the template item name at creation — survives template edits. */
+    /** Yaratiliş paytidagi şablon elementi nomining nusxasi — şablon tahrirlansa ham saqlanadi. */
     name: varchar("name", { length: 255 }).notNull(),
     /** 'locked' | 'active' | 'completed' */
     status: varchar("status", { length: 20 }).default("locked").notNull(),
     plannedStartDate: date("planned_start_date"),
     plannedDeadline: date("planned_deadline"),
     plannedAmount: decimal("planned_amount", { precision: 15, scale: 2 }),
-    /** Per-stage contract number (Shartnoma raqami). Defaults to "1". */
+    /** Har bir bosqiç böyiça şartnoma raqami (Şartnoma raqami). Standart qiymati "1". */
     contractNumber: varchar("contract_number", { length: 50 }).default("1").notNull(),
-    /** When true, completing this stage also auto-completes the following stage
-     *  in the same click (merged "one common phase" — e.g. prep + filming). */
+    /** true bölsa, bu bosqiçni yakunlaş aynan şu bosishda keyingi bosqiçni ham
+     *  avtomatik yakunlaydi (birlaştirilgan "yagona umumiy bosqiç" — masalan, tayyorgarlik + suratga oliş). */
     mergeWithNext: boolean("merge_with_next").default(false).notNull(),
     responsibleUserId: uuid("responsible_user_id").references(() => users.id, {
       onDelete: "set null",
     }),
-    /** Review sub-machine, meaningful only while status='active'. Drives "whose
-     *  turn is it": 'in_progress'|'changes_requested' → studio owes work,
-     *  'submitted' → BKRM owes a review. Acceptance collapses into status→completed. */
+    /** Körib çiqiş kiçik maşinasi, faqat status='active' bölgandagina ma'noli. "Kimning
+     *  navbati" ekanini belgilaydi: 'in_progress'|'changes_requested' → studiya iş qarzdor,
+     *  'submitted' → BKRM körib çiqişi qarz. Qabul qiliş status→completed holatiga aylanadi. */
     reviewStatus: varchar("review_status", { length: 20 }).default("in_progress").notNull(),
-    /** Latest curator change-request note (studio sees it). */
+    /** Kuratorning eng sönggi özgartiriş sörovi izohi (studiya köradi). */
     reviewNote: text("review_note"),
     reviewedByUserId: uuid("reviewed_by_user_id").references(() => users.id, { onDelete: "set null" }),
     reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
     submittedByUserId: uuid("submitted_by_user_id").references(() => users.id, { onDelete: "set null" }),
-    /** What the studio must deliver this stage (read-only to studio). */
+    /** Studiya bu bosqiçda nima topşirişi kerakligi (studiyaga faqat öqiş uçun). */
     requirements: text("requirements"),
     startedAt: timestamp("started_at", { withTimezone: true }),
     completedAt: timestamp("completed_at", { withTimezone: true }),
-    // Cron dedupe: one reminder of each kind per active stage; cleared on transition.
+    // Cron takrorini oldini oliş: har bir aktiv bosqiçga har turdan bittadan eslatma; ötişda tozalanadi.
     reminderApproachingSentAt: timestamp("reminder_approaching_sent_at", { withTimezone: true }),
     reminderOverdueSentAt: timestamp("reminder_overdue_sent_at", { withTimezone: true }),
     reminderStaleSentAt: timestamp("reminder_stale_sent_at", { withTimezone: true }),
@@ -738,13 +738,13 @@ export const projectStages = pgTable(
     orderUniq: uniqueIndex("project_stages_order_uniq").on(t.projectId, t.orderIndex),
     statusIdx: index("project_stages_status_idx").on(t.status),
     responsibleIdx: index("project_stages_responsible_idx").on(t.responsibleUserId),
-    // Partial index backing the cross-studio review queue (migration 0025).
+    // Studiyalararo körib çiqiş navbatini quvvatlaydigan qisman indeks (migration 0025).
     reviewIdx: index("project_stages_review_idx").on(t.reviewStatus).where(sql`status = 'active'`),
   })
 );
 
 // ---------- 5.23 stage_documents ----------
-// Attachments per stage — any format. Mirrors task_attachments.
+// Har bir bosqiç uçun ilova fayllar — istalgan format. task_attachments'ni takrorlaydi.
 export const stageDocuments = pgTable(
   "stage_documents",
   {
@@ -756,7 +756,7 @@ export const stageDocuments = pgTable(
     fileName: varchar("file_name", { length: 255 }).notNull(),
     fileSize: integer("file_size"),
     fileMimeType: varchar("file_mime_type", { length: 120 }),
-    /** User-defined folder/label (e.g. "Hisobotlar", "To'lovlar"). NULL = uncategorized. */
+    /** Foydalanuvçi belgilagan papka/yorliq (masalan, "Hisobotlar", "To'lovlar"). NULL = kategoriyasiz. */
     category: varchar("category", { length: 120 }),
     uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id, {
       onDelete: "set null",
@@ -770,11 +770,11 @@ export const stageDocuments = pgTable(
 );
 
 // ---------- project_documents ----------
-// Project-level document buckets shown under the stage list: analysis
-// ("tahlil" — Loyiha bo'yicha tahlil), international experience
-// ("xalqaro_tajriba" — Xalqaro tajriba) and payment documents
-// ("payment" — cheklar / hisob-fakturalar, grouped by an optional folder).
-// One row per uploaded file.
+// Bosqiçlar röyxati ostida körsatiladigan loyiha darajasidagi hujjat bölimlari:
+// tahlil ("tahlil" — Loyiha böyiça tahlil), xalqaro tajriba
+// ("xalqaro_tajriba" — Xalqaro tajriba) va tölov hujjatlari
+// ("payment" — cheklar / hisob-fakturalar, ixtiyoriy papka böyiça guruhlangan).
+// Har bir yuklangan faylga bitta qator.
 export const PROJECT_DOC_KINDS = ["tahlil", "xalqaro_tajriba", "payment"] as const;
 export type ProjectDocKind = (typeof PROJECT_DOC_KINDS)[number];
 
@@ -787,7 +787,7 @@ export const projectDocuments = pgTable(
       .references(() => projects.id, { onDelete: "cascade" }),
     /** 'tahlil' | 'xalqaro_tajriba' | 'payment' */
     kind: varchar("kind", { length: 32 }).notNull(),
-    /** Optional folder name typed by the uploader (used by the 'payment' bucket). */
+    /** Yuklovçi kiritgan ixtiyoriy papka nomi ('payment' bölimida işlatiladi). */
     folder: varchar("folder", { length: 120 }),
     fileUrl: text("file_url").notNull(),
     fileName: varchar("file_name", { length: 255 }).notNull(),
@@ -805,15 +805,15 @@ export const projectDocuments = pgTable(
 );
 
 // ---------- normative_documents ----------
-// Organisation-wide regulatory documents ("Me'yoriy hujjatlar"), grouped by an
-// optional user-typed folder. Not tied to any project or stage.
+// Taşkilot böylab amal qiladigan me'yoriy hujjatlar ("Me'yoriy hujjatlar"),
+// foydalanuvçi kiritgan ixtiyoriy papka böyiça guruhlangan. Hiç bir loyiha yoki bosqiçga boğlanmagan.
 export const normativeDocuments = pgTable(
   "normative_documents",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    /** Optional folder name typed by the uploader. NULL = uncategorised. */
+    /** Yuklovçi kiritgan ixtiyoriy papka nomi. NULL = kategoriyasiz. */
     folder: varchar("folder", { length: 120 }),
-    /** true → this entry is an external link (fileUrl holds the URL, no file on disk). */
+    /** true → bu yozuv taşqi havola (fileUrl URL'ni saqlaydi, diskda fayl yöq). */
     isLink: boolean("is_link").default(false).notNull(),
     fileUrl: text("file_url").notNull(),
     fileName: varchar("file_name", { length: 255 }).notNull(),
@@ -828,7 +828,7 @@ export const normativeDocuments = pgTable(
 );
 
 // ---------- 5.24 stage_payments ----------
-// Multiple payments per stage. Project total = Σ across all its stages.
+// Har bir bosqiçda bir neça tölov. Loyiha jami = uning barça bosqiçlari böyiça Σ.
 export const stagePayments = pgTable(
   "stage_payments",
   {
@@ -880,10 +880,10 @@ export const councilAgendaItems = pgTable(
     orderIndex: integer("order_index").default(0).notNull(),
     topic: varchar("topic", { length: 500 }).notNull(), // Mavzu
     projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }), // Loyiha (tizimdagi)
-    /** Free-text project name when it isn't a registered project (projectId null). */
+    /** Röyxatdan ötmagan loyiha bölganda erkin matnli loyiha nomi (projectId null). */
     projectName: varchar("project_name", { length: 255 }),
-    presenterUserId: uuid("presenter_user_id").references(() => users.id, { onDelete: "set null" }), // Ma'ruzachi (tizimdagi)
-    /** Free-text presenter name when they aren't a registered user (presenterUserId null). */
+    presenterUserId: uuid("presenter_user_id").references(() => users.id, { onDelete: "set null" }), // Ma'ruzaçi (tizimdagi)
+    /** Röyxatdan ötmagan foydalanuvçi bölganda erkin matnli ma'ruzaçi nomi (presenterUserId null). */
     presenterName: varchar("presenter_name", { length: 255 }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
@@ -892,18 +892,18 @@ export const councilAgendaItems = pgTable(
   })
 );
 
-// ---------- 5.27 contests (Tanlov orqali o'tgan loyihalar) ----------
-// A tender/contest that a project passed through: its name, how many studios
-// took part, and who won. Photos live in contest_photos.
+// ---------- 5.27 contests (Tanlov orqali ötgan loyihalar) ----------
+// Loyiha ötgan tender/tanlov: uning nomi, neça studiya qatnaşgani va
+// kim ğolib bölgani. Suratlar contest_photos'da saqlanadi.
 export const contests = pgTable(
   "contests",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name", { length: 255 }).notNull(), // Tanlov nomi
-    participantsCount: integer("participants_count").default(0).notNull(), // ishtirokchilar soni
-    winnerName: varchar("winner_name", { length: 255 }), // G'olib (studiya / loyiha)
+    participantsCount: integer("participants_count").default(0).notNull(), // iştirokçilar soni
+    winnerName: varchar("winner_name", { length: 255 }), // Ğolib (studiya / loyiha)
     winnerProjectId: uuid("winner_project_id").references(() => projects.id, { onDelete: "set null" }),
-    /** Winner's logo shown on the reveal screen. */
+    /** Ğolib e'lon qilinadigan ekranda körsatiladigan logotipi. */
     winnerLogoUrl: text("winner_logo_url"),
     description: text("description"),
     heldAt: date("held_at"),
@@ -973,7 +973,7 @@ export const contestComments = pgTable(
   })
 );
 
-// Re-export inferred types for convenience
+// Qulaylik uçun aniqlangan tiplarni qayta eksport qilamiz
 export type User = typeof users.$inferSelect;
 export type CouncilMeeting = typeof councilMeetings.$inferSelect;
 export type CouncilAgendaItem = typeof councilAgendaItems.$inferSelect;

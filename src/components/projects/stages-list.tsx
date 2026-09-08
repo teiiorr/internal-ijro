@@ -28,7 +28,7 @@ type Props = {
   projectId: string;
   items: Stage[];
   canManage: boolean;
-  /** Bo'lim boshlig'i can edit but not delete — keep these split. */
+  /** Bölim boshliği tahrirlay oladi, lekin öçira olmaydi — şuning uçun bularni ajratib qöyamiz. */
   canDelete?: boolean;
 };
 
@@ -54,7 +54,7 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
       try {
         await setMilestoneProgress(id, clamped);
       } catch {
-        // server will revalidate; on failure user sees server truth on next nav
+        // server revalidate qiladi; xatolik bölsa, foydalanuvçi keyingi ötişda server holatini köradi
       }
     });
   }
@@ -84,8 +84,8 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
     [next[idx], next[target]] = [next[target], next[idx]];
     const ordered = next.map((x, i) => ({ ...x, orderIndex: i }));
     setStages(ordered);
-    // Server reconciliation outside of the updater so React doesn't see
-    // a Router update mid-render.
+    // Server bilan moslaştirişni updater'dan taşqarida bajaramiz, aks holda React
+    // render jarayonining örtasida Router yangilanişini köradi.
     startTransition(() =>
       reorderMilestones(projectId, ordered.map((x) => x.id)).catch(() => {})
     );
@@ -129,7 +129,7 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
         </p>
       </div>
 
-      {/* Stages list */}
+      {/* Bosqiçlar röyxati */}
       {stages.length === 0 ? (
         <div className="rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-6 text-center">
           <p className="text-sm text-[var(--muted)]">{t("projects.stages.empty")}</p>
@@ -178,7 +178,7 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
                     <span className="text-base font-bold tabular shrink-0">{s.progress}%</span>
                   </div>
 
-                  {/* Slider + numeric input */}
+                  {/* Slider + raqamli maydon */}
                   <div className="flex items-center gap-3">
                     <input
                       type="range"

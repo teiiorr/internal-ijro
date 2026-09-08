@@ -19,9 +19,9 @@ import {
 import { stageTurn } from "@/lib/projects/progress";
 
 /**
- * All curators for a project (avatar + name), ordered. Falls back to the legacy
- * single `curator_user_id` when the join table is empty OR not migrated yet
- * (so the app never crashes before 0022 is applied on the target DB).
+ * Loyihaning barcha kuratorlari (avatar + ism), tartiblangan holda. Boğlovçi jadval
+ * böş bölganda YOKI hali migratsiya qilinmaganda eski yagona `curator_user_id`
+ * ustuniga qaytadi (şu tufayli 0022 maqsadli DB ga qöllanmasdan oldin ilova heç qaçon işdan çiqmaydi).
  */
 export async function fetchProjectCurators(
   projectId: string,
@@ -36,7 +36,7 @@ export async function fetchProjectCurators(
       .orderBy(asc(projectCurators.orderIndex), asc(users.fullName));
     if (rows.length > 0) return rows;
   } catch {
-    /* table not migrated yet — fall through to the single-curator column */
+    /* jadval hali migratsiya qilinmagan — yagona kurator ustuniga ötamiz */
   }
   if (fallbackCuratorUserId) {
     return db
@@ -53,14 +53,14 @@ export type ProjectFilters = {
   status?: string | null;
   type?: "internal" | "external" | null;
   externalCompanyId?: string | null;
-  // production-type / stage filters (only match typed projects)
+  // işlab çiqarish turi / bosqiç filtrlari (faqat turi belgilangan loyihalarga mos keladi)
   projectTypeId?: string | null;
   responsibleUserId?: string | null;
   payment?: "paid" | "unpaid" | null;
   overdue?: boolean | null;
   from?: string | null;
   to?: string | null;
-  /** current-state filter: snapshot name (nameUzLatn) of the project's ACTIVE stage */
+  /** joriy holat filtri: loyihaning FAOL bosqiçining nusxa nomi (nameUzLatn) */
   stage?: string | null;
 };
 
@@ -182,7 +182,7 @@ export async function listContractors(status?: string | null) {
   return db.select().from(externalCompanies).where(where).orderBy(desc(externalCompanies.createdAt));
 }
 
-/** Studios + the projects assigned to each (for the reveal on the studios page). */
+/** Studiyalar + har biriga biriktirilgan loyihalar (studiyalar sahifasidagi ochilma uçun). */
 export async function listContractorsWithProjects() {
   const companies = await db.select().from(externalCompanies).orderBy(desc(externalCompanies.createdAt));
   const prjs = await db
@@ -197,7 +197,7 @@ export async function listContractorsWithProjects() {
     arr.push({ id: p.id, name: p.name, status: p.status });
     byCompany.set(p.ec, arr);
   }
-  // Per-studio "awaiting your review" count (active stages submitted for review).
+  // Har bir studiya böyiça "körib çiqişingizni kutmoqda" soni (körib çiqiş uçun yuborilgan faol bosqiçlar).
   const waiting = new Map<string, number>();
   for (const r of await db
     .select({ ec: projects.externalCompanyId, c: sql<number>`count(*)::int` })
@@ -216,8 +216,8 @@ export async function getContractor(id: string) {
 }
 
 /**
- * Telegram-style chat list for a studio: one thread per project, each with the
- * project's curator (our side — the person they talk to) and the last message.
+ * Studiya uçun Telegram uslubidagi çatlar röyxati: har bir loyiha uçun bitta suhbat,
+ * har biri loyiha kuratori (biz tomon — ular gaplaşadigan odam) va oxirgi xabar bilan.
  */
 export async function getContractorChatProjects(contractorUserId: string) {
   const me = await db.select({ email: users.email }).from(users).where(eq(users.id, contractorUserId)).limit(1);
@@ -250,7 +250,7 @@ export async function getContractorChatProjects(contractorUserId: string) {
       .orderBy(desc(projectMessages.createdAt));
     for (const m of msgs) if (!lastByProject.has(m.projectId)) lastByProject.set(m.projectId, { content: m.content, createdAt: m.createdAt, userName: m.userName });
 
-    // Unread for the studio = our-side messages (any channel) not yet read by them.
+    // Studiya uçun öqilmagan = biz tomonimizdan yuborilgan (istalgan kanaldagi) va ular hali öqimagan xabarlar.
     for (const r of await db
       .select({ projectId: projectMessages.projectId, c: sql<number>`count(*)::int` })
       .from(projectMessages)
@@ -275,7 +275,7 @@ export async function getContractorChatProjects(contractorUserId: string) {
   return { company, chats };
 }
 
-/** Total unread chat messages for a studio (drives the nav badge). */
+/** Studiya uçun öqilmagan çat xabarlari umumiy soni (navigatsiya belgisini boşqaradi). */
 export async function getContractorUnreadCount(contractorUserId: string): Promise<number> {
   const [me] = await db.select({ email: users.email }).from(users).where(eq(users.id, contractorUserId)).limit(1);
   if (!me) return 0;
@@ -290,7 +290,7 @@ export async function getContractorUnreadCount(contractorUserId: string): Promis
 }
 
 export async function listProjectsForContractor(contractorUserId: string, locale = "uz-latn") {
-  // Resolve company by contractor user (uses email match — simplest reliable join for self-registered contractors)
+  // Kompaniyani kontragent foydalanuvçisi böyiça aniqlaymiz (email moslik böyiça — özi röyxatdan ötgan kontragentlar uçun eng sodda va işonçli boğlaniş usuli)
   const me = await db.select({ email: users.email }).from(users).where(eq(users.id, contractorUserId)).limit(1);
   if (me.length === 0) return { company: null, projects: [] };
   const company = await db
@@ -319,7 +319,7 @@ export async function listProjectsForContractor(contractorUserId: string, locale
     .where(eq(projects.externalCompanyId, company[0].id))
     .orderBy(desc(projects.createdAt));
 
-  // Enrich with the active stage name + "stage X of N" — the "where am I" signal.
+  // Faol bosqiç nomi + "N tadan X-bosqiç" bilan boyitamiz — "men qayerdaman" signali.
   const ids = prjs.map((p) => p.id);
   const activeByProject = new Map<string, { name: string; orderIndex: number; reviewStatus: string }>();
   const countByProject = new Map<string, number>();
@@ -354,9 +354,9 @@ export async function listProjectsForContractor(contractorUserId: string, locale
 }
 
 /**
- * Flat per-project rows for the Excel report (Loyihalar hisoboti):
- * name, studio, current stage, contract number, dates and the money totals
- * (planned / paid / remaining). Ordered oldest-first for a stable registry.
+ * Excel hisoboti (Loyihalar hisoboti) uçun har bir loyiha böyiça tekis qatorlar:
+ * nomi, studiya, joriy bosqiç, şartnoma raqami, sanalar va pul summalari
+ * (rejalaştirilgan / tölangan / qolgan). Barqaror röyxat uçun eng eskisidan boşlab tartiblangan.
  */
 export type ProjectReportRow = {
   name: string;
@@ -375,9 +375,9 @@ export type ProjectReportRow = {
 };
 
 /**
- * Report rows honouring the same filters as the projects list (search / project
- * type / stage / payment / overdue). The derived-status tab + status-priority
- * sort are applied by the caller (route), since derived status isn't a column.
+ * Hisobot qatorlari loyihalar röyxatidagi bilan bir xil filtrlarga amal qiladi (qidiruv /
+ * loyiha turi / bosqiç / tölov / muddati ötgan). Hosila-holat tabi va holat böyiça
+ * ustunlik saralaşi çaqiruvçi (route) tomonidan qöllanadi, çunki hosila holat ustun emas.
  */
 export async function listProjectsForReport(f: ProjectFilters = {}): Promise<ProjectReportRow[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -438,7 +438,7 @@ export async function listProjectsForReport(f: ProjectFilters = {}): Promise<Pro
   return rows as unknown as ProjectReportRow[];
 }
 
-// ── Studio detail queries ──────────────────────────────────────────
+// ── Studiya tafsilotlari sörovlari ──────────────────────────────────────────
 
 export async function getContractorDetail(companyId: string) {
   const [company] = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
@@ -493,10 +493,10 @@ export async function getContractorDetail(companyId: string) {
 }
 
 /**
- * Studio review workspace (staff /contractors/[id]): each of the studio's
- * projects enriched with its ACTIVE stage (review fields + submitted files) and
- * a whose-turn signal, so staff review/accept/request-changes in-place without
- * leaving the Студии section.
+ * Studiyani körib çiqiş ish maydoni (xodimlar uçun /contractors/[id]): studiyaning har bir
+ * loyihasi özining FAOL bosqiçi (körib çiqiş maydonlari + yuborilgan fayllar) va
+ * kimning navbati signali bilan boyitilgan, şunda xodimlar Студии bölimidan çiqmasdan
+ * turib körib çiqadi/qabul qiladi/özgartiriş söraydi.
  */
 export async function getContractorReviewProjects(companyId: string) {
   const prjs = await db

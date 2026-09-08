@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-// Merged into the projects work-queue — kept only to redirect old links/bookmarks.
+// Loyihalar iş navbatiga birlaştirildi — faqat eski havola va xatchöplarni yönaltiriş uchun qoldirilgan.
 export default function ContractorDashboardPage() {
   redirect("/contractor/projects");
 }

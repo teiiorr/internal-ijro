@@ -3,25 +3,28 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 /**
- * Remembers the window scroll position for the current URL and restores it when
- * the user comes back — e.g. scrolls the project list, opens a project, then
- * returns (browser back, the Android hardware back, or an in-app "back" link).
+ * Joriy URL uçun oynaning scroll holatini eslab qoladi va foydalanuvçi qaytib
+ * kelganda uni tiklaydi — masalan, loyihalar röyxatini suradi, bir loyihani
+ * oçadi, söng qaytadi (brauzerning "orqaga" tugmasi, Android'ning apparat
+ * "orqaga" tugmasi yoki ilova içidagi "orqaga" havolasi orqali).
  *
- * Keyed by the live URL (path + query, read from window.location), so each
- * filtered/tab view keeps its own position; scoped to sessionStorage so it
- * resets when the tab closes. Renders nothing. Uses only usePathname (no
- * useSearchParams), so it needs no Suspense boundary.
+ * Kalit sifatida jonli URL işlatiladi (path + query, window.location'dan
+ * öqiladi), şu bois har bir filtrlangan/tab körinişi öz holatini saqlaydi;
+ * sessionStorage bilan çegaralangani uçun tab yopilganda holat tozalanadi.
+ * Hech narsa render qilmaydi. Faqat usePathname'dan foydalanadi
+ * (useSearchParams'siz), şuning uçun unga Suspense chegarasi kerak emas.
  *
- * Relies on the list having a stable height on mount (the project grid uses
- * fixed aspect-ratio cards), so the saved offset is valid before images load.
+ * Röyxat mount paytida barqaror balandlikka ega bölişiga tayanadi (loyiha
+ * gridi belgilangan aspect-ratio kartalardan foydalanadi), şuning uçun
+ * saqlangan offset rasmlar yuklanişidan oldin ham töğri böladi.
  */
 export function ScrollMemory() {
-  const pathname = usePathname(); // re-arm the effect whenever the route changes
+  const pathname = usePathname(); // route özgarganda effektni qayta işga tuşiramiz
 
   useEffect(() => {
     const keyOf = () => `scroll:${window.location.pathname}${window.location.search}`;
 
-    // Restore — wait two frames so the (server-rendered) content is laid out.
+    // Tiklaş — (serverda render qilingan) kontent joylaşuvi uçun ikki freym kutamiz.
     const saved = sessionStorage.getItem(keyOf());
     if (saved) {
       const y = parseInt(saved, 10);
@@ -30,7 +33,7 @@ export function ScrollMemory() {
       }
     }
 
-    // Save on scroll, throttled to one write per frame.
+    // Scroll paytida saqlaymiz, har freymga bitta yozuvga çeklab.
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
@@ -44,7 +47,7 @@ export function ScrollMemory() {
 
     return () => {
       window.removeEventListener("scroll", onScroll);
-      // Final save on navigation away, so opening a project captures the exact spot.
+      // Boshqa sahifaga ötişda oxirgi marta saqlaymiz, şunda loyiha oçilganda aniq nuqta saqlanadi.
       sessionStorage.setItem(keyOf(), String(Math.round(window.scrollY)));
     };
   }, [pathname]);

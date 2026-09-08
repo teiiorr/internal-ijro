@@ -1,7 +1,7 @@
 "use client";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LabelList } from "recharts";
 
-/** Horizontal bar of typed-project counts per production type. */
+/** Har bir produksiya turi böyicha loyihalar sonini körsatuvchi gorizontal bar. */
 export function ProjectTypeBar({ data }: { data: { name: string; count: number }[] }) {
   if (data.length === 0) {
     return <div className="grid h-[220px] place-items-center text-sm text-[var(--muted)]">—</div>;

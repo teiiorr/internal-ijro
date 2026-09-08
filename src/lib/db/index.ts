@@ -4,10 +4,10 @@ import postgres from "postgres";
 import * as schema from "./schema";
 
 /**
- * Build-tolerant Postgres client. Used to throw at module load if
- * DATABASE_URL was missing — that killed `next build` on platforms that
- * don't expose runtime envs at build time. Deferred until first query so
- * the build succeeds without a DB and only real requests fail loudly.
+ * Build'ga çidamli Postgres klienti. Ilgari DATABASE_URL yöq bölsa modul yuklanişida
+ * xatolik taşlardi — bu build vaqtida runtime env'larni bermaydigan platformalarda
+ * `next build`'ni öldirardi. Endi birinçi sörovgaça keçiktiriladi, şunda build DB'siz
+ * ham muvaffaqiyatli ötadi va faqat haqiqiy sörovlar oçiq-oydin xatolik beradi.
  */
 type PgClient = ReturnType<typeof postgres>;
 
@@ -31,7 +31,7 @@ function getDb() {
   return globalForPg._drizzleDb;
 }
 
-/** Proxy that resolves the real drizzle instance on first property access. */
+/** Birinçi marta xususiyatga murojaat qilinganda haqiqiy drizzle nusxasini oladigan Proxy. */
 export const db = new Proxy({} as ReturnType<typeof drizzle<typeof schema>>, {
   get(_, prop, receiver) {
     return Reflect.get(getDb() as object, prop, receiver);

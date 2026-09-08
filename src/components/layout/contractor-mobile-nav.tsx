@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string };
 
-// Three destinations, no "more" sheet. Notifications (bell) and Settings live in
-// the Header; everything a studio needs day-to-day is one tap away here.
+// Uchta bölim, "yana" oynasi yöq. Bildirişnomalar (qöngğiroq) va Sozlamalar
+// Header'da turadi; studiyaga har kuni kerak böladigan hamma narsa şu yerda bir bosişda.
 const ITEMS: NavItem[] = [
   { href: "/contractor/projects", icon: Folder, key: "projects" },
   { href: "/contractor/chats", icon: MessageCircle, key: "chats" },

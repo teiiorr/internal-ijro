@@ -29,7 +29,7 @@ export function ChatsList({ chats }: { chats: Chat[] }) {
 
   return (
     <div className="space-y-3">
-      {/* Sticky frosted search — full-bleed under the app header. */}
+      {/* Yopişib turadigan xira şişa qidiruvi — ilova header'i ostida töliq enda. */}
       <div className="sticky top-[60px] z-20 -mx-3 glass-soft px-3 py-2 sm:-mx-4 sm:top-[68px] sm:px-4">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />

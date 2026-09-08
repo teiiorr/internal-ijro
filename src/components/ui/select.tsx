@@ -15,9 +15,9 @@ export const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      // min-w-0 + the truncate wrapper below keeps long single-line values
-      // (department names, locale labels) from wrapping the pill onto two
-      // lines on narrow viewports.
+      // min-w-0 va quyidagi truncate örami uzun, bir qatorli qiymatlarning
+      // (bölim nomlari, til yorliqlari) tor ekranlarda pill'ni ikki qatorga
+      // tuşirib yuborişining oldini oladi.
       "flex h-11 w-full min-w-0 items-center justify-between gap-2 rounded-2xl border border-[var(--input)] " +
       "bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 " +
       "pl-4 pr-5 text-[15px] text-[var(--foreground)] font-medium whitespace-nowrap " +
@@ -60,9 +60,10 @@ export const SelectContent = React.forwardRef<
       <SelectPrimitive.Viewport
         className={cn(
           "p-1.5",
-          // Long lists (e.g. 30+ employees) must scroll instead of running off
-          // the screen. Cap at the smaller of ~20rem and the space Radix reports
-          // as available so it never overflows the viewport on any device.
+          // Uzun röyxatlar (masalan, 30+ xodim) ekrandan çiqib ketmasligi uçun
+          // suriladigan bölişi kerak. Balandlikni ~20rem bilan Radix mavjud deb
+          // bildirgan joyning kiçigi bilan çeklaymiz, şunda hiç bir qurilmada
+          // viewportdan taşib ketmaydi.
           "max-h-[min(20rem,var(--radix-select-content-available-height))] overflow-y-auto overscroll-contain",
           position === "popper" &&
             "w-full min-w-[var(--radix-select-trigger-width)]"

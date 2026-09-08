@@ -29,8 +29,8 @@ export async function isInCoordinatedDepartments(
 }
 
 /**
- * Walks the reports_to chain upward from `userId` and returns true if
- * `ancestorUserId` is found along the way (max depth 10 — guards against loops).
+ * `userId` dan boşlab reports_to zanjiri böyiça yuqoriga kötariladi va yölda
+ * `ancestorUserId` topilsa true qaytaradi (maksimal çuqurlik 10 — sikllardan himoya qiladi).
  */
 export async function isSubordinate(ancestorUserId: string, userId: string): Promise<boolean> {
   let current: string | null = userId;
@@ -49,16 +49,16 @@ export async function isSubordinate(ancestorUserId: string, userId: string): Pro
 }
 
 /**
- * Section 4.3 of TZ: who can assign a task to whom.
- * Returns true if `assigner` is allowed to assign a task to `assignee`.
+ * TZ ning 4.3-bölimi: kim kimga topşiriq berişi mumkin.
+ * Agar `assigner` ga `assignee` uçun topşiriq berişga ruxsat bölsa true qaytaradi.
  */
 export async function canAssignTaskTo(
   assigner: ActorContext,
   assignee: ActorContext
 ): Promise<boolean> {
-  // Open assignment policy (user directive): any internal staff member can assign
-  // a task to any other internal staff member — no hierarchy/department scoping.
-  // Contractors are external and are excluded both as assigner and assignee.
+  // Oçiq topşiriq beriş siyosati (foydalanuvçi körsatmasi): ixtiyoriy içki xodim
+  // boşqa ixtiyoriy içki xodimga topşiriq bera oladi — ierarxiya yoki bölimga qarab çeklanmaydi.
+  // Pudratçilar taşqi hisoblanadi va topşiriq beruvçi ham, oluvçi ham böla olmaydi.
   if (assigner.position === "kontragent" || assignee.position === "kontragent") return false;
   return true;
 }

@@ -64,7 +64,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
           s.projects.some((p) => p.name.toLowerCase().includes(q))
         );
       })
-      // Studios awaiting review float to the top.
+      // Körib çiqiş kutayotgan studiyalar röyxatning tepasiga çiqadi.
       .sort((a, b) => (b.waiting > 0 ? 1 : 0) - (a.waiting > 0 ? 1 : 0));
   }, [query, filter, studios]);
 
@@ -72,7 +72,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
 
   return (
     <div className="space-y-5">
-      {/* Triage KPI band — "awaiting your review" first (the actionable one) */}
+      {/* Saralaş KPI qatori — avval "körigingizni kutmoqda" (amal talab qiladigani) */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
         <button type="button" onClick={() => toggle("review")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "review" && "rounded-2xl ring-2 ring-[var(--primary)]")}>
           <StatCard label={t("contractors.inReview")} value={counts.review} tone="primary" filled={counts.review > 0} />
@@ -89,7 +89,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
         </button>
       </div>
 
-      {/* Search + tabs */}
+      {/* Qidiruv + yorliqlar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
@@ -154,7 +154,7 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
 
   return (
     <div className={cn("flex flex-col rounded-2xl border bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]", s.waiting > 0 ? "border-[var(--warning)]/55" : "border-[var(--border)]")}>
-      {/* Header: logo + name + status */}
+      {/* Sarlavha: logo + nom + holat */}
       <div className="flex items-start gap-3">
         <Link href={`/contractors/${s.id}`} className="shrink-0">
           <div className="grid size-14 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-2)] ring-1 ring-[var(--border)]">
@@ -168,7 +168,7 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <Link href={`/contractors/${s.id}`} className="min-w-0 flex-1">
-              {/* Long names scroll (marquee) instead of clipping — like the projects list. */}
+              {/* Uzun nomlar kesilmasdan suriladi (marquee) — loyihalar röyxatidagi kabi. */}
               <Marquee className="text-base font-bold leading-snug tracking-tight transition-colors hover:text-[var(--primary)]">{s.name}</Marquee>
             </Link>
             <StatusTag tone={tone} size="sm" className="shrink-0">{t(`status.${s.status}` as "status.pending")}</StatusTag>
@@ -181,7 +181,7 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
         </div>
       </div>
 
-      {/* Meta row — awaiting-review tag first (project-style rectangular tag) */}
+      {/* Meta qatori — avval körib çiqiş kutilmoqda yorliği (loyiha uslubidagi törtburçak yorliq) */}
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[var(--muted)]">
         {s.waiting > 0 && (
           <StatusTag tone="amber" size="sm">{s.waiting} {t("contractors.inReview")}</StatusTag>
@@ -191,14 +191,14 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
         <span className="inline-flex items-center gap-1"><IconCalendarEvent className="size-3.5" />{formatDate(s.createdAt as string, locale)}</span>
       </div>
 
-      {/* Rejection reason */}
+      {/* Rad etiş sababi */}
       {s.status === "rejected" && s.rejectionReason && (
         <p className="mt-2 rounded-lg bg-[var(--danger-soft)] px-2.5 py-1.5 text-xs text-[var(--danger)]">
           <span className="font-semibold">{t("contractors.reasonLabel")}:</span> {s.rejectionReason}
         </p>
       )}
 
-      {/* Footer actions */}
+      {/* Pastki paneldagi amallar */}
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-[var(--border)] pt-3">
         {s.status === "pending" ? (
           <div className="flex flex-1 flex-wrap items-center gap-2">

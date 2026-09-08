@@ -7,7 +7,7 @@ import { IconClipboardText as Board } from "@tabler/icons-react";
 import { derivedStatus } from "@/lib/projects/progress";
 import { ProjectStatusSearch, type ProjectStatusRow } from "./project-status-search";
 
-/** Dashboard board of every project's "joriy holat" (current-status note), searchable. */
+/** Har bir loyihaning "joriy holat" izohini körsatadigan, qidiruvli dashboard taxtasi. */
 export async function ProjectStatusBoard() {
   const t = await getTranslations();
   const rows = await db

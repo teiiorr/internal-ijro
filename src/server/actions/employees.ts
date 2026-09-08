@@ -18,7 +18,7 @@ import { storeFile, deleteFileByUrl } from "@/lib/upload";
 
 const internalPositions = POSITIONS.filter((p) => p !== "kontragent");
 
-// --- Invite new employee ---
+// --- Yangi xodimni taklif qiliş ---
 const inviteEmployeeSchema = z.object({
   email: z.string().email(),
   fullName: z.string().min(2).max(255),
@@ -64,13 +64,13 @@ export async function inviteEmployee(formData: FormData) {
   revalidatePath("/employees");
 }
 
-// --- Change position / department ---
+// --- Lavozim / bölimni özgartiriş ---
 const changePositionSchema = z.object({
   userId: z.string().uuid(),
   newPosition: z.enum(internalPositions as [string, ...string[]]),
   newDepartmentId: z.string().uuid().nullable().optional(),
   reportsToUserId: z.string().uuid().nullable().optional(),
-  /** Free-text job title shown instead of the position label. */
+  /** Lavozim yorliği örniga körsatiladigan erkin matnli lavozim nomi. */
   positionTitle: z.string().max(200).nullable().optional(),
   reason: z.string().max(500).optional(),
 });
@@ -118,7 +118,7 @@ export async function changePosition(input: z.infer<typeof changePositionSchema>
   revalidatePath("/employees");
 }
 
-// --- Archive / Restore employee ---
+// --- Xodimni arxivlaş / tiklaş ---
 export async function archiveEmployee(userId: string, terminationDate: string) {
   const me = await requirePosition(["direktor", "orinbosar", "hr"]);
   if (!can(me.position, "employees.archive")) throw new Error("forbidden");
@@ -142,7 +142,7 @@ export async function restoreEmployee(userId: string) {
   revalidatePath("/employees");
 }
 
-// --- Update HR profile (passport, INN, address, emergency contact, etc.) ---
+// --- HR profilini yangilaş (pasport, INN, manzil, favqulodda aloqa va h.k.) ---
 const profileSchema = z.object({
   userId: z.string().uuid(),
   birthDate: z.string().nullable().optional(),
@@ -183,7 +183,7 @@ export async function upsertEmployeeProfile(input: z.infer<typeof profileSchema>
   revalidatePath(`/employees/${parsed.userId}`);
 }
 
-// --- Upload employee document ---
+// --- Xodim hujjatini yuklaş ---
 export async function uploadEmployeeDocument(userId: string, documentType: string, title: string, file: File) {
   const me = await requirePosition(["direktor", "orinbosar", "hr"]);
   if (!can(me.position, "hr.documents")) throw new Error("forbidden");
@@ -226,8 +226,8 @@ export async function deleteEmployeeDocument(documentId: string) {
   revalidatePath(`/employees/${row[0].userId}`);
 }
 
-// --- Re-send invitation (for pending users) ---
-// Implemented in auth-flow.createInvitation re-used.
+// --- Taklifnomani qayta yuboriş (kutilayotgan foydalanuvçilar uçun) ---
+// auth-flow.createInvitation funksiyasi qayta işlatilib amalga oşirilgan.
 export const _internal_marker = true as const;
 void _internal_marker;
 void and;

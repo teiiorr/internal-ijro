@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 type Size = "sm" | "md" | "lg";
 
-/** Avatar size mapping — UserAvatar sizes: sm=40px, md=48px, lg=64px. */
+/** Avatar ölçamlari mosligi — UserAvatar ölçamlari: sm=40px, md=48px, lg=64px. */
 const AVATAR_SIZE: Record<Size, "sm" | "md" | "lg"> = { sm: "sm", md: "md", lg: "lg" };
 const NAME_CLS: Record<Size, string> = {
   sm: "text-sm font-semibold",
@@ -20,24 +20,25 @@ const SUB_CLS: Record<Size, string> = {
 const GAP: Record<Size, string> = { sm: "gap-2.5", md: "gap-3", lg: "gap-3.5" };
 
 interface EmployeeIdentityProps {
-  /** Display-ready name (localize at the call site via localizeName). */
+  /** Körsatişga tayyor ism (çaqiruv joyida localizeName orqali lokalizatsiya qilinadi). */
   name: string;
   avatarUrl?: string | null;
   position?: string | null;
   department?: string | null;
-  /** Overrides the auto-built "position · department" subtitle. */
+  /** Avtomatik yiğilgan "position · department" subtitrini almaştiradi. */
   subtitle?: string | null;
   size?: Size;
-  /** Wraps the whole identity in a Link (avatar lightbox is disabled then). */
+  /** Butun identity'ni Link içiga öraydi (bu holda avatar lightbox öçiriladi). */
   href?: string;
   className?: string;
-  /** Stack name under avatar (centered), for large card contexts. */
+  /** Ismni avatar ostiga joylaştiradi (markazda), katta karta holatlari uçun. */
   stacked?: boolean;
 }
 
 /**
- * The single source of truth for rendering a person (avatar + name [+ role]).
- * Avatar and name read as one unit. Use everywhere a staff member appears.
+ * Şaxsni (avatar + ism [+ lavozim]) çiziş uçun yagona haqiqat manbai.
+ * Avatar va ism yaxlit bir butun sifatida körinadi. Xodim körinadigan har
+ * qanday joyda foydalaning.
  */
 export function EmployeeIdentity({
   name,

@@ -32,17 +32,17 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   if (!data || data.stage.projectId !== id) notFound();
 
   const me = session.user;
-  // Stage changes = the fixed allowlist OR an owner-granted capability.
+  // Bosqiçni özgartiriş = qat'iy allowlist YOKI owner bergan huquq.
   const canManage = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
   const canManagePayments = canManage;
-  // Budgets & payment sums shown to the money allowlist OR granted users.
+  // Byudjet va tölov summalari "money" allowlistidagilarga YOKI huquq berilganlarga körsatiladi.
   const showMoney = canViewMoney(me.email) || (await hasGrant(me.id, "money.view"));
-  // Assignable users for the "Mas'ul" (responsible) picker — managers only.
+  // "Mas'ul" tanlagiçi uçun tayinlanadigan foydalanuvçilar — faqat menejerlar uçun.
   const assignable = canManage ? await listAssignableUsers(me.id, me.position, me.departmentId) : [];
 
   const s = data.stage;
   const total = data.siblings.length;
-  // Only the most-recently completed stage can be un-completed (matches reopenStage's guard).
+  // Faqat eng oxirgi yakunlangan bosqiçni qayta oçiş mumkin (reopenStage'dagi tekşiruvga mos keladi).
   const lastCompleted = [...data.siblings].reverse().find((x) => x.status === "completed");
   const isLastCompleted = s.status === "completed" && lastCompleted?.id === s.id;
   const statusMeta =
@@ -54,10 +54,10 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
 
   return (
     <div className="space-y-6">
-      {/* Unified stage header + schedule/budget — one combined card. */}
+      {/* Yagona bosqiç sarlavhasi + jadval/byudjet — bitta birlaştirilgan karta. */}
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-5">
-          {/* Balanced header bar: back + title (left) + edit (right) on one row. */}
+          {/* Muvozanatli sarlavha paneli: orqaga + sarlavha (çapda) + tahrirlaş (öngda) bitta qatorda. */}
           <div className="flex items-start gap-3 sm:gap-4">
             <BackButton fallbackHref={`/projects/${id}`} className="mt-0.5 shrink-0" />
             <div className="min-w-0 flex-1">
@@ -80,7 +80,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
 
           <div className="border-t border-[var(--border)]" />
 
-          {/* All stage facts as one uniform horizontal row of cards. Active stage ticks a live countdown. */}
+          {/* Bosqiçning barça ma'lumotlari bir xil gorizontal kartalar qatorida. Faol bosqiç jonli sanoqni körsatib turadi. */}
           <dl className="detail-grid grid grid-cols-2 gap-3 text-sm sm:grid-cols-3 lg:grid-cols-6">
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
@@ -127,7 +127,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
         </Card>
       )}
 
-      {/* Documents + Payments side by side on wide screens, stacked on mobile */}
+      {/* Hujjatlar + Tölovlar keng ekranlarda yonma-yon, mobil ekranda ustma-ust */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 items-start">
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-4">
@@ -144,7 +144,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
         </Card>
       </div>
 
-      {/* primary action — bottom right */}
+      {/* asosiy amal — pastki öngda */}
       {canManage && s.status === "active" && (
         <div className="flex flex-col items-end gap-2 pt-1">
           {s.mergeWithNext && (
@@ -157,7 +157,7 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
         </div>
       )}
 
-      {/* Undo an accidental completion — only the last completed stage */}
+      {/* Tasodifan yakunlaşni bekor qiliş — faqat eng oxirgi yakunlangan bosqiç */}
       {canManage && isLastCompleted && (
         <div className="flex justify-end pt-1">
           <ReopenStageButton stageId={s.id} />

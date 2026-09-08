@@ -14,7 +14,7 @@ export default async function StudioConversationPage({ params }: { params: Promi
   const t = await getTranslations();
   const { id, projectId } = await params;
   const data = await getProject(projectId);
-  // Only a project that actually belongs to this studio.
+  // Faqat haqiqatan ham şu studiyaga tegişli loyiha.
   if (!data || data.project.externalCompanyId !== id) notFound();
 
   const messages = await getStageMessages(projectId, null);

@@ -11,7 +11,7 @@ export default async function NormativeDocsPage() {
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
   const me = session.user;
-  const canManage = me.position !== "kontragent"; // all internal staff can upload
+  const canManage = me.position !== "kontragent"; // barça içki xodimlar yuklay oladi
   const docs = await listNormativeDocuments();
 
   return (

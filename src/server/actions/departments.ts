@@ -63,7 +63,7 @@ export async function deleteDepartment(id: string) {
 
 export async function assignCoordinator(departmentId: string, coordinatorUserId: string) {
   const me = await requirePosition(["direktor", "orinbosar"]);
-  // Verify user is a coordinator
+  // Foydalanuvçi koordinator ekanini tekşiramiz
   const u = await db.select({ position: users.position }).from(users).where(eq(users.id, coordinatorUserId)).limit(1);
   if (u.length === 0 || u[0].position !== "koordinator") throw new Error("not_a_coordinator");
   await db

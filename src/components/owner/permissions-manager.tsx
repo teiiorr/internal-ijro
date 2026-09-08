@@ -76,7 +76,7 @@ export function PermissionsManager({
         />
       </div>
 
-      {/* Same table format as "Barcha loglar" — scrolls horizontally on mobile. */}
+      {/* "Barcha loglar" bilan bir xil jadval körinişi — mobil qurilmada gorizontal skrol qilinadi. */}
       <Table>
         <TableHeader>
           <TableRow>

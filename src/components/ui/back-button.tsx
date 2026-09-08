@@ -3,10 +3,10 @@ import { useRouter } from "@/i18n/navigation";
 import { IconArrowLeft as ArrowLeft } from "@tabler/icons-react";
 
 /**
- * Big round back button. Uses history back() so it returns to the previous page
- * with its state intact (e.g. the filtered projects list keeps its filters);
- * falls back to `fallbackHref` when there's no history (deep link / refresh).
- * Snappy press animation.
+ * Katta yumaloq "orqaga" tugmasi. history back() dan foydalanadi, şu bois oldingi
+ * sahifaga holati saqlangan holda qaytadi (masalan, filtrlangan loyihalar röyxati
+ * filtrlarini saqlab qoladi); tarix bölmasa (deep link / sahifani yangilaş)
+ * `fallbackHref` ga qaytadi. Çaqqon bosiş animatsiyasi.
  */
 export function BackButton({ fallbackHref, className = "" }: { fallbackHref: string; className?: string }) {
   const router = useRouter();

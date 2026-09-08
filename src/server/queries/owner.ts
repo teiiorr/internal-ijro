@@ -12,7 +12,7 @@ import pkg from "../../../package.json";
 
 const one = async (q: Promise<{ n: number }[]>) => Number((await q)[0]?.n ?? 0);
 
-// ---------- 1. System statistics ----------
+// ---------- 1. Tizim statistikasi ----------
 export async function getSystemStats() {
   const cnt = () => sql<number>`count(*)::int`;
   const [
@@ -32,8 +32,8 @@ export async function getSystemStats() {
     one(db.select({ n: cnt() }).from(departments)),
   ]);
 
-  // Scope money sums to UZS so the "UZS" label is accurate (payments may carry
-  // a non-UZS currency; mixing them into one figure would mislabel the total).
+  // Pul yiğindilarini faqat UZS bilan çeklaymiz — şunda "UZS" yorliği toğri böladi
+  // (tölovlar UZS'dan boşqa valyutada bölişi mumkin; ularni bitta raqamga aralaştirsak, jami notöğri belgilanadi).
   const pay = await db
     .select({
       paid: sql<string>`coalesce(sum(case when ${stagePayments.status} = 'paid' and ${stagePayments.currency} = 'UZS' then ${stagePayments.amount} else 0 end), 0)`,
@@ -63,13 +63,13 @@ export async function getSystemStats() {
   };
 }
 
-// ---------- 2. Recent changes (who added / deleted / changed what) ----------
-// Actions are "entity.verb" OR "entity.noun_verb" — so the meaningful verb is the
-// LAST token when split on "." or "_" (e.g. stage.payment_added → "added").
+// ---------- 2. Sönggi özgarişlar (kim nimani qöşdi / öçirdi / özgartirdi) ----------
+// Amallar "entity.verb" YOKI "entity.noun_verb" körinişida — demak ma'noli fe'l
+// "." yoki "_" böyiça ajratilganda ENG OXIRGI bölak böladi (masalan, stage.payment_added → "added").
 const ADD_VERBS = new Set(["created", "added", "uploaded", "invited", "submitted", "assigned", "set"]);
 const DEL_VERBS = new Set(["deleted", "removed", "archived", "unassigned"]);
 
-/** Classify an action string into add / delete / update for the changes feed. */
+/** Amal satrini özgarişlar lentasi uçun add / delete / update turlariga ajratadi. */
 export function changeKind(action: string): "add" | "delete" | "update" {
   const verb = action.split(/[._]/).pop() ?? "";
   if (ADD_VERBS.has(verb)) return "add";
@@ -78,8 +78,8 @@ export function changeKind(action: string): "add" | "delete" | "update" {
 }
 
 export async function getRecentChanges(limit = 40) {
-  // Match the trailing verb regardless of the "." / "_" separator so compound
-  // actions (payment_added, document_removed, poster_set, …) are included.
+  // Oxirgi fe'lni "." / "_" ajratgiçidan qat'i nazar moslaymiz — şunda qöşma
+  // amallar (payment_added, document_removed, poster_set, …) ham qamrab olinadi.
   const rows = await db
     .select({
       id: activityLog.id,
@@ -98,13 +98,13 @@ export async function getRecentChanges(limit = 40) {
   return rows;
 }
 
-// ---------- 3. Dev tools / system info ----------
+// ---------- 3. Dasturçi vositalari / tizim ma'lumoti ----------
 const SAFE_ENV = [
   "NODE_ENV", "APP_NAME", "APP_URL", "AUTH_URL", "PORT", "HOSTNAME",
   "AUTH_TRUST_HOST", "SMTP_HOST", "SMTP_PORT", "SMTP_SECURE", "SMTP_FROM",
   "UPLOAD_DIR", "MAX_UPLOAD_BYTES", "WORKER_APPROACHING_DAYS", "WORKER_STALE_DAYS",
 ];
-// Only ever surface a configured yes/no for these — NEVER their value.
+// Bular uçun faqat sozlangan/sozlanmagan (ha/yöq) holatini körsatamiz — qiymatini HEÇ QAÇON emas.
 const SECRET_ENV = ["DATABASE_URL", "AUTH_SECRET", "SMTP_USER", "SMTP_PASS", "TELEGRAM_BOT_TOKEN", "TELEGRAM_WEBHOOK_SECRET"];
 
 const BACKUP_DIR = process.env.BACKUP_DIR ?? "/opt/markaz-ijro/backup/dumps";

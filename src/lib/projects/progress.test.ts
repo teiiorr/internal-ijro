@@ -8,13 +8,13 @@ describe("stageProgress", () => {
 
   it("counts completed / total (unweighted)", () => {
     const s = (status: string) => ({ status });
-    // 1 of 4 completed → 25%
+    // 4 tadan 1 tasi tugallangan → 25%
     expect(stageProgress([s("completed"), s("active"), s("locked"), s("locked")])).toBe(25);
-    // 1 of 6 completed → 17% (rounded)
+    // 6 tadan 1 tasi tugallangan → 17% (yaxlitlangan)
     expect(stageProgress([s("completed"), s("active"), s("locked"), s("locked"), s("locked"), s("locked")])).toBe(17);
-    // all completed → 100%
+    // hammasi tugallangan → 100%
     expect(stageProgress([s("completed"), s("completed"), s("completed")])).toBe(100);
-    // none completed → 0%
+    // birortasi ham tugallanmagan → 0%
     expect(stageProgress([s("active"), s("locked")])).toBe(0);
   });
 });
@@ -94,7 +94,7 @@ describe("overallProgress", () => {
         { progress: 100, weight: 1 },
         { progress: 99, weight: 1 },
       ])
-    ).toBe(100); // round(199/2)=100, edge case worth documenting
+    ).toBe(100); // round(199/2)=100, hujjatlaştirişga arziydigan çegaraviy holat
   });
 });
 

@@ -45,7 +45,7 @@ export function ImageLightbox({
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col bg-black/90 backdrop-blur-md" onClick={onClose}>
-      {/* Top bar */}
+      {/* Yuqori panel */}
       <div className="flex items-center justify-between px-4 py-3 text-white/80" onClick={(e) => e.stopPropagation()}>
         <p className="min-w-0 truncate text-sm font-medium">{img.name}</p>
         <button onClick={onClose} className="grid size-10 shrink-0 place-items-center rounded-full hover:bg-white/10 transition-colors">
@@ -53,7 +53,7 @@ export function ImageLightbox({
         </button>
       </div>
 
-      {/* Image */}
+      {/* Rasm */}
       <div className="flex flex-1 items-center justify-center px-4 pb-4" onClick={(e) => e.stopPropagation()}>
         {hasPrev && (
           <button
@@ -78,7 +78,7 @@ export function ImageLightbox({
         )}
       </div>
 
-      {/* Counter */}
+      {/* Hisoblagiç */}
       <div className="pb-4 text-center text-xs text-white/50">
         {index + 1} / {images.length}
         {img.date && <span className="ml-2">{img.date}</span>}

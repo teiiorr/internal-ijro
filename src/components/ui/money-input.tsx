@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Input } from "@/components/ui/input";
 
-/** "6000000" → "6 000 000"; keeps a single decimal separator ("." or ","). */
+/** "6000000" → "6 000 000"; bitta kasr ajratgiçini ("." yoki ",") saqlaydi. */
 function format(raw: string): string {
   let s = String(raw).replace(/,/g, ".").replace(/[^\d.]/g, "");
   const dot = s.indexOf(".");
@@ -17,23 +17,24 @@ type Props = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "value" | "defaultValue" | "onChange" | "type"
 > & {
-  /** When set, a hidden input carries the raw (unspaced) numeric string for FormData. */
+  /** Berilganda, yaşirin input FormData uçun xom (probelsiz) raqam satrini olib yuradi. */
   name?: string;
   value?: string | number | null;
   defaultValue?: string | number | null;
-  /** Fires with the raw numeric string (no spaces), e.g. "6000000". */
+  /** Xom raqam satri (probelsiz) bilan işga tuşadi, masalan "6000000". */
   onValueChange?: (raw: string) => void;
 };
 
 /**
- * Amount input that renders the value with thousand separators as the user types
- * (6000000 → "6 000 000"). Submit either via a controlled `value`/`onValueChange`
- * pair or, in a plain form, via `name` (a hidden input holds the raw digits).
+ * Foydalanuvçi terayotganda qiymatni minglik ajratgiçlar bilan körsatadigan summa
+ * inputi (6000000 → "6 000 000"). Uni yo boşqariladigan `value`/`onValueChange`
+ * jufti orqali, yo oddiy formada `name` orqali yuboriladi (yaşirin input xom
+ * raqamlarni saqlaydi).
  */
 export function MoneyInput({ name, value, defaultValue, onValueChange, inputMode, ...props }: Props) {
   const [display, setDisplay] = React.useState(() => format(String(value ?? defaultValue ?? "")));
 
-  // Keep in sync when a controlled `value` changes from the outside.
+  // Boşqariladigan `value` taşqaridan özgarganda holatni sinxron saqlab turamiz.
   React.useEffect(() => {
     if (value === undefined || value === null) return;
     const f = format(String(value));

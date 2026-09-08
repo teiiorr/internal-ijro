@@ -8,7 +8,7 @@ import { isOwner } from "@/lib/permissions/owner";
 import { isManagedCapability } from "@/lib/permissions/grants";
 import { logActivity } from "@/lib/audit";
 
-/** Owner-only: grant or revoke a managed capability for a user. */
+/** Faqat egasi uçun: foydalanuvçiga boşqariladigan huquqni beradi yoki bekor qiladi. */
 export async function setUserPermission(userId: string, capability: string, enabled: boolean) {
   const me = await requireUser();
   if (!isOwner(me.email)) throw new Error("forbidden");

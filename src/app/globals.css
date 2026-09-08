@@ -1,19 +1,19 @@
 @import "tailwindcss";
-/* Make `dark:` utilities follow the .dark class (toggled by ThemeProvider),
-   not the OS media query. */
+/* `dark:` utilitalari OS media query'siga emas, .dark klassiga
+   ergaşsin (uni ThemeProvider almaştiradi). */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================================================================
-   SOLID GLASS — flat backgrounds, no gradients, clean light + dark modes
-   Glass utilities remain (translucent panels with backdrop-blur), but they
-   sit on a solid colored canvas instead of an animated aurora.
+   SOLID GLASS — tekis fonlar, gradientsiz, toza light va dark rejimlar.
+   Glass utilitalari saqlanadi (backdrop-blur bilan yarim şaffof panellar),
+   ammo endi animatsion aurora emas, bir xil rangli fon ustida turadi.
    ========================================================================= */
 :root {
-  /* Canvas — warm off-white, no gradient */
+  /* Fon — iliq oqiş tus, gradientsiz */
   --background:       #F4F5FA;
   --background-2:     #ECEEF5;
 
-  /* Glass surface tokens — solid-ish, still translucent for the frosted look */
+  /* Glass yuza tokenlari — deyarli yaxlit, ammo xira köriniş uçun hamon yarim şaffof */
   --glass-fill:        rgba(255, 255, 255, 0.70);
   --glass-fill-strong: rgba(255, 255, 255, 0.90);
   --glass-fill-soft:   rgba(255, 255, 255, 0.55);
@@ -25,24 +25,24 @@
   --glass-blur:        16px;
   --glass-saturate:    160%;
 
-  /* Solid opaque surfaces */
+  /* Yaxlit, şaffof bölmagan yuzalar */
   --surface:           #FFFFFF;
   --surface-2:         #F1F2F8;
   --surface-3:         #E5E7EF;
 
-  /* Text */
+  /* Matn */
   --foreground:        #0E1330;
   --muted:             #57607F;
   --muted-foreground:  #57607F;
   --subtle:            #8A92AE;
 
-  /* Lines */
+  /* Çiziqlar */
   --border:            rgba(14, 19, 48, 0.10);
   --border-strong:     rgba(14, 19, 48, 0.18);
   --input:             rgba(14, 19, 48, 0.16);
   --ring:              #6366F1;
 
-  /* Brand — indigo */
+  /* Brend — indigo */
   --primary:               #6366F1;
   --primary-hover:         #5054E5;
   --primary-foreground:    #FFFFFF;
@@ -50,14 +50,14 @@
   --primary-soft-strong:   rgba(99, 102, 241, 0.22);
   --primary-glow:          rgba(99, 102, 241, 0.35);
 
-  /* Accent — magenta */
+  /* Urğu rang — magenta */
   --accent:                #EC4899;
   --accent-hover:          #DB2777;
   --accent-foreground:     #FFFFFF;
   --accent-soft:           rgba(236, 72, 153, 0.14);
   --accent-glow:           rgba(236, 72, 153, 0.35);
 
-  /* Status */
+  /* Holat */
   --success:               #10B981;
   --success-soft:          rgba(16, 185, 129, 0.14);
   --warning:               #F59E0B;
@@ -75,7 +75,7 @@
   --popover:               var(--surface);
   --popover-foreground:    #0E1330;
 
-  /* Radii — chunky iOS */
+  /* Radiuslar — yirik, iOS uslubida */
   --radius-xs:  6px;
   --radius-sm:  10px;
   --radius:     14px;
@@ -84,7 +84,7 @@
   --radius-xl:  24px;
   --radius-2xl: 32px;
 
-  /* Shadows — restrained */
+  /* Soyalar — vazmin */
   --shadow-1: 0 1px 2px rgba(20, 25, 60, 0.05);
   --shadow-2: 0 4px 14px -4px rgba(20, 25, 60, 0.10), 0 2px 4px rgba(20, 25, 60, 0.04);
   --shadow-3: 0 18px 40px -10px rgba(20, 25, 60, 0.18), 0 4px 10px rgba(20, 25, 60, 0.06);
@@ -194,7 +194,7 @@
 }
 
 /* =========================================================================
-   BASE
+   ASOSIY
    ========================================================================= */
 html {
   font-size: 17px;
@@ -205,10 +205,11 @@ html {
 }
 .dark { color-scheme: dark; }
 
-/* Native <select> option lists: on Windows / Android the popup otherwise renders
-   with a white background while inheriting the light dark-theme text colour, so
-   the options become nearly invisible. Force a solid dark background + light text
-   (literal hex — native <option> ignores CSS variables on some platforms). */
+/* Native <select> röyxatlari: Windows / Android'da popup aks holda oq fonda
+   çiziladi, matn rangi esa dark-mavzudan oçiq bölib qoladi — natijada
+   variantlar deyarli körinmaydi. Şu bois qatʼiy töq fon + oçiq matn
+   beriladi (literal hex — baʼzi platformalarda native <option> CSS
+   özgaruvçilarini inobatga olmaydi). */
 .dark select { color-scheme: dark; }
 .dark select option,
 .dark select optgroup {
@@ -225,15 +226,16 @@ body {
   font-weight: 500;
   letter-spacing: -0.005em;
   min-height: 100vh;
-  /* Guarantee no horizontal scroll app-wide (§1). `clip` (not `hidden`) so it
-     never creates a scroll container that would break position: sticky. */
+  /* Butun ilova böylab gorizontal scroll bölmasligi kafolatlanadi (§1).
+     `hidden` emas, `clip` — çunki u position: sticky'ni buzadigan scroll
+     konteyner yaratib qöymaydi. */
   overflow-x: clip;
 }
 
 ::selection { background: var(--primary); color: var(--primary-foreground); }
 
 /* =========================================================================
-   TYPOGRAPHY
+   TIPOGRAFIYA
    ========================================================================= */
 @layer base {
   h1, h2, h3, h4, h5, h6 {
@@ -243,20 +245,20 @@ body {
     line-height: 1.2;
     color: var(--foreground);
   }
-  /* Page titles use the Unbounded display face (rounded geometric). */
+  /* Sahifa sarlavhalari Unbounded display şriftidan foydalanadi (yumaloq geometrik). */
   h1 { font-family: var(--font-display), var(--font-sans), sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
   h2 { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.022em; }
   h3 { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.018em; }
   h4 { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.012em; }
 }
 
-/* Opt-in Unbounded display face for any heading-like element. */
+/* Sarlavhaga öxşaş istalgan element uçun ixtiyoriy Unbounded display şrifti. */
 .font-display { font-family: var(--font-display), var(--font-sans), sans-serif; }
 
 .tabular { font-variant-numeric: tabular-nums; }
 .mono    { font-family: var(--font-mono); }
 
-/* .eyebrow removed — use plain Montserrat (Tailwind: text-xs font-medium text-[var(--muted)]) */
+/* .eyebrow olib taşlandi — oddiy Montserrat işlatiladi (Tailwind: text-xs font-medium text-[var(--muted)]) */
 
 .display-num {
   font-weight: 800;
@@ -265,12 +267,12 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* gradient-text deprecated — flat foreground colour everywhere now.
-   Class kept to avoid touching every call-site; emits no gradient. */
+/* gradient-text eskirgan — endi hamma joyda tekis foreground rang.
+   Har bir çaqiruv joyiga tegmaslik uçun klass qoldirilgan; gradient bermaydi. */
 .gradient-text { color: var(--foreground); }
 
-/* The Godfather honorific — engraved Cinzel caps in a gilded gold gradient,
-   evoking the film's title card. Latin-only, owner-greeting only. */
+/* "The Godfather" unvoni — oltin gradientdagi öyib yozilgan Cinzel bosh
+   harflari, filmning nom kartasini eslatadi. Faqat lotin, faqat egani kutib oliş uçun. */
 .godfather-title {
   font-family: var(--font-godfather), Georgia, "Times New Roman", serif;
   font-weight: 900;
@@ -285,7 +287,7 @@ body {
 }
 
 /* =========================================================================
-   FORM CONTROLS
+   FORMA ELEMENTLARI
    ========================================================================= */
 input, select, textarea, button {
   font-family: inherit;
@@ -315,7 +317,7 @@ input:not([type]), select, textarea {
 ::-webkit-scrollbar-thumb:hover { background: var(--subtle); background-clip: content-box; }
 
 /* =========================================================================
-   GLASS UTILITIES (still translucent — sit on flat canvas now)
+   GLASS UTILITALARI (hamon yarim şaffof — endi tekis fon ustida turadi)
    ========================================================================= */
 .glass {
   background: var(--glass-fill);
@@ -359,7 +361,7 @@ input:not([type]), select, textarea {
   box-shadow: var(--shadow-2);
 }
 
-/* Pulsing dot — live status */
+/* Pulslanuvçi nuqta — jonli holat */
 @keyframes pulse-soft {
   0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
   50%      { box-shadow: 0 0 0 6px transparent; }
@@ -369,13 +371,13 @@ input:not([type]), select, textarea {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 
-/* Ticker-tape marquee for overflowing labels (see components/ui/marquee.tsx).
-   Loops seamlessly by shifting exactly one copy + gap; constant speed via a
-   per-instance --marquee-duration. Disabled under reduced-motion. */
+/* Siğmagan yorliqlar uçun yuguruvçi satr (qarang: components/ui/marquee.tsx).
+   Aynan bitta nusxa + oraliqqa surib, uzluksiz aylanadi; tezlik har bir nusxa
+   uçun --marquee-duration orqali doimiy. reduced-motion'da öçirilgan. */
 @keyframes marquee-x {
   to { transform: translateX(calc(-1 * var(--marquee-shift, 100%))); }
 }
-/* Tanlov winner-reveal: confetti fall + card pop-in (see components/contests). */
+/* Tanlov ğolibini eʼlon qiliş: konfetti yoğişi + kartaning paydo bölişi (qarang: components/contests). */
 @keyframes contest-fall {
   0%   { transform: translateY(-12vh) rotate(0deg); opacity: 0; }
   10%  { opacity: 1; }
@@ -411,10 +413,10 @@ input:not([type]), select, textarea {
 }
 
 /* =========================================================================
-   RELAXING ANIMATIONS — smooth, buttery transitions everywhere
+   YENGIL ANIMATSIYALAR — hamma joyda silliq, ravon ötişlar
    ========================================================================= */
 
-/* --- Page content fade-in + rise --- */
+/* --- Sahifa kontenti ohista paydo bölib kötariladi --- */
 @keyframes page-enter {
   from { opacity: 0; transform: translateY(16px); filter: blur(4px); }
   to   { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -423,7 +425,7 @@ main, [role="main"] {
   animation: page-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Card hover lift (enhances .glass-card) --- */
+/* --- Karta hover'da kötariladi (.glass-card'ni kuçaytiradi) --- */
 .glass-card {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
@@ -439,7 +441,7 @@ main, [role="main"] {
   transition-duration: 0.1s;
 }
 
-/* --- Stagger children fade-in for lists & grids --- */
+/* --- Röyxat va gridlarda elementlar navbatma-navbat paydo bölişi --- */
 @keyframes item-enter {
   from { opacity: 0; transform: translateY(12px) scale(0.96); filter: blur(2px); }
   to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
@@ -461,7 +463,7 @@ main, [role="main"] {
 .stagger-children > *:nth-child(12) { animation-delay: 0.60s; }
 .stagger-children > *:nth-child(n+13) { animation-delay: 0.65s; }
 
-/* --- Progress bar fill animation --- */
+/* --- Progress bar tölişi animatsiyasi --- */
 @keyframes progress-fill {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
@@ -471,7 +473,7 @@ main, [role="main"] {
   animation: progress-fill 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Smooth number counter feel on stats --- */
+/* --- Statistikada silliq raqam sanagiç effekti --- */
 @keyframes count-pop {
   0%   { transform: scale(0.5); opacity: 0; filter: blur(4px); }
   60%  { transform: scale(1.06); filter: blur(0); }
@@ -481,7 +483,7 @@ main, [role="main"] {
   animation: count-pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Tab content crossfade --- */
+/* --- Tab kontentining silliq almaşuvi (crossfade) --- */
 @keyframes tab-fade-in {
   from { opacity: 0; transform: translateY(8px); filter: blur(2px); }
   to   { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -490,7 +492,7 @@ main, [role="main"] {
   animation: tab-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Sidebar link hover glow --- */
+/* --- Sidebar havolasi hover'da yorişadi --- */
 nav a {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -502,14 +504,14 @@ nav a:active {
   transition-duration: 0.08s;
 }
 
-/* --- Input focus glow ring --- */
+/* --- Input focus'da porlaydigan halqa --- */
 input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 3px var(--primary-glow);
   border-color: var(--primary) !important;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* --- Badge subtle entrance --- */
+/* --- Badge'ning ohista paydo bölişi --- */
 @keyframes badge-pop {
   from { transform: scale(0.7); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
@@ -518,7 +520,7 @@ input:focus, textarea:focus, select:focus {
   animation: badge-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* --- Floating breathing glow for active indicators --- */
+/* --- Aktiv indikatorlar uçun nafas oluvçi suzuvçi porlaş --- */
 @keyframes breathe {
   0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
   50%      { box-shadow: 0 0 12px 4px var(--primary-glow); }
@@ -527,7 +529,7 @@ input:focus, textarea:focus, select:focus {
   animation: breathe 3s ease-in-out infinite;
 }
 
-/* --- Smooth skeleton shimmer --- */
+/* --- Silliq skeleton yaltiraşi --- */
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -540,13 +542,13 @@ input:focus, textarea:focus, select:focus {
   border-radius: var(--radius-sm);
 }
 
-/* --- Toast slide-in --- */
+/* --- Toast siljib kiradi --- */
 @keyframes toast-enter {
   from { transform: translateX(100%) scale(0.9); opacity: 0; }
   to   { transform: translateX(0) scale(1); opacity: 1; }
 }
 
-/* --- Image reveal on gallery --- */
+/* --- Galereyada rasmning paydo bölişi --- */
 @keyframes img-reveal {
   from { opacity: 0; transform: scale(0.9); filter: blur(10px); }
   to   { opacity: 1; transform: scale(1); filter: blur(0); }
@@ -555,7 +557,7 @@ input:focus, textarea:focus, select:focus {
   animation: img-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Smooth hover scale for image thumbnails --- */
+/* --- Rasm eskizlari uçun silliq hover kattalaşuvi --- */
 .hover-scale {
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -565,7 +567,7 @@ input:focus, textarea:focus, select:focus {
   box-shadow: var(--shadow-2);
 }
 
-/* --- Status dot pulse variants (legacy, kept for compatibility) --- */
+/* --- Holat nuqtasi puls variantlari (eski, moslik uçun qoldirilgan) --- */
 @keyframes status-pulse-green {
   0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
   50%      { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
@@ -577,10 +579,10 @@ input:focus, textarea:focus, select:focus {
 .pulse-green { animation: status-pulse-green 2s ease-in-out infinite; }
 .pulse-amber { animation: status-pulse-amber 2s ease-in-out infinite; }
 
-/* --- Status "signal tag" (components/ui/status-tag.tsx) ---
-   Angular chamfered chip, vivid solid fill with white text (static, no
-   animation). --tone is a fixed, distinct status color; the dark text-shadow
-   keeps white legible even on the bright amber. --ch = corner chamfer size. */
+/* --- Holatning "signal tegi" (components/ui/status-tag.tsx) ---
+   Burçaklari qiyilgan chip, oq matnli yorqin yaxlit fon (statik,
+   animatsiyasiz). --tone — qatʼiy, öziga xos holat rangi; töq text-shadow oq
+   matnni hatto yorqin amber ustida ham öqişli saqlaydi. --ch = burçak qiyilişi ölçami. */
 .status-tag {
   border-radius: 0;
   color: #ffffff;
@@ -595,8 +597,8 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* =========================================================================
-   DETAIL GRID — bordered table-like cells everywhere (mobile + desktop).
-   Apply .detail-grid to any <dl>/<div> with <div> children containing labels + values.
+   DETAIL GRID — hamma joyda (mobil + desktop) çegarali, jadvalga öxşaş kataklar.
+   .detail-grid'ni yorliq + qiymatli <div> bolalari bor istalgan <dl>/<div>'ga qöllang.
    ========================================================================= */
 .detail-grid > div {
   border: 1px solid var(--border);
@@ -619,9 +621,9 @@ input:focus, textarea:focus, select:focus {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* A status chip is inline-flex; text-align:center doesn't reliably center it,
-   so flex-center any value cell that holds one (plain-text cells keep their
-   text-align + ellipsis behavior untouched). */
+/* Holat chip'i inline-flex; text-align:center uni işonçli markazlaştirmaydi,
+   şuning uçun uni saqlagan istalgan qiymat katagini flex bilan markazga oling
+   (oddiy matnli kataklar öz text-align + ellipsis xatti-harakatini saqlaydi). */
 .detail-grid > div > dd:has(.status-tag) {
   display: flex;
   justify-content: center;
@@ -635,7 +637,7 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--border-strong);
 }
 
-/* --- Smooth accordion expand --- */
+/* --- Silliq akkordeon oçilişi --- */
 @keyframes accordion-down {
   from { height: 0; opacity: 0; }
   to   { height: var(--radix-accordion-content-height); opacity: 1; }
@@ -646,10 +648,10 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* =========================================================================
-   ENHANCED MICRO-INTERACTIONS
+   KUÇAYTIRILGAN MIKRO-INTERAKSIYALAR
    ========================================================================= */
 
-/* --- Button press ripple overlay --- */
+/* --- Tugma bosilganda tölqin effekti (overlay) --- */
 button:not(:disabled),
 [role="button"]:not(:disabled) {
   position: relative;
@@ -671,14 +673,14 @@ button:not(:disabled):active::after,
   transition: opacity 0.05s ease;
 }
 
-/* --- Card tilt on hover (subtle 3D) --- */
+/* --- Karta hover'da qiyalaşadi (yengil 3D) --- */
 .glass-card, [class*="rounded-2xl"][class*="border"] {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.3s ease;
 }
 
-/* --- Checkbox / toggle spring pop --- */
+/* --- Checkbox / toggle prujinali sakraşi --- */
 @keyframes check-spring {
   0% { transform: scale(0); }
   50% { transform: scale(1.3); }
@@ -689,7 +691,7 @@ input[type="checkbox"]:checked {
   animation: check-spring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* --- Modal / dialog entrance: scale + blur --- */
+/* --- Modal / dialog paydo bölişi: kattalaşuv + blur --- */
 @keyframes modal-enter {
   from { opacity: 0; transform: scale(0.92) translateY(10px); filter: blur(8px); }
   to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
@@ -699,7 +701,7 @@ input[type="checkbox"]:checked {
   animation: modal-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Dropdown / popover slide vary by position --- */
+/* --- Dropdown / popover siljişi joylaşuviga qarab özgaradi --- */
 @keyframes dropdown-enter {
   from { opacity: 0; transform: translateY(-6px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
@@ -716,7 +718,7 @@ input[type="checkbox"]:checked {
   animation: dropdown-enter-top 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Tooltip float-in --- */
+/* --- Tooltip suzib kiradi --- */
 @keyframes tooltip-enter {
   from { opacity: 0; transform: scale(0.92); }
   to   { opacity: 1; transform: scale(1); }
@@ -725,7 +727,7 @@ input[type="checkbox"]:checked {
   animation: tooltip-enter 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* --- Status tag entrance with bounce --- */
+/* --- Holat tegining sakraş bilan paydo bölişi --- */
 @keyframes tag-bounce {
   0%   { transform: scale(0.5); opacity: 0; }
   60%  { transform: scale(1.08); }
@@ -736,13 +738,13 @@ input[type="checkbox"]:checked {
   animation: tag-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* --- Avatar hover ring pulse --- */
+/* --- Avatar hover'da halqa pulsi --- */
 .rounded-full[role="button"]:hover {
   box-shadow: 0 0 0 3px var(--primary-glow);
   transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Notification bell shake --- */
+/* --- Bildirişnoma qönğiroği silkinişi --- */
 @keyframes bell-shake {
   0%, 100% { transform: rotate(0); }
   15% { transform: rotate(12deg); }
@@ -755,7 +757,7 @@ input[type="checkbox"]:checked {
   animation: bell-shake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
-/* --- Scroll-triggered slide variants (applied via IntersectionObserver or stagger) --- */
+/* --- Scroll'da işga tuşadigan siljiş variantlari (IntersectionObserver yoki stagger orqali qöllanadi) --- */
 @keyframes slide-from-left {
   from { opacity: 0; transform: translateX(-24px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -772,7 +774,7 @@ input[type="checkbox"]:checked {
 .animate-slide-right { animation: slide-from-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .animate-scale-in    { animation: scale-in-center  0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-/* --- Row hover highlight for table/list rows --- */
+/* --- Jadval/röyxat qatorlari uçun hover'da ajratib körsatiş --- */
 tr, [class*="border-b"][class*="flex"] {
   transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -780,7 +782,7 @@ tbody tr:hover, [data-hoverable]:hover {
   background-color: var(--surface-2);
 }
 
-/* --- Floating action button pulse --- */
+/* --- Suzuvçi amal tugmasi (FAB) pulsi --- */
 @keyframes fab-pulse {
   0%, 100% { transform: scale(1); box-shadow: 0 4px 16px var(--primary-glow); }
   50%      { transform: scale(1.04); box-shadow: 0 8px 28px var(--primary-glow); }
@@ -789,7 +791,7 @@ tbody tr:hover, [data-hoverable]:hover {
   animation: fab-pulse 2.5s ease-in-out infinite;
 }
 
-/* --- Send button launch effect --- */
+/* --- Yuboriş tugmasining "uçiriş" effekti --- */
 @keyframes send-launch {
   0%   { transform: scale(1) rotate(0); }
   30%  { transform: scale(0.85) rotate(-5deg); }
@@ -800,17 +802,17 @@ tbody tr:hover, [data-hoverable]:hover {
   animation: send-launch 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* --- Tab indicator sliding underline --- */
+/* --- Tab indikatorining siljuvçi tag çiziği --- */
 [role="tablist"] [data-state="active"] {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Smooth scroll behavior --- */
+/* --- Silliq scroll xatti-harakati --- */
 html {
   scroll-behavior: smooth;
 }
 
-/* --- Respect prefers-reduced-motion for ALL custom animations --- */
+/* --- BARCHA maxsus animatsiyalar uçun prefers-reduced-motion'ga rioya qilinadi --- */
 @media (prefers-reduced-motion: reduce) {
   main, [role="main"] { animation: none; }
   .glass-card { transition: none; }
@@ -841,10 +843,11 @@ html {
 }
 
 /* =========================================================================
-   UNIVERSAL prefers-reduced-motion reset — catch-all so EVERY animation and
-   transition (including component-level ones like the employee picker) is
-   neutralised for users who ask for reduced motion. This supersedes the
-   per-class list above and guarantees §16 compliance app-wide.
+   UNIVERSAL prefers-reduced-motion reset — barchasini qamrab oluvchi qoida:
+   harakatni kamaytirişni söragan foydalanuvçilar uçun HAR bir animatsiya va
+   ötiş (jumladan employee picker kabi komponent darajasidagilar ham)
+   neytrallanadi. Bu yuqoridagi klassma-klass röyxatdan ustun turadi va butun
+   ilova böylab §16 talabiga rioya qilişni kafolatlaydi.
    ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
   *,

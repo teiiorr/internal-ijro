@@ -16,11 +16,11 @@ const linkSchema = z.object({
   folder: z.string().trim().max(120).nullable().optional(),
 });
 
-/** Add an external link as a normative "document" (no file on disk). */
+/** Taşqi havolani meyoriy "hujjat" sifatida qöşadi (diskda fayl saqlanmaydi). */
 export async function addNormativeLink(input: z.infer<typeof linkSchema>) {
   const me = await requirePosition([...MANAGERS]);
   const parsed = linkSchema.parse(input);
-  // Only http/https links.
+  // Faqat http/https havolalari.
   if (!/^https?:\/\//i.test(parsed.url)) throw new Error("bad_url");
   await db.insert(normativeDocuments).values({
     folder: parsed.folder?.trim() || null,
@@ -37,7 +37,7 @@ export async function removeNormativeDocument(id: string) {
   const me = await requirePosition([...MANAGERS]);
   const [doc] = await db.select().from(normativeDocuments).where(eq(normativeDocuments.id, id)).limit(1);
   if (!doc) return;
-  // Links have no file on disk — only delete real uploads.
+  // Havolalarning diskda fayli yöq — faqat haqiqiy yuklamalarni öçiramiz.
   if (!doc.isLink) await deleteFileByUrl(doc.fileUrl);
   await db.delete(normativeDocuments).where(eq(normativeDocuments.id, id));
   await logActivity({ userId: me.id, action: "normative.document_removed", entityType: "normative_document", entityId: id });

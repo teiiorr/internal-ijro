@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { submitStageWork } from "@/server/actions/stages";
 
 /**
- * Studio's deliberate "hand this stage to BKRM" action — separate from adding
- * files. Becomes a disabled "under review" confirmation once submitted, and a
- * "resubmit" after changes were requested.
+ * Studiyaning "bu bosqiçni BKRM'ga topşiriş" böyiça ataylab bosiladigan amali —
+ * fayl qöşişdan alohida. Topşirilgaç, öçirilgan "körikda" tasdiğiga aylanadi,
+ * özgartiriş söralgandan keyin esa "qayta topşiriş"ga aylanadi.
  */
 export function StageSubmitButton({
   stageId,

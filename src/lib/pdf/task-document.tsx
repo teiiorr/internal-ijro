@@ -235,20 +235,20 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
   const doc = (
     <Document>
       <Page size="A4" style={s.page}>
-        {/* Organization header */}
+        {/* Tashkilot sarlavhasi */}
         <View style={s.header}>
           <Text style={s.orgName}>Bolalar Kontentini Rivojlantirish Markazi</Text>
           <Text style={s.orgSub}>Ichki Ijro Tizimi</Text>
         </View>
         <View style={s.divider} />
 
-        {/* Document title */}
+        {/* Hujjat sarlavhasi */}
         <Text style={s.title}>Topshiriq</Text>
         {task.registrationNumber && (
           <Text style={s.regNum}>No {task.registrationNumber}</Text>
         )}
 
-        {/* Info fields */}
+        {/* Maölumot maydonlari */}
         <View style={s.infoTable}>
           <View style={s.infoRow}>
             <Text style={s.infoLabel}>Topshiriq bergan:</Text>
@@ -276,14 +276,14 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
           </View>
         </View>
 
-        {/* Task content */}
+        {/* Topshiriq mazmuni */}
         <Text style={s.sectionTitle}>Topshiriq mazmuni</Text>
         <Text style={[s.body, { fontWeight: 700, marginBottom: 4 }]}>{task.title}</Text>
         {task.description && (
           <Text style={s.body}>{task.description}</Text>
         )}
 
-        {/* Assignees */}
+        {/* Ijroçilar */}
         <Text style={s.sectionTitle}>Ijrochilar</Text>
         <View style={s.tableHeader}>
           <View style={s.numCol}>
@@ -321,7 +321,7 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
           </View>
         ))}
 
-        {/* Footer with stamp */}
+        {/* Muhrli pastki qism */}
         <View style={s.footer} fixed>
           <View>
             <Text style={s.footerText}>{task.registrationNumber ?? ""}</Text>

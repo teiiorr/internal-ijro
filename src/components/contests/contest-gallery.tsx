@@ -22,9 +22,9 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
 
   const go = useCallback((dir: number) => setActive((i) => (count ? (i + dir + count) % count : 0)), [count]);
 
-  // Auto-advance every 5s (paused on hover / when only one photo). Depending on
-  // `active` re-arms the timer after each slide — so manual prev/next/dot taps
-  // also reset the 5s window (matters on touch, where there's no hover-pause).
+  // Har 5 soniyada avtomatik almaşadi (hover'da yoki faqat bitta rasm bölsa töxtaydi).
+  // `active`'ga boğliq — taymer har slaydan keyin qayta işga tuşadi, şuning uçun qöl bilan
+  // prev/next/nuqta bosişlari ham 5 soniyalik oynani nolga qaytaradi (touch'da muhim, hover-pauza yöq).
   useEffect(() => {
     if (paused || count <= 1) return;
     const id = window.setTimeout(() => setActive((i) => (i + 1) % count), AUTOPLAY_MS);
@@ -40,7 +40,7 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
     setUploading(true);
     try {
       let f = file;
-      try { const r = await compressImage(file); f = r.file; } catch { /* original */ }
+      try { const r = await compressImage(file); f = r.file; } catch { /* asl fayl */ }
       const qs = new URLSearchParams({ contestId, name: f.name });
       const res = await fetch(`/api/files/contest-photos?${qs.toString()}`, {
         method: "POST",

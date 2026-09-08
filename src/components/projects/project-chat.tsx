@@ -67,8 +67,8 @@ function shouldShowSeparator(current: Date | string, prev: Date | string | null)
 
 type Staged = { file: File; preview?: string };
 
-// A single message row: renders the bubble and handles swipe-to-reply +
-// long-press / right-click → action menu.
+// Bitta xabar qatori: pufakçani çizadi hamda surib javob berish +
+// uzoq bosish / öng tugma bosish → amallar menyusini boşqaradi.
 function MessageRow({
   m,
   mine,
@@ -107,7 +107,7 @@ function MessageRow({
     const ddx = e.touches[0].clientX - startX.current;
     const ddy = e.touches[0].clientY - startY.current;
     if (!swiping.current && Math.abs(ddx) > 8 && Math.abs(ddx) > Math.abs(ddy)) { swiping.current = true; clearLp(); }
-    if (swiping.current) setDx(Math.max(-88, Math.min(0, ddx))); // drag left to reply
+    if (swiping.current) setDx(Math.max(-88, Math.min(0, ddx))); // javob berish uçun çapga suring
   }
   function onTouchEnd() {
     clearLp();
@@ -117,7 +117,7 @@ function MessageRow({
 
   return (
     <div id={`m-${m.id}`} className={`relative ${sameUser ? "mt-0.5" : "mt-3"}`}>
-      {/* reply hint revealed while swiping */}
+      {/* surish paytida namoyon böladigan javob belgisi */}
       {dx < -8 && (
         <span className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-[var(--primary-soft)] text-[var(--primary)]" style={{ opacity: Math.min(1, -dx / 56) }}>
           <Reply className="size-4" />
@@ -148,7 +148,7 @@ function MessageRow({
               (isOptimistic ? " opacity-70" : "")
             }
           >
-            {/* quoted reply */}
+            {/* iqtibos keltirilgan javob */}
             {m.replyToId && (m.replyToContent != null) && (
               <button
                 type="button"
@@ -239,7 +239,7 @@ export function ProjectChat({
     e.target.value = "";
     let finalFile = file;
     if (file.type.startsWith("image/")) {
-      try { const r = await compressImage(file); finalFile = r.file; } catch { /* keep original */ }
+      try { const r = await compressImage(file); finalFile = r.file; } catch { /* aslini qoldiramiz */ }
     }
     if (finalFile.size > maxBytes) { toast.error(t("projects.chat.fileTooLarge")); return; }
     const preview = finalFile.type.startsWith("image/") ? URL.createObjectURL(finalFile) : undefined;
@@ -259,7 +259,7 @@ export function ProjectChat({
   function cancelCompose() { setReplyTo(null); setEditing(null); setText(""); }
 
   const send = useCallback(async () => {
-    // Edit mode
+    // Tahrirlash rejimi
     if (editing) {
       const val = text.trim();
       if (!val) return;
@@ -326,7 +326,7 @@ export function ProjectChat({
   }
   async function doCopy(m: Msg) {
     setMenuFor(null);
-    try { await navigator.clipboard.writeText(m.content); toast.success(t("projects.chat.copied")); } catch { /* ignore */ }
+    try { await navigator.clipboard.writeText(m.content); toast.success(t("projects.chat.copied")); } catch { /* e'tiborsiz qoldiramiz */ }
   }
 
   const composing = replyTo || editing;
@@ -370,7 +370,7 @@ export function ProjectChat({
         <div ref={endRef} />
       </div>
 
-      {/* Staged file preview */}
+      {/* Yuklaşga tayyorlangan faylni oldindan köriş */}
       {staged && (
         <div className="mx-2 mb-1 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 sm:mx-4">
           {staged.preview ? (
@@ -386,7 +386,7 @@ export function ProjectChat({
         </div>
       )}
 
-      {/* Reply / edit context bar */}
+      {/* Javob / tahrirlash konteksti paneli */}
       {composing && (
         <div className="mx-2 mb-1 flex items-center gap-2 rounded-xl border-l-2 border-[var(--primary)] bg-[var(--card)] px-3 py-2 sm:mx-4">
           {editing ? <Pencil className="size-4 shrink-0 text-[var(--primary)]" /> : <Reply className="size-4 shrink-0 text-[var(--primary)]" />}
@@ -398,7 +398,7 @@ export function ProjectChat({
         </div>
       )}
 
-      {/* Input area */}
+      {/* Kiritiş maydoni */}
       <div className={`border-t border-[var(--border)] px-2 py-2 sm:px-3 sm:py-2.5 ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--card)]"}`}>
         <div className="flex items-end gap-1 sm:gap-2">
           <input ref={fileRef} type="file" className="hidden" onChange={onFileSelect} />
@@ -423,7 +423,7 @@ export function ProjectChat({
         </div>
       </div>
 
-      {/* Message action menu (bottom sheet) */}
+      {/* Xabar amallari menyusi (pastki panel) */}
       {menuFor && (
         <>
           <div className="fixed inset-0 z-[60] bg-black/40" onClick={() => setMenuFor(null)} aria-hidden />

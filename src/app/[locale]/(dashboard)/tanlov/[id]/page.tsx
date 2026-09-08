@@ -29,7 +29,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto max-w-5xl stagger-children">
-      {/* Toolbar: navigation + owner actions on their own row. */}
+      {/* Asboblar paneli: navigatsiya + owner amallari alohida qatorda. */}
       <div className="flex items-center justify-between gap-2">
         <BackButton fallbackHref="/tanlov" />
         {canManage && (
@@ -40,7 +40,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
         )}
       </div>
 
-      {/* Masthead — the contest title leads. */}
+      {/* Sarlavha qismi — tanlov nomi asosiy örinda. */}
       <header className="mt-5">
         <h1 className="text-2xl font-bold leading-tight tracking-tight break-words sm:text-3xl md:text-4xl">{c.name}</h1>
         <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-[var(--muted)]">
@@ -49,17 +49,17 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
         </div>
       </header>
 
-      {/* Hero gallery — the visual anchor. */}
+      {/* Bosh galereya — vizual markaz. */}
       <div className="mt-6">
         <ContestGallery contestId={c.id} photos={c.photos} canManage={canManage} />
       </div>
 
-      {/* Official result. */}
+      {/* Rasmiy natija. */}
       <div className="mt-6">
         <ContestReveal contestId={c.id} winnerName={winner} logoUrl={c.winnerLogoUrl} canManage={canManage} />
       </div>
 
-      {/* Description as readable prose. */}
+      {/* Tavsif — öqişga qulay matn körinişida. */}
       {c.description && (
         <section className="mt-8">
           <h2 className="text-base font-semibold">{t("tanlov.about")}</h2>
@@ -67,7 +67,7 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
         </section>
       )}
 
-      {/* Discussion + documents. */}
+      {/* Muhokama + hujjatlar. */}
       <div className="mt-8 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
         <Card><CardContent className="p-5 sm:p-6"><ContestComments contestId={c.id} comments={c.comments} canModerate={canManage} /></CardContent></Card>
         <Card><CardContent className="p-5 sm:p-6"><ContestFiles contestId={c.id} files={c.files} canManage={canManage} /></CardContent></Card>

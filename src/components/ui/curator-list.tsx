@@ -12,9 +12,9 @@ export type CuratorItem = {
 };
 
 /**
- * Renders one or several curators as a consistent list of EmployeeIdentity
- * rows, collapsing to "+N" beyond `max`. Ready for multiple curators; today
- * it's usually fed a single-item array.
+ * Bir yoki bir neçta kuratorni EmployeeIdentity qatorlaridan iborat izçil
+ * röyxat körinişida körsatadi, `max` dan oşganlarini "+N" ga jamlaydi. Bir
+ * neçta kuratorga tayyor; hozircha odatda unga bitta elementli massiv beriladi.
  */
 export function CuratorList({
   curators,

@@ -61,7 +61,7 @@ export function SmetaArchive() {
         return { ...m, items };
       })
       .filter((m) => m.items.length > 0)
-      .sort((a, b) => b.no - a.no); // newest meeting first
+      .sort((a, b) => b.no - a.no); // eng yangi majlis birinchi
   }, [term, kind]);
 
   const totalShown = groups.reduce((n, m) => n + m.items.length, 0);
@@ -73,7 +73,7 @@ export function SmetaArchive() {
 
   return (
     <div className="space-y-5">
-      {/* Summary */}
+      {/* Umumiy ma'lumot */}
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-5 sm:p-6">
         <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{t("kengash.archive.title")}</h1>
         {data.period && <p className="mt-1 text-sm text-[var(--muted)]">{data.period}</p>}
@@ -83,7 +83,7 @@ export function SmetaArchive() {
         </div>
       </div>
 
-      {/* Controls */}
+      {/* Boşqaruv elementlari */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
@@ -119,7 +119,7 @@ export function SmetaArchive() {
         <p className="text-xs text-[var(--muted)]">{t("kengash.archive.found", { n: totalShown })}</p>
       )}
 
-      {/* Meetings */}
+      {/* Majlislar */}
       <div className="space-y-2.5">
         {groups.length === 0 && (
           <p className="py-10 text-center text-sm text-[var(--muted)]">{t("common.noResults")}</p>

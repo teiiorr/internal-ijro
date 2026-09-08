@@ -9,8 +9,8 @@ import { logActivity } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
-// Same set as the stage management actions — every staff position except the
-// isolated contractor portal. Kept in sync with MANAGERS in server/actions/stages.ts.
+// Bosqichni boşqarish amallaridagi bilan bir xil töplam — ajratilgan kontragent
+// portalidan boşqa barcha xodim lavozimlari. server/actions/stages.ts dagi MANAGERS bilan mos saqlanadi.
 const ALLOWED_POSITIONS = new Set([
   "direktor",
   "orinbosar",
@@ -22,17 +22,17 @@ const ALLOWED_POSITIONS = new Set([
   "hr",
 ]);
 
-/** Trim, collapse whitespace, cap length; empty → null. Mirrors the stage action helper. */
+/** Boşliqlarni yiğib/kesib, uzunlikni çeklaydi; böş → null. Bosqich amalidagi yordamçini takrorlaydi. */
 function normalizeCategory(raw: string | null): string | null {
   if (!raw) return null;
   const v = raw.replace(/\s+/g, " ").trim().slice(0, 120);
   return v.length > 0 ? v : null;
 }
 
-/** Reject cross-site POSTs (defence-in-depth on top of the SameSite=Lax session cookie). */
+/** Saytlararo POST sörovlarni rad etadi (SameSite=Lax sessiya cookie'si ustidan qöşimça himoya). */
 function sameOrigin(req: NextRequest): boolean {
   const origin = req.headers.get("origin");
-  if (!origin) return true; // same-origin fetches may omit Origin; the Lax cookie already guards us
+  if (!origin) return true; // bir xil manbali sörovlar Origin ni yubormasligi mumkin; Lax cookie allaqaçon himoyalaydi
   try {
     return new URL(origin).host === req.headers.get("host");
   } catch {
@@ -41,13 +41,13 @@ function sameOrigin(req: NextRequest): boolean {
 }
 
 /**
- * Streaming upload endpoint for stage documents.
+ * Bosqich hujjatlari uçun oqimli yuklash endpointi.
  *
- * The file is sent as the raw request body (client: `fetch(url, { body: file })`),
- * with stageId / name / category in the query string. The body streams straight
- * to disk — it is never buffered whole in memory — so a 100MB upload is safe even
- * on the 2GB production box shared with Postgres. Contrast with a Server Action,
- * which buffers the entire body in RAM before our code runs.
+ * Fayl xom sörov tanasi sifatida yuboriladi (mijoz: `fetch(url, { body: file })`),
+ * stageId / name / category esa sörov satrida keladi. Tana tögridan-tögri diskka
+ * oqadi — hech qaçon xotirada töliq buferlanmaydi — şuning uçun 100MB lik yuklash
+ * Postgres bilan bölişilgan 2GB li production serverda ham xavfsiz. Server Action
+ * esa butun tanani bizning kod işga tuşmasidan oldin RAM ga buferlaydi.
  */
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -87,9 +87,9 @@ export async function POST(req: NextRequest) {
   await db.insert(stageDocuments).values({
     stageId,
     fileUrl: stored.url,
-    fileName: stored.originalName.slice(0, 255), // column is varchar(255)
+    fileName: stored.originalName.slice(0, 255), // ustun varchar(255)
     fileSize: stored.size,
-    fileMimeType: stored.mimeType.slice(0, 120), // column is varchar(120)
+    fileMimeType: stored.mimeType.slice(0, 120), // ustun varchar(120)
     category,
     uploadedByUserId: session.user.id,
   });

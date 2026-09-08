@@ -26,22 +26,22 @@ export function formatDateTime(d: Date | string, locale = "uz-latn") {
   return `${formatDate(d, locale)}, ${hh}:${mm}`;
 }
 
-/** True when the timestamp carries a meaningful (non-midnight Tashkent) time. */
+/** Timestamp mazmunli (Toşkent yarim tunidan farqli) vaqtni saqlasa, true qaytaradi. */
 export function hasTime(d: Date | string): boolean {
   const x = toTashkent(new Date(d));
   return x.getUTCHours() !== 0 || x.getUTCMinutes() !== 0;
 }
 
 /**
- * Show the date; append the time only when one was actually set.
- * Lets date-only entries (stored at Tashkent midnight) render clean.
+ * Sanani körsatadi; vaqtni faqat u haqiqatan belgilangan bölsagina qöşadi.
+ * Şu tariqa faqat sanadan iborat yozuvlar (Toşkent yarim tunida saqlangan) toza körinadi.
  */
 export function formatDateMaybeTime(d: Date | string, locale = "uz-latn") {
   return hasTime(d) ? formatDateTime(d, locale) : formatDate(d, locale);
 }
 
-/** Compact Telegram-style timestamp for chat/list rows: HH:mm today,
- *  "Yesterday" localized, else a short "D-mon" date. */
+/** Chat/röyxat qatorlari uçun ixçam, Telegram uslubidagi vaqt belgisi: bugun HH:mm,
+ *  tarjima qilingan "Kecha", aks holda qisqa "D-oy" sanasi. */
 export function formatChatTime(d: Date | string, locale = "uz-latn") {
   const x = toTashkent(new Date(d));
   const now = toTashkent(new Date());

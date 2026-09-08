@@ -20,7 +20,7 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 
 const money = (n: number) => `${Math.round(n).toLocaleString("ru-RU")} UZS`;
 
-// Traffic-light hexes (recharts fills don't take CSS vars) kept in sync with the theme.
+// Svetofor hex ranglari (recharts fill CSS özgaruvçilarini qabul qilmaydi) — mavzu bilan sinxron saqlanadi.
 const STATUS_HEX: Record<DerivedStatus, string> = {
   in_progress: "#6366F1",
   completed: "#10B981",
@@ -65,16 +65,16 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
     color: STATUS_HEX[k],
   }));
 
-  // Pending = remaining balance = planned − paid (never below zero).
+  // Pending = qolgan balans = rejalaştirilgan − tölangan (heç qaçon noldan past emas).
   const payRemaining = Math.max(0, pay.planned - pay.paid);
-  // payments bar geometry (paid green + remaining amber over the planned reference)
+  // tölovlar paneli geometriyasi (tölangan — yaşil + qolgan — sariq, rejalaştirilgan qiymatga nisbatan)
   const payBase = Math.max(pay.planned, pay.paid, 1);
   const paidPct = (pay.paid / payBase) * 100;
   const pendingPct = (payRemaining / payBase) * 100;
 
   return (
     <div className="space-y-6">
-      {/* Clickable KPI hero row */}
+      {/* Bosiladigan KPI asosiy qatori */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {kpis.map((k) => {
           const tone = KPI_TONE[k.tone];
@@ -99,7 +99,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
         })}
       </div>
 
-      {/* Projects analytics: status donut + type bar */}
+      {/* Loyihalar tahlili: holat donut + tur bar */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex-row items-center gap-3 pb-4">
@@ -132,7 +132,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
         </Card>
       </div>
 
-      {/* Stage deadline board — the actionable heart of the dashboard */}
+      {/* Bosqiç muddatlari taxtasi — dashboardning amaliy markazi */}
       <Card id="stage-board" className="scroll-mt-24">
         <CardHeader className="flex-row items-center gap-3 pb-4">
           <div className="grid size-10 place-items-center rounded-xl bg-[var(--warning-soft)]">
@@ -168,7 +168,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
         </CardContent>
       </Card>
 
-      {/* Payments overview — restricted (director, Finance dept, dept heads) */}
+      {/* Tölovlar şarhi — çeklangan (direktor, Moliya bölimi, bölim boşliqlari) */}
       {showPayments && (
       <Card>
         <CardHeader className="flex-row items-center gap-3 pb-4">
@@ -181,7 +181,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* stacked label→value rows on mobile (long sums never overlap); 3 columns from sm up */}
+          {/* mobilda label→qiymat qatorlari ustma-ust (uzun summalar heç qaçon bir-birining ustiga tuşmaydi); sm dan yuqorida 3 ustun */}
           <div className="space-y-2.5 sm:grid sm:grid-cols-3 sm:gap-3 sm:space-y-0">
             <div className="flex items-baseline justify-between gap-3 sm:block">
               <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.planned")}</p>
@@ -204,7 +204,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
       </Card>
       )}
 
-      {/* Row: Top performers + Most overdue (people) */}
+      {/* Qator: Eng faol xodimlar + Eng köp keçiktirganlar (odamlar) */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex-row items-center gap-3 pb-4">
@@ -277,7 +277,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
         </Card>
       </div>
 
-      {/* Department workload — stacked bar */}
+      {/* Bölimlar yuklamasi — stacked bar */}
       <Card>
         <CardHeader className="flex-row items-center gap-3 pb-4">
           <div className="grid size-10 place-items-center rounded-xl bg-[var(--primary-soft)]">

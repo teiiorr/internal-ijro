@@ -1,5 +1,6 @@
 /**
- * Product footer credit. Kept minimal and unobtrusive per the design system.
+ * Mahsulot footeridagi mualliflik yozuvi. Dizayn tizimiga mos ravişda sodda va
+ * közga taşlanmaydigan qilib saqlangan.
  */
 export function AppFooter() {
   return (

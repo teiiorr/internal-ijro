@@ -6,11 +6,12 @@ import { sendTelegram } from "../telegram";
 const { notifications, notificationSettings, users } = schema;
 
 /**
- * Server-only-free notification delivery core.
+ * `server-only` ga boğliq bölmagan bildirişnoma yetkazib beriş yadrosi.
  *
- * Kept import-clean (no `server-only`, no `@/` DB singleton) so it can run both
- * inside Next server actions AND in the standalone `scripts/worker.ts` cron.
- * The caller supplies the drizzle instance and (optionally) an email sender.
+ * Importlari toza saqlangan (`server-only` ham, `@/` DB singletoni ham yöq),
+ * şuning uçun ham Next server action'lari içida, ham alohida `scripts/worker.ts`
+ * cron'ida işlay oladi. Çaqiruvçi drizzle nusxasini va (ixtiyoriy) email
+ * yuboruvçini uzatadi.
  */
 export type DeliverArgs = {
   userIds: string[];
@@ -44,7 +45,7 @@ export async function deliverNotification(
     .where(inArray(notificationSettings.userId, uniq));
   const map = new Map(settings.map((s) => [s.userId, s]));
 
-  // 1) In-app (default on when the user has no settings row)
+  // 1) Ilova içida (foydalanuvçining sozlama qatori bölmasa, sukut böyiça yoqilgan)
   const toInsert = uniq
     .filter((uid) => {
       const s = map.get(uid);
@@ -61,7 +62,7 @@ export async function deliverNotification(
     }));
   if (toInsert.length > 0) await db.insert(notifications).values(toInsert);
 
-  // 2) Email (opt-in) — only when a mailer is provided
+  // 2) Email (ixtiyoriy yoqiladi) — faqat mailer berilgan bölsa
   if (mailer) {
     const emailUserIds = uniq.filter((id) => map.get(id)?.email === true);
     if (emailUserIds.length > 0) {
@@ -84,7 +85,7 @@ export async function deliverNotification(
     }
   }
 
-  // 3) Telegram (opt-in + linked chat) — dormant until a bot token + chat id exist
+  // 3) Telegram (ixtiyoriy yoqiladi + ulangan çat) — bot tokeni va chat id paydo bölguncha uxlab turadi
   const tgTargets = uniq
     .map((id) => map.get(id))
     .filter((s): s is NonNullable<typeof s> => !!s && s.telegram === true && !!s.telegramChatId);

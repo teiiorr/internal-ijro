@@ -26,7 +26,7 @@ export default async function ContractorChatPage({ params }: { params: Promise<{
   const messages = await getStageMessages(id, null);
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
-  // Group members: our-side curator(s) + the studio.
+  // Guruh a'zolari: biz tomondagi kurator(lar) + studiya.
   const members = [
     ...data.curators.map((c) => ({ id: c.id, name: c.fullName, role: t("conversation.curator"), avatarUrl: c.avatarUrl })),
     ...(data.company ? [{ id: "studio", name: data.company.name, role: t("conversation.studio"), avatarUrl: data.company.logoUrl ?? null }] : []),

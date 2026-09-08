@@ -25,17 +25,17 @@ export interface StatCardProps {
   hint?: string;
   icon?: React.ReactNode;
   tone?: Tone;
-  /** Makes the whole tile a link (clickable KPI). */
+  /** Butun kartani havolaga aylantiradi (bosiladigan KPI). */
   href?: string;
-  /** Extra emphasis: tint the whole tile in the tone. */
+  /** Qöşimça urğu: butun kartani tanlangan tusga böyaydi. */
   filled?: boolean;
   className?: string;
 }
 
 /**
- * Big KPI tile — the "large clear display" building block. A prominent number
- * with a label, optional icon, tone color and click target. Used across the
- * studios dashboards, studio hub and project facts.
+ * Katta KPI kartasi — "yirik, aniq körinadigan taxta" quriliş bloki. Yorliq,
+ * ixtiyoriy ikonka, tus rangi va bosiş nişoni bilan birga körsatiladigan yirik
+ * raqam. Studiya daşboardlarida, studiya markazida va loyiha ma'lumotlarida işlatiladi.
  */
 export function StatCard({ label, value, hint, icon, tone = "default", href, filled, className }: StatCardProps) {
   const inner = (

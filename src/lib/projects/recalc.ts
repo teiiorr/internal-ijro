@@ -5,10 +5,11 @@ import { projects, projectStages, milestones } from "@/lib/db/schema";
 import { overallProgress, stageProgress } from "./progress";
 
 /**
- * Recompute and persist a project's progress percentage.
- * Branches by model so the two never mix: typed projects (with project_stages)
- * use completed/total; legacy projects use the weighted milestone average.
- * Kept out of any "use server" module so it is never callable as a client action.
+ * Loyihaning bajariliş foizini qayta hisoblaydi va saqlaydi.
+ * Model türiga qarab ajraladi, şuning uçun ikkalasi hech qaçon aralaşmaydi:
+ * turlangan loyihalar (project_stages bilan) tugallangan/jami nisbatini işlatadi;
+ * eski loyihalar esa milestone'larning vaznli örtaçasini işlatadi.
+ * Hech qanday "use server" modulida saqlanmaydi, şuning uçun uni hech qaçon client action sifatida çaqirib bölmaydi.
  */
 export async function recalcProjectProgress(projectId: string): Promise<number> {
   const stages = await db

@@ -21,9 +21,9 @@ type Msg = {
 export type Member = { id: string; name: string; role: string; avatarUrl: string | null };
 
 /**
- * Full-screen, Telegram-style GROUP conversation: the project is the group, its
- * BKRM curator(s) + the studio are the members. Covers the whole viewport with
- * one glass header; tapping the header reveals the members list.
+ * Töliq ekranli, Telegram uslubidagi GURUH suhbati: loyihaning özi guruh bölib,
+ * uning BKRM kurator(lar)i + studiya esa aʼzolar hisoblanadi. Butun ekranni bitta
+ * şişa header bilan qoplaydi; header bosilganda aʼzolar röyxati ochiladi.
  */
 export function ConversationScreen({
   title,
@@ -55,8 +55,8 @@ export function ConversationScreen({
   const t = useTranslations();
   const [membersOpen, setMembersOpen] = useState(false);
 
-  // Opening the group marks its incoming messages read (clears the unread badge
-  // on the chats list + nav once you navigate back).
+  // Guruh ochilganda kelgan xabarlar öqilgan deb belgilanadi (orqaga qaytganingizda
+  // suhbatlar röyxati va navigatsiyadagi öqilmagan belgisini tozalaydi).
   useEffect(() => {
     markProjectRead(projectId).catch(() => {});
   }, [projectId]);
@@ -66,7 +66,7 @@ export function ConversationScreen({
       <header className="glass-bar relative z-10 shrink-0 pt-[max(0.5rem,env(safe-area-inset-top))]">
         <div className="flex items-center gap-2 px-2 pb-2 sm:px-3">
           <BackButton fallbackHref={backHref} className="shrink-0" />
-          {/* Tap the group identity → members list (Telegram group-info pattern). */}
+          {/* Guruh nomiga bosilsa → aʼzolar röyxati (Telegram'dagi guruh maʼlumoti uslubi). */}
           <button type="button" onClick={() => setMembersOpen((v) => !v)} className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl py-1 pl-1 pr-2 text-left transition-colors active:bg-[var(--glass-fill)]">
             <div className="relative size-9 shrink-0 overflow-hidden rounded-full bg-[var(--surface-2)]">
               {avatarUrl ? (
@@ -96,7 +96,7 @@ export function ConversationScreen({
           )}
         </div>
 
-        {/* Members panel */}
+        {/* Aʼzolar paneli */}
         {membersOpen && (
           <div className="absolute inset-x-0 top-full max-h-[60dvh] overflow-y-auto border-b border-[var(--border)] glass-strong px-3 py-3 shadow-[var(--shadow-2)] sm:px-4">
             <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-[var(--muted)]"><Users className="size-3.5" />{t("conversation.members")} · {members.length}</p>
@@ -115,7 +115,7 @@ export function ConversationScreen({
         )}
       </header>
 
-      {/* Tap-away to close the members panel */}
+      {/* Aʼzolar panelini yopiş uchun taşqariga bosiş */}
       {membersOpen && <div className="absolute inset-0 z-0" onClick={() => setMembersOpen(false)} aria-hidden />}
 
       <div className="min-h-0 flex-1">

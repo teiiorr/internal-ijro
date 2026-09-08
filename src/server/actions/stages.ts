@@ -13,15 +13,15 @@ import { recalcProjectProgress } from "@/lib/projects/recalc";
 function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/projects/${projectId}`);
   revalidatePath(`/projects/${projectId}/stages/${stageId}`);
-  // Studio-side surfaces mirror the same stage.
+  // Studiya tomonidagi sahifalar ham xuddi şu bosqiçni aks ettiradi.
   revalidatePath(`/contractor/projects/${projectId}`);
   revalidatePath(`/contractor/projects/${projectId}/stages/${stageId}`);
   revalidatePath(`/contractor/projects`);
-  // Staff Студии workspace (review queue panel, grid pills, studio detail).
+  // Xodimlarning Studiyalar iş maydoni (tekşiruv navbati paneli, katakça belgilari, studiya tafsiloti).
   revalidatePath(`/contractors`);
 }
 
-/** Resolve the studio (kontragent) user who owns a project, via company email. */
+/** Loyiha egasi bölgan studiya (kontragent) foydalanuvçisini kompaniya emaili orqali aniqlaydi. */
 async function resolveStudioContactId(projectId: string): Promise<string | null> {
   const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
   if (!prj?.ec) return null;
@@ -40,8 +40,8 @@ async function directorIds(): Promise<string[]> {
 }
 
 /**
- * Complete the current active stage and unlock the next.
- * Strict sequential state machine: only an 'active' stage can be completed.
+ * Joriy faol bosqiçni yakunlaydi va keyingisini oçadi.
+ * Qat'iy ketma-ket holat maşinasi: faqat 'active' bosqiçni yakunlaş mumkin.
  */
 export async function completeStage(stageId: string) {
   const me = await requireProjectEditor();
@@ -59,15 +59,15 @@ export async function completeStage(stageId: string) {
         status: "completed",
         completedAt: now,
         updatedAt: now,
-        // clear reminder guards so a future active stage can alert afresh
+        // eslatma himoyalarini tozalaymiz — keyingi faol bosqiç qaytadan ogohlantira olsin
         reminderApproachingSentAt: null,
         reminderOverdueSentAt: null,
         reminderStaleSentAt: null,
       })
       .where(eq(projectStages.id, stageId));
 
-    // Merged block: a stage flagged mergeWithNext is completed together with the
-    // stage(s) that follow it — one click finishes the whole "common phase".
+    // Birlaştirilgan blok: mergeWithNext belgisi qöyilgan bosqiç özidan keyingi
+    // bosqiç(lar) bilan birga yakunlanadi — bitta bosişda butun "umumiy bosqiç" tugaydi.
     let last = stage;
     while (last.mergeWithNext) {
       const followRows = await tx
@@ -92,7 +92,7 @@ export async function completeStage(stageId: string) {
       last = follow;
     }
 
-    // Activate the stage after the (possibly merged) block, else complete the project.
+    // (Ehtimol birlaştirilgan) blokdan keyingi bosqiçni faollaştiramiz, aks holda loyihani yakunlaymiz.
     const nextRows = await tx
       .select()
       .from(projectStages)
@@ -109,7 +109,7 @@ export async function completeStage(stageId: string) {
           status: "active",
           startedAt: now,
           updatedAt: now,
-          // Fresh active stage → studio's turn again; clear prior review metadata.
+          // Yangi faol bosqiç → yana studiya navbati; oldingi tekşiruv ma'lumotlarini tozalaymiz.
           reviewStatus: "in_progress",
           reviewNote: null,
           reviewedByUserId: null,
@@ -144,7 +144,7 @@ export async function completeStage(stageId: string) {
     newValue: { name: result.stage.name },
   });
 
-  // Notify: stage completed → curator + creator.
+  // Xabar: bosqiç yakunlandi → kurator + yaratuvçi.
   const completedRecipients = [prj?.curatorUserId, prj?.createdByUserId].filter(Boolean) as string[];
   if (completedRecipients.length > 0) {
     await notify({
@@ -158,8 +158,8 @@ export async function completeStage(stageId: string) {
     });
   }
 
-  // Notify: the STUDIO that their stage work was accepted (acceptance is no
-  // longer invisible to them).
+  // Xabar: STUDIYAga uning bosqiç işi qabul qilingani haqida (endi qabul qilinişi
+  // ular uçun körinmas bölib qolmaydi).
   const studioContactId = await resolveStudioContactId(result.stage.projectId);
   if (studioContactId) {
     await notify({
@@ -173,7 +173,7 @@ export async function completeStage(stageId: string) {
     });
   }
 
-  // Notify: next stage started → its responsible (+ curator).
+  // Xabar: keyingi bosqiç boşlandi → uning mas'uli (+ kurator).
   if (result.next) {
     const startRecipients = [result.next.responsibleUserId, prj?.curatorUserId].filter(Boolean) as string[];
     if (startRecipients.length > 0) {
@@ -189,7 +189,7 @@ export async function completeStage(stageId: string) {
     }
   }
 
-  // Notify: project auto-completed → curator + creator + directors.
+  // Xabar: loyiha avtomatik yakunlandi → kurator + yaratuvçi + direktorlar.
   if (result.projectCompleted) {
     const recipients = new Set<string>([...completedRecipients, ...(await directorIds())]);
     await notify({
@@ -208,10 +208,10 @@ export async function completeStage(stageId: string) {
 }
 
 /**
- * Reopen the most recently completed stage (admin only).
- * The only backward transition. Preserves the "exactly one active, strictly
- * sequential" invariant: reverts this stage to active and demotes the stage
- * that was unlocked by its completion back to locked.
+ * Eng oxirgi yakunlangan bosqiçni qayta oçadi (faqat admin uçun).
+ * Yagona orqaga qaytiş ötişi. "Aynan bitta faol, qat'iy ketma-ket" qoidasini
+ * saqlaydi: bu bosqiçni yana faol qiladi va uning yakunlanişi bilan oçilgan
+ * bosqiçni qaytadan qulflangan holatga tuşiradi.
  */
 export async function reopenStage(stageId: string) {
   const me = await requireProjectEditor();
@@ -228,15 +228,15 @@ export async function reopenStage(stageId: string) {
       .where(eq(projectStages.projectId, stage.projectId))
       .orderBy(projectStages.orderIndex);
 
-    // Only the last completed stage may be reopened (the one just before the current active,
-    // or the final stage of a completed project).
+    // Faqat oxirgi yakunlangan bosqiçni qayta oçiş mumkin (joriy faol bosqiçdan bevosita oldingisi,
+    // yoki yakunlangan loyihaning eng sönggi bosqiçi).
     const lastCompleted = [...all].reverse().find((s) => s.status === "completed");
     if (!lastCompleted || lastCompleted.id !== stageId) throw new Error("not_last_completed");
 
     const now = new Date();
 
-    // If this stage was auto-completed as part of a merged block (a preceding stage
-    // flagged mergeWithNext), undo the WHOLE block: walk back to the block start.
+    // Agar bu bosqiç birlaştirilgan blok tarkibida avtomatik yakunlangan bölsa (oldingi bosqiçga
+    // mergeWithNext belgisi qöyilgan), BUTUN blokni bekor qilamiz: blok boşiga qaytib boramiz.
     let start = all.find((s) => s.orderIndex === stage.orderIndex)!;
     for (;;) {
       const prev = all.find((s) => s.orderIndex === start.orderIndex - 1);
@@ -244,8 +244,8 @@ export async function reopenStage(stageId: string) {
       else break;
     }
 
-    // Block start → active again; reopening means staff want more from the
-    // studio, so the ball goes back to them (review_status → 'in_progress').
+    // Blok boşi → yana faol; qayta oçiş xodimlar studiyadan qöşimça iş kutayotganini
+    // anglatadi, şuning uçun navbat yana ularga ötadi (review_status → 'in_progress').
     await tx
       .update(projectStages)
       .set({ status: "active", completedAt: null, updatedAt: now, reviewStatus: "in_progress", submittedAt: null, submittedByUserId: null })
@@ -259,7 +259,7 @@ export async function reopenStage(stageId: string) {
       }
     }
 
-    // Demote the stage after the block (if it had been unlocked) back to locked.
+    // Blokdan keyingi bosqiçni (agar oçilgan bölsa) qaytadan qulflangan holatga tuşiramiz.
     const next = all.find((s) => s.orderIndex === stage.orderIndex + 1);
     if (next && next.status === "active") {
       await tx
@@ -268,7 +268,7 @@ export async function reopenStage(stageId: string) {
         .where(eq(projectStages.id, next.id));
     }
 
-    // If the project had been auto-completed, revert it to active.
+    // Agar loyiha avtomatik yakunlangan bölsa, uni yana faol holatga qaytaramiz.
     await tx
       .update(projects)
       .set({ status: "planning", completedAt: null, updatedAt: now })
@@ -282,11 +282,11 @@ export async function reopenStage(stageId: string) {
   stageLinks(projectId, stageId);
 }
 
-// ---------- review sub-machine (studio ↔ staff loop) ----------
+// ---------- tekşiruv yordamçi maşinasi (studiya ↔ xodim aylanmasi) ----------
 
 /**
- * STUDIO hands the active stage's work to BKRM for review. Separate, deliberate
- * act from uploading files (which stays a plain attach).
+ * STUDIYA faol bosqiç işini BKRMga tekşiruvga topşiradi. Bu fayl yuklaşdan
+ * alohida, ataylab qilinadigan amal (fayl yuklaş oddiy biriktiriş bölib qolaveradi).
  */
 export async function submitStageWork(stageId: string) {
   const me = await requireUser();
@@ -295,7 +295,7 @@ export async function submitStageWork(stageId: string) {
   if (stage.status !== "active") throw new Error("stage_not_active");
   if (stage.reviewStatus !== "in_progress" && stage.reviewStatus !== "changes_requested") throw new Error("already_submitted");
 
-  // A kontragent may only submit their own project's stage.
+  // Kontragent faqat öz loyihasining bosqiçini topşira oladi.
   if (me.position === "kontragent") {
     const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
     const owned = prj?.ec
@@ -304,7 +304,7 @@ export async function submitStageWork(stageId: string) {
     if (owned.length === 0) throw new Error("forbidden");
   }
 
-  // Must have something to hand off.
+  // Topşiriş uçun aqalli bir narsa bölişi kerak.
   const [cnt] = await db.select({ c: sql<number>`count(*)::int` }).from(stageDocuments).where(eq(stageDocuments.stageId, stageId));
   if (!cnt || cnt.c === 0) throw new Error("nothing_to_submit");
 
@@ -312,14 +312,14 @@ export async function submitStageWork(stageId: string) {
   await db.update(projectStages).set({ reviewStatus: "submitted", submittedAt: now, submittedByUserId: me.id, updatedAt: now }).where(eq(projectStages.id, stageId));
   await logActivity({ userId: me.id, action: "stage.submitted", entityType: "project_stage", entityId: stageId, newValue: { name: stage.name } });
 
-  // Notify the curators (our side) — their turn now.
+  // Kuratorlarga (bizning tomon) xabar beramiz — endi ularning navbati.
   const [prj] = await db.select({ name: projects.name, curatorUserId: projects.curatorUserId }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
   const recipients = new Set<string>();
   if (prj?.curatorUserId) recipients.add(prj.curatorUserId);
   try {
     const rows = await db.select({ userId: projectCurators.userId }).from(projectCurators).where(eq(projectCurators.projectId, stage.projectId));
     for (const r of rows) recipients.add(r.userId);
-  } catch { /* projectCurators not migrated */ }
+  } catch { /* projectCurators migratsiya qilinmagan */ }
   recipients.delete(me.id);
   if (recipients.size > 0) {
     await notify({
@@ -336,8 +336,8 @@ export async function submitStageWork(stageId: string) {
 }
 
 /**
- * STAFF bounces the submitted work back with a note. Stays 'active'; only the
- * review sub-machine changes. The note is echoed into the stage chat for history.
+ * XODIM topşirilgan işni izoh bilan qaytaradi. Bosqiç 'active' bölib qoladi; faqat
+ * tekşiruv yordamçi maşinasi özgaradi. Izoh tarix uçun bosqiç çatiga ham yozib qöyiladi.
  */
 export async function requestStageChanges(stageId: string, note: string) {
   const me = await requireProjectEditor();
@@ -349,7 +349,7 @@ export async function requestStageChanges(stageId: string, note: string) {
 
   const now = new Date();
   await db.update(projectStages).set({ reviewStatus: "changes_requested", reviewNote: text, reviewedByUserId: me.id, reviewedAt: now, updatedAt: now }).where(eq(projectStages.id, stageId));
-  // Preserve the ask in the conversation.
+  // Söralgan özgartirişni suhbatda saqlab qolamiz.
   await db.insert(projectMessages).values({ projectId: stage.projectId, stageId, userId: me.id, content: text });
   await logActivity({ userId: me.id, action: "stage.changes_requested", entityType: "project_stage", entityId: stageId, newValue: { note: text } });
 
@@ -370,14 +370,14 @@ export async function requestStageChanges(stageId: string, note: string) {
 }
 
 /**
- * STAFF accepts the submitted work → advances the pipeline. Thin wrapper over
- * completeStage (which now also notifies the studio of acceptance).
+ * XODIM topşirilgan işni qabul qiladi → zanjir oldinga suriladi. completeStage
+ * ustidagi yupqa örоvçi (u endi studiyaga qabul qilinişi haqida ham xabar beradi).
  */
 export async function acceptStage(stageId: string) {
   return completeStage(stageId);
 }
 
-/** STAFF sets what the studio must deliver this stage (read-only to studio). */
+/** XODIM studiya bu bosqiçda nima topşirişi kerakligini belgilaydi (studiya uçun faqat öqiş). */
 export async function setStageRequirements(stageId: string, requirements: string | null) {
   const me = await requireProjectEditor();
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
@@ -387,7 +387,7 @@ export async function setStageRequirements(stageId: string, requirements: string
   stageLinks(row.projectId, stageId);
 }
 
-// ---------- field updaters ----------
+// ---------- maydon yangilagiçlar ----------
 
 export async function setStageResponsible(stageId: string, userId: string | null) {
   const me = await requireProjectEditor();
@@ -423,9 +423,9 @@ export async function setStagePlannedAmount(stageId: string, amount: number | nu
   stageLinks(row.projectId, stageId);
 }
 
-// One-shot edit of a stage's core fields (name + start/end dates + budget) from
-// the single "pencil" dialog. Open to all staff. Clears the deadline reminders
-// so a changed deadline re-arms the cron notifications.
+// Bosqiçning asosiy maydonlarini (nom + boşlaniş/tugaş sanalari + byudjet) bitta
+// "qalam" oynasidan bir yöla tahrirlaydi. Barça xodimlar uçun oçiq. Muddat eslatmalarini
+// tozalaydi — özgargan muddat cron xabarnomalarini qaytadan işga tuşirsin.
 const updateStageSchema = z.object({
   name: z.string().min(1).max(255),
   plannedStartDate: z.string().nullable().optional(),
@@ -458,7 +458,7 @@ export async function updateStage(stageId: string, input: z.infer<typeof updateS
   stageLinks(row.projectId, stageId);
 }
 
-// ---------- documents ----------
+// ---------- hujjatlar ----------
 
 async function stageProjectId(stageId: string): Promise<string> {
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
@@ -466,19 +466,19 @@ async function stageProjectId(stageId: string): Promise<string> {
   return row.projectId;
 }
 
-/** Normalize a user-typed folder name: trim, collapse spaces, cap length; empty → null. */
+/** Foydalanuvçi kiritgan jild nomini me'yorlaydi: keraksiz boşliqlarni oladi, ortiqça boşliqlarni birlaştiradi, uzunligini çeklaydi; boş → null. */
 function normalizeCategory(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const v = raw.replace(/\s+/g, " ").trim().slice(0, 120);
   return v.length > 0 ? v : null;
 }
 
-// Adding a document is handled by the streaming route at
-// src/app/api/files/stage-docs/route.ts (uploads stream to disk instead of being
-// buffered in memory by a Server Action — safe for the 2GB production box). The
-// server actions below only touch existing rows, so they carry no file body.
+// Hujjat qöşiş src/app/api/files/stage-docs/route.ts manzilidagi oqim yöli
+// orqali amalga oşiriladi (yuklamalar Server Action xotirasida buferlanmasdan
+// bevosita diskka oqib boradi — 2GB'lik işlab çiqariş serveri uçun xavfsiz).
+// Quyidagi server amallari faqat mavjud qatorlarga tegadi, şu bois ular fayl tanasini olib yurmaydi.
 
-/** Move a document to another folder (or clear it). Powers drag-free re-filing from the stage page. */
+/** Hujjatni boşqa jildga köçiradi (yoki jildini tozalaydi). Bosqiç sahifasidan sudramasdan qayta joylaşni ta'minlaydi. */
 export async function setStageDocumentCategory(documentId: string, category: string | null) {
   const me = await requireProjectEditor();
   const [doc] = await db.select().from(stageDocuments).where(eq(stageDocuments.id, documentId)).limit(1);
@@ -500,7 +500,7 @@ export async function removeStageDocument(documentId: string) {
   stageLinks(projectId, doc.stageId);
 }
 
-// ---------- payments ----------
+// ---------- tölovlar ----------
 
 const paymentSchema = z.object({
   stageId: z.string().uuid(),

@@ -10,8 +10,8 @@ import { setStageDeadline } from "@/server/actions/stages";
 import { formatDate } from "@/lib/dates";
 
 /**
- * Shows the stage deadline + live countdown, and (for managers) an inline date
- * editor. `active` gates the countdown — only the current stage ticks.
+ * Bosqiç muddati va jonli sanoqni körsatadi, hamda (menejerlar uçun) satr içidagi sana
+ * tahrirlagiçini. `active` sanoqni boşqaradi — faqat joriy bosqiç sanaydi.
  */
 export function SetStageDeadline({
   stageId,

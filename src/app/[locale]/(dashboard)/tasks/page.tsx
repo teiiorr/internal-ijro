@@ -20,7 +20,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   const sp = await searchParams;
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
 
-  const canCreate = me.position !== "kontragent"; // open assignment: any internal staff can create tasks
+  const canCreate = me.position !== "kontragent"; // oçiq tayinlaş: har qanday içki xodim vazifa yaratişi mumkin
   const scope = ((get("scope") as Scope | undefined) ?? "mine") as Scope;
   const tab = ((get("tab") as StatusTab | undefined) ?? "all") as StatusTab;
 

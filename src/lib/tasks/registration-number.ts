@@ -4,8 +4,8 @@ import { db } from "@/lib/db";
 import { tasks } from "@/lib/db/schema";
 
 /**
- * Generates next registration number in format YYYY/MM/DD-NN.
- * NN is a daily counter, padded to 2 digits.
+ * YYYY/MM/DD-NN formatida keyingi röyxatga oliş raqamini generatsiya qiladi.
+ * NN — kunlik hisoblagiç, 2 xonagacha töldiriladi.
  */
 export async function nextRegistrationNumber(now: Date = new Date()): Promise<string> {
   const yyyy = now.getFullYear();

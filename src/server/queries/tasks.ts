@@ -21,7 +21,7 @@ export type TaskListFilters = {
   priority?: TaskPriority | null;
   assignedToUserId?: string | null;
   projectId?: string | null;
-  /** "mine" = tasks where I'm an assignee, "given" = tasks I created, default = both. */
+  /** "mine" = men ijroçi bölgan vazifalar, "given" = men yaratgan vazifalar, standart = ikkalasi. */
   scope?: "mine" | "given" | "all";
   actorId: string;
   actorPosition: Position;
@@ -40,7 +40,7 @@ export async function listTasks(f: TaskListFilters) {
   if (f.assignedToUserId) conds.push(eq(tasks.assignedToUserId, f.assignedToUserId));
   if (f.projectId) conds.push(eq(tasks.projectId, f.projectId));
 
-  // Involvement filter — scope-aware
+  // Ishtirok filtri — qamrovni hisobga oladi
   if (f.scope === "mine") {
     conds.push(
       sql`EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId})`
@@ -190,14 +190,14 @@ export async function getOverdueTaskCount(actorId: string, actorPosition: Positi
   return Number(rows[0]?.c ?? 0);
 }
 
-// Specific bosses who must never appear as executors (matched by name,
-// case-insensitive) — other staff, including other deputies, stay assignable.
+// Ijroçi sifatida hech qaçon körinmasligi kerak bölgan aniq rahbarlar (ism böyiça,
+// katta-kiçik harfga qaramay tanlanadi) — boşqa xodimlar, jumladan boşqa örinbosarlar, biriktirilaveradi.
 const NON_ASSIGNABLE_NAME_PATTERNS = ["%jahongir%", "%zafar%"];
 
 export async function listAssignableUsers(actorId: string, actorPosition: Position, actorDepartmentId: string | null) {
-  // Open assignment policy (user directive): anyone can assign a task to any
-  // internal staff member. Excludes contractors and the named bosses below.
-  // canAssignTaskTo still runs on the server as a final guard.
+  // Ochiq biriktiriş siyosati (foydalanuvçi körsatmasi): har kim istalgan içki
+  // xodimga vazifa biriktira oladi. Kontragentlar va quyida sanab ötilgan rahbarlar bundan mustasno.
+  // canAssignTaskTo baribir yakuniy himoya sifatida serverda işlaydi.
   void actorId;
   void actorPosition;
   void actorDepartmentId;

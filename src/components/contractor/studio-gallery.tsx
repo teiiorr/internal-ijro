@@ -35,7 +35,7 @@ export function StudioGallery({
 
   return (
     <div className="space-y-4">
-      {/* Project filter */}
+      {/* Loyiha böyicha filtr */}
       {projects.length > 1 && (
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
           <button
@@ -64,7 +64,7 @@ export function StudioGallery({
         </div>
       )}
 
-      {/* Grid */}
+      {/* Setka */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-[var(--muted)]">
           <PhotoIcon className="size-10 mb-2 opacity-40" />

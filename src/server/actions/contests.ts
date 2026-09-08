@@ -69,7 +69,7 @@ export async function deleteContest(id: string) {
   for (const ph of photos) await deleteFileByUrl(ph.url);
   for (const f of files) await deleteFileByUrl(f.url);
   if (c?.logo) await deleteFileByUrl(c.logo);
-  await db.delete(contests).where(eq(contests.id, id)); // photo/file/comment rows cascade
+  await db.delete(contests).where(eq(contests.id, id)); // photo/file/comment qatorlari cascade böyiça öçadi
   await logActivity({ userId: me.id, action: "contest.deleted", entityType: "contest", entityId: id });
   revalidatePath("/tanlov");
 }
@@ -105,7 +105,7 @@ export async function removeContestLogo(contestId: string) {
 
 const commentSchema = z.object({ contestId: z.string().uuid(), body: z.string().trim().min(1).max(2000) });
 
-/** Comments are open to all internal staff. */
+/** Izohlar barça içki xodimlar uçun oçiq. */
 export async function addContestComment(input: z.infer<typeof commentSchema>) {
   const me = await requireUser();
   const p = commentSchema.parse(input);
@@ -117,7 +117,7 @@ export async function removeContestComment(commentId: string) {
   const me = await requireUser();
   const [cm] = await db.select().from(contestComments).where(eq(contestComments.id, commentId)).limit(1);
   if (!cm) return;
-  // Author can delete own; project-editors can delete any.
+  // Muallif özinikini öçira oladi; project-editor'lar istalganini öçira oladi.
   const editor = (await import("@/lib/permissions/project-editors")).canEditProjects(me.email);
   if (cm.userId !== me.id && !editor) return;
   await db.delete(contestComments).where(eq(contestComments.id, commentId));

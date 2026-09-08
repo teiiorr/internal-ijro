@@ -17,15 +17,15 @@ function revalidate(kind: string) {
 const meetingSchema = z.object({
   kind: z.enum(KINDS),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // YYYY-MM-DD
-  time: z.string().regex(/^\d{2}:\d{2}$/).nullable().optional(), // HH:mm (optional)
+  time: z.string().regex(/^\d{2}:\d{2}$/).nullable().optional(), // HH:mm (ixtiyoriy)
   title: z.string().max(255).nullable().optional(),
 });
 
 export async function createCouncilMeeting(input: z.infer<typeof meetingSchema>) {
   const me = await requirePosition([...MANAGERS]);
   const parsed = meetingSchema.parse(input);
-  // Build an unambiguous Tashkent-local instant (+05:00). Date-only meetings
-  // are stored at midnight Tashkent so the UI can render them time-free.
+  // Toşkent vaqti böyiça aniq (+05:00) lahzani hosil qilamiz. Faqat sana körsatilgan
+  // yiğilişlar Toşkent vaqti bilan yarim tunda saqlanadi, şunda UI ularni vaqtsiz körsata oladi.
   const time = parsed.time || "00:00";
   const scheduledAt = new Date(`${parsed.date}T${time}:00+05:00`);
   const ins = await db
@@ -54,10 +54,10 @@ export async function deleteCouncilMeeting(meetingId: string) {
 const agendaSchema = z.object({
   meetingId: z.string().uuid(),
   topic: z.string().min(1).max(500),
-  // Project: either a registered project (projectId) OR a free-text name.
+  // Loyiha: yo röyxatdan ötgan loyiha (projectId), yo erkin matnli nom.
   projectId: z.string().uuid().nullable().optional(),
   projectName: z.string().max(255).nullable().optional(),
-  // Presenter: either a registered user (presenterUserId) OR a free-text name.
+  // Taqdimotçi: yo röyxatdan ötgan foydalanuvçi (presenterUserId), yo erkin matnli nom.
   presenterUserId: z.string().uuid().nullable().optional(),
   presenterName: z.string().max(255).nullable().optional(),
 });
@@ -80,7 +80,7 @@ export async function addAgendaItem(input: z.infer<typeof agendaSchema>) {
     meetingId: parsed.meetingId,
     orderIndex: Number(next) || 0,
     topic: parsed.topic,
-    // A registered id wins; otherwise keep the typed-in name.
+    // Röyxatdan ötgan id ustun; aks holda qölda kiritilgan nom saqlanadi.
     projectId: parsed.projectId || null,
     projectName: parsed.projectId ? null : parsed.projectName?.trim() || null,
     presenterUserId: parsed.presenterUserId || null,

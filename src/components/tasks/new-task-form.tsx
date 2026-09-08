@@ -69,7 +69,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
         </div>
       </div>
 
-      {/* Assignee picker — large employee cards */}
+      {/* Ijroçi tanlagiç — katta xodim kartalari */}
       <div className="space-y-2">
         <div className="flex items-baseline justify-between gap-2">
           <Label>{t("tasks.fields.assignees")}</Label>
@@ -117,7 +117,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
 
       {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
 
-      {/* Submit — after the whole form; sticky at the bottom on mobile (safe-area aware) */}
+      {/* Submit — butun formadan keyin; mobil qurilmada pastda yopişib turadi (safe-area hisobga olingan) */}
       <div className="sticky bottom-0 -mx-5 border-t border-[var(--border)] bg-[var(--card)]/85 px-5 py-3 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:pb-0 sm:backdrop-blur-none">
         <div className="flex justify-end">
           <Button type="submit" disabled={pending} size="lg" className="w-full sm:w-auto">

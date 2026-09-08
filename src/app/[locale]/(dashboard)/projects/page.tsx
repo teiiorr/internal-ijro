@@ -19,7 +19,7 @@ import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors
 type Sort = "created" | "name" | "deadline" | "progress";
 type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_hold" | "at_risk";
 
-// Status tone: green done, amber ongoing, red paused, muted not-started.
+// Status ranglari: yaşil — yakunlangan, sariq — jarayonda, qizil — töxtatilgan, xira — başlanmagan.
 const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
   completed: "green",
   in_progress: "amber",
@@ -52,8 +52,8 @@ export default async function ProjectsPage({
     listStageOptionsByType(locale),
   ]);
   const canCreate = canEditProjects(session.user.email);
-  const canExport = canViewMoney(session.user.email); // report has sums → allowlist only
-  // Excel export mirrors the currently-applied filters.
+  const canExport = canViewMoney(session.user.email); // hisobotda summalar bör → faqat allowlist uçun
+  // Excel eksporti hozir qöllangan filtrlarni aynan takrorlaydi.
   const exportParams = new URLSearchParams();
   if (search) exportParams.set("search", search);
   if (statusFilter !== "all") exportParams.set("status", statusFilter);
@@ -66,7 +66,7 @@ export default async function ProjectsPage({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Decorate every row with its derived status + at-risk flag
+  // Har bir qatorni hisoblangan statusi + xavf ostidagi (at-risk) belgisi bilan böyitamiz
   const decorated = rows.map((p) => {
     const status = derivedStatus(p.progressPercentage, p.statusOverride);
     const due = p.deadline ? new Date(p.deadline) : null;
@@ -74,15 +74,15 @@ export default async function ProjectsPage({
     return { ...p, derived: status, atRisk };
   });
 
-  // Filter
+  // Filtr
   const filtered = decorated.filter((p) => {
     if (statusFilter === "all") return true;
     if (statusFilter === "at_risk") return p.atRisk;
     return p.derived === statusFilter;
   });
 
-  // Status priority — always applied first: in-progress (Jarayonda) on top,
-  // completed (Yakunlangan) at the very bottom, regardless of the chosen sort.
+  // Status ustuvorligi — har doim birinchi qöllanadi: jarayondagilar (Jarayonda) tepada,
+  // yakunlanganlar (Yakunlangan) esa eng pastda, tanlangan saralaşdan qat'i nazar.
   const STATUS_PRIORITY: Record<DerivedStatus, number> = {
     in_progress: 0,
     not_started: 1,
@@ -90,8 +90,8 @@ export default async function ProjectsPage({
     completed: 3,
   };
 
-  // Sort: at-risk (red / overdue) projects first, then status priority, then
-  // the selected sort within each group.
+  // Saralaş: avval xavf ostidagi (qizil / muddati ötgan) loyihalar, keyin status ustuvorligi,
+  // söngra har bir guruh içida tanlangan saralaş tartibi.
   filtered.sort((a, b) => {
     if (a.atRisk !== b.atRisk) return a.atRisk ? -1 : 1;
     const byStatus = STATUS_PRIORITY[a.derived] - STATUS_PRIORITY[b.derived];
@@ -103,7 +103,7 @@ export default async function ProjectsPage({
       const bx = b.deadline ? new Date(b.deadline).getTime() : Infinity;
       return ax - bx;
     }
-    return 0; // "created" — keep API order
+    return 0; // "created" — API tartibini saqlab qolamiz
   });
 
   const counts = {
@@ -143,7 +143,7 @@ export default async function ProjectsPage({
 
   return (
     <div className="space-y-5 sm:space-y-6 stagger-children">
-      {/* Restores the list scroll position when returning from a project. */}
+      {/* Loyihadan qaytganda röyxatning skroll holatini tiklaydi. */}
       <ScrollMemory />
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
@@ -171,11 +171,11 @@ export default async function ProjectsPage({
           <FilterTab value="at_risk"     label={t("projects.atRisk")} count={counts.at_risk} />
         </div>
 
-        {/* Real-time filters — no Apply button. Stage dropdown is type-scoped. */}
+        {/* Real vaqt filtrlari — "Qöllaş" tugmasi yöq. Bosqiç röyxati tur böyiça çeklangan. */}
         <ProjectsFilters types={projectTypeOptions} stagesByType={stagesByType} />
       </div>
 
-      {/* Poster grid — big square covers */}
+      {/* Poster töri — katta kvadrat muqovalar */}
       {filtered.length === 0 ? (
         <Card><CardContent className="py-16 text-center text-sm text-[var(--muted)]">{t("projects.empty")}</CardContent></Card>
       ) : (
@@ -186,7 +186,7 @@ export default async function ProjectsPage({
               href={`/projects/${p.id}`}
               className="group block rounded-2xl border border-[var(--border)] bg-[var(--card)] p-2 shadow-[var(--shadow-1)] transition-[background-color,border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-[var(--primary)] hover:bg-[var(--primary)] hover:shadow-[var(--shadow-2)]"
             >
-              {/* The poster is untouched on hover — only the tile behind/around it turns violet. */}
+              {/* Kursor ustiga kelganda poster özgarmaydi — faqat uning ortidagi/atrofidagi plitka binafşa rangga ötadi. */}
               <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
                 {p.posterUrl ? (
                   <SmoothImage src={p.posterUrl} alt={p.name} className="size-full object-cover" />
@@ -207,13 +207,13 @@ export default async function ProjectsPage({
                   <div className="h-full bg-[var(--success)]" style={{ width: `${p.progressPercentage}%` }} />
                 </div>
               </div>
-              {/* Footer — sits on the tile, so text flips to the on-primary colour when the
-                  tile turns violet on hover. Title centred; type on the left, status pill on the
-                  right; the pill fills in (solid) on hover instead of staying a dashed outline. */}
+              {/* Futer — plitka ustida turadi, şuning uçun kursor kelib plitka binafşa rangga
+                  ötganda matn on-primary rangiga özgaradi. Sarlavha markazda; tur çapda, status
+                  belgisi öngda; kursor kelganda belgi punktir ramka bölib qolmay, töliq böyaladi. */}
               <div className="space-y-2 px-1.5 pb-1 pt-2.5">
                 <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug transition-colors duration-300 group-hover:text-[var(--primary-foreground)]">{p.name}</p>
                 <div className="flex items-center justify-between gap-2">
-                  {/* Show the content genre when set (e.g. exclusive projects); else the pipeline type. Long names scroll. */}
+                  {/* Agar janr belgilangan bölsa öşani körsatamiz (masalan, eksklyuziv loyihalar); aks holda pipeline turini. Uzun nomlar suriladi. */}
                   <Marquee className="min-w-0 flex-1 text-xs text-[var(--muted)] transition-colors duration-300 group-hover:text-[var(--primary-foreground)] group-hover:opacity-80">
                     {isProjectGenre(p.genre)
                       ? t(`projects.genre.${p.genre}` as "projects.genre.film")

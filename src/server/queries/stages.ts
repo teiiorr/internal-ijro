@@ -14,17 +14,17 @@ import {
 } from "@/lib/db/schema";
 import { fetchProjectCurators } from "@/server/queries/projects";
 
-// ---------- localization helpers ----------
+// ---------- lokalizatsiya yordamçilari ----------
 type LocalizedNames = { nameUzLatn: string; nameUzCyrl: string; nameRu: string };
 
-/** Pick the display name for the current locale (falls back to Latin). */
+/** Joriy til uçun körsatiladigan nomni tanlaydi (lotin alifbosiga qaytadi). */
 export function localizedTypeName(row: LocalizedNames, locale: string): string {
   if (locale === "ru") return row.nameRu;
   if (locale === "uz-cyrl") return row.nameUzCyrl;
   return row.nameUzLatn;
 }
 
-/** Localized stage name from the joined template item, falling back to the snapshot. */
+/** Boğlangan şablon elementidan lokallaştirilgan bosqiç nomi, bölmasa nusxaga qaytadi. */
 function stageName(
   row: { tiUz: string | null; tiCy: string | null; tiRu: string | null; snapshot: string },
   locale: string
@@ -57,10 +57,10 @@ export type StageView = {
   pending: number;
 };
 
-/** Full typed-project view: project + type + ordered stages (with payment rollups). */
+/** Turi belgilangan loyihaning töliq köriniş: loyiha + tur + tartiblangan bosqiçlar (tölov jamlanmalari bilan). */
 export async function getStageProject(projectId: string, locale: string) {
   const p = await db.select().from(projects).where(eq(projects.id, projectId)).limit(1);
-  if (p.length === 0 || !p[0].projectTypeId) return null; // typed projects only
+  if (p.length === 0 || !p[0].projectTypeId) return null; // faqat turi belgilangan loyihalar
 
   const [typeRow] = await db
     .select()
@@ -154,7 +154,7 @@ export async function getStageProject(projectId: string, locale: string) {
     pending: sum(stages.map((s) => s.pending)),
   };
 
-  // Project-level document buckets (analysis / international experience).
+  // Loyiha darajasidagi hujjat guruhlari (tahlil / xalqaro tajriba).
   const docRows = await db
     .select({
       id: projectDocuments.id,
@@ -189,7 +189,7 @@ export async function getStageProject(projectId: string, locale: string) {
   };
 }
 
-/** Single stage detail: stage + documents + payments + sibling ordering for nav. */
+/** Bitta bosqiç tafsiloti: bosqiç + hujjatlar + tölovlar + navigatsiya uçun qöşni bosqiçlar tartibi. */
 export async function getStage(stageId: string, locale: string) {
   const rows = await db
     .select({
@@ -252,7 +252,7 @@ export async function getStage(stageId: string, locale: string) {
       .from(projectStages)
       .where(eq(projectStages.projectId, s.projectId))
       .orderBy(asc(projectStages.orderIndex)),
-    // Distinct folder names used anywhere in this project → autocomplete suggestions.
+    // Şu loyihada istalgan joyda işlatilgan noyob papka nomlari → avtotöldiriş takliflari.
     db
       .selectDistinct({ category: stageDocuments.category })
       .from(stageDocuments)
@@ -311,7 +311,7 @@ export type StageProjectFilters = {
   overdue?: boolean | null;
 };
 
-/** Typed-project list with cross-project filters (type/status/responsible/date/paid/overdue). */
+/** Turi belgilangan loyihalar röyxati, loyihalararo filtrlar bilan (tur/holat/mas'ul/sana/tölangan/muddati ötgan). */
 export async function listStageProjects(f: StageProjectFilters, locale: string) {
   const conds = [sql`${projects.projectTypeId} is not null`];
   if (f.typeId) conds.push(sql`${projects.projectTypeId} = ${f.typeId}`);
@@ -340,7 +340,7 @@ export async function listStageProjects(f: StageProjectFilters, locale: string) 
       typeUz: projectTypes.nameUzLatn,
       typeCy: projectTypes.nameUzCyrl,
       typeRu: projectTypes.nameRu,
-      // active stage summary
+      // faol bosqiç xulosasi
       activeStageName: sql<string | null>`(
         select coalesce(ti.name_uz_latn, s.name) from ${projectStages} s
         left join ${stageTemplateItems} ti on ti.id = s.template_item_id
@@ -362,10 +362,10 @@ export async function listStageProjects(f: StageProjectFilters, locale: string) 
   }));
 }
 
-/** The 9 active types, localized — for the create form and filter bar. */
-/** Stage-name options grouped by project type, so the list filter can scope the
- *  "stage" dropdown to the selected type. value = snapshot nameUzLatn (matches
- *  the active-stage filter in listProjects). */
+/** 9 ta faol tur, lokallaştirilgan — yaratiş formasi va filtr paneli uçun. */
+/** Loyiha turi böyiça guruhlangan bosqiç nomi variantlari, şunda röyxat filtri
+ *  "bosqiç" ochilma röyxatini tanlangan tur bilan çeklaydi. value = nusxa nameUzLatn
+ *  (listProjects dagi faol-bosqiç filtriga mos keladi). */
 export async function listStageOptionsByType(locale: string): Promise<Record<string, { value: string; name: string }[]>> {
   const rows = await db
     .select({
@@ -395,9 +395,9 @@ export async function listProjectTypes(locale: string) {
 }
 
 /**
- * Distinct stage names across all templates, localized — powers the
- * "filter by current state" dropdown (e.g. "Adabiy ssenariy", "Postprodakshn").
- * The `value` is the Uz-Latn name, which matches project_stages.name (snapshot).
+ * Barcha şablonlar böyiça noyob bosqiç nomlari, lokallaştirilgan — "joriy holat
+ * böyiça filtr" ochilma röyxatini ta'minlaydi (masalan, "Adabiy ssenariy", "Postprodakshn").
+ * `value` — bu Uz-Latn nomi, u project_stages.name (nusxa) bilan mos keladi.
  */
 export async function listStageNameOptions(locale: string) {
   const rows = await db
@@ -420,9 +420,9 @@ export async function listStageNameOptions(locale: string) {
 }
 
 /**
- * Cross-studio "waiting on you" queue: every ACTIVE stage a studio has
- * submitted for review, grouped by studio, oldest first. Hits the partial
- * index project_stages_review_idx (migration 0025).
+ * Studiyalararo "sizni kutmoqda" navbati: studiya körib çiqiş uçun yuborgan
+ * har bir FAOL bosqiç, studiya böyiça guruhlangan, eng eskisi birinçi. Qisman
+ * project_stages_review_idx indeksidan foydalanadi (0025-migratsiya).
  */
 export async function getReviewQueue() {
   const rows = await db
@@ -454,7 +454,7 @@ export async function getReviewQueue() {
   return [...groups.values()];
 }
 
-/** Count of submitted-for-review active stages across all studios (nav badge). */
+/** Barcha studiyalar böyiça körib çiqiş uçun yuborilgan faol bosqiçlar soni (navigatsiya belgisi). */
 export async function getReviewQueueCount(): Promise<number> {
   const [r] = await db
     .select({ c: sql<number>`count(*)::int` })

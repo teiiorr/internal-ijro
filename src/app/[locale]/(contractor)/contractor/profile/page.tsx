@@ -39,7 +39,7 @@ export default async function ContractorProfilePage() {
 
   return (
     <div className="mx-auto max-w-lg space-y-5">
-      {/* Company header */}
+      {/* Kompaniya sarlavhasi */}
       <div className="flex flex-col items-center gap-3 pt-2 text-center">
         <div className="grid size-20 place-items-center overflow-hidden rounded-3xl bg-[var(--surface-2)] ring-1 ring-[var(--border)]">
           {c.logoUrl ? (
@@ -54,7 +54,7 @@ export default async function ContractorProfilePage() {
         </div>
       </div>
 
-      {/* Contact — grouped inset list */}
+      {/* Aloqa — guruhlangan ichki röyxat */}
       <div>
         <p className="mb-1.5 px-4 text-xs font-semibold uppercase tracking-wide text-[var(--subtle)]">{t("contractor.profile.contact")}</p>
         <div className="divide-y divide-[var(--border)] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
@@ -66,7 +66,7 @@ export default async function ContractorProfilePage() {
         </div>
       </div>
 
-      {/* Appearance — theme + language */}
+      {/* Köriniş — mavzu + til */}
       <div>
         <p className="mb-1.5 px-4 text-xs font-semibold uppercase tracking-wide text-[var(--subtle)]">{t("contractor.profile.appearance")}</p>
         <div className="divide-y divide-[var(--border)] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">

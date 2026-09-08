@@ -5,8 +5,8 @@ import { listProjectsForContractor } from "@/server/queries/projects";
 import { ScrollMemory } from "@/components/scroll-memory";
 import { ContractorProjectsView } from "@/components/contractor/contractor-projects-view";
 
-// Studio home = the work-queue. (The old /contractor/dashboard was an identical
-// screen behind a second nav item; it now redirects here.)
+// Studiya bosh sahifasi = iş navbati. (Eski /contractor/dashboard ikkinchi navigatsiya
+// bandi ortidagi aynan şu ekran edi; endi bu yerga yönaltiradi.)
 export default async function ContractorProjectsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");

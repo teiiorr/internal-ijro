@@ -10,7 +10,7 @@ import { logActivity } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
-// Every staff position except the isolated contractor portal.
+// Ajratilgan kontragent portalidan boşqa barcha xodim lavozimlari.
 const ALLOWED_POSITIONS = new Set([
   "direktor",
   "orinbosar",
@@ -33,10 +33,10 @@ function sameOrigin(req: NextRequest): boolean {
 }
 
 /**
- * Streaming upload endpoint for project-level documents (analysis / international
- * experience). Same memory-safe design as the stage-doc route: the file is the
- * raw request body and streams straight to disk. stageId → projectId + kind in
- * the query string.
+ * Loyiha darajasidagi hujjatlar (tahlil / xalqaro tajriba) uçun oqimli yuklash
+ * endpointi. Xotira uçun xavfsiz dizayn stage-doc route bilan bir xil: fayl xom
+ * sörov tanasi bölib, tögridan-tögri diskka oqadi. Sörov satrida stageId emas,
+ * projectId + kind uzatiladi.
  */
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
   if (!projectId || !name || !PROJECT_DOC_KINDS.includes(kind as ProjectDocKind)) {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
-  // Payment documents (receipts / invoices) are financial → money allowlist only.
+  // Tölov hujjatlari (çeklar / hisob-fakturalar) moliyaviy → faqat pulni köra oladiganlar röyxati uçun.
   if (kind === "payment" && !canViewMoney(session.user.email)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }

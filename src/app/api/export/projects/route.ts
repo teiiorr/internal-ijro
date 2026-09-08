@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
   const ws = wb.addWorksheet("Excel hisoboti");
   ws.columns = HEADERS;
 
-  // Style header row
+  // Sarlavha qatorini bezaymiz
   const headerRow = ws.getRow(1);
   headerRow.height = 28;
   for (let c = 1; c <= HEADERS.length; c++) {
@@ -114,7 +114,7 @@ export async function GET(req: NextRequest) {
       stageRemaining: Math.round(stageRem),
     });
 
-    // Highlight the active stage cell green
+    // Joriy bosqich katagini yaşil rang bilan ajratamiz
     if (r.activeStage) {
       const stageCol = HEADERS.findIndex((h) => h.key === "stage") + 1;
       dataRow.getCell(stageCol).fill = GREEN_FILL;
@@ -122,7 +122,7 @@ export async function GET(req: NextRequest) {
     }
   });
 
-  // Grand totals row
+  // Umumiy jami qatori
   const totalRowNum = rows.length + 2;
   const totalRow = ws.addRow({
     no: "",
@@ -145,7 +145,7 @@ export async function GET(req: NextRequest) {
     cell.font = { name: "Montserrat", bold: true, size: 10 };
   }
 
-  // Number format + alignment for money columns
+  // Pul ustunlari uçun raqam formati va tekislash
   for (const key of MONEY_COLS) {
     const col = ws.getColumn(key);
     col.numFmt = "#,##0";
@@ -155,7 +155,7 @@ export async function GET(req: NextRequest) {
   ws.getColumn("start").alignment = { horizontal: "center" };
   ws.getColumn("end").alignment = { horizontal: "center" };
 
-  // Thin borders across the used range
+  // Ishlatilgan diapazonga ingiçka çegaralar qöyamiz
   const thin = { style: "thin" as const, color: { argb: "FFBFBFBF" } };
   const lastRow = totalRowNum;
   for (let r = 1; r <= lastRow; r++) {

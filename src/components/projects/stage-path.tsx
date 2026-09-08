@@ -17,11 +17,11 @@ export type StagePathItem = {
 };
 
 /**
- * Vertical stage stepper. Status is a coloured dashed tag (green done, amber
- * active, red locked). Layout stacks cleanly at every width: the name gets the
- * full row, with the status tag + meta on the line below — so long stage names
- * never get squeezed on mobile. Solid green connector for the finished part,
- * dashed for what's ahead.
+ * Vertikal bosqiçlar zinapoyasi. Holat rangli punktir teg bilan körsatiladi (yaşil — bajarilgan,
+ * sariq — faol, qizil — qulflangan). Tuzilma har qanday enda toza joylaşadi: nom butun
+ * qatorni egallaydi, holat tegi va meta esa pastdagi qatorda — şunda uzun bosqiç nomlari
+ * mobilda heç qaçon siqilib qolmaydi. Bajarilgan qism uçun töq yaşil ulagiç,
+ * oldindagi qism uçun punktir.
  */
 export function StagePath({ projectId, stages, basePath }: { projectId: string; stages: StagePathItem[]; basePath?: string }) {
   const t = useTranslations();
@@ -45,7 +45,7 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
               href={`${basePath ?? "/projects"}/${projectId}/stages/${s.id}`}
               className="group flex gap-3 rounded-xl transition-colors hover:bg-[var(--surface-2)] sm:gap-4"
             >
-              {/* status circle + connector (solid green done / dashed ahead) */}
+              {/* holat doirasi va ulagiç (töq yaşil — bajarilgan / punktir — oldinda) */}
               <div className="flex flex-col items-center">
                 <span
                   className={`grid size-10 shrink-0 place-items-center rounded-full text-sm font-bold ${
@@ -66,7 +66,7 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
                   ))}
               </div>
 
-              {/* content */}
+              {/* mazmun */}
               <div className="min-w-0 flex-1 py-2 pr-1">
                 <div className="flex items-center gap-2">
                   <span className={`min-w-0 flex-1 font-semibold leading-6 truncate ${isLocked ? "text-[var(--muted)]" : "text-[var(--foreground)]"}`}>

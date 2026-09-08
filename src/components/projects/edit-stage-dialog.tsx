@@ -84,7 +84,7 @@ export function EditStageDialog({ stage, users = [], currency = "UZS" }: { stage
             <Input id="es-name" value={name} onChange={(e) => setName(e.target.value)} required minLength={1} />
           </div>
 
-          {/* Mas'ul (responsible) — add or remove */}
+          {/* Masʼul (javobgar) — qöşiş yoki olib taşlaş */}
           <div className="space-y-1.5">
             <Label>{t("projects.fields.responsible")}</Label>
             <div className="rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] p-2.5 space-y-2">

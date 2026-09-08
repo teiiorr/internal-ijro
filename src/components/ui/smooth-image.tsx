@@ -5,8 +5,8 @@ export function SmoothImage({ src, alt, className }: { src: string; alt: string;
   const [loaded, setLoaded] = useState(false);
   const ref = useRef<HTMLImageElement>(null);
 
-  // Cached images can complete before onLoad is attached — detect on mount so
-  // the image doesn't stay stuck at opacity-0.
+  // Keşdagi rasmlar onLoad ulanmasdan oldin yuklanib bölişi mumkin — şuning uçun
+  // mount paytida aniqlaymiz, aks holda rasm opacity-0 holatida qotib qoladi.
   useEffect(() => {
     setLoaded(false);
     const el = ref.current;

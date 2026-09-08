@@ -1,18 +1,18 @@
-// Display names by locale. Names are stored in Uzbek Latin; for the Cyrillic
-// and Russian UIs we transliterate them so "Ahmedov" shows as "Аҳмедов".
+// Ismlarni til böyiça körsatiş. Ismlar özbek lotinida saqlanadi; kirill va rus
+// interfeyslari uçun ularni transliteratsiya qilamiz — şunda "Ahmedov" "Аҳмедов" bölib körinadi.
 
 const APOS = /['ʻʼ`‘’]/g;
 
-// single letters (lowercase keys)
+// yakka harflar (kiçik harfli kalitlar)
 const UZ: Record<string, string> = {
   a: "а", b: "б", c: "с", d: "д", e: "е", f: "ф", g: "г", h: "ҳ", i: "и", j: "ж",
   k: "к", l: "л", m: "м", n: "н", o: "о", p: "п", q: "қ", r: "р", s: "с", t: "т",
   u: "у", v: "в", w: "в", x: "х", y: "й", z: "з",
 };
-// Russian-style differs for a few letters (no ҳ/ғ/қ/ў)
+// Ruscha uslub bir neça harfda farq qiladi (ҳ/ғ/қ/ў yöq)
 const RU: Record<string, string> = { ...UZ, h: "х", q: "к" };
 
-// digraphs (apostrophes already normalized to '); order matters
+// digraflar (apostroflar allaqaçon ' ga keltirilgan); tartib muhim
 const UZ_DI: [string, string][] = [
   ["o'", "ў"], ["g'", "ғ"], ["yo", "ё"], ["yu", "ю"], ["ya", "я"], ["ye", "е"], ["sh", "ш"], ["ch", "ч"], ["ts", "ц"],
 ];
@@ -42,13 +42,13 @@ function translit(input: string, map: Record<string, string>, di: [string, strin
     const low = ch.toLowerCase();
     const c = map[low];
     if (c) out += ch !== low ? cap(c) : c;
-    else if (ch !== "'") out += ch; // drop the leftover tutuq belgisi in names
+    else if (ch !== "'") out += ch; // ismlardagi ortib qolgan tutuq belgisini olib taşlaymiz
     i++;
   }
   return out;
 }
 
-/** Strip the patronymic (3rd word) from "Familiya Ism Otchestvo". */
+/** "Familiya Ism Otchestvo" dan otaning ismini (3-söz) olib taşlaydi. */
 export function shortName(name: string | null | undefined): string {
   if (!name) return name ?? "";
   const parts = name.trim().split(/\s+/);
@@ -56,7 +56,7 @@ export function shortName(name: string | null | undefined): string {
   return parts.slice(0, 2).join(" ");
 }
 
-/** Localize a person's name for the current UI language. */
+/** Odamning ismini joriy interfeys tiliga moslaydi. */
 export function localizeName(name: string | null | undefined, locale: string): string {
   if (!name) return name ?? "";
   const short = shortName(name);

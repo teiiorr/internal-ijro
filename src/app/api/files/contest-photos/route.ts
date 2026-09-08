@@ -20,7 +20,7 @@ function sameOrigin(req: NextRequest): boolean {
   }
 }
 
-/** Streaming photo upload for a contest (Tanlov). Managed by the project-editor allowlist. */
+/** Tanlov uçun rasmni oqim orqali yuklash. Loyiha muharrirlari röyxati orqali boşqariladi. */
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

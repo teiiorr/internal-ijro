@@ -31,7 +31,7 @@ export function ContestFiles({ contestId, files, canManage }: { contestId: strin
     setUploading(true);
     try {
       let f = file;
-      try { const r = await compressImage(file); f = r.file; } catch { /* original */ }
+      try { const r = await compressImage(file); f = r.file; } catch { /* asl fayl */ }
       const qs = new URLSearchParams({ contestId, name: f.name });
       const res = await fetch(`/api/files/contest-files?${qs.toString()}`, {
         method: "POST",

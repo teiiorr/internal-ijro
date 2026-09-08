@@ -17,7 +17,7 @@ const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
   not_started: "muted",
 };
 
-// deliberately loose — matches listProjectsForContractor() rows
+// ataylab erkin tuzilgan — listProjectsForContractor() qatorlariga mos keladi
 type Proj = {
   id: string;
   name: string;
@@ -52,13 +52,13 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
         const derived = derivedStatus(p.progressPercentage, p.statusOverride);
         const due = p.deadline ? new Date(p.deadline) : null;
         const overdue = !!due && due < today && derived !== "completed" && derived !== "on_hold";
-        // Whose turn: only meaningful while there's an active stage.
+        // Navbat kimda: faqat aktiv bosqiç bölganda maʼnoga ega.
         const rs = p.activeStageReviewStatus;
         const turn: Turn =
           derived === "completed" || !rs ? null : rs === "submitted" ? "bkrm" : "studio";
         return { ...p, derived, overdue, turn };
       })
-      // "Your turn" first, then overdue, then by lifecycle.
+      // Avval "Sizning navbatingiz", keyin muddati ötgan, söng hayot sikli böyiça.
       .sort((a, b) => {
         if ((a.turn === "studio") !== (b.turn === "studio")) return a.turn === "studio" ? -1 : 1;
         if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
@@ -97,7 +97,7 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
 
   return (
     <div className="space-y-5">
-      {/* KPI tiles — clickable filters. "Needs you" first (the actionable one). */}
+      {/* KPI kartalari — bosiladigan filtrlar. Avval "Sizdan kutilmoqda" (harakat talab etadigani). */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
         <button type="button" onClick={() => toggle("needs_you")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "needs_you" && "ring-2 ring-[var(--primary)] rounded-2xl")}>
           <StatCard label={t("review.needsYou")} value={counts.needs_you} tone="primary" icon={<Hand className="size-4" />} />
@@ -113,7 +113,7 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
         </button>
       </div>
 
-      {/* Sticky frosted search — cards scroll under it, full-bleed on mobile. */}
+      {/* Yopişqoq muzli qidiruv — kartalar uning ostidan siljiydi, mobil'da çetdan-çetga. */}
       <div className="sticky top-[60px] z-20 -mx-3 glass-soft px-3 py-2 sm:-mx-4 sm:top-[68px] sm:px-4 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
         <div className="relative mx-auto max-w-[1500px]">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />

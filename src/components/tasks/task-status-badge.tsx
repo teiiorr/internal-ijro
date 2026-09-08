@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 
-// Task status → traffic-light tone (dashed tag, no solid chip).
+// Topşiriq holati → svetofor rangi (çiziqli teg, töldirilgan çip emas).
 const STATUS_TONE: Record<string, StatusTone> = {
   todo: "muted",
   in_progress: "amber",
@@ -15,7 +15,7 @@ export function TaskStatusBadge({ status }: { status: string }) {
   return <StatusTag tone={STATUS_TONE[status] ?? "muted"}>{t(`tasks.status.${status}` as `tasks.status.todo`)}</StatusTag>;
 }
 
-// Priority → tone: urgent red, high/medium amber, low muted.
+// Ustuvorlik → rang: şoşilinç qizil, yuqori/örta sariq, past xira.
 const PRIORITY_TONE: Record<string, StatusTone> = {
   urgent: "red",
   high: "amber",

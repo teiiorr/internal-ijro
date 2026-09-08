@@ -22,7 +22,7 @@ export type ContestDetail = ContestWithPhotos & {
   comments: ContestComment[];
 };
 
-/** All contests, newest first, each with its ordered photos. */
+/** Barça tanlovlar, eng yangisidan boşlab, har biri tartiblangan rasmlari bilan. */
 export async function listContests(): Promise<ContestWithPhotos[]> {
   const rows = await db
     .select({
@@ -65,7 +65,7 @@ export async function listContests(): Promise<ContestWithPhotos[]> {
   }));
 }
 
-/** Single contest with its photos, files and comments (for the detail page). */
+/** Bitta tanlov, rasmlari, fayllari va izohlari bilan (tafsilot sahifasi uçun). */
 export async function getContest(id: string): Promise<ContestDetail | null> {
   const [c] = await db
     .select({

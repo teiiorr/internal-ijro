@@ -33,7 +33,7 @@ export async function requirePosition(allowed: Position[]): Promise<SessionUser>
   return user;
 }
 
-/** Project-editor allowlist OR an owner-granted `projects.edit` capability. */
+/** Project-editor allowlist YOKI egasi tomonidan berilgan `projects.edit` imkoniyati. */
 export async function requireProjectEditor(): Promise<SessionUser> {
   const user = await requireUser();
   if (canEditProjects(user.email)) return user;

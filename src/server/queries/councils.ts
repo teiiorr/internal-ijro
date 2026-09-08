@@ -13,7 +13,7 @@ export type AgendaRow = {
   presenterName: string | null;
 };
 
-/** Everything the council page needs: the nearest upcoming meeting + its agenda, and the full history. */
+/** Kengaş sahifasiga kerak bölgan hamma narsa: eng yaqin böladigan majlis + uning kun tartibi, va töliq tarix. */
 export async function getCouncilPage(kind: string) {
   const meetings = await db
     .select()
@@ -21,7 +21,7 @@ export async function getCouncilPage(kind: string) {
     .where(eq(councilMeetings.kind, kind))
     .orderBy(desc(councilMeetings.scheduledAt));
 
-  // Upcoming = soonest meeting still in the future.
+  // Böladigan = hali kelajakdagi eng yaqin majlis.
   const upcoming = (
     await db
       .select()
@@ -50,8 +50,8 @@ export async function getCouncilPage(kind: string) {
       .orderBy(asc(councilAgendaItems.orderIndex));
   }
 
-  // Agenda for every meeting of this kind → lets the history render as an
-  // expandable archive (each past meeting shows its own kun tartibi inside).
+  // Şu turdagi har bir majlis uçun kun tartibi → tarixni yoyiladigan arxiv
+  // körinişida körsatiş imkonini beradi (har bir ötgan majlis öz kun tartibini içida körsatadi).
   const allItems = await db
     .select({
       meetingId: councilAgendaItems.meetingId,

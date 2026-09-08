@@ -83,7 +83,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
 
   return (
     <div className="space-y-4">
-      {/* Header */}
+      {/* Sarlavha */}
       <div className="flex items-start gap-4">
         <button
           type="button"
@@ -127,7 +127,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
         </div>
       </div>
 
-      {/* Contact links */}
+      {/* Aloqa havolalari */}
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {company.contactPhone && (
           <a
@@ -166,7 +166,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
         )}
       </div>
 
-      {/* Specialization */}
+      {/* Ixtisoslik */}
       {company.specialization && (
         <div className="rounded-xl border border-[var(--border)] px-4 py-3">
           <p className="text-xs font-semibold text-[var(--muted)] mb-1">{t("specialization")}</p>
@@ -174,7 +174,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
         </div>
       )}
 
-      {/* Stats row */}
+      {/* Statistika qatori */}
       <div className="grid grid-cols-3 gap-2 text-center stagger-children">
         <div className="rounded-xl bg-[var(--surface-2)] py-3 hover-scale">
           <div className="flex items-center justify-center gap-1 text-[var(--primary)]">
@@ -200,7 +200,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
         </div>
       </div>
 
-      {/* Login info */}
+      {/* Kiriş ma'lumotlari */}
       {company.contactEmail && (
         <div className="rounded-xl border border-[var(--border)] px-4 py-3">
           <p className="text-xs font-semibold text-[var(--muted)] mb-1">{t("loginInfo")}</p>
@@ -208,7 +208,7 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
         </div>
       )}
 
-      {/* Staff notes */}
+      {/* Xodim izohlari */}
       <div className="space-y-2">
         <p className="text-sm font-semibold">{t("notes")}</p>
         <textarea

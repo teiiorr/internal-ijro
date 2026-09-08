@@ -44,7 +44,7 @@ export function StudioProjectsList({
     return <p className="py-10 text-center text-sm text-[var(--muted)]">{t("contractors.detail.noProjects")}</p>;
   }
 
-  // Awaiting-you (bkrm) first.
+  // Avval sizni kutayotganlari (bkrm).
   const sorted = [...projects].sort((a, b) => (a.turn === "bkrm" ? 0 : 1) - (b.turn === "bkrm" ? 0 : 1));
 
   return (
@@ -84,7 +84,7 @@ export function StudioProjectsList({
               <div className="space-y-4 border-t border-[var(--border)] p-4">
                 {a ? (
                   <>
-                    {/* changes-requested note echo (what staff last asked) */}
+                    {/* özgartiriş sörovi izohi (xodim oxirgi marta nimani söraganini körsatadi) */}
                     {a.reviewStatus === "changes_requested" && a.reviewNote && (
                       <div className="rounded-xl border border-[var(--danger)]/40 bg-[var(--danger)]/8 p-3 text-sm">
                         <p className="mb-1 font-semibold text-[var(--danger)]">{t("review.changesRequestedTitle")}</p>

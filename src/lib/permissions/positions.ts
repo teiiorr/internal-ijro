@@ -1,8 +1,8 @@
 import type { Position } from "@/lib/db/schema";
 
 /**
- * Position hierarchy levels (lower = higher authority).
- * HR and Kontragent are functional roles outside the chain.
+ * Lavozim ierarxiyasi darajalari (kiçik son = yuqori vakolat).
+ * HR va Kontragent zanjirdan taşqaridagi funktsional rollar.
  */
 export const POSITION_LEVEL: Record<Position, number> = {
   direktor: 1,

@@ -45,7 +45,7 @@ export default async function ContractorDetailPage({
   if (!detail) notFound();
 
   const { company, projects: prjs, lastActivity } = detail;
-  // Review authority = the same check the review server actions enforce.
+  // Körib chiqiş huquqi = körib chiqiş server action'lari qöllaydigan aynan şu tekşiruv.
   const isEditor = canEditProjects(session.user.email) || (await hasGrant(session.user.id, "projects.edit"));
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
@@ -64,7 +64,7 @@ export default async function ContractorDetailPage({
     <div className="space-y-5 stagger-children">
       <BackButton fallbackHref="/contractors" />
 
-      {/* Hero header — who they are, how healthy, at a glance */}
+      {/* Hero sarlavha — ular kim, ahvoli qanday, bir qaraşda */}
       <Card>
         <CardContent className="p-5 sm:p-7">
           <div className="flex flex-wrap items-start gap-4">

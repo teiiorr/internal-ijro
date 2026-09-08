@@ -7,7 +7,7 @@ import { IconPencil as Pencil, IconDeviceFloppy as Save } from "@tabler/icons-re
 import { Button } from "@/components/ui/button";
 import { setStageRequirements } from "@/server/actions/stages";
 
-/** Staff authors what the studio must deliver this stage (read-only to studio). */
+/** Xodim studiya bu bosqiçda nima topşirişi kerakligini yozadi (studiya uçun faqat öqiş). */
 export function StageRequirementsEditor({ stageId, initial }: { stageId: string; initial: string | null }) {
   const t = useTranslations();
   const router = useRouter();

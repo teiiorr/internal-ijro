@@ -52,15 +52,16 @@ export default async function proxy(req: NextRequest) {
     req.cookies.get("authjs.session-token")?.value ??
     req.cookies.get("__Secure-authjs.session-token")?.value;
 
-  // Rate limiting (per IP). IMPORTANT: the whole office sits behind ONE public
-  // IP (NAT), so a low per-IP cap falsely 429s everyone once a handful of people
-  // are active — each page load fans out into many RSC + prefetch requests plus
-  // 60s notification polling, and 40 users share the same bucket. So:
-  //  • auth endpoints (login/forgot/reset): strict per-IP cap for brute force
-  //    (backed by per-account lockout too);
-  //  • anonymous traffic to other paths: a generous cap;
-  //  • authenticated users (valid session): only a very high runaway backstop —
-  //    they're trusted internal staff and must not be blocked as a shared IP.
+  // Rate limiting (IP böyiça). MUHIM: butun ofis BITTA ommaviy IP (NAT) ortida
+  // turadi, şuning uçun IP böyiça past çegara bir neça kişi faollaşişi bilanoq
+  // hammani noörin 429 qiladi — har bir sahifa yuklanişida köplab RSC + prefetch
+  // sörovlar hamda 60s'lik bildirişnoma polling'i keladi, 40 ta foydalanuvçi esa
+  // bitta bucket'ni ulaşadi. Şuning uçun:
+  //  • auth endpoint'lar (login/forgot/reset): brute force'ga qarşi IP böyiça qat'iy çegara
+  //    (buni akkaunt böyiça bloklaş ham quvvatlaydi);
+  //  • boşqa yöllarga anonim trafik: keng (saxovatli) çegara;
+  //  • autentifikatsiyadan ötgan foydalanuvçilar (haqiqiy sessiya): faqat juda yuqori
+  //    himoya çegarasi — ular işonçli içki xodimlar va umumiy IP tufayli bloklanmasligi kerak.
   if (!isPrivate) {
     const isAuthEndpoint =
       pathname.includes("/login") || pathname.includes("/forgot-password") || pathname.includes("/reset-password");

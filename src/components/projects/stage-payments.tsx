@@ -33,7 +33,7 @@ export function StagePayments({
   payments: Payment[];
   plannedAmount: number | null;
   canManage: boolean;
-  // When false, all figures are shown as "***" (money visible only to the allowlist).
+  // false bölsa, barcha raqamlar "***" körinişida körsatiladi (pulni faqat ruxsat röyxatidagilar köradi).
   showMoney?: boolean;
 }) {
   const t = useTranslations();
@@ -64,7 +64,7 @@ export function StagePayments({
 
   return (
     <div className="space-y-4">
-      {/* totals / planned-vs-paid — dashed frame, coloured figures, no grey fill */}
+      {/* jami / reja va tölangan — punktir ramka, rangli raqamlar, kulrang fon yöq */}
       <div className="rounded-xl border border-dashed border-[var(--border-strong)] p-4 space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</span>
@@ -100,7 +100,7 @@ export function StagePayments({
         )}
       </div>
 
-      {/* list — dashed rows, amount coloured by status (green paid / amber pending) */}
+      {/* röyxat — punktir qatorlar, summa holat böyicha ranglangan (yaşil — tölangan / sariq — kutilmoqda) */}
       <ul className="space-y-2">
         {payments.map((p) => (
           <li key={p.id} className="rounded-xl border border-dashed border-[var(--border)] px-3 py-2.5 space-y-2">
@@ -136,7 +136,7 @@ export function StagePayments({
         {payments.length === 0 && <li className="text-sm text-[var(--muted)]">{t("projects.stagePayments.empty")}</li>}
       </ul>
 
-      {/* add — wraps gracefully in narrow columns */}
+      {/* qöşiş — tor ustunlarda çiroyli tarzda qatorga öradi */}
       {canManage && (
         <div className="flex flex-wrap items-center gap-2">
           <MoneyInput placeholder={t("projects.stagePayments.amount")} value={amount} onValueChange={setAmount} className="w-36 flex-none" />

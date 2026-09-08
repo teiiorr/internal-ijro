@@ -10,17 +10,18 @@ import { randomUUID } from "node:crypto";
 const UPLOAD_DIR = process.env.UPLOAD_DIR ?? "./uploads";
 const MAX_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
-/** The upload size cap in bytes — single source of truth for server + (via prop) client. */
+/** Yuklaş hajmi çegarasi (bayt) — server va (prop orqali) mijoz uçun yagona haqiqat manbai. */
 export const MAX_UPLOAD_BYTES = MAX_BYTES;
 
-/** True if the file extension is on the executable/active-content blocklist. */
+/** Fayl kengaytmasi bajariladigan/aktiv-kontent qora röyxatida bölsa, true qaytaradi. */
 export function isForbiddenExt(fileName: string): boolean {
   return FORBIDDEN_EXT.has(extname(fileName).toLowerCase());
 }
 
-// Stage documents accept ANY format. Security floor = an executable/active-content
-// blocklist (files are served with `Content-Disposition: inline`, so markup that can
-// run script — .html/.svg/etc. — is blocked to prevent stored XSS on the app origin).
+// Bosqiç hujjatlari HAR QANDAY formatni qabul qiladi. Minimal xavfsizlik çorasi =
+// bajariladigan/aktiv-kontent qora röyxati (fayllar `Content-Disposition: inline` bilan
+// beriladi, şuning uçun skript işga tuşira oladigan markup — .html/.svg va h.k. — ilova
+// originida saqlangan XSS'ning oldini oliş uçun bloklanadi).
 const FORBIDDEN_EXT = new Set([
   ".exe", ".bat", ".sh", ".cmd", ".com", ".js", ".mjs", ".cjs", ".jar", ".msi",
   ".vbs", ".ps1", ".scr", ".app", ".dll",
@@ -41,7 +42,7 @@ export async function storeFile(file: File, subdir: string): Promise<StoredFile>
   if (file.size > MAX_BYTES) throw new Error("file_too_large");
   if (file.size === 0) throw new Error("file_empty");
   const ext = extname(file.name).toLowerCase();
-  // Allow-by-default: any format except the executable/active-content blocklist.
+  // Standart holda ruxsat: bajariladigan/aktiv-kontent qora röyxatidan boşqa har qanday format.
   if (FORBIDDEN_EXT.has(ext)) throw new Error("ext_forbidden");
 
   const targetDir = join(UPLOAD_DIR, subdir);
@@ -50,10 +51,10 @@ export async function storeFile(file: File, subdir: string): Promise<StoredFile>
   const fileName = `${randomUUID()}${safeExt}`;
   const diskPath = join(targetDir, fileName);
 
-  // Stream the upload straight to disk rather than buffering the whole file into
-  // a Buffer. A 60–100MB Buffer per request is exactly the kind of memory spike
-  // that took the server down; streaming keeps peak memory flat. On any failure
-  // we remove the half-written file so no truncated garbage is left behind.
+  // Faylni butunlay Buffer'ga yiğmasdan, yuklamani toğridan-toğri diskka stream
+  // qilamiz. Har bir sörov uçun 60–100MB Buffer — aynan serverni ağdarib
+  // tuşiradigan xotira sakraşi; stream esa eng yuqori xotira sarfini past ushlaydi.
+  // Har qanday xatolikda yarim yozilgan faylni öçiramiz, toki buzuq qoldiq qolmasin.
   try {
     await pipeline(
       Readable.fromWeb(file.stream() as unknown as NodeWebReadableStream<Uint8Array>),
@@ -75,11 +76,12 @@ export async function storeFile(file: File, subdir: string): Promise<StoredFile>
 }
 
 /**
- * Store a file straight from a request body stream (no full-file buffering).
- * This is the memory-safe path for large uploads on the small production box:
- * bytes flow request → disk in chunks, so peak RAM stays flat regardless of the
- * file size. Enforces the size cap WHILE streaming (a lying Content-Length can't
- * sneak a huge file past us) and cleans up the partial file on any failure.
+ * Faylni toğridan-toğri sörov tanasi (body) stream'idan saqlaydi (butun faylni buffer'ga yiğmasdan).
+ * Bu kiçik production serverida katta fayllarni yuklaş uçun xotira jihatidan xavfsiz yöl:
+ * baytlar bölaklar (chunk) böyiça request → disk yönalişida oqadi, şuning uçun fayl
+ * hajmidan qat'i nazar eng yuqori RAM sarfi past qoladi. Hajm çegarasini stream davomida
+ * tekşiradi (yolğon Content-Length katta faylni bizdan yaşirib ötkaza olmaydi) va har
+ * qanday xatolikda yarim faylni tözalaydi.
  */
 export async function storeStream(
   body: NodeWebReadableStream<Uint8Array> | ReadableStream<Uint8Array> | null,
@@ -88,7 +90,7 @@ export async function storeStream(
   if (!body) throw new Error("file_empty");
   const ext = extname(opts.fileName).toLowerCase();
   if (FORBIDDEN_EXT.has(ext)) throw new Error("ext_forbidden");
-  // Fast reject when the client already tells us it's over the cap.
+  // Mijozning özi hajm çegarasidan oşganini aytsa, tezda rad etamiz.
   if (opts.declaredSize != null && opts.declaredSize > MAX_BYTES) throw new Error("file_too_large");
 
   const targetDir = join(UPLOAD_DIR, opts.subdir);
@@ -140,15 +142,15 @@ export async function deleteFileByUrl(url: string): Promise<void> {
   try {
     await unlink(path);
   } catch {
-    // ignore — already gone
+    // e'tibor bermaymiz — allaqaçon yöq
   }
 }
 
 /**
- * Resolve a stored file's absolute path + size for download — WITHOUT reading it
- * into memory. The route streams it from disk (createReadStream), so serving a
- * 100MB file costs a constant few KB of RAM instead of a 100MB Buffer. `basename`
- * strips any path traversal from the requested name.
+ * Yuklab oliş uçun saqlangan faylning absolyut yölini va hajmini aniqlaydi — uni
+ * xotiraga öqimasdan. Route uni diskdan stream qiladi (createReadStream), şuning
+ * uçun 100MB faylni uzatiş 100MB Buffer örniga doimiy bir neça KB RAM sarflaydi.
+ * `basename` söralgan nomdan har qanday path traversal'ni olib taşlaydi.
  */
 export async function statFileForDownload(subdir: string, fileName: string): Promise<{ path: string; size: number } | null> {
   const safe = basename(fileName);

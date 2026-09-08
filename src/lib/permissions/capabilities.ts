@@ -1,8 +1,8 @@
 import type { Position } from "@/lib/db/schema";
 
 /**
- * Pure (no DB) capability matrix derived from TZ §4.4.
- * Imported from server actions AND unit tests — must not pull DB or `server-only`.
+ * TZ §4.4 dan olingan sof (DB'siz) qobiliyatlar matritsasi.
+ * Server action'lardan ham, unit-testlardan ham import qilinadi — DB yoki `server-only` ni tortmasligi kerak.
  */
 export type Capability =
   | "settings.company"

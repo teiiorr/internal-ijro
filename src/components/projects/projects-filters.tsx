@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, useTransition } from "react";
 import { IconChevronDown as ChevronDown, IconSearch as Search } from "@tabler/icons-react";
 
-// Airy dashed control — same language as the file dropzone.
+// Havodor punktir uslubidagi element — fayl taşlash maydoni bilan bir xil uslubda.
 const FIELD =
   "h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3.5 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none";
 
@@ -37,9 +37,9 @@ function Sel({
 }
 
 /**
- * Real-time projects filter bar (no "Apply" button): every change updates the
- * URL, which re-renders the list on the server. The "stage" dropdown is scoped
- * to the selected type and stays disabled until a type is picked.
+ * Real vaqt rejimida işlaydigan loyihalar filtri paneli ("Qöllash" tugmasisiz): har bir
+ * özgariş URL ni yangilaydi, bu esa röyxatni serverda qaytadan render qiladi. "stage" röyxati
+ * tanlangan turga boğliq va tur tanlanmaguncha nofaol turadi.
  */
 export function ProjectsFilters({
   types,
@@ -72,7 +72,7 @@ export function ProjectsFilters({
     startTransition(() => router.replace(`${pathname}?${next.toString()}`, { scroll: false }));
   }
 
-  // Debounce the search box so we navigate once the user pauses typing.
+  // Qidiruv maydonini debounce qilamiz — foydalanuvçi yozişni töxtatgandan söng ötamiz.
   useEffect(() => {
     if (search === searchParam) return;
     const id = setTimeout(() => push({ search: search || null }), 350);
@@ -95,7 +95,7 @@ export function ProjectsFilters({
         />
       </div>
 
-      {/* Selecting a type also clears any stage (options are type-scoped). */}
+      {/* Tur tanlanganda bosqiç ham tozalanadi (variantlar turga boğliq). */}
       <Sel value={typeId} onChange={(v) => push({ typeId: v || null, stage: null })}>
         <option value="">{t("projects.filters.allTypes")}</option>
         {types.map((pt) => (

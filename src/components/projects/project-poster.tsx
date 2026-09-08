@@ -22,7 +22,7 @@ export function ProjectPoster({
   const [pending, start] = useTransition();
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  // Detect cached posters that finish before onLoad attaches (else stuck hidden).
+  // onLoad ulanguncha yuklanib bölgan keşlangan posterlarni aniqlaymiz (aks holda yaşirin qolib ketadi).
   useEffect(() => {
     setImgLoaded(false);
     const el = imgRef.current;

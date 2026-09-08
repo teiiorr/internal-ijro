@@ -28,8 +28,8 @@ function humanSize(bytes: number | null): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-// Each bucket gets its own colourway + icon so the two panels read as distinct,
-// on-brand blocks that draw the eye.
+// Har bir bölimga alohida rang jamlanmasi va belgi beriladi — şunda ikkala panel
+// közga taşlanadigan, uslubga mos, bir-biridan aniq farq qiladigan bloklarga öxşaydi.
 const THEME: Record<Kind, { grad: string; btn: string; soft: string; Icon: typeof BarChart3 }> = {
   tahlil: {
     grad: "from-[#6366f1] to-[#8b5cf6]",
@@ -72,7 +72,7 @@ function DocPanel({
   const [preparing, setPreparing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
-  const [open, setOpen] = useState(false); // upload form collapsed by default — keeps the panel compact
+  const [open, setOpen] = useState(false); // yuklaş formasi standart holatda yiğilgan — panelni ixcham saqlaydi
 
   async function onFileChange(file: File | null) {
     if (!file) return setStaged(null);
@@ -121,7 +121,7 @@ function DocPanel({
       }
       setStaged(null);
       setPickerKey((k) => k + 1);
-      setOpen(false); // collapse again after a successful add
+      setOpen(false); // muvaffaqiyatli qöşilgandan söng yana yiğamiz
       toast.success(t("projects.stageDocs.added"));
       router.refresh();
     } catch {
@@ -136,8 +136,8 @@ function DocPanel({
 
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]">
-      {/* Gradient header — title centred, icon + count pinned to the sides.
-          text-white is set on the <h3> itself to beat the base `h3 { color }` rule. */}
+      {/* Gradiyentli sarlavha — matn markazda, belgi va son çetlarga mahkamlangan.
+          Asosiy `h3 { color }` qoidasini yengish uchun text-white bevosita <h3> ga qöyilgan. */}
       <div className={`relative bg-gradient-to-r ${theme.grad} px-4 py-3.5`}>
         <span className="absolute left-4 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-xl bg-white/20 text-white backdrop-blur-sm">
           <Icon className="size-5" />
@@ -191,9 +191,9 @@ function DocPanel({
           </ul>
         )}
 
-        {/* Upload area pinned to the bottom so the button lines up across panels
-            regardless of how many files each holds. Collapsed by default; the
-            button and the form cross-animate (height + fade) when toggled. */}
+        {/* Yuklaş qismi pastga mahkamlangan — şunda har bir panelda neçta fayl
+            bölişidan qat'i nazar, tugma bir xil joyda turadi. Standart holatda yiğilgan;
+            almaştirilganda tugma va forma özaro animatsiyalanadi (balandlik + söniş). */}
         {canManage && (
           <div className="mt-auto">
             <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}>

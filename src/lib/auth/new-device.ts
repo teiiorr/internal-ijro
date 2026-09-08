@@ -6,8 +6,8 @@ import { activityLog } from "@/lib/db/schema";
 import { renderNewDeviceLoginEmail, sendMail } from "@/lib/email";
 
 /**
- * Send a "new device" email if no successful login for the same UA happened in the last 60 days.
- * Best-effort — failures are swallowed.
+ * Oxirgi 60 kun içida şu UA bilan muvaffaqiyatli kiriş bölmagan bölsa, "yangi qurilma" xatini yuboradi.
+ * Iloji boriça bajariladi — xatoliklar e'tiborsiz qoldiriladi.
  */
 export async function maybeSendNewDeviceEmail(opts: {
   userId: string;

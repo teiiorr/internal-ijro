@@ -95,7 +95,7 @@ export async function getTaskActivityTimeline(days = 30) {
     ) c2 ON c2.d = gs::date
     ORDER BY gs::date
   `);
-  // postgres-js returns array of rows on .execute
+  // postgres-js .execute'da qatorlar massivini qaytaradi
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (rows as any[]).map((r) => ({
     date: typeof r.d === "string" ? r.d : new Date(r.d).toISOString().slice(0, 10),
@@ -128,8 +128,9 @@ export async function getProjectsActiveCount(): Promise<number> {
 }
 
 /**
- * Workload split per department for not-yet-finished tasks. Returns one row
- * per dept with three columns the UI stacks as a horizontal bar.
+ * Hali tugallanmagan topşiriqlar böyiça har bir bölimga yuklamaning taqsimlanişi.
+ * Har bir bölim uçun bitta qator qaytaradi — UI uni gorizontal ustun sifatida
+ * ürub körsatadigan uçta ustun bilan.
  */
 export async function getDepartmentWorkload() {
   const rows = await db.execute<{
@@ -162,7 +163,7 @@ export async function getDepartmentWorkload() {
   }));
 }
 
-/** Tasks with a deadline within the next N days, soonest first. */
+/** Keyingi N kun içida muddati tugaydigan topşiriqlar, eng yaqinidan boşlab. */
 export async function getUpcomingDeadlines(days = 7, limit = 8) {
   const rows = await db
     .select({
@@ -181,7 +182,7 @@ export async function getUpcomingDeadlines(days = 7, limit = 8) {
   return rows;
 }
 
-/** Active projects with computed progress + overdue flag for the manager dashboard. */
+/** Rahbar boşqaruv paneli uçun faol loyihalar — hisoblangan jarayoni + muddati ötgan belgisi bilan. */
 export async function getActiveProjectsHealth(limit = 6) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -206,10 +207,10 @@ export async function getActiveProjectsHealth(limit = 6) {
 }
 
 // ---------------------------------------------------------------------------
-// Projects & stages analytics (manager dashboard)
+// Loyihalar va bosqiçlar tahlili (rahbar boşqaruv paneli)
 // ---------------------------------------------------------------------------
 
-/** Headline counters for the projects dashboard — every one is a clickable KPI. */
+/** Loyihalar boşqaruv paneli uçun asosiy hisoblagiçlar — har biri bosiladigan KPI. */
 export async function getProjectStageKpis() {
   const [active, overdueStages, dueSoonStages, overdueTasks] = await Promise.all([
     db.select({ c: sql<number>`count(*)::int` }).from(projects).where(sql`${projects.status} not in ('completed','cancelled')`),
@@ -225,7 +226,7 @@ export async function getProjectStageKpis() {
   };
 }
 
-/** Project counts by derived status (progress + on-hold override) — powers the donut. */
+/** Hosilaviy holat böyiça loyihalar soni (jarayoni + "töxtatib turiş" holati) — halqa diagrammani ta'minlaydi. */
 export async function getProjectStatusBreakdown() {
   const rows = await db
     .select({ progressPercentage: projects.progressPercentage, statusOverride: projects.statusOverride })
@@ -235,7 +236,7 @@ export async function getProjectStatusBreakdown() {
   return out;
 }
 
-/** Typed-project counts per production type — powers the horizontal bar. */
+/** Işlab çiqariş turi böyiça loyihalar soni — gorizontal ustunni ta'minlaydi. */
 export async function getProjectTypeBreakdown(locale: string) {
   const rows = await db
     .select({
@@ -254,7 +255,7 @@ export async function getProjectTypeBreakdown(locale: string) {
     .filter((r) => r.count > 0);
 }
 
-/** Active stages that have a deadline, most urgent first (overdue → soonest). */
+/** Muddati belgilangan faol bosqiçlar, eng şoşilinçidan boşlab (muddati ötgan → eng yaqin). */
 export async function getStageDeadlineBoard(locale: string, limit = 8) {
   const rows = await db
     .select({
@@ -285,7 +286,7 @@ export async function getStageDeadlineBoard(locale: string, limit = 8) {
   }));
 }
 
-/** Money rollup across every stage: planned target vs paid vs pending. */
+/** Barça bosqiçlar böyiça pul jamlanmasi: rejadagi maqsad, tölangan va kutilayotgan summalar. */
 export async function getProjectPaymentsSummary() {
   const [plannedRow, payRow] = await Promise.all([
     db.select({ s: sql<string>`coalesce(sum(${projectStages.plannedAmount}),0)` }).from(projectStages),

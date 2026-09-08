@@ -1,5 +1,5 @@
-// Tiny in-memory rate limiter. Acceptable for single-instance dev/local use.
-// In production replace with @upstash/ratelimit + Redis (recommended in TZ §10.2).
+// Xotirada işlaydigan kiçik rate limiter. Bitta instansiyali dev/lokal foydalaniş uçun maqbul.
+// Production'da uni @upstash/ratelimit + Redis bilan almaştiriş kerak (TZ §10.2 da tavsiya etilgan).
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
 export function rateLimit(key: string, limit: number, windowMs: number): { allowed: boolean; remaining: number } {

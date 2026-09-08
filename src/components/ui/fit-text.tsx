@@ -2,10 +2,11 @@
 import * as React from "react";
 
 /**
- * Renders text on a single line and shrinks the font-size (between minPx and
- * maxPx) until it fits its parent's width — never wraps. Used for large money
- * figures in narrow cards so "… UZS" stays on one line beside its label.
- * The parent element must have a bounded width (e.g. flex-1 min-w-0).
+ * Matnni bitta qatorda körsatadi va u ota elementning kengligiga siğgunça
+ * font-size ni (minPx va maxPx orasida) kiçraytiradi — hech qaçon yangi satrga
+ * ötmaydi. Tor kartalardagi katta pul summalari uçun işlatiladi, şunda "… UZS"
+ * öz yorliği yonida bitta qatorda turadi. Ota element çegaralangan kenglikka
+ * ega bölişi kerak (masalan, flex-1 min-w-0).
  */
 export function FitText({
   children,

@@ -6,7 +6,7 @@ import { IconTrash as Trash2, IconLoader2 as Loader2 } from "@tabler/icons-react
 import { Button } from "@/components/ui/button";
 import { deleteProject } from "@/server/actions/projects";
 
-/** Two-step delete: a trash button that reveals an inline "are you sure?" confirm. */
+/** Ikki bosqiçli öçiriş: savatcha tugmasi bosilganda şu yerda "işonchingiz komilmi?" tasdiği çiqadi. */
 export function DeleteProjectButton({ projectId }: { projectId: string }) {
   const t = useTranslations();
   const router = useRouter();

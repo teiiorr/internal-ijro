@@ -43,7 +43,7 @@ export function NewProjectForm({
     const fd = new FormData(e.currentTarget);
     start(async () => {
       try {
-        // Resolve the studio: link an existing one by name, otherwise create it inline.
+        // Studiyani aniqlaymiz: mavjud bölsa nomi böyicha boğlaymiz, aks holda şu yerda yaratamiz.
         let externalCompanyId: string | null = null;
         if (type === "external") {
           const nm = companyText.trim();

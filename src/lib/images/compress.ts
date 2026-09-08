@@ -1,27 +1,28 @@
 /**
- * Client-side image shrinker.
+ * Brauzer tomonida işlaydigan rasm kiçraytirgiç.
  *
- * Big photos and scans (a 60MB phone shot, a 4000-px document scan) are the
- * common reason an upload blows past the size limit. Rather than reject them,
- * we re-render the image on a canvas at a sane maximum dimension and re-encode
- * it as JPEG, which typically turns tens of MB into ~1–3MB with no visible loss
- * for document use. Anything we can't or shouldn't touch — PDFs, Office files,
- * video, GIFs, SVGs, HEIC the browser can't decode — is returned unchanged.
+ * Katta rasmlar va skanlar (60MB'lik telefon surati, 4000-px'lik hujjat skani)
+ * yuklamaning hajm çegarasidan oşib ketişiga eng köp sabab böladi. Ularni rad
+ * etiş örniga, rasmni canvas'da maqbul maksimal ölçamda qayta çizib, JPEG
+ * körinişida qayta kodlaymiz — bu odatda önlab MB'ni hujjat uçun közga
+ * körinarli sifat yöqotişsiz ~1–3MB'ga aylantiradi. Tegib bölmaydigan yoki
+ * tegmasligimiz kerak bölgan narsalar — PDF, Office fayllari, video, GIF, SVG,
+ * brauzer dekodlay olmaydigan HEIC — özgarişsiz qaytariladi.
  *
- * Runs entirely in the browser (canvas), so nothing large is uploaded only to
- * be rejected server-side, and the server never has to spend CPU on it.
+ * Töliq brauzerda (canvas) işlaydi, şuning uçun katta fayl serverga yuklanib
+ * bekorga rad etilmaydi va server unga CPU sarflamaydi.
  */
 
 export type CompressResult = {
-  /** The file to actually upload — compressed when it helped, else the original. */
+  /** Haqiqatda yuklanadigan fayl — foyda bölsa siqilgani, aks holda asli. */
   file: File;
   compressed: boolean;
   originalSize: number;
   finalSize: number;
 };
 
-// Raster formats a <canvas> can reliably decode + re-encode. Deliberately excludes
-// image/gif (would drop animation) and image/svg+xml (vector; also upload-forbidden).
+// <canvas> işonçli dekodlab va qayta kodlay oladigan raster formatlar. image/gif
+// (animatsiyani yöqotardi) va image/svg+xml (vektor; yuklaş ham man etilgan) atayin çetlab ötildi.
 const COMPRESSIBLE = /^image\/(jpe?g|png|webp|bmp)$/i;
 
 const passthrough = (file: File): CompressResult => ({
@@ -35,10 +36,10 @@ export async function compressImage(
   file: File,
   opts: { targetBytes?: number; maxDimension?: number } = {}
 ): Promise<CompressResult> {
-  const targetBytes = opts.targetBytes ?? 3 * 1024 * 1024; // aim to land under ~3MB
-  const maxDimension = opts.maxDimension ?? 2560; // longest edge
+  const targetBytes = opts.targetBytes ?? 3 * 1024 * 1024; // maqsad — ~3MB dan pastga tuşiş
+  const maxDimension = opts.maxDimension ?? 2560; // eng uzun tomon
 
-  // Only shrink decodable raster images that are actually big enough to bother.
+  // Faqat dekodlanadigan va rostdan ham kiçraytirişga arzigulik katta raster rasmlarni siqamiz.
   if (typeof document === "undefined") return passthrough(file);
   if (!COMPRESSIBLE.test(file.type)) return passthrough(file);
   if (file.size <= targetBytes) return passthrough(file);
@@ -47,7 +48,7 @@ export async function compressImage(
   try {
     source = await loadImage(file);
   } catch {
-    return passthrough(file); // undecodable (e.g. HEIC) → upload as-is
+    return passthrough(file); // dekodlab bölmadi (masalan HEIC) → borişiça yuklanadi
   }
 
   const srcW = "width" in source ? source.width : 0;
@@ -69,19 +70,19 @@ export async function compressImage(
     release(source);
     return passthrough(file);
   }
-  // JPEG has no alpha — flatten any transparency onto white so it isn't rendered black.
+  // JPEG'da alfa yöq — şaffoflikni oq fonga tekislaymiz, aks holda qora bölib çiqadi.
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, w, h);
   ctx.drawImage(source as CanvasImageSource, 0, 0, w, h);
   release(source);
 
-  // Walk quality down until we're under target (or hit the floor at 0.5).
+  // Maqsadga tuşguncha (yoki 0.5 quyi çegarasiga yetguncha) sifatni bosqiçma-bosqiç kamaytiramiz.
   for (const quality of [0.82, 0.72, 0.6, 0.5]) {
     const blob = await toBlob(canvas, quality);
     if (!blob) break;
     const underTarget = blob.size <= targetBytes;
     if (underTarget || quality === 0.5) {
-      // If re-encoding didn't actually shrink it (already-optimised JPEG), keep original.
+      // Qayta kodlaş uni aslida kiçraytirmagan bölsa (allaqaçon optimallaştirilgan JPEG), aslini qoldiramiz.
       if (blob.size >= file.size) return passthrough(file);
       return {
         file: new File([blob], toJpgName(file.name), { type: "image/jpeg" }),
@@ -95,7 +96,7 @@ export async function compressImage(
 }
 
 function loadImage(file: File): Promise<ImageBitmap | HTMLImageElement> {
-  // createImageBitmap is fastest and can honour EXIF orientation (upright phone photos).
+  // createImageBitmap eng tez va EXIF yönalişini hisobga oladi (telefon suratlari tik turadi).
   if (typeof createImageBitmap === "function") {
     return createImageBitmap(file, { imageOrientation: "from-image" }).catch(() => loadViaTag(file));
   }
