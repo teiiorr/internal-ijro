@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconCalendarClock as CalendarClock, IconArrowRight as ArrowRight, IconCircleCheck as CircleCheck } from "@tabler/icons-react";
+import { IconCalendarClock as CalendarClock, IconArrowRight as ArrowRight, IconCircleCheck as CircleCheck, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
@@ -20,7 +20,6 @@ import { ProjectChat } from "@/components/projects/project-chat";
 import { StudioDocuments } from "@/components/contractor/studio-documents";
 import { StudioStageUpload } from "@/components/contractor/studio-stage-upload";
 import { StageSubmitButton } from "@/components/contractor/stage-submit-button";
-import { ContractorChatTab } from "./contractor-chat-tab";
 import { derivedStatus } from "@/lib/projects/progress";
 import { formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
@@ -155,31 +154,20 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </CardContent>
         </Card>
 
-        {/* Talk to your curator */}
-        <Card>
-          <CardContent className="space-y-4 p-5 sm:p-6">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="text-base font-semibold">{t("projects.tabs.chat")}</h3>
-              {sp.curator && (
-                <div className="flex items-center gap-2">
-                  <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="xs" clickable={false} />
-                  <span className="truncate text-xs font-semibold text-[var(--muted)]">{shortName(sp.curator.fullName)}</span>
-                </div>
-              )}
-            </div>
-            <ContractorChatTab
-              projectId={data.project.id}
-              stages={sp.stages.map((s) => ({
-                id: s.id,
-                projectId: data.project.id,
-                name: s.name,
-                orderNumber: s.orderIndex + 1,
-                status: s.status,
-              }))}
-              currentUserId={session.user.id}
-            />
-          </CardContent>
-        </Card>
+        {/* Talk to your curator — opens the full-screen conversation */}
+        <Link
+          href={`/contractor/chats/${id}`}
+          className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-[0.995]"
+        >
+          <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-[var(--surface-2)] text-[var(--primary)]">
+            <MessageCircle className="size-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold">{t("projects.tabs.chat")}</p>
+            {sp.curator && <p className="truncate text-xs text-[var(--muted)]">{shortName(sp.curator.fullName)}</p>}
+          </div>
+          <ArrowRight className="size-4 shrink-0 text-[var(--subtle)]" />
+        </Link>
 
         {/* All delivered files */}
         <Card>

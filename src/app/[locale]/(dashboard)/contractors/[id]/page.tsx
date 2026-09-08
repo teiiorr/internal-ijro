@@ -13,7 +13,6 @@ import {
   getContractorDocuments,
   getContractorGallery,
   getContractorMessageCounts,
-  getStageMessages,
 } from "@/server/queries/projects";
 import { StudioDetailTabs } from "@/components/contractor/studio-detail-tabs";
 import { StudioInfoCard } from "@/components/contractor/studio-info-card";
@@ -39,7 +38,7 @@ export default async function ContractorDetailPage({
   const detail = await getContractorDetail(id);
   if (!detail) notFound();
 
-  const { company, projects: prjs, stages, lastActivity } = detail;
+  const { company, projects: prjs, lastActivity } = detail;
 
   const [docs, gallery, msgCounts] = await Promise.all([
     getContractorDocuments(id),
@@ -47,13 +46,8 @@ export default async function ContractorDetailPage({
     getContractorMessageCounts(id),
   ]);
 
-  const countsByStage: Record<string, number> = {};
   let chatTotal = 0;
-  for (const r of msgCounts) {
-    const key = r.stage_id ?? "__general__";
-    countsByStage[key] = (countsByStage[key] ?? 0) + Number(r.cnt);
-    chatTotal += Number(r.cnt);
-  }
+  for (const r of msgCounts) chatTotal += Number(r.cnt);
   const statusTone: StatusTone = company.status === "approved" ? "green" : company.status === "rejected" ? "red" : "amber";
 
   return (
@@ -130,16 +124,9 @@ export default async function ContractorDetailPage({
         }
         chatSlot={
           <StudioChatTab
+            companyId={company.id}
             projects={prjs.map((p) => ({ id: p.id, name: p.name }))}
-            stages={stages.map((s) => ({
-              id: s.id,
-              projectId: s.projectId,
-              name: s.name,
-              orderNumber: s.orderIndex,
-              status: s.status,
-            }))}
-            countsByStage={countsByStage}
-            currentUserId={session.user.id}
+            emptyLabel={t("contractors.detail.noProjects")}
           />
         }
         docsSlot={

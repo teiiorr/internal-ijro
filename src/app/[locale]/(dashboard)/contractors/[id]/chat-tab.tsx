@@ -1,95 +1,40 @@
-"use client";
-import { useEffect, useState, useTransition } from "react";
-import { useTranslations } from "next-intl";
-import { IconLoader2 as Loader, IconMessageCircle as Msg } from "@tabler/icons-react";
-import { StageChatAccordion } from "@/components/projects/stage-chat-accordion";
-import { loadStageMessagesForProject } from "@/server/actions/projects";
+import Link from "next/link";
+import { IconMessageCircle as Msg, IconChevronRight as Chevron } from "@tabler/icons-react";
 
-type StageInfo = {
-  id: string;
-  projectId: string;
-  name: string;
-  orderNumber: number;
-  status: string;
-};
-
-type MsgItem = {
-  id: string;
-  content: string;
-  createdAt: Date | string;
-  userId: string;
-  userName: string;
-  attachments?: unknown;
-};
-
+/** List-that-links: each project opens its full-screen conversation route.
+ *  No inline accordion — chats never expand top-to-bottom. */
 export function StudioChatTab({
+  companyId,
   projects,
-  stages,
-  countsByStage,
-  currentUserId,
+  emptyLabel,
 }: {
+  companyId: string;
   projects: { id: string; name: string }[];
-  stages: StageInfo[];
-  countsByStage: Record<string, number>;
-  currentUserId: string;
+  emptyLabel: string;
 }) {
-  const t = useTranslations("contractors.detail");
-  const [selectedProject, setSelectedProject] = useState<string>(projects[0]?.id ?? "");
-  const [messagesByStage, setMessagesByStage] = useState<Record<string, MsgItem[]>>({});
-  const [generalMessages, setGeneralMessages] = useState<MsgItem[]>([]);
-  const [loading, start] = useTransition();
-
-  const projectStages = stages.filter((s) => s.projectId === selectedProject);
-
-  useEffect(() => {
-    if (!selectedProject) return;
-    start(async () => {
-      const result = await loadStageMessagesForProject(selectedProject);
-      setMessagesByStage(result.byStage);
-      setGeneralMessages(result.general);
-    });
-  }, [selectedProject]);
-
   if (projects.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-[var(--muted)]">
-        <Msg className="size-10 mb-2 opacity-40" />
-        <p className="text-sm font-medium">{t("noProjects")}</p>
+        <Msg className="mb-2 size-10 opacity-40" />
+        <p className="text-sm font-medium">{emptyLabel}</p>
       </div>
     );
   }
-
   return (
-    <div className="space-y-4">
-      {/* Project selector */}
-      {projects.length > 1 && (
-        <select
-          value={selectedProject}
-          onChange={(e) => setSelectedProject(e.target.value)}
-          className="w-full rounded-xl border border-[var(--input)] bg-[var(--surface-1)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none transition-colors"
+    <div className="space-y-2">
+      {projects.map((p) => (
+        <Link
+          key={p.id}
+          href={`/contractors/${companyId}/chat/${p.id}`}
+          className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-[0.995]"
         >
-          {projects.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader className="size-6 animate-spin text-[var(--muted)]" />
-        </div>
-      ) : (
-        <StageChatAccordion
-          projectId={selectedProject}
-          stages={projectStages}
-          messagesByStage={messagesByStage}
-          countsByStage={countsByStage}
-          generalMessages={generalMessages}
-          currentUserId={currentUserId}
-        />
-      )}
+          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--surface-2)] text-[var(--muted)]">
+            <Msg className="size-5" />
+          </div>
+          <span className="min-w-0 flex-1 truncate font-semibold">{p.name}</span>
+          <Chevron className="size-4 shrink-0 text-[var(--subtle)]" />
+        </Link>
+      ))}
     </div>
   );
 }

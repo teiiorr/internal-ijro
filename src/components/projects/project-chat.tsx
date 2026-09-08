@@ -65,6 +65,7 @@ export function ProjectChat({
   currentUserName,
   currentUserAvatar,
   maxBytes = 104857600,
+  fill = false,
 }: {
   projectId: string;
   stageId?: string | null;
@@ -73,6 +74,8 @@ export function ProjectChat({
   currentUserName?: string;
   currentUserAvatar?: string | null;
   maxBytes?: number;
+  /** Fill the parent (full-screen conversation) instead of a bounded 560px panel. */
+  fill?: boolean;
 }) {
   const t = useTranslations();
   const [, start] = useTransition();
@@ -195,7 +198,12 @@ export function ProjectChat({
   }
 
   return (
-    <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden" style={{ height: "min(560px, 50dvh)", maxHeight: "560px" }}>
+    <div
+      className={fill
+        ? "flex h-full min-h-0 flex-col overflow-hidden bg-[var(--surface-1)]"
+        : "flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden"}
+      style={fill ? undefined : { height: "min(560px, 50dvh)", maxHeight: "560px" }}
+    >
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto overscroll-contain px-2.5 py-3 sm:px-4 space-y-0.5">
         {allMessages.length === 0 && (
@@ -311,7 +319,7 @@ export function ProjectChat({
       )}
 
       {/* Input area */}
-      <div className="border-t border-[var(--border)] bg-[var(--card)] px-2 py-2 sm:px-3 sm:py-2.5">
+      <div className={`border-t border-[var(--border)] bg-[var(--card)] px-2 py-2 sm:px-3 sm:py-2.5${fill ? " pb-[max(0.5rem,env(safe-area-inset-bottom))]" : ""}`}>
         <div className="flex items-end gap-1 sm:gap-2">
           <input ref={fileRef} type="file" className="hidden" onChange={onFileSelect} />
           <button
