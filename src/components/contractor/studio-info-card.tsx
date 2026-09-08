@@ -42,7 +42,7 @@ type Stats = {
   lastActivity: Date | string | null;
 };
 
-export function StudioInfoCard({ company, stats }: { company: Company; stats: Stats }) {
+export function StudioInfoCard({ company, stats, canManage = true }: { company: Company; stats: Stats; canManage?: boolean }) {
   const t = useTranslations("contractors.detail");
   const locale = useLocale();
   const router = useRouter();
@@ -87,8 +87,9 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
       <div className="flex items-start gap-4">
         <button
           type="button"
-          onClick={() => fileRef.current?.click()}
-          className="group relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-3)] cursor-pointer"
+          disabled={!canManage}
+          onClick={() => canManage && fileRef.current?.click()}
+          className={`group relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-3)] ${canManage ? "cursor-pointer" : "cursor-default"}`}
         >
           {company.logoUrl ? (
             <img src={company.logoUrl} alt="" loading="lazy" decoding="async" className="size-full object-cover" />
@@ -97,10 +98,14 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
               {company.name.charAt(0).toUpperCase()}
             </span>
           )}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
-            {uploading ? <Loader className="size-5 text-white animate-spin" /> : <Camera className="size-5 text-white" />}
-          </div>
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadLogo(f); e.target.value = ""; }} />
+          {canManage && (
+            <>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+                {uploading ? <Loader className="size-5 text-white animate-spin" /> : <Camera className="size-5 text-white" />}
+              </div>
+              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadLogo(f); e.target.value = ""; }} />
+            </>
+          )}
         </button>
         <div className="min-w-0 flex-1">
           <h2 className="text-xl font-bold truncate">{company.name}</h2>
@@ -209,25 +214,34 @@ export function StudioInfoCard({ company, stats }: { company: Company; stats: St
       )}
 
       {/* Xodim izohlari */}
-      <div className="space-y-2">
-        <p className="text-sm font-semibold">{t("notes")}</p>
-        <textarea
-          value={notes}
-          onChange={(e) => { setNotes(e.target.value); setSaved(false); }}
-          placeholder={t("notesPlaceholder")}
-          rows={3}
-          className="w-full resize-none rounded-xl border border-[var(--input)] bg-[var(--surface-1)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--subtle)] focus:border-[var(--primary)] focus:outline-none transition-colors"
-        />
-        {!saved && (
-          <button
-            onClick={saveNotes}
-            disabled={pending}
-            className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-50"
-          >
-            {pending ? <Loader className="mx-2 size-4 animate-spin" /> : t("notesSave")}
-          </button>
-        )}
-      </div>
+      {canManage ? (
+        <div className="space-y-2">
+          <p className="text-sm font-semibold">{t("notes")}</p>
+          <textarea
+            value={notes}
+            onChange={(e) => { setNotes(e.target.value); setSaved(false); }}
+            placeholder={t("notesPlaceholder")}
+            rows={3}
+            className="w-full resize-none rounded-xl border border-[var(--input)] bg-[var(--surface-1)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--subtle)] focus:border-[var(--primary)] focus:outline-none transition-colors"
+          />
+          {!saved && (
+            <button
+              onClick={saveNotes}
+              disabled={pending}
+              className="rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-50"
+            >
+              {pending ? <Loader className="mx-2 size-4 animate-spin" /> : t("notesSave")}
+            </button>
+          )}
+        </div>
+      ) : (
+        notes.trim() && (
+          <div className="space-y-1">
+            <p className="text-sm font-semibold">{t("notes")}</p>
+            <p className="whitespace-pre-wrap rounded-xl border border-[var(--border)] px-4 py-3 text-sm text-[var(--muted)]">{notes}</p>
+          </div>
+        )
+      )}
     </div>
   );
 }

@@ -1112,7 +1112,8 @@
       "caps": {
         "projects_edit": "Редактирование проектов",
         "money_view": "Просмотр финансов",
-        "projects_upload_docs": "Загрузка документов"
+        "projects_upload_docs": "Загрузка документов",
+        "contractors_chat_read": "Чтение переписки со студиями"
       }
     },
     "statsTitle": "Статистика системы",
@@ -1252,6 +1253,7 @@
     "curator": "Nazoratchi mas'ul",
     "studio": "Студия",
     "you": "Вы",
-    "group": "Группа"
+    "group": "Группа",
+    "readOnly": "Только чтение"
   }
 }

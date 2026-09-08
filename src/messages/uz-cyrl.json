@@ -1112,7 +1112,8 @@
       "caps": {
         "projects_edit": "Лойиҳаларни таҳрирлаш",
         "money_view": "Молияни кўриш",
-        "projects_upload_docs": "Ҳужжат юклаш"
+        "projects_upload_docs": "Ҳужжат юклаш",
+        "contractors_chat_read": "Студия суҳбатларини ўқиш"
       }
     },
     "statsTitle": "Тизим статистикаси",
@@ -1252,6 +1253,7 @@
     "curator": "Назоратчи масъул",
     "studio": "Студия",
     "you": "Сиз",
-    "group": "Гуруҳ"
+    "group": "Гуруҳ",
+    "readOnly": "Фақат ўқиш"
   }
 }

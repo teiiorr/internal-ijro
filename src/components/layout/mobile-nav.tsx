@@ -35,13 +35,17 @@ const ITEMS: NavItem[] = [
 // Panelda doimiy qadab qöyilgan uchta bölim (+ "Yana" tugmasi).
 const PINNED = ["/dashboard", "/tasks", "/projects"];
 
-export function MobileNav({ position, userId, isOwner, reviewCount = 0 }: { position: Position; userId: string; isOwner?: boolean; reviewCount?: number }) {
+export function MobileNav({ position, userId, isOwner, reviewCount = 0, showContractors = false }: { position: Position; userId: string; isOwner?: boolean; reviewCount?: number; showContractors?: boolean }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-  const allowed = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position) || i.allowedUserIds?.includes(userId)));
+  const allowed = ITEMS.filter((i) => {
+    // Studiyalar bölimi kirişni server hal qiladi (egasi ruxsat bergan xodimlar ham köradi).
+    if (i.key === "contractors") return showContractors;
+    return i.ownerOnly ? !!isOwner : i.allowed.includes(position) || i.allowedUserIds?.includes(userId);
+  });
   const pinned = PINNED.map((h) => allowed.find((i) => i.href === h)).filter(Boolean) as NavItem[];
   const moreActive = allowed.some((i) => !PINNED.includes(i.href) && isActive(i.href));
 

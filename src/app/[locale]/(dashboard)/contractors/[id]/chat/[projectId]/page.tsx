@@ -3,13 +3,15 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { getProject, getStageMessages } from "@/server/queries/projects";
 import { ConversationScreen } from "@/components/projects/conversation-screen";
-
-const EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
+import { canViewContractorChats, isContractorManager, canModerateContractorChats } from "@/lib/permissions/contractors";
 
 export default async function StudioConversationPage({ params }: { params: Promise<{ id: string; projectId: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position) && !EXTRA_USERS.includes(session.user.id)) redirect("/dashboard");
+  if (!(await canViewContractorChats(session.user))) redirect("/dashboard");
+  // Boşqaruvçilar yozadi; egasi ruxsat bergan xodimlar esa faqat öqiydi.
+  const readOnly = !isContractorManager(session.user);
+  const canModerate = await canModerateContractorChats(session.user);
 
   const t = await getTranslations();
   const { id, projectId } = await params;
@@ -37,6 +39,8 @@ export default async function StudioConversationPage({ params }: { params: Promi
       currentUserId={session.user.id}
       currentUserName={session.user.fullName}
       maxBytes={maxBytes}
+      readOnly={readOnly}
+      canModerate={canModerate}
     />
   );
 }

@@ -44,10 +44,14 @@ const ITEMS: Item[] = [
   { href: "/owner",             icon: ShieldCheck,     key: "owner",          allowed: [],                                                                 section: "system", ownerOnly: true },
 ];
 
-export function Sidebar({ position, userId, isOwner, reviewCount = 0 }: { position: Position; userId: string; isOwner?: boolean; reviewCount?: number }) {
+export function Sidebar({ position, userId, isOwner, reviewCount = 0, showContractors = false }: { position: Position; userId: string; isOwner?: boolean; reviewCount?: number; showContractors?: boolean }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
-  const visible = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position) || i.allowedUserIds?.includes(userId)));
+  const visible = ITEMS.filter((i) => {
+    // Studiyalar bölimi kirişni server hal qiladi (egasi ruxsat bergan xodimlar ham köradi).
+    if (i.key === "contractors") return showContractors;
+    return i.ownerOnly ? !!isOwner : i.allowed.includes(position) || i.allowedUserIds?.includes(userId);
+  });
 
   const sections: ("primary" | "work" | "system")[] = ["primary", "work", "system"];
 

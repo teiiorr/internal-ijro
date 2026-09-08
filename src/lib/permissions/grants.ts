@@ -13,6 +13,7 @@ export const MANAGED_CAPABILITIES = [
   "projects.edit",
   "money.view",
   "projects.upload_docs",
+  "contractors.chat_read",
 ] as const;
 
 export type ManagedCapability = (typeof MANAGED_CAPABILITIES)[number];

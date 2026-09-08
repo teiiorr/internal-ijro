@@ -1112,7 +1112,8 @@
       "caps": {
         "projects_edit": "Loyihalarni tahrirlash",
         "money_view": "Moliyani ko'rish",
-        "projects_upload_docs": "Hujjat yuklash"
+        "projects_upload_docs": "Hujjat yuklash",
+        "contractors_chat_read": "Studiya suhbatlarini o'qish"
       }
     },
     "statsTitle": "Tizim statistikasi",
@@ -1252,6 +1253,7 @@
     "curator": "Nazoratchi mas'ul",
     "studio": "Studiya",
     "you": "Siz",
-    "group": "Guruh"
+    "group": "Guruh",
+    "readOnly": "Faqat o'qish"
   }
 }

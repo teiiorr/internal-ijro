@@ -75,6 +75,7 @@ function MessageRow({
   sameUser,
   isOptimistic,
   locale,
+  readOnly,
   onReply,
   onMenu,
 }: {
@@ -83,6 +84,7 @@ function MessageRow({
   sameUser: boolean;
   isOptimistic: boolean;
   locale: string;
+  readOnly: boolean;
   onReply: (m: Msg) => void;
   onMenu: (m: Msg) => void;
 }) {
@@ -104,6 +106,7 @@ function MessageRow({
     lp.current = setTimeout(() => { if (!swiping.current) onMenu(m); }, 480);
   }
   function onTouchMove(e: React.TouchEvent) {
+    if (readOnly) return; // faqat öqiş rejimida javob berish uçun surish yöq
     const ddx = e.touches[0].clientX - startX.current;
     const ddy = e.touches[0].clientY - startY.current;
     if (!swiping.current && Math.abs(ddx) > 8 && Math.abs(ddx) > Math.abs(ddy)) { swiping.current = true; clearLp(); }
@@ -111,7 +114,7 @@ function MessageRow({
   }
   function onTouchEnd() {
     clearLp();
-    if (dx <= -56 && !isOptimistic) onReply(m);
+    if (!readOnly && dx <= -56 && !isOptimistic) onReply(m);
     setDx(0);
   }
 
@@ -202,6 +205,8 @@ export function ProjectChat({
   currentUserAvatar,
   maxBytes = 104857600,
   fill = false,
+  readOnly = false,
+  canModerate = false,
 }: {
   projectId: string;
   stageId?: string | null;
@@ -211,6 +216,10 @@ export function ProjectChat({
   currentUserAvatar?: string | null;
   maxBytes?: number;
   fill?: boolean;
+  /** Faqat öqiş: kiritiş maydoni, javob/tahrir/öçiriş berkitiladi (nusxa olish qoladi). */
+  readOnly?: boolean;
+  /** Egasi/muharrir — istalgan xabarni öçira oladi (nafaqat özinikini). */
+  canModerate?: boolean;
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -361,6 +370,7 @@ export function ProjectChat({
                 sameUser={sameUser}
                 isOptimistic={m.id.startsWith("optimistic-")}
                 locale={locale}
+                readOnly={readOnly}
                 onReply={startReply}
                 onMenu={setMenuFor}
               />
@@ -398,30 +408,36 @@ export function ProjectChat({
         </div>
       )}
 
-      {/* Kiritiş maydoni */}
-      <div className={`border-t border-[var(--border)] px-2 py-2 sm:px-3 sm:py-2.5 ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--card)]"}`}>
-        <div className="flex items-end gap-1 sm:gap-2">
-          <input ref={fileRef} type="file" className="hidden" onChange={onFileSelect} />
-          {!editing && (
-            <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="grid size-11 shrink-0 place-items-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95 disabled:opacity-50 sm:size-10">
-              <Paperclip className="size-[18px] sm:size-5" />
-            </button>
-          )}
-          <textarea
-            ref={inputRef}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder={t("projects.chat.placeholder")}
-            rows={1}
-            className="max-h-28 min-h-[36px] flex-1 resize-none rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] px-3 py-2 text-[13px] leading-snug text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus:border-[var(--primary)] focus:outline-none sm:min-h-[40px] sm:px-4 sm:text-sm"
-            style={{ fieldSizing: "content" } as React.CSSProperties}
-          />
-          <button type="button" onClick={send} disabled={uploading || (!text.trim() && !staged)} className="grid size-11 shrink-0 place-items-center rounded-full bg-[var(--primary)] text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-40 sm:size-10">
-            {uploading ? <Loader className="size-[18px] animate-spin sm:size-5" /> : <Send className="size-[18px] sm:size-5" />}
-          </button>
+      {/* Kiritiş maydoni — faqat öqiş rejimida körsatilmaydi */}
+      {readOnly ? (
+        <div className={`border-t border-[var(--border)] px-3 py-2.5 text-center text-xs font-medium text-[var(--muted)] ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--card)]"}`}>
+          {t("conversation.readOnly")}
         </div>
-      </div>
+      ) : (
+        <div className={`border-t border-[var(--border)] px-2 py-2 sm:px-3 sm:py-2.5 ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--card)]"}`}>
+          <div className="flex items-end gap-1 sm:gap-2">
+            <input ref={fileRef} type="file" className="hidden" onChange={onFileSelect} />
+            {!editing && (
+              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="grid size-11 shrink-0 place-items-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95 disabled:opacity-50 sm:size-10">
+                <Paperclip className="size-[18px] sm:size-5" />
+              </button>
+            )}
+            <textarea
+              ref={inputRef}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={onKeyDown}
+              placeholder={t("projects.chat.placeholder")}
+              rows={1}
+              className="max-h-28 min-h-[36px] flex-1 resize-none rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] px-3 py-2 text-[13px] leading-snug text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus:border-[var(--primary)] focus:outline-none sm:min-h-[40px] sm:px-4 sm:text-sm"
+              style={{ fieldSizing: "content" } as React.CSSProperties}
+            />
+            <button type="button" onClick={send} disabled={uploading || (!text.trim() && !staged)} className="grid size-11 shrink-0 place-items-center rounded-full bg-[var(--primary)] text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-40 sm:size-10">
+              {uploading ? <Loader className="size-[18px] animate-spin sm:size-5" /> : <Send className="size-[18px] sm:size-5" />}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Xabar amallari menyusi (pastki panel) */}
       {menuFor && (
@@ -429,12 +445,14 @@ export function ProjectChat({
           <div className="fixed inset-0 z-[60] bg-black/40" onClick={() => setMenuFor(null)} aria-hidden />
           <div className="fixed inset-x-0 bottom-0 z-[60] rounded-t-3xl glass-strong p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             <div className="mx-auto max-w-md space-y-1">
-              <MenuItem icon={<Reply className="size-5" />} label={t("projects.chat.reply")} onClick={() => startReply(menuFor)} />
+              {!readOnly && (
+                <MenuItem icon={<Reply className="size-5" />} label={t("projects.chat.reply")} onClick={() => startReply(menuFor)} />
+              )}
               <MenuItem icon={<Copy className="size-5" />} label={t("projects.chat.copy")} onClick={() => doCopy(menuFor)} />
-              {menuFor.userId === currentUserId && (
+              {!readOnly && menuFor.userId === currentUserId && (
                 <MenuItem icon={<Pencil className="size-5" />} label={t("projects.chat.edit")} onClick={() => startEdit(menuFor)} />
               )}
-              {menuFor.userId === currentUserId && (
+              {!readOnly && (menuFor.userId === currentUserId || canModerate) && (
                 <MenuItem icon={<Trash className="size-5" />} label={t("projects.chat.delete")} danger onClick={() => doDelete(menuFor)} />
               )}
             </div>

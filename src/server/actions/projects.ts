@@ -23,6 +23,8 @@ import { redirect } from "next/navigation";
 import { requireUser, requireProjectEditor } from "@/lib/session";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
+import { isOwner } from "@/lib/permissions/owner";
+import { isContractorManager } from "@/lib/permissions/contractors";
 import { logActivity } from "@/lib/audit";
 import { hashPassword } from "@/lib/auth/password";
 import { notify } from "@/lib/notifications";
@@ -523,12 +525,12 @@ export async function editProjectMessage(messageId: string, content: string) {
   revalidateMessageSurfaces(msg.projectId, msg.stageId);
 }
 
-/** Xabarni öçiradi. Muallif yoki loyiha muharriri (moderatsiya) böla oladi. */
+/** Xabarni öçiradi. Muallif, loyiha muharriri yoki egasi (moderatsiya) böla oladi. */
 export async function deleteProjectMessage(messageId: string) {
   const me = await requireUser();
   const [msg] = await db.select().from(projectMessages).where(eq(projectMessages.id, messageId)).limit(1);
   if (!msg) throw new Error("not_found");
-  const isEditor = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
+  const isEditor = isOwner(me.email) || canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
   if (msg.userId !== me.id && !isEditor) throw new Error("forbidden");
   await db.delete(projectMessages).where(eq(projectMessages.id, messageId));
   revalidateMessageSurfaces(msg.projectId, msg.stageId);
@@ -884,7 +886,8 @@ export async function setProjectDocumentFolder(documentId: string, folder: strin
 
 export async function updateContractorNotes(companyId: string, notes: string) {
   const me = await requireUser();
-  if (me.position === "kontragent") throw new Error("forbidden");
+  // Izohlarni faqat Studiyalar bölimini boşqaruvçilar tahrirlaydi (faqat-öqiş xodimlar emas).
+  if (!isContractorManager(me)) throw new Error("forbidden");
   await db.update(externalCompanies).set({ notes: notes.trim() || null }).where(eq(externalCompanies.id, companyId));
   revalidatePath(`/contractors/${companyId}`);
 }

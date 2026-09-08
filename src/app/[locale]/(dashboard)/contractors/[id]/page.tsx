@@ -17,6 +17,7 @@ import {
 } from "@/server/queries/projects";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
+import { canViewContractorChats, isContractorManager } from "@/lib/permissions/contractors";
 import { StudioDetailTabs } from "@/components/contractor/studio-detail-tabs";
 import { StudioInfoCard } from "@/components/contractor/studio-info-card";
 import { StudioProjectsList } from "@/components/contractor/studio-projects-list";
@@ -34,8 +35,9 @@ export default async function ContractorDetailPage({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  const EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
-  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position) && !EXTRA_USERS.includes(session.user.id)) redirect("/dashboard");
+  if (!(await canViewContractorChats(session.user))) redirect("/dashboard");
+  // Boşqaruvçilar tahrirlaydi; egasi ruxsat bergan xodimlar faqat köradi.
+  const canManage = isContractorManager(session.user);
 
   const t = await getTranslations();
   const locale = await getLocale();
@@ -89,10 +91,12 @@ export default async function ContractorDetailPage({
                 {company.contactPhone && <a href={`tel:${company.contactPhone}`} className="inline-flex items-center gap-1 hover:text-[var(--primary)]"><Phone className="size-3.5" />{company.contactPhone}</a>}
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <RenameStudioButton companyId={company.id} currentName={company.name} />
-              <DeleteStudioButton companyId={company.id} studioName={company.name} hasProjects={prjs.length > 0} />
-            </div>
+            {canManage && (
+              <div className="flex items-center gap-1">
+                <RenameStudioButton companyId={company.id} currentName={company.name} />
+                <DeleteStudioButton companyId={company.id} studioName={company.name} hasProjects={prjs.length > 0} />
+              </div>
+            )}
           </div>
 
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -118,6 +122,7 @@ export default async function ContractorDetailPage({
               docCount: docs.length,
               lastActivity,
             }}
+            canManage={canManage}
           />
         }
         projectsSlot={

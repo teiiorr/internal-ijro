@@ -38,6 +38,8 @@ export function ConversationScreen({
   currentUserId,
   currentUserName,
   maxBytes,
+  readOnly = false,
+  canModerate = false,
 }: {
   title: string;
   avatarUrl?: string | null;
@@ -51,6 +53,10 @@ export function ConversationScreen({
   currentUserId: string;
   currentUserName?: string;
   maxBytes?: number;
+  /** Faqat öqiş — egasi ruxsat bergan xodim uçun (yozib bölmaydi). */
+  readOnly?: boolean;
+  /** Egasi/muharrir — istalgan xabarni öçira oladi. */
+  canModerate?: boolean;
 }) {
   const t = useTranslations();
   const [membersOpen, setMembersOpen] = useState(false);
@@ -85,6 +91,11 @@ export function ConversationScreen({
               </p>
             </div>
           </button>
+          {readOnly && (
+            <span className="inline-flex shrink-0 items-center rounded-full bg-[var(--surface-2)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)]">
+              {t("conversation.readOnly")}
+            </span>
+          )}
           {openHref && (
             <Link
               href={openHref}
@@ -121,6 +132,8 @@ export function ConversationScreen({
       <div className="min-h-0 flex-1">
         <ProjectChat
           fill
+          readOnly={readOnly}
+          canModerate={canModerate}
           projectId={projectId}
           stageId={stageId}
           messages={messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))}

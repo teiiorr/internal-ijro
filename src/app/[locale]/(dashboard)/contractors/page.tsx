@@ -6,13 +6,14 @@ import { getReviewQueue } from "@/server/queries/stages";
 import { CreateStudioButton } from "@/components/contractor/studio-crud-dialogs";
 import { StudioGrid } from "@/components/contractor/studio-grid";
 import { ReviewQueuePanel } from "@/components/contractor/review-queue-panel";
+import { canViewContractorChats, isContractorManager } from "@/lib/permissions/contractors";
 
 export default async function ContractorsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
-  const EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
-  if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position) && !EXTRA_USERS.includes(session.user.id)) redirect("/dashboard");
+  if (!(await canViewContractorChats(session.user))) redirect("/dashboard");
+  const canManage = isContractorManager(session.user);
 
   const [rows, reviewGroups] = await Promise.all([listContractorsWithProjects(), getReviewQueue()]);
 
@@ -20,10 +21,10 @@ export default async function ContractorsPage() {
     <div className="space-y-6 stagger-children">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("contractors.pageTitle")}</h1>
-        <CreateStudioButton />
+        {canManage && <CreateStudioButton />}
       </div>
 
-      <ReviewQueuePanel groups={reviewGroups} />
+      {canManage && <ReviewQueuePanel groups={reviewGroups} />}
 
       <StudioGrid studios={rows.map((c) => ({ ...c, rating: c.rating as string | null }))} />
     </div>
