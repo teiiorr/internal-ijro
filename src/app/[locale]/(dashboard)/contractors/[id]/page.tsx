@@ -10,10 +10,13 @@ import { SmoothImage } from "@/components/ui/smooth-image";
 import { formatDate } from "@/lib/dates";
 import {
   getContractorDetail,
+  getContractorReviewProjects,
   getContractorDocuments,
   getContractorGallery,
   getContractorMessageCounts,
 } from "@/server/queries/projects";
+import { canEditProjects } from "@/lib/permissions/project-editors";
+import { hasGrant } from "@/lib/permissions/grants";
 import { StudioDetailTabs } from "@/components/contractor/studio-detail-tabs";
 import { StudioInfoCard } from "@/components/contractor/studio-info-card";
 import { StudioProjectsList } from "@/components/contractor/studio-projects-list";
@@ -24,8 +27,10 @@ import { StudioChatTab } from "./chat-tab";
 
 export default async function ContractorDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ review?: string }>;
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
@@ -35,12 +40,17 @@ export default async function ContractorDetailPage({
   const t = await getTranslations();
   const locale = await getLocale();
   const { id } = await params;
+  const { review: autoExpandProjectId } = await searchParams;
   const detail = await getContractorDetail(id);
   if (!detail) notFound();
 
   const { company, projects: prjs, lastActivity } = detail;
+  // Review authority = the same check the review server actions enforce.
+  const isEditor = canEditProjects(session.user.email) || (await hasGrant(session.user.id, "projects.edit"));
+  const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
-  const [docs, gallery, msgCounts] = await Promise.all([
+  const [reviewProjects, docs, gallery, msgCounts] = await Promise.all([
+    getContractorReviewProjects(id),
     getContractorDocuments(id),
     getContractorGallery(id),
     getContractorMessageCounts(id),
@@ -114,12 +124,11 @@ export default async function ContractorDetailPage({
         }
         projectsSlot={
           <StudioProjectsList
-            projects={prjs.map((p) => ({
-              ...p,
-              progressPercentage: p.progressPercentage as number | null,
-              deadline: p.deadline as string | Date | null,
-              startDate: p.startDate as string | Date | null,
-            }))}
+            companyId={company.id}
+            projects={reviewProjects}
+            isEditor={isEditor}
+            autoExpandProjectId={autoExpandProjectId}
+            maxBytes={maxBytes}
           />
         }
         chatSlot={

@@ -17,6 +17,8 @@ function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/contractor/projects/${projectId}`);
   revalidatePath(`/contractor/projects/${projectId}/stages/${stageId}`);
   revalidatePath(`/contractor/projects`);
+  // Staff Студии workspace (review queue panel, grid pills, studio detail).
+  revalidatePath(`/contractors`);
 }
 
 /** Resolve the studio (kontragent) user who owns a project, via company email. */
@@ -242,11 +244,11 @@ export async function reopenStage(stageId: string) {
       else break;
     }
 
-    // Block start → active again; the just-reopened work is effectively awaiting
-    // BKRM once more, so review_status → 'submitted'.
+    // Block start → active again; reopening means staff want more from the
+    // studio, so the ball goes back to them (review_status → 'in_progress').
     await tx
       .update(projectStages)
-      .set({ status: "active", completedAt: null, updatedAt: now, reviewStatus: "submitted" })
+      .set({ status: "active", completedAt: null, updatedAt: now, reviewStatus: "in_progress", submittedAt: null, submittedByUserId: null })
       .where(eq(projectStages.id, start.id));
     for (const s of all) {
       if (s.orderIndex > start.orderIndex && s.orderIndex <= stage.orderIndex) {

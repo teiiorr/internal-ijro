@@ -1,98 +1,130 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
+import { IconChevronDown as Chevron, IconFolder as Folder, IconMessageCircle as Msg, IconArrowRight as ArrowRight, IconClockHour4 as Clock } from "@tabler/icons-react";
+import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { SmoothImage } from "@/components/ui/smooth-image";
+import { StageDocuments } from "@/components/projects/stage-documents";
+import { StageReviewBar } from "@/components/projects/stage-review-bar";
+import { StageRequirementsEditor } from "./stage-requirements-editor";
 import { formatDate } from "@/lib/dates";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  IconFolder as Folder,
-  IconCalendar as Calendar,
-  IconUser as User,
-  IconArrowRight as ArrowRight,
-} from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
-type Project = {
-  id: string;
-  name: string;
-  status: string;
-  progressPercentage: number | null;
-  deadline: string | Date | null;
-  startDate: string | Date | null;
-  curatorName: string | null;
+type Doc = { id: string; fileUrl: string; fileName: string; fileSize: number | null; category: string | null; uploadedAt: Date | string; uploaderName: string | null };
+type ActiveStage = {
+  id: string; name: string; orderIndex: number;
+  reviewStatus: string; reviewNote: string | null; reviewedAt: Date | string | null;
+  submittedAt: Date | string | null; requirements: string | null; plannedDeadline: string | null;
+  submittedByName: string | null;
+};
+export type ReviewProject = {
+  id: string; name: string; status: string; progressPercentage: number | null;
+  deadline: string | Date | null; posterUrl: string | null; curatorName: string | null;
+  totalStages: number; activeStage: ActiveStage | null; docs: Doc[]; suggestions: string[];
+  turn: "studio" | "bkrm" | "nobody";
 };
 
-const STATUS_VARIANT: Record<string, "success" | "warning" | "danger" | "secondary"> = {
-  completed: "success",
-  active: "warning",
-  planning: "secondary",
-  cancelled: "danger",
-};
-
-export function StudioProjectsList({ projects }: { projects: Project[] }) {
+export function StudioProjectsList({
+  companyId,
+  projects,
+  isEditor,
+  autoExpandProjectId,
+  maxBytes,
+}: {
+  companyId: string;
+  projects: ReviewProject[];
+  isEditor: boolean;
+  autoExpandProjectId?: string;
+  maxBytes: number;
+}) {
   const t = useTranslations();
   const locale = useLocale();
+  const [open, setOpen] = useState<Set<string>>(new Set(autoExpandProjectId ? [autoExpandProjectId] : []));
+  const toggle = (id: string) => setOpen((cur) => { const n = new Set(cur); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
   if (projects.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-[var(--muted)]">
-        <Folder className="size-10 mb-2 opacity-40" />
-        <p className="text-sm font-medium">{t("contractors.detail.noProjects")}</p>
-      </div>
-    );
+    return <p className="py-10 text-center text-sm text-[var(--muted)]">{t("contractors.detail.noProjects")}</p>;
   }
 
+  // Awaiting-you (bkrm) first.
+  const sorted = [...projects].sort((a, b) => (a.turn === "bkrm" ? 0 : 1) - (b.turn === "bkrm" ? 0 : 1));
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 stagger-children">
-      {projects.map((p) => {
-        const progress = p.progressPercentage ?? 0;
+    <div className="space-y-3">
+      {sorted.map((p) => {
+        const isOpen = open.has(p.id);
+        const a = p.activeStage;
+        const done = p.status === "completed" || !a;
+        const turnTone: StatusTone = p.turn === "bkrm" ? "amber" : done ? "green" : "muted";
+        const turnLabel = p.turn === "bkrm" ? t("review.turn.bkrmStaff") : done ? t("review.status.accepted") : t("review.turn.studioStaff");
         return (
-          <div
-            key={p.id}
-            className="flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-4 transition-colors hover:bg-[var(--surface-2)]"
-          >
-            <div className="flex items-start justify-between gap-2 mb-3">
-              <p className="font-bold text-base truncate flex-1">{p.name}</p>
-              <Badge variant={STATUS_VARIANT[p.status] ?? "secondary"} className="shrink-0">
-                {t(`status.${p.status}` as "status.planning")}
-              </Badge>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted)] mb-3">
-              {p.curatorName && (
-                <span className="flex items-center gap-1">
-                  <User className="size-3.5" /> {p.curatorName}
-                </span>
-              )}
-              {p.deadline && (
-                <span className="flex items-center gap-1">
-                  <Calendar className="size-3.5" />
-                  {formatDate(p.deadline, locale)}
-                </span>
-              )}
-            </div>
-
-            {/* Progress bar */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between text-[11px] font-medium text-[var(--muted)] mb-1">
-                <span>{t("contractors.detail.progress")}</span>
-                <span className="font-bold text-[var(--foreground)]">{progress}%</span>
+          <div key={p.id} className={cn("overflow-hidden rounded-2xl border bg-[var(--card)] shadow-[var(--shadow-1)]", p.turn === "bkrm" ? "border-[var(--warning)]/55" : "border-[var(--border)]")}>
+            <button onClick={() => toggle(p.id)} className="flex w-full items-center gap-3 p-3 text-left sm:p-4">
+              <div className="relative size-12 shrink-0 overflow-hidden rounded-xl bg-[var(--surface-2)]">
+                {p.posterUrl ? (
+                  <SmoothImage src={p.posterUrl} alt={p.name} className="size-full object-cover object-[center_25%]" />
+                ) : (
+                  <div className="grid size-full place-items-center"><span className="text-lg font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span></div>
+                )}
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--surface-3)]">
-                <div
-                  className="h-full rounded-full bg-[var(--primary)] animate-progress"
-                  style={{ width: `${Math.min(progress, 100)}%` }}
-                />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-bold">{p.name}</p>
+                {a ? (
+                  <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{a.orderIndex + 1}/{p.totalStages} · {a.name}</p>
+                ) : (
+                  <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{p.progressPercentage ?? 0}%</p>
+                )}
               </div>
-            </div>
+              {a?.submittedAt && p.turn === "bkrm" && (
+                <span className="hidden items-center gap-1 text-[11px] text-[var(--muted)] sm:inline-flex"><Clock className="size-3.5" />{formatDate(a.submittedAt, locale)}</span>
+              )}
+              <StatusTag tone={turnTone} size="sm" className="shrink-0">{turnLabel}</StatusTag>
+              <Chevron className={cn("size-4 shrink-0 text-[var(--subtle)] transition-transform", isOpen && "rotate-180")} />
+            </button>
 
-            <div className="mt-auto">
-              <Link href={`/projects/${p.id}`}>
-                <Button variant="outline" size="sm" className="w-full gap-2">
-                  {t("contractors.detail.goToProject")}
-                  <ArrowRight className="size-4" />
-                </Button>
-              </Link>
-            </div>
+            {isOpen && (
+              <div className="space-y-4 border-t border-[var(--border)] p-4">
+                {a ? (
+                  <>
+                    {/* changes-requested note echo (what staff last asked) */}
+                    {a.reviewStatus === "changes_requested" && a.reviewNote && (
+                      <div className="rounded-xl border border-[var(--danger)]/40 bg-[var(--danger)]/8 p-3 text-sm">
+                        <p className="mb-1 font-semibold text-[var(--danger)]">{t("review.changesRequestedTitle")}</p>
+                        <p className="whitespace-pre-wrap leading-relaxed">{a.reviewNote}</p>
+                      </div>
+                    )}
+
+                    {isEditor ? (
+                      <StageRequirementsEditor stageId={a.id} initial={a.requirements} />
+                    ) : a.requirements ? (
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-semibold">{t("review.requirements")}</h4>
+                        <p className="whitespace-pre-wrap text-sm text-[var(--muted)]">{a.requirements}</p>
+                      </div>
+                    ) : null}
+
+                    <div>
+                      <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><Folder className="size-4 text-[var(--muted)]" />{t("projects.stageDocs.title")}</h4>
+                      <StageDocuments stageId={a.id} documents={p.docs} canManage={isEditor} suggestions={p.suggestions} maxBytes={maxBytes} />
+                    </div>
+
+                    {isEditor && <StageReviewBar stageId={a.id} reviewStatus={a.reviewStatus} />}
+                  </>
+                ) : (
+                  <p className="text-sm text-[var(--muted)]">{t("review.status.accepted")}</p>
+                )}
+
+                <Link
+                  href={`/contractors/${companyId}/chat/${p.id}`}
+                  className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2.5 text-sm font-semibold transition-colors hover:border-[var(--primary)]"
+                >
+                  <Msg className="size-4 text-[var(--primary)]" />
+                  <span className="flex-1">{t("projects.tabs.chat")}</span>
+                  <ArrowRight className="size-4 text-[var(--subtle)]" />
+                </Link>
+              </div>
+            )}
           </div>
         );
       })}

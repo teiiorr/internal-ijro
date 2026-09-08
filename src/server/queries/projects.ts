@@ -15,6 +15,7 @@ import {
   users,
   tasks,
 } from "@/lib/db/schema";
+import { stageTurn } from "@/lib/projects/progress";
 
 /**
  * All curators for a project (avatar + name), ordered. Falls back to the legacy
@@ -453,6 +454,104 @@ export async function getContractorDetail(companyId: string) {
   const lastActivity = [lastMsg?.ts, lastDoc?.ts].filter(Boolean).sort((a, b) => (b as Date).getTime() - (a as Date).getTime())[0] ?? null;
 
   return { company, projects: prjs, stages, lastActivity };
+}
+
+/**
+ * Studio review workspace (staff /contractors/[id]): each of the studio's
+ * projects enriched with its ACTIVE stage (review fields + submitted files) and
+ * a whose-turn signal, so staff review/accept/request-changes in-place without
+ * leaving the Студии section.
+ */
+export async function getContractorReviewProjects(companyId: string) {
+  const prjs = await db
+    .select({
+      id: projects.id,
+      name: projects.name,
+      status: projects.status,
+      progressPercentage: projects.progressPercentage,
+      deadline: projects.deadline,
+      posterUrl: projects.posterUrl,
+      curatorName: users.fullName,
+    })
+    .from(projects)
+    .leftJoin(users, eq(users.id, projects.curatorUserId))
+    .where(eq(projects.externalCompanyId, companyId))
+    .orderBy(desc(projects.createdAt));
+
+  const ids = prjs.map((p) => p.id);
+  if (ids.length === 0) return [];
+
+  const totals = new Map<string, number>();
+  for (const r of await db
+    .select({ projectId: projectStages.projectId, c: sql<number>`count(*)::int` })
+    .from(projectStages)
+    .where(inArray(projectStages.projectId, ids))
+    .groupBy(projectStages.projectId)) {
+    totals.set(r.projectId, Number(r.c));
+  }
+
+  const acts = await db
+    .select({
+      projectId: projectStages.projectId,
+      id: projectStages.id,
+      name: projectStages.name,
+      orderIndex: projectStages.orderIndex,
+      reviewStatus: projectStages.reviewStatus,
+      reviewNote: projectStages.reviewNote,
+      reviewedAt: projectStages.reviewedAt,
+      submittedAt: projectStages.submittedAt,
+      requirements: projectStages.requirements,
+      plannedDeadline: projectStages.plannedDeadline,
+      submittedByName: users.fullName,
+    })
+    .from(projectStages)
+    .leftJoin(users, eq(users.id, projectStages.submittedByUserId))
+    .where(and(inArray(projectStages.projectId, ids), eq(projectStages.status, "active")));
+  const activeByProject = new Map<string, (typeof acts)[number]>();
+  for (const a of acts) if (!activeByProject.has(a.projectId)) activeByProject.set(a.projectId, a);
+
+  const activeStageIds = acts.map((a) => a.id);
+  const docsByStage = new Map<string, { id: string; fileUrl: string; fileName: string; fileSize: number | null; category: string | null; uploadedAt: Date | string; uploaderName: string | null }[]>();
+  const suggestionsByStage = new Map<string, string[]>();
+  if (activeStageIds.length) {
+    const docs = await db
+      .select({
+        id: stageDocuments.id,
+        stageId: stageDocuments.stageId,
+        fileUrl: stageDocuments.fileUrl,
+        fileName: stageDocuments.fileName,
+        fileSize: stageDocuments.fileSize,
+        category: stageDocuments.category,
+        uploadedAt: stageDocuments.uploadedAt,
+        uploaderName: users.fullName,
+      })
+      .from(stageDocuments)
+      .leftJoin(users, eq(users.id, stageDocuments.uploadedByUserId))
+      .where(inArray(stageDocuments.stageId, activeStageIds))
+      .orderBy(desc(stageDocuments.uploadedAt));
+    for (const d of docs) {
+      const arr = docsByStage.get(d.stageId) ?? [];
+      arr.push({ id: d.id, fileUrl: d.fileUrl, fileName: d.fileName, fileSize: d.fileSize as number | null, category: d.category, uploadedAt: d.uploadedAt, uploaderName: d.uploaderName });
+      docsByStage.set(d.stageId, arr);
+      if (d.category) {
+        const s = suggestionsByStage.get(d.stageId) ?? [];
+        if (!s.includes(d.category)) s.push(d.category);
+        suggestionsByStage.set(d.stageId, s);
+      }
+    }
+  }
+
+  return prjs.map((p) => {
+    const a = activeByProject.get(p.id) ?? null;
+    return {
+      ...p,
+      totalStages: totals.get(p.id) ?? 0,
+      activeStage: a,
+      docs: a ? docsByStage.get(a.id) ?? [] : [],
+      suggestions: a ? suggestionsByStage.get(a.id) ?? [] : [],
+      turn: a ? stageTurn({ status: "active", reviewStatus: a.reviewStatus }) : ("nobody" as const),
+    };
+  });
 }
 
 export async function getStageMessages(projectId: string, stageId: string | null) {
