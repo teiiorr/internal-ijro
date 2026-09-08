@@ -113,17 +113,20 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
         </button>
       </div>
 
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={t("common.search")}
-          type="search"
-          inputMode="search"
-          enterKeyHint="search"
-          className="h-12 w-full rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-base text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
-        />
+      {/* Sticky frosted search — cards scroll under it, full-bleed on mobile. */}
+      <div className="sticky top-[60px] z-20 -mx-3 glass-soft px-3 py-2 sm:-mx-4 sm:top-[68px] sm:px-4 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
+        <div className="relative mx-auto max-w-[1500px]">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t("common.search")}
+            type="search"
+            inputMode="search"
+            enterKeyHint="search"
+            className="h-12 w-full rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-base text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
+          />
+        </div>
       </div>
 
       {filter !== "all" && (
