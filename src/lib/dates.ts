@@ -10,6 +10,7 @@ const MONTHS: Record<string, string[]> = {
 const REL: Record<string, { overdue: string; today: string; tomorrow: string; daysLeft: string; dayUnit: string }> = {
   "uz-latn": { overdue: "Kechikdi", today: "Bugun", tomorrow: "Ertaga", daysLeft: "kun qoldi", dayUnit: "kun" },
   "uz-cyrl": { overdue: "Кечикди", today: "Бугун", tomorrow: "Эртага", daysLeft: "кун қолди", dayUnit: "кун" },
+  oz: { overdue: "Keçikdi", today: "Bugun", tomorrow: "Ertaga", daysLeft: "kun qoldi", dayUnit: "kun" },
   ru: { overdue: "Просрочено", today: "Сегодня", tomorrow: "Завтра", daysLeft: "дн. осталось", dayUnit: "дн." },
 };
 
@@ -50,7 +51,7 @@ export function formatChatTime(d: Date | string, locale = "uz-latn") {
   const hh = String(x.getUTCHours()).padStart(2, "0");
   const mm = String(x.getUTCMinutes()).padStart(2, "0");
   if (diffDays <= 0) return `${hh}:${mm}`;
-  if (diffDays === 1) return locale === "ru" ? "Вчера" : locale === "uz-cyrl" ? "Кеча" : "Kecha";
+  if (diffDays === 1) return locale === "ru" ? "Вчера" : locale === "uz-cyrl" ? "Кеча" : locale === "oz" ? "Keça" : "Kecha";
   const months = MONTHS[locale] ?? MONTHS["uz-latn"];
   return `${x.getUTCDate()}-${months[x.getUTCMonth()]}`;
 }

@@ -1,0 +1,1260 @@
+{
+  "app": {
+    "name": "Içki Ijro",
+    "tagline": "Vazifalar, loyihalar va kadrlarni boşqariş",
+    "organizationName": "Bolalar Kontentini Rivojlantiriş Markazi"
+  },
+  "offline": {
+    "title": "Internet aloqasi yöq",
+    "subtitle": "Tarmoq ulanişi yöqoldi. Wi-Fi yoki mobil internetni tekşirib, qayta urinib köring.",
+    "retry": "Qayta uriniş",
+    "hint": "Ulaniş qaytarilganda sahifa avtomatik yangilanadi."
+  },
+  "common": {
+    "error": "Xatolik yuz berdi",
+    "loading": "Yuklanmoqda...",
+    "save": "Saqlaş",
+    "saved": "Saqlandi",
+    "cancel": "Bekor qiliş",
+    "delete": "Öçiriş",
+    "edit": "Tahrirlaş",
+    "add": "Qöşiş",
+    "create": "Yaratiş",
+    "update": "Yangilaş",
+    "back": "Orqaga",
+    "next": "Keyingi",
+    "submit": "Yuboriş",
+    "search": "Qidiriş",
+    "actions": "Amallar",
+    "yes": "Ha",
+    "no": "Yöq",
+    "of": "jami",
+    "all": "Hammasi",
+    "none": "Yöq",
+    "open": "Oçiş",
+    "close": "Yopiş",
+    "upload": "Yuklaş",
+    "download": "Yuklab oliş",
+    "send": "Yuboriş",
+    "confirm": "Tasdiqlaş",
+    "reject": "Rad etiş",
+    "approve": "Tasdiqlaş",
+    "archive": "Arxivlaş",
+    "restore": "Tiklaş",
+    "export": "Eksport",
+    "print": "Çop etiş",
+    "name": "Nomi",
+    "fullName": "Töliq ism",
+    "email": "Email",
+    "phone": "Telefon",
+    "status": "Holat",
+    "type": "Turi",
+    "date": "Sana",
+    "from": "Boşlanişi",
+    "to": "Tugaşi",
+    "reason": "Sababi",
+    "title": "Sarlavha",
+    "description": "Tavsif",
+    "notes": "Izohlar",
+    "file": "Fayl",
+    "files": "Fayllar",
+    "size": "Hajmi",
+    "created": "Yaratildi",
+    "updated": "Yangilandi",
+    "deadline": "Muddat",
+    "priority": "Muhimlik",
+    "assignee": "Ijroçi",
+    "creator": "Yaratuvçi",
+    "project": "Loyiha",
+    "department": "Bölim",
+    "position": "Lavozim",
+    "head": "Rahbar",
+    "members": "A'zolar",
+    "progress": "Bajariliş",
+    "weight": "Vazn",
+    "payment": "Tölov",
+    "amount": "Summa",
+    "score": "Baho",
+    "rating": "Reyting",
+    "confirmDelete": "Rostdan ham öçirilsinmi?",
+    "noResults": "Natija topilmadi",
+    "noData": "Ma'lumot yöq",
+    "today": "Bugun",
+    "yesterday": "Keça",
+    "week": "Hafta",
+    "month": "Oy",
+    "quarter": "Çorak",
+    "year": "Yil",
+    "emptyValue": "—",
+    "selectPlaceholder": "Tanlang",
+    "separator": "·",
+    "notSpecified": "Belgilanmagan",
+    "copy": {
+      "success": "Nusxa olindi",
+      "failed": "Nusxa olib bölmadi"
+    },
+    "registrationLabel": "Raqam",
+    "apply": "Qöllaş",
+    "chooseFile": "Faylni tanlang",
+    "orDropHere": "yoki bu yerga olib keling",
+    "replaceFile": "Boşqasini tanlaş"
+  },
+  "nav": {
+    "dashboard": "Boş sahifa",
+    "tasks": "Vazifalar",
+    "projects": "Loyihalar",
+    "employees": "Xodimlar",
+    "departments": "Bölimlar",
+    "contractors": "Studiyalar",
+    "reports": "Hisobotlar",
+    "leaves": "Tatillar",
+    "notifications": "Bildirişnoma",
+    "auditLog": "Faoliyat jurnali",
+    "settings": "Sozlamalar",
+    "profile": "Profil",
+    "logout": "Çiqiş",
+    "contractorPortal": "Studiya portali",
+    "ekspertKengash": "Ekspertlar Kengaşi",
+    "smetaKengash": "Smeta Komissiyasi",
+    "more": "Köproq",
+    "owner": "Egasi paneli",
+    "normativeDocs": "Me'yoriy hujjatlar",
+    "tanlov": "Tanlov",
+    "chats": "Çatlar"
+  },
+  "positions": {
+    "direktor": "Direktor",
+    "orinbosar": "Örinbosar",
+    "koordinator": "Koordinator",
+    "bolim_boshligi": "Bölim boşliği",
+    "bosh_mutaxassis": "Boş mutaxassis",
+    "yetakchi_mutaxassis": "Yetakçi mutaxassis",
+    "mutaxassis": "Mutaxassis",
+    "hr": "HR",
+    "kontragent": "Studiya"
+  },
+  "status": {
+    "active": "Faol",
+    "pending": "Kutilmoqda",
+    "archived": "Arxivlangan",
+    "blocked": "Bloklangan",
+    "approved": "Tasdiqlangan",
+    "rejected": "Rad etilgan",
+    "completed": "Bajarilgan",
+    "in_progress": "Bajarilmoqda",
+    "planning": "Rejalaştirilmoqda",
+    "cancelled": "Bekor qilingan",
+    "submitted": "Yuborilgan",
+    "revision_requested": "Qayta körib çiqiş söraldi",
+    "paid": "Tölangan",
+    "partial": "Qisman",
+    "under_review": "Tekşiruvda"
+  },
+  "auth": {
+    "login": {
+      "title": "Tizimga kiriş",
+      "email": "Email",
+      "password": "Parol",
+      "totp": "2FA kodi",
+      "submit": "Kiriş",
+      "forgot": "Parolni unutdingizmi?",
+      "registerContractor": "Studiya sifatida röyxatdan ötiş",
+      "invalid": "Email yoki parol notöğri",
+      "locked": "Hisob qulflangan. Keyinroq qayta urinib köring."
+    },
+    "forgot": {
+      "title": "Parolni tiklaş",
+      "submit": "Havolani yuboriş",
+      "sent": "Agar uşbu email mavjud bölsa, havola yuborildi.",
+      "backToLogin": "Kirişga qaytiş"
+    },
+    "reset": {
+      "title": "Yangi parolni örnatiş",
+      "password": "Yangi parol",
+      "confirm": "Parolni tasdiqlang",
+      "submit": "Saqlaş",
+      "mismatch": "Parollar mos kelmaydi",
+      "invalidToken": "Havola yaroqsiz yoki muddati ötgan"
+    },
+    "setup": {
+      "title": "Tizimni dastlabki sozlaş",
+      "subtitle": "Birinçi Direktor hisobini yarating",
+      "fullName": "Töliq ism",
+      "email": "Email",
+      "password": "Parol",
+      "confirm": "Parolni tasdiqlang",
+      "submit": "Yaratiş",
+      "alreadySetup": "Tizim allaqaçon sozlangan."
+    },
+    "invite": {
+      "title": "Taklifni qabul qiliş",
+      "fullName": "Töliq ism",
+      "password": "Parol",
+      "confirm": "Parolni tasdiqlang",
+      "submit": "Akkauntni yaratiş",
+      "invalid": "Taklif yaroqsiz yoki muddati ötgan"
+    },
+    "registerContractor": {
+      "title": "Studiya sifatida röyxatdan ötiş",
+      "companyName": "Kompaniya nomi",
+      "contactPerson": "Aloqa şaxsi",
+      "contactEmail": "Email",
+      "contactPhone": "Telefon",
+      "password": "Parol",
+      "submit": "Yuboriş",
+      "submitted": "Arizangiz yuborildi. Administrator körib çiqadi."
+    }
+  },
+  "tasks": {
+    "pageTitle": "Vazifalar",
+    "newTitle": "Yangi vazifa yaratiş",
+    "new": {
+      "noAssignees": "Ijroçilar tanlanmagan",
+      "addAssigneeBtn": "Ijroçi qöşiş",
+      "selectAssigneeError": "Kamida bitta ijroçi tanlang",
+      "primaryAssigneeHint": "Birinçi tanlangan ijroçi — asosiy",
+      "primary": "Asosiy",
+      "selectedCount": "{n} tanlandi"
+    },
+    "view": {
+      "list": "Röyxat",
+      "kanban": "Kanban",
+      "calendar": "Kalendar"
+    },
+    "scope": {
+      "mine": "Mening vazifalarim",
+      "team": "Jamoa",
+      "all": "Hammasi",
+      "given": "Men tomondan berilgan"
+    },
+    "fields": {
+      "title": "Sarlavha",
+      "description": "Tavsif",
+      "assignee": "Ijroçi",
+      "project": "Loyiha",
+      "priority": "Muhimlik",
+      "deadline": "Muddat",
+      "dependsOn": "Boğliqliklar (oldin bajarilişi kerak)",
+      "recurring": "Takrorlanadigan vazifa",
+      "repeat": "Takrorlaş",
+      "pickAssignee": "Ijroçini tanlang",
+      "noProject": "Loyihasiz",
+      "assignees": "Ijroçilar"
+    },
+    "status": {
+      "todo": "Bajarilişi kerak",
+      "in_progress": "Bajarilmoqda",
+      "under_review": "Tekşiruvda",
+      "completed": "Bajarildi",
+      "rejected": "Rad etildi"
+    },
+    "priority": {
+      "low": "Past",
+      "medium": "Örtaça",
+      "high": "Yuqori",
+      "urgent": "Şoşilinç"
+    },
+    "transitions": {
+      "start": "Boşlaş",
+      "submit": "Tekşiruvga yuboriş",
+      "approve": "Tasdiqlaş",
+      "reject": "Rad etiş",
+      "resume": "Davom ettiriş",
+      "reasonPlaceholder": "Rad etiş sababini körsating...",
+      "confirmReject": "Rad etişni tasdiqlaş",
+      "noTransitions": "Ötkaziş imkoniyatlari yöq."
+    },
+    "sections": {
+      "description": "Tavsif",
+      "checklist": "Tekşiruv röyxati",
+      "attachments": "Biriktirilgan fayllar",
+      "comments": "Şarhlar",
+      "statusSection": "Holat",
+      "people": "Iştirokçilar",
+      "dependencies": "Boğliqliklar",
+      "noDescription": "Tavsif kiritilmagan.",
+      "rejectionReason": "Rad etiş sababi",
+      "noChecklist": "Tekşiruv röyxati böş.",
+      "noAttachments": "Biriktirilgan fayllar yöq.",
+      "noComments": "Şarhlar yöq.",
+      "writeComment": "Şarh yozing... @\"Töliq Ism\" orqali eslab öting",
+      "newChecklistItem": "Yangi tekşiruv punkti...",
+      "watcher": "Kuzatuvçi",
+      "watchers": "Kuzatuvçilar",
+      "watch": "Kuzatiş",
+      "unwatch": "Kuzatişni töxtatiş",
+      "send": "Yuboriş"
+    },
+    "overdue": "Muddat ötgan",
+    "due": "Muddat",
+    "emptyList": "Vazifalar yöq",
+    "empty": {
+      "description": "Hozirça topşiriqlar yöq"
+    },
+    "sectionLabel": "Topşiriqlar",
+    "response": {
+      "title": "Sizning javobingiz",
+      "placeholder": "Bajarilgan iş haqida qisqaça yozing",
+      "submitted": "Javob yuborildi",
+      "submittedDescription": "Topşiriq beruvçi tekşirib çiqadi",
+      "error": "Yuborib bölmadi",
+      "approved": "Qabul qilindi",
+      "underReview": "Tekşiruvda",
+      "rejected": "Rad etildi",
+      "resubmitBtn": "Qayta yuboriş"
+    },
+    "review": {
+      "responseLabel": "Javob",
+      "noResponse": "Ijroçi tomonidan javob kiritilmagan",
+      "feedbackPlaceholder": "Izoh (rad etiş uçun)",
+      "approvedToast": "Javob tasdiqlandi",
+      "rejectedToast": "Javob rad etildi",
+      "errorToast": "Xatolik yuz berdi"
+    },
+    "print": "Bosma",
+    "deadline": {
+      "deadlineLabel": "Bajariş muddati"
+    }
+  },
+  "projects": {
+    "delete": {
+      "button": "Öçiriş",
+      "confirm": "Loyiha butunlay öçirilsinmi? Bu amalni ortga qaytarib bölmaydi.",
+      "yes": "Ha, öçiriş"
+    },
+    "pageTitle": "Loyihalar",
+    "searchPlaceholder": "Loyihalarni qidiriş...",
+    "new": {
+      "contractorPlaceholder": "Tasdiqlangan studiyani tanlang",
+      "defaultCurrency": "UZS"
+    },
+    "newTitle": "Loyiha yaratiş",
+    "fields": {
+      "name": "Loyiha nomi",
+      "description": "Tavsif",
+      "type": "Turi",
+      "curator": "Nazoratçi mas'ul",
+      "contractor": "Studiya",
+      "startDate": "Boşlaniş sanasi",
+      "deadline": "Tugatiş muddati",
+      "budget": "Byudjet",
+      "contractNumber": "Şartnoma raqami",
+      "progress": "Bajariliş",
+      "projectType": "Loyiha turi",
+      "projectTypePlaceholder": "Turini tanlang (bosqiçlar avtomatik yaratiladi)",
+      "projectTypeHint": "Tur tanlansa, uşbu turga mos bosqiçlar avtomatik qöşiladi.",
+      "currentStatus": "Joriy holat",
+      "currentStatusPlaceholder": "Loyihaning hozirgi holati haqida qisqaça…",
+      "responsible": "Mas'ul",
+      "responsibleHint": "Barça bosqiçlarga qöllanadi (keyin alohida özgartiriş mumkin).",
+      "nameRequired": "Nomni kiriting",
+      "genre": "Kontent turi",
+      "genrePlaceholder": "Tanlang (ixtiyoriy)",
+      "genreHint": "Masalan, eksklyuziv loyiha uçun — film, kitob, multserial…"
+    },
+    "type": {
+      "internal": "Içki",
+      "external": "Taşqi"
+    },
+    "tabs": {
+      "milestones": "Bosqiçlar",
+      "gantt": "Gantt diagrammasi",
+      "deliverables": "Materiallar",
+      "tasks": "Vazifalar",
+      "chat": "Suhbat",
+      "paymentsTabName": "Bosqiçlar va tölovlar"
+    },
+    "milestones": {
+      "addBtn": "Bosqiç qöşiş",
+      "noMilestones": "Hozirça bosqiçlar yöq.",
+      "title": "Sarlavha",
+      "deadline": "Muddat",
+      "weight": "vazn",
+      "paymentAmount": "Tölov summasi",
+      "paymentStatus": "Tölov holati",
+      "paymentLabel": "tölov",
+      "payment": {
+        "pending": "kutilmoqda",
+        "partial": "qisman",
+        "paid": "tölangan"
+      }
+    },
+    "deliverables": {
+      "addBtn": "Material yuklaş",
+      "submit": "Material yuklaş",
+      "feedback": "Izoh",
+      "message": "Xabar",
+      "milestone": "Bosqiç",
+      "type": "Turi",
+      "file": "Fayl",
+      "noDeliverables": "Hali materiallar yöq.",
+      "types": {
+        "document": "Hujjat",
+        "video": "Video",
+        "image": "Rasm",
+        "archive": "Arxiv",
+        "other": "Boşqa"
+      }
+    },
+    "chat": {
+      "placeholder": "Xabar yozing...",
+      "noMessages": "Xabarlar yöq.",
+      "fileTooLarge": "Fayl juda katta",
+      "uploadError": "Faylni yuklaşda xatolik",
+      "reply": "Javob beriş",
+      "edit": "Tahrirlaş",
+      "delete": "Öçiriş",
+      "copy": "Nusxa oliş",
+      "copied": "Nusxa olindi",
+      "edited": "tahrirlandi",
+      "editing": "Tahrirlaş",
+      "deletePrompt": "Xabar öçirilsinmi?"
+    },
+    "studioFiles": {
+      "title": "Studiya hujjatlari",
+      "empty": "Studiya hali hujjat yuklamagan"
+    },
+    "complete": {
+      "btn": "Yakunlaş va baholaş",
+      "title": "Loyihani yakunlaş",
+      "ratePrompt": "Studiyani baholang:",
+      "notesPlaceholder": "Izohlar (ixtiyoriy)",
+      "confirm": "Yakunlaş"
+    },
+    "ratings": "Reytinglar",
+    "noLinkedTasks": "Uşbu loyihaga vazifa biriktirilmagan.",
+    "headers": {
+      "name": "Nomi",
+      "type": "Turi",
+      "curator": "Nazoratçi mas'ul",
+      "company": "Kompaniya",
+      "progress": "Bajariliş",
+      "deadline": "Muddat",
+      "status": "Holat"
+    },
+    "empty": "Loyihalar yöq",
+    "contractorLabel": "Studiya",
+    "contractor": {
+      "none": "Studiya tayinlanmagan",
+      "namePlaceholder": "Studiya nomi — tanlang yoki yozing",
+      "person": "Aloqa şaxsi (ixtiyoriy)",
+      "phone": "Telefon (ixtiyoriy)",
+      "remove": "Olib taşlaş",
+      "saved": "Studiya saqlandi",
+      "removed": "Studiya olib taşlandi",
+      "hint": "Röyxatdan ötmagan studiyani ham qölda qöşişingiz mumkin"
+    },
+    "curatorLabel": "Nazoratçi mas'ul",
+    "deliverable": {
+      "types": {
+        "document": "Hujjat",
+        "video": "Video",
+        "image": "Rasm",
+        "archive": "Arxiv",
+        "other": "Boşqa"
+      }
+    },
+    "derivedStatus": {
+      "not_started": "Boşlanmagan",
+      "in_progress": "Jarayonda",
+      "completed": "Yakunlangan",
+      "on_hold": "Töxtatilgan"
+    },
+    "atRisk": "Muddati ötgan",
+    "pause": "Töxtatiş",
+    "markInProgress": "Jarayonda deb belgilaş",
+    "clearInProgress": "Belgini bekor qiliş",
+    "resume": "Davom etiş",
+    "stages": {
+      "overall": "Umumiy bajariliş",
+      "zeroCaption": "Bosqiç qöşilişi bilan foiz avtomatik hisoblanadi.",
+      "computedCaption": "{count} ta bosqiç örtaçasi böyiça hisoblangan",
+      "empty": "Hali bosqiç yöq. Birinçi bosqiçni qöşing — foiz avtomatik hisoblanadi.",
+      "weight": "Vazn",
+      "markDone": "Yakunlandi",
+      "addBtn": "Bosqiç qöşiş",
+      "newTitle": "Yangi bosqiç nomi",
+      "newPlaceholder": "Masalan: Ssenariy",
+      "moveUp": "Yuqoriga",
+      "moveDown": "Pastga"
+    },
+    "documents": {
+      "title": "Hujjatlar"
+    },
+    "details": {
+      "title": "Tafsilotlar",
+      "startDate": "Boşlaniş sanasi",
+      "dueDate": "Tugaş muddati",
+      "budget": "Byudjet"
+    },
+    "sort": {
+      "created": "Sana böyiça",
+      "name": "Nom böyiça",
+      "deadline": "Muddati böyiça",
+      "progress": "Bajariliş böyiça"
+    },
+    "stagePath": {
+      "title": "Bosqiçlar",
+      "active": "Faol",
+      "done": "Yakunlangan",
+      "locked": "Yopiq",
+      "currentStage": "Joriy bosqiç",
+      "stageOf": "{n}/{total}-bosqiç",
+      "lockedHint": "Bu bosqiç hali oçilmagan. Oldingi bosqiç yakunlangaç faollaşadi."
+    },
+    "stageDocs": {
+      "title": "Hujjatlar",
+      "empty": "Hujjatlar yöq",
+      "folder": "Papka",
+      "folderPlaceholder": "Papka tanlang",
+      "newFolderPlaceholder": "Yangi papka nomi",
+      "folderHint": "Fayl «{folder}» papkasiga joylanadi",
+      "uncategorized": "Boşqa",
+      "move": "Boşqa papkaga köçiriş",
+      "uploading": "Yuklanmoqda…",
+      "preparing": "Rasm tayyorlanmoqda…",
+      "added": "Fayl qöşildi",
+      "uploadError": "Yuklaşda xatolik yuz berdi",
+      "tooLarge": "Fayl juda katta (maksimal {max})",
+      "emptyFile": "Fayl böş",
+      "forbiddenType": "Bu turdagi fayllarni yuklab bölmaydi",
+      "compressedNote": "Rasm siqildi: {from} → {to}",
+      "sizeHint": "Maksimal hajm {max}. Katta rasmlar avtomatik siqiladi."
+    },
+    "projectDocs": {
+      "tahlilTitle": "Loyiha böyiça tahlil",
+      "xalqaroTitle": "Xalqaro tajriba",
+      "empty": "Hozirça hujjat yöq",
+      "addFile": "Fayl qöşiş",
+      "hide": "Yaşiriş"
+    },
+    "stagePayments": {
+      "title": "Tölovlar",
+      "projectTotal": "Loyiha böyiça tölovlar",
+      "planned": "Rejalaştirilgan",
+      "paid": "Tölangan",
+      "pending": "Kutilmoqda",
+      "remaining": "Qoldiq",
+      "add": "Qöşiş",
+      "amount": "Summa",
+      "note": "Izoh",
+      "markPaid": "Tölandi deb belgilaş",
+      "markPending": "Kutilmoqda deb belgilaş",
+      "empty": "Tölovlar yöq",
+      "invalidAmount": "Summani töğri kiriting",
+      "fullyPaid": "Töliq tölangan"
+    },
+    "stageActions": {
+      "complete": "Bosqiçni yakunlaş",
+      "completed": "Bosqiç yakunlandi",
+      "projectCompleted": "Loyiha yakunlandi!",
+      "notActive": "Bu bosqiç faol emas",
+      "reopen": "Yakunlaşni bekor qiliş",
+      "reopenConfirm": "Bu bosqiç qayta oçilsinmi?",
+      "reopenYes": "Ha, oçiş",
+      "reopened": "Bosqiç qayta oçildi",
+      "reopenNotLast": "Faqat oxirgi yakunlangan bosqiçni bekor qiliş mumkin",
+      "reopenNotCompleted": "Bu bosqiç yakunlanmagan",
+      "mergeHint": "Bu bosqiçni yakunlasangiz, keyingi bosqiç ham birga yakunlanadi."
+    },
+    "stageDeadline": {
+      "title": "Bosqiç muddati",
+      "notSet": "Muddat belgilanmagan",
+      "saved": "Muddat saqlandi",
+      "clear": "Tozalaş",
+      "hint": "Bu bosqiç qaçon yakunlanişi kerakligini belgilang"
+    },
+    "filters": {
+      "title": "Filtrlar",
+      "type": "Tur",
+      "allTypes": "Barça turlar",
+      "responsible": "Mas'ul",
+      "allResponsible": "Barça mas'ullar",
+      "payment": "Tölov",
+      "paid": "Tölangan",
+      "unpaid": "Tölanmagan",
+      "overdue": "Muddati ötgan",
+      "reset": "Tozalaş",
+      "typedOnly": "Işlab çiqariş loyihalari",
+      "stage": "Bosqiç",
+      "allStages": "Barça bosqiçlar",
+      "selectTypeFirst": "Avval turni tanlang"
+    },
+    "poster": {
+      "change": "Poster özgartiriş"
+    },
+    "edit": {
+      "button": "Tahrirlaş",
+      "title": "Loyihani tahrirlaş"
+    },
+    "editStage": {
+      "button": "Tahrirlaş",
+      "title": "Bosqiçni tahrirlaş",
+      "stageName": "Bosqiç nomi",
+      "startDate": "Boşlaniş sanasi",
+      "endDate": "Tugaş sanasi",
+      "budget": "Byudjet",
+      "scheduleTitle": "Muddat va byudjet",
+      "dateOrder": "Tugaş sanasi boşlaniş sanasidan oldin bölişi mumkin emas"
+    },
+    "genre": {
+      "film": "Film",
+      "multserial": "Multserial",
+      "serial": "Serial",
+      "kitob": "Kitob",
+      "anime": "Anime",
+      "spektakl": "Spektakl",
+      "teledastur": "Teledastur",
+      "oyin": "Raqamli öyin",
+      "dublyaj": "Dublyaj",
+      "boshqa": "Boşqa"
+    }
+  },
+  "employees": {
+    "pageTitle": "Xodimlar",
+    "newTitle": "Yangi xodim qöşiş",
+    "addBtn": "Xodim qöşiş",
+    "reportsTo": "Bevosita rahbar",
+    "table": {
+      "name": "Ism familiya",
+      "email": "Email",
+      "position": "Lavozim",
+      "department": "Bölim",
+      "status": "Holat",
+      "hireDate": "Işga kirgan sana"
+    },
+    "empty": "Xodim topilmadi",
+    "tabs": {
+      "main": "Asosiy",
+      "documents": "Hujjatlar",
+      "history": "Lavozim tarixi",
+      "leaves": "Tatillar",
+      "notes": "HR yozuvlari"
+    },
+    "profile": {
+      "sectionTitle": "Profil",
+      "birthDate": "Tuğilgan sana",
+      "maritalStatus": "Oilaviy holati",
+      "passportSerial": "Pasport seriyasi",
+      "passportNumber": "Pasport raqami",
+      "passportIssuedDate": "Berilgan sana",
+      "passportIssuedBy": "Kim tomonidan berilgan",
+      "inn": "INN",
+      "emergencyContactName": "Favqulodda holat uçun aloqa",
+      "emergencyContactPhone": "Aloqa telefoni",
+      "emergencyContactRelation": "Aloqasi",
+      "address": "Manzil",
+      "education": "Ma'lumot",
+      "hr_notes": "HR yozuvlari",
+      "printPdf": "PDF kartoçka",
+      "viewOnly": "Faqat köriş.",
+      "notesNote": "Yozuvlar faqat HR uçun körinadi."
+    },
+    "docs": {
+      "type": "Hujjat turi",
+      "title": "Sarlavha",
+      "file": "Fayl",
+      "upload": "Yuklaş",
+      "uploaded": "Yuklanildi",
+      "noDocs": "Hujjatlar yöq",
+      "types": {
+        "contract": "Mehnat şartnomasi",
+        "passport": "Pasport",
+        "diploma": "Diplom",
+        "medical": "Tibbiy ma'lumotnoma",
+        "certificate": "Sertifikat",
+        "other": "Boşqa"
+      }
+    },
+    "history": {
+      "date": "Sana",
+      "from": "Avvalgi",
+      "to": "Yangi",
+      "reason": "Sababi",
+      "noHistory": "Özgarişlar yöq"
+    },
+    "changePosition": {
+      "btn": "Lavozimni özgartiriş",
+      "title": "Lavozim va bölimni özgartiriş",
+      "newPosition": "Yangi lavozim",
+      "department": "Bölim",
+      "reportsTo": "Bevosita rahbar",
+      "reason": "Sababi",
+      "positionTitle": "Lavozim nomi (ixtiyoriy)",
+      "positionTitlePlaceholder": "Masalan: Ijroçi direktor"
+    },
+    "archive": {
+      "btn": "Arxivlaş",
+      "btnRestore": "Tiklaş"
+    }
+  },
+  "departments": {
+    "pageTitle": "Bölimlar",
+    "addBtn": "Bölim qöşiş",
+    "table": {
+      "name": "Nomi",
+      "head": "Rahbar",
+      "members": "A'zolar"
+    },
+    "fields": {
+      "name": "Nomi",
+      "head": "Rahbar",
+      "parent": "Yuqori bölim",
+      "description": "Tavsif",
+      "nameRu": "Nomi (Rus)",
+      "nameEn": "Nomi (Ing)",
+      "nameUzLatn": "Nomi (Özbek lotin)",
+      "nameUzCyrl": "Nomi (Özbek kiril)"
+    },
+    "empty": "Bölimlar yöq"
+  },
+  "contractors": {
+    "pageTitle": "Studiyalar",
+    "pendingTitle": "Tasdiqlaş kutilmoqda",
+    "allTitle": "Barça studiyalar",
+    "none": "Yöq.",
+    "reason": "Sababi",
+    "uploadLogo": "Logo yuklaş",
+    "logoSaved": "Logo saqlandi",
+    "logoError": "Logo yuklaşda xatolik",
+    "projectsCount": "{n} ta loyiha",
+    "noProjects": "Loyihalar yöq",
+    "createStudio": "Studiya qöşiş",
+    "editName": "Nomini özgartiriş",
+    "deleteStudio": "Studiyani öçiriş",
+    "deleteConfirm": "«{name}» studiyasini öçirişni xohlaysizmi? Bu amalni qaytarib bölmaydi.",
+    "studioCreated": "Studiya yaratildi",
+    "studioRenamed": "Nom özgartirildi",
+    "studioDeleted": "Studiya öçirildi",
+    "emailTaken": "Bu email allaqaçon işlatilmoqda",
+    "cannotDeleteHasProjects": "Loyihalari bor studiyani öçirib bölmaydi",
+    "cancel": "Bekor qiliş",
+    "create": "Yaratiş",
+    "save": "Saqlaş",
+    "delete": "Öçiriş",
+    "fields": {
+      "name": "Studiya nomi",
+      "contactPerson": "Mas'ul şaxs",
+      "email": "Email (login)",
+      "password": "Parol",
+      "phone": "Telefon"
+    },
+    "detail": {
+      "tabs": {
+        "info": "Ma'lumotlar",
+        "projects": "Loyihalar",
+        "chat": "Suhbat",
+        "docs": "Hujjatlar",
+        "gallery": "Galereya"
+      },
+      "specialization": "Ixtisoslaşuv",
+      "notes": "Içki qaydlar",
+      "notesPlaceholder": "Studiya haqida içki eslatmalar...",
+      "notesSaved": "Qayd saqlandi",
+      "notesSave": "Saqlaş",
+      "loginInfo": "Tizimga kiriş ma'lumotlari",
+      "statsProjects": "Loyihalar",
+      "statsDocs": "Hujjatlar",
+      "statsLastActivity": "Oxirgi faollik",
+      "noProjects": "Loyihalar yöq",
+      "progress": "Jarayon",
+      "goToProject": "Loyihaga ötiş",
+      "selectProject": "Loyiha tanlang",
+      "generalChat": "Umumiy suhbat",
+      "docsEmpty": "Hujjatlar yöq",
+      "gallery": {
+        "empty": "Rasmlar yöq",
+        "allProjects": "Barça loyihalar"
+      },
+      "folders": {
+        "create": "Papka yaratiş",
+        "createDesc": "Yangi papka uçun nom kiriting",
+        "name": "Papka nomi",
+        "cancel": "Bekor qiliş",
+        "createBtn": "Yaratiş"
+      }
+    },
+    "total": "Jami",
+    "approvedTitle": "Tasdiqlangan",
+    "rejectedTitle": "Rad etilgan",
+    "approve": "Tasdiqlaş",
+    "reject": "Rad etiş",
+    "rejectReasonPlaceholder": "Rad etiş sababi…",
+    "reasonLabel": "Sabab",
+    "ratingScale": "{r} / 5",
+    "reviewQueue": {
+      "title": "Sizni kutmoqda",
+      "submitted": "yuborildi",
+      "count": "ta körib çiqiş"
+    },
+    "inReview": "Körib çiqiş"
+  },
+  "reports": {
+    "standupTitle": "Kunlik standup",
+    "todayLabel": "Bugun",
+    "doneYesterday": "Keça nima qildim",
+    "plannedToday": "Bugun nima rejalaştirdim",
+    "blockers": "Tösiqlar",
+    "myHistory": "Mening tarixim",
+    "teamReports": "Jamoa hisobotlari (14 kun)",
+    "noHistory": "Tarix yöq.",
+    "submit": "Topşiriş",
+    "update": "Yangilaş",
+    "done": "Bajarildi",
+    "plan": "Reja"
+  },
+  "leaves": {
+    "pageTitle": "Tatillar",
+    "request": "Tatil söraş",
+    "myLeaves": "Mening tatillarim",
+    "pending": "Tasdiqlaş kutilmoqda",
+    "calendar": "Tatillar kalendari",
+    "types": {
+      "vacation": "Yillik tatil",
+      "sick": "Kasallik varaqasi",
+      "unpaid": "Tölovsiz tatil",
+      "other": "Boşqa"
+    },
+    "fields": {
+      "type": "Turi",
+      "start": "Boşlanişi",
+      "end": "Tugaşi",
+      "reason": "Sababi"
+    },
+    "none": "Tatillar yöq."
+  },
+  "notifications": {
+    "pageTitle": "Bildirişnomalar",
+    "markAllRead": "Hammasini öqilgan deb belgilaş",
+    "open": "Oçiş",
+    "empty": "Bildirişnomalar yöq.",
+    "viewAll": "Hammasini köriş"
+  },
+  "audit": {
+    "pageTitle": "Faoliyat jurnali",
+    "table": {
+      "time": "Vaqt",
+      "user": "Foydalanuvçi",
+      "action": "Amal",
+      "entity": "Obyekt",
+      "ip": "IP"
+    },
+    "empty": "Yozuvlar yöq."
+  },
+  "settings": {
+    "pageTitle": "Sozlamalar",
+    "tabs": {
+      "personal": "Şaxsiy",
+      "notifications": "Bildirişnomalar",
+      "security": "Xavfsizlik",
+      "telegram": "Telegram"
+    },
+    "personal": {
+      "language": "Til",
+      "theme": "Mavzu",
+      "timezone": "Vaqt mintaqasi"
+    },
+    "notifs": {
+      "inApp": "Tizim içida bildirişnomalar",
+      "email": "Email",
+      "taskAssigned": "Vazifa yuklanganda",
+      "deadline": "Muddat yaqinlaşganda",
+      "comments": "Yangi şarhlar",
+      "mentions": "Esga olişlar",
+      "standup": "Standup eslatmasi"
+    },
+    "security": {
+      "changePassword": "Parolni özgartiriş",
+      "current": "Joriy parol",
+      "newPass": "Yangi parol (kamida 8 belgi)",
+      "change": "Özgartiriş",
+      "twoFa": "Ikki bosqiçli autentifikatsiya",
+      "twoFaEnabled": "2FA yoqilgan.",
+      "startSetup": "Sozlaşni boşlaş",
+      "manualEntry": "Yoki maxfiy kalitni qölda kiriting:",
+      "codePlaceholder": "6 raqamli kod",
+      "verify": "Tekşiriş",
+      "disablePlaceholder": "Öçiriş uçun joriy 6 raqamli kodni kiriting",
+      "disable": "Öçiriş",
+      "messages": {
+        "passwordChanged": "Parol özgartirildi",
+        "twoFaEnabled": "2FA yoqildi",
+        "twoFaDisabled": "2FA öçirildi"
+      }
+    },
+    "telegram": {
+      "connected": "Boğlangan.",
+      "disconnect": "Uziş",
+      "hint": "Boğlaş uçun: pastdan kod hosil qiling va uni Telegram botiga yuboring.",
+      "generate": "Kod hosil qiliş",
+      "yourCode": "Sizning kodingiz:"
+    },
+    "theme": {
+      "light": "Yoruğ",
+      "dark": "Qoronği",
+      "system": "Tizimga mos"
+    },
+    "lang": {
+      "uz-latn": "Özbekça (lotin)",
+      "uz-cyrl": "Özbekça (kirill)",
+      "ru": "Rusça",
+      "en": "Inglizça",
+      "oz": "Özbekça (yangi lotin)"
+    }
+  },
+  "contractor": {
+    "accountUnderReview": "Hisob tekşiruvda",
+    "applicationStatus": "Sizning studiya arizangiz holati",
+    "reason": "Sababi",
+    "statusLabel": "Sizning studiya arizangiz holati:",
+    "nda": {
+      "title": "Maxfiylik kelişuvi",
+      "body1": "Uşbu kelişuvni qabul qiliş orqali siz uşbu portal orqali ulaşilgan barça ma'lumotlar, hujjatlar va aloqalarni qat'iy maxfiy saqlaşga rozilik bildirasiz.",
+      "body2": "Kelişuvni buziş şartnomani bekor qiliş va Özbekiston Respublikasi qonunçiligiga muvofiq huquqiy oqibatlarga olib kelişi mumkin.",
+      "accept": "Qabul qilaman",
+      "description1": "Mazkur maxfiylik kelişuvini qabul qiliş orqali siz uşbu portal orqali ulaşilgan barça ma'lumotlarni qat'iy maxfiy saqlaşga rozilik bildirasiz.",
+      "description2": "Kelişuvni buziş Özbekiston Respublikasi qonunçiligiga muvofiq şartnomani bekor qilişga va huquqiy oqibatlarga olib kelişi mumkin.",
+      "acceptBtn": "Qabul qilaman"
+    },
+    "dashboard": {
+      "activeProjects": "Faol loyihalar",
+      "completed": "Yakunlangan",
+      "total": "Jami",
+      "myProjects": "Mening loyihalarim",
+      "noProjects": "Sizga loyihalar biriktirilmagan.",
+      "averageRating": "Örtaça reyting"
+    },
+    "profile": {
+      "title": "Kompaniya profili",
+      "contactPerson": "Aloqa şaxsi",
+      "email": "Email",
+      "phone": "Telefon",
+      "status": "Holat",
+      "rating": "Reyting",
+      "specialization": "Mutaxassisligi",
+      "noCompany": "Boğlangan kompaniya yöq.",
+      "contact": "Aloqa",
+      "appearance": "Köriniş",
+      "theme": "Mavzu",
+      "language": "Til",
+      "nda": "NDA"
+    },
+    "portalLabel": "Studiya portali",
+    "budget": {
+      "title": "Byudjet (loyihangiz)"
+    },
+    "tabs": {
+      "docs": "Hujjatlar va media",
+      "stages": "Bosqiçlar"
+    },
+    "docs": {
+      "mediaHint": "Hujjat yoki foto qöşing — katta rasmlar avtomatik siqiladi. Çeklov: {max}"
+    },
+    "chats": {
+      "title": "Çatlar",
+      "empty": "Hozirça loyiha çatlari yöq",
+      "curator": "Nazoratçi mas'ul",
+      "noCurator": "Nazoratçi mas'ul tayinlanmagan",
+      "noMessages": "Xabar yöq",
+      "subtitle": "Loyihalar böyiça nazoratçi mas'ul bilan yozişing",
+      "openProject": "Loyihani oçiş"
+    },
+    "submitWork": "Işni topşiriş",
+    "openStage": "Bosqiçni oçiş"
+  },
+  "dashboard": {
+    "title": "Boş sahifa",
+    "hr": {
+      "activeEmployees": "Faol xodimlar",
+      "newThisMonth": "Bu oyda qöşilganlar",
+      "onLeave": "Hozir tatilda",
+      "pendingInvites": "Kutilayotgan takliflar",
+      "birthdays": "Bu haftadagi tuğilgan kunlar",
+      "noBirthdays": "Bu hafta tuğilgan kun yöq.",
+      "departments": "Bölimlar",
+      "noDepartments": "Hozirça bölimlar yöq."
+    },
+    "manager": {
+      "tasks30": "Vazifalar (30 kun)",
+      "inProgress": "Bajarilmoqda",
+      "overdue": "Muddati ötgan",
+      "activeProjects": "Faol loyihalar",
+      "byStatus": "Vazifalar holati böyiça",
+      "activity30": "Yaratilgan va yakunlangan (30 kun)",
+      "topPerformers": "Eng samarali (30 kun)",
+      "topPerformersDesc": "Oxirgi 30 kunda eng köp vazifa yakunlaganlar",
+      "mostOverdue": "Eng köp keçikişlar",
+      "mostOverdueDesc": "Hozir keçikkan vazifalari köp bölganlar",
+      "deptLoad": "Bölimlar yuklamasi",
+      "deptLoadDesc": "Hozirgi faol vazifalar bölim kesimida",
+      "deptEmpty": "Faol vazifalar yöq.",
+      "upcoming": "Yaqin muddatlar (7 kun)",
+      "upcomingDesc": "Keyingi 7 kunda bajarilişi kerak bölganlar",
+      "upcomingEmpty": "Yaqin muddatda vazifa yöq.",
+      "projectsHealth": "Loyihalar holati",
+      "projectsHealthDesc": "Faol loyihalar progressi va xatar belgilari",
+      "projectsEmpty": "Faol loyiha yöq.",
+      "noCompletions": "Hali yakunlaş yöq.",
+      "allOnTrack": "Hammasi muddatida.",
+      "kpiActiveProjects": "Faol loyihalar",
+      "kpiOverdueStages": "Muddati ötgan bosqiçlar",
+      "kpiDueSoon": "Bu hafta muddati",
+      "kpiOverdueTasks": "Muddati ötgan vazifalar",
+      "projectsByStatus": "Loyihalar holati böyiça",
+      "projectsByStatusDesc": "Barça loyihalarning joriy holati",
+      "projectsByType": "Turlar böyiça loyihalar",
+      "projectsByTypeDesc": "Har bir işlab çiqariş turi soni",
+      "projectsTotal": "Jami",
+      "stageBoard": "Bosqiç muddatlari",
+      "stageBoardDesc": "Faol bosqiçlar — eng şoşilinçidan boşlab",
+      "stageBoardEmpty": "Muddati belgilangan faol bosqiç yöq.",
+      "paymentsTitle": "Tölovlar körinişi",
+      "paymentsDesc": "Barça loyihalar böyiça reja va tölovlar"
+    },
+    "specialist": {
+      "dueToday": "Bugun muddat",
+      "thisWeek": "Bu hafta",
+      "soon": "Yaqin (24 soat)",
+      "overdue": "Muddati ötgan",
+      "openMyTasks": "Mening vazifalarim",
+      "submitStandup": "Standup topşiriş"
+    },
+    "greeting": {
+      "morning": "Xayrli tong",
+      "afternoon": "Xayrli kun",
+      "evening": "Xayrli keç",
+      "night": "Xayrli tun"
+    },
+    "ownerRole": "Platforma egasi",
+    "currentStatus": {
+      "title": "Loyihalar joriy holati",
+      "subtitle": "Har bir loyihaning hozirgi holati",
+      "search": "Loyiha nomi yoki holat böyiça qidiriş…",
+      "empty": "Hali joriy holat kiritilmagan",
+      "notSet": "Holat kiritilmagan",
+      "count": "{n} ta loyiha"
+    }
+  },
+  "commandPalette": {
+    "placeholder": "Buyruq yoki sahifa nomini kiriting...",
+    "hint": "Oçiş/yopiş uçun ⌘K bosing.",
+    "groupPages": "Sahifalar",
+    "noResults": "Natija yöq."
+  },
+  "header": {
+    "searchPlaceholder": "Vazifalarni qidiriş...",
+    "accountSettings": "Sozlamalar",
+    "signOut": "Çiqiş",
+    "signedInAs": "Tizimga kirgan"
+  },
+  "landing": {
+    "hero": "Bolalar Kontentini Rivojlantiriş Markazi — içki ijro boşqaruv tizimi",
+    "cta": "Tizimga kiriş",
+    "tagline": "Vazifalar, loyihalar va kadrlarni boşqariş",
+    "copyright": "© Bolalar Kontentini Rivojlantiriş Markazi. Barça huquqlar himoyalangan."
+  },
+  "theme": {
+    "toggleLabel": "Mavzuni almaştiriş",
+    "darkOn": "Qoronği mavzu",
+    "lightOn": "Yoruğ mavzu"
+  },
+  "inbox": {
+    "awaitingApproval": "Tasdiğimni kutmoqda",
+    "approvalDescription": "Tekşirib, qabul yoki rad etişingiz kerak",
+    "noResponses": "Tekşiriş uçun javoblar yöq",
+    "responsePrefix": "Javob:",
+    "assignedPrefix": "Bergan:",
+    "myTasks": "Bajariş kerak",
+    "myTasksDescription": "Sizga yuklatilgan topşiriqlar",
+    "allComplete": "Hammasi bajarilgan"
+  },
+  "kengash": {
+    "ekspertHeading": "Kelayotgan Ekspertlar Kengaşining kun tartibi",
+    "smetaHeading": "Kelayotgan Smeta Komissiyasining kun tartibi",
+    "archiveButton": "Arxiv",
+    "archive": {
+      "title": "Smeta komissiyasi arxivi",
+      "meetings": "majlis",
+      "documents": "hujjat",
+      "searchPlaceholder": "Loyiha, studiya yoki matn böyiça qidiriş…",
+      "xulosalar": "Xulosalar",
+      "bayonlar": "Bayonnomalar",
+      "found": "{n} ta hujjat topildi",
+      "meetingNo": "{n}-yiğiliş",
+      "bayon": "Bayon",
+      "empty": "Bu bölim uçun arxiv hali mavjud emas"
+    },
+    "agenda": "Kun tartibi",
+    "noUpcoming": "Kelayotgan majlis rejalaştirilmagan",
+    "createMeeting": "Majlis qöşiş",
+    "meetingDate": "Sana",
+    "meetingDateRequired": "Sanani tanlang",
+    "addTime": "Vaqt qöşiş",
+    "meetingTitle": "Sarlavha (ixtiyoriy)",
+    "save": "Saqlaş",
+    "topic": "Mavzu",
+    "project": "Loyiha",
+    "presenter": "Ma'ruzaçi",
+    "addItem": "Qöşiş",
+    "noItems": "Kun tartibi böş",
+    "history": "Majlislar tarixi",
+    "selectProject": "Loyihani tanlang",
+    "selectPresenter": "Ma'ruzaçini tanlang",
+    "projectField": "Loyiha — tanlang yoki yozing",
+    "presenterField": "Ma'ruzaçi — tanlang yoki yozing",
+    "newTopic": "Yangi mavzu",
+    "emptyAgenda": "Kun tartibi böş"
+  },
+  "owner": {
+    "title": "Egasi paneli",
+    "permissions": {
+      "title": "Ruxsatlar",
+      "subtitle": "Xodimlarga qöşimça huquqlar bering yoki oling. Röyxatdagi asosiy huquqlar saqlanadi.",
+      "caps": {
+        "projects_edit": "Loyihalarni tahrirlaş",
+        "money_view": "Moliyani köriş",
+        "projects_upload_docs": "Hujjat yuklaş",
+        "contractors_chat_read": "Studiya suhbatlarini öqiş"
+      }
+    },
+    "statsTitle": "Tizim statistikasi",
+    "stats": {
+      "users": "Foydalanuvçilar",
+      "projects": "Loyihalar",
+      "tasks": "Vazifalar",
+      "stages": "Bosqiçlar",
+      "documents": "Hujjatlar",
+      "paid": "Tölangan",
+      "companies": "Studiyalar",
+      "departments": "Bölimlar",
+      "notifications": "Bildirişnomalar",
+      "logs": "Log yozuvlari",
+      "dbSize": "Baza hajmi",
+      "connections": "Ulanişlar",
+      "activeSuffix": "faol",
+      "pending": "Kutilayotgan tölov"
+    },
+    "changes": {
+      "title": "Sönggi özgarişlar",
+      "add": "Qöşildi",
+      "delete": "Öçirildi",
+      "update": "Özgartirildi",
+      "empty": "Hozirça özgarişlar yöq"
+    },
+    "logs": {
+      "title": "Barça loglar",
+      "latest": "Sönggi 500 ta körsatilmoqda — töliq röyxat XLSX'da"
+    },
+    "system": {
+      "title": "Dev vositalar va tizim",
+      "runtime": "Iş muhiti",
+      "appVersion": "Versiya",
+      "uptime": "Işlaş vaqti",
+      "platform": "Platforma",
+      "memory": "Xotira",
+      "database": "Ma'lumotlar bazasi",
+      "connections": "Ulanişlar",
+      "topTables": "Eng katta jadvallar",
+      "backup": "Zaxira nusxa",
+      "backupLatest": "Sönggi zaxira",
+      "backupSize": "Hajmi",
+      "backupCount": "Nusxalar soni",
+      "backupTotal": "Jami hajmi",
+      "backupNone": "Zaxira nusxa yöq",
+      "backupUnavailable": "Ma'lumot yöq (server yölidan taşqarida)",
+      "env": "Muhit sozlamalari",
+      "secrets": "Maxfiy kalitlar"
+    }
+  },
+  "normative": {
+    "title": "Me'yoriy hujjatlar",
+    "subtitle": "Taşkilotning me'yoriy hujjatlari — papkalar böyiça saqlanadi",
+    "orLink": "yoki havola",
+    "linkTitlePlaceholder": "Havola nomi",
+    "addLink": "Havola qöşiş",
+    "linkError": "Havolani qöşib bölmadi"
+  },
+  "tanlov": {
+    "title": "Tanlov",
+    "subtitle": "Tanlov orqali ötgan loyihalar",
+    "empty": "Hozirça tanlovlar yöq",
+    "add": "Yangi tanlov",
+    "nameLabel": "Tanlov nomi",
+    "namePlaceholder": "Masalan: Milliy animatsiya tanlovi",
+    "nameRequired": "Tanlov nomini kiriting",
+    "participants": "Iştirokçilar soni",
+    "participantsShort": "iştirokçi",
+    "heldAt": "Ötkazilgan sana",
+    "winnerLabel": "Ğolib (studiya yoki loyiha)",
+    "winnerPlaceholder": "Ğolib nomi",
+    "descriptionLabel": "Izoh",
+    "createTitle": "Yangi tanlov",
+    "editTitle": "Tanlovni tahrirlaş",
+    "revealWinner": "Ğolibni körsatiş",
+    "winner": "Ğolib",
+    "noWinner": "Ğolib hali belgilanmagan",
+    "replay": "Yana körsatiş",
+    "celebrateDone": "Ajoyib! 🎉",
+    "addPhoto": "Rasm qöşiş",
+    "photoAdded": "Rasm qöşildi",
+    "photoError": "Rasmni yuklab bölmadi",
+    "deleteConfirm": "Bu tanlov öçirilsinmi?",
+    "winnerOf": "«{name}» tanlovi ğolibi",
+    "openDetail": "Batafsil",
+    "about": "Tanlov haqida",
+    "gallery": "Fotogalereya",
+    "comments": "Izohlar",
+    "addComment": "Izoh qöşiş",
+    "commentPlaceholder": "Izohingizni yozing...",
+    "noComments": "Hozirça izohlar yöq",
+    "files": "Fayllar",
+    "addFile": "Fayl qöşiş",
+    "noFiles": "Fayllar hali yöq",
+    "setLogo": "Logotip qöşiş",
+    "changeLogo": "Logotipni almaştiriş",
+    "removeLogo": "Logotipni öçiriş",
+    "logoHint": "Ğolib logotipi — ğolibni körsatganda çiqadi",
+    "pending": "Kutilmoqda",
+    "prev": "Oldingi",
+    "next": "Keyingi"
+  },
+  "review": {
+    "turn": {
+      "studio": "Sizning navbatingiz",
+      "bkrm": "BKRM körib çiqmoqda",
+      "studioStaff": "Studiyada",
+      "bkrmStaff": "Sizda — körib çiqing"
+    },
+    "status": {
+      "in_progress": "Işlanmoqda",
+      "submitted": "Körib çiqilmoqda",
+      "changes_requested": "Özgartiriş söraldi",
+      "accepted": "Qabul qilindi"
+    },
+    "submit": "Körib çiqişga yuboriş",
+    "resubmit": "Qayta yuboriş",
+    "submittedWait": "Yuborildi — BKRM körib çiqmoqda",
+    "addFile": "Fayl qöşiş",
+    "requirements": "Talablar",
+    "noRequirements": "Talablar körsatilmagan",
+    "accept": "Qabul qiliş va davom etiş",
+    "requestChanges": "Özgartiriş söraş",
+    "notePlaceholder": "Nima tuzatiş kerak?",
+    "awaitingReview": "Studiya işni yubordi — körib çiqing",
+    "needsYou": "Sizdan kutilmoqda",
+    "nothingToSubmit": "Avval fayl yuklang",
+    "submitSuccess": "Körib çiqişga yuborildi",
+    "changesSent": "Özgartiriş söraldi",
+    "cancel": "Bekor qiliş",
+    "changesRequestedTitle": "Özgartiriş söraldi"
+  },
+  "conversation": {
+    "participants": "iştirokçi",
+    "members": "Iştirokçilar",
+    "curator": "Nazoratçi mas'ul",
+    "studio": "Studiya",
+    "you": "Siz",
+    "group": "Guruh",
+    "readOnly": "Faqat öqiş"
+  }
+}

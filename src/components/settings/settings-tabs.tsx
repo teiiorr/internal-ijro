@@ -64,6 +64,7 @@ export function SettingsTabs({ init }: { init: Init }) {
               <SelectContent>
                 <SelectItem value="uz-latn">{t("settings.lang.uz-latn")}</SelectItem>
                 <SelectItem value="uz-cyrl">{t("settings.lang.uz-cyrl")}</SelectItem>
+                <SelectItem value="oz">{t("settings.lang.oz")}</SelectItem>
                 <SelectItem value="ru">{t("settings.lang.ru")}</SelectItem>
               </SelectContent>
             </Select>

@@ -1,7 +1,9 @@
 import { defineRouting } from "next-intl/routing";
 
 export const routing = defineRouting({
-  locales: ["uz-latn", "uz-cyrl", "ru"] as const,
+  // "oz" — özbek tilining yangi lotin alifbosi (ö, ğ, ş, ç). Boshqa özbekcha
+  // variantlar kabi Latin oilasiga kiradi; kod ichida uz-latn nusxasi sifatida ishlaydi.
+  locales: ["uz-latn", "uz-cyrl", "oz", "ru"] as const,
   // "always" HAR bir URL oldiga locale qöşadi (masalan /uz-latn/login). Avvalgi
   // "as-needed" rejimi productionda çeksiz redirect halqasini keltirib çiqargan
   // — next-intl 4.12 + Next.js 16 default-locale yöllar uçun ham `x-middleware-rewrite`

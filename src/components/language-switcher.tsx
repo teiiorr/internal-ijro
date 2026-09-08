@@ -9,6 +9,7 @@ import { IconCheck as Check } from "@tabler/icons-react";
 const LANG: Record<string, { flag: string; label: string }> = {
   "uz-latn": { flag: "🇺🇿", label: "Lotin" },
   "uz-cyrl": { flag: "🇺🇿", label: "Кирилл" },
+  oz:        { flag: "🇺🇿", label: "Öz" },
   ru:        { flag: "🇷🇺", label: "Русский" },
 };
 

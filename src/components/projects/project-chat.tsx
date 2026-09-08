@@ -360,7 +360,7 @@ export function ProjectChat({
               {showDate && (
                 <div className="flex justify-center py-2.5">
                   <span className="glass-soft rounded-full px-3 py-1 text-[11px] font-semibold text-[var(--muted)]">
-                    {dateSeparator(m.createdAt, locale, locale === "ru" ? "Сегодня" : locale === "uz-cyrl" ? "Бугун" : "Bugun", locale === "ru" ? "Вчера" : locale === "uz-cyrl" ? "Кеча" : "Kecha")}
+                    {dateSeparator(m.createdAt, locale, locale === "ru" ? "Сегодня" : locale === "uz-cyrl" ? "Бугун" : "Bugun", locale === "ru" ? "Вчера" : locale === "uz-cyrl" ? "Кеча" : locale === "oz" ? "Keça" : "Kecha")}
                   </span>
                 </div>
               )}
