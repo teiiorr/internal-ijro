@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { externalCompanies, users } from "@/lib/db/schema";
+import { getContractorUnreadCount } from "@/server/queries/projects";
 import { SessionProvider } from "next-auth/react";
 import { Header } from "@/components/layout/header";
 import { ContractorMobileNav } from "@/components/layout/contractor-mobile-nav";
@@ -50,6 +51,7 @@ export default async function ContractorLayout({ children }: { children: React.R
     { href: "/contractor/chats", icon: MessageCircle, label: t("nav.chats") },
   ];
   const menuLinks = [{ href: "/contractor/profile", label: t("nav.profile") }];
+  const unread = await getContractorUnreadCount(session.user.id);
 
   return (
     <SessionProvider>
@@ -63,7 +65,10 @@ export default async function ContractorLayout({ children }: { children: React.R
               <nav className="space-y-1">
                 {NAV.map(({ href, icon: Icon, label }) => (
                   <Link key={href} href={href} className="flex items-center gap-3 rounded-2xl px-4 h-12 text-[15px] font-semibold text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--glass-fill)] transition-colors">
-                    <Icon className="size-5" /> {label}
+                    <Icon className="size-5" /> <span className="flex-1">{label}</span>
+                    {href === "/contractor/chats" && unread > 0 && (
+                      <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--primary)] px-1.5 text-[11px] font-bold text-white tabular-nums">{unread > 99 ? "99+" : unread}</span>
+                    )}
                   </Link>
                 ))}
               </nav>
@@ -74,7 +79,7 @@ export default async function ContractorLayout({ children }: { children: React.R
             <AppFooter />
           </main>
         </div>
-        <ContractorMobileNav />
+        <ContractorMobileNav unread={unread} />
       </div>
     </SessionProvider>
   );

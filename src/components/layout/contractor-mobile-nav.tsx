@@ -14,7 +14,7 @@ const ITEMS: NavItem[] = [
   { href: "/contractor/profile", icon: UserIcon, key: "profile" },
 ];
 
-export function ContractorMobileNav() {
+export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -24,6 +24,7 @@ export function ContractorMobileNav() {
       <ul className="grid grid-cols-3 rounded-3xl glass-strong overflow-hidden">
         {ITEMS.map(({ href, icon: Icon, key }) => {
           const active = isActive(href);
+          const badge = key === "chats" && unread > 0;
           return (
             <li key={href} className="min-w-0">
               <Link
@@ -33,7 +34,14 @@ export function ContractorMobileNav() {
                   active ? "text-[var(--primary)]" : "text-[var(--muted)]"
                 )}
               >
-                <Icon className={cn("size-6 shrink-0", active && "drop-shadow-[0_0_8px_var(--primary-glow)]")} />
+                <span className="relative">
+                  <Icon className={cn("size-6 shrink-0", active && "drop-shadow-[0_0_8px_var(--primary-glow)]")} />
+                  {badge && (
+                    <span className="absolute -right-2 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-[var(--primary)] px-1 text-[10px] font-bold text-white tabular-nums ring-2 ring-[var(--glass-fill-strong)]">
+                      {unread > 99 ? "99+" : unread}
+                    </span>
+                  )}
+                </span>
                 <span className="max-w-full truncate px-1 text-[11px] font-bold leading-none">{t(key)}</span>
               </Link>
             </li>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { IconArrowRight as ArrowRight, IconChevronDown as Chevron, IconUsers as Users } from "@tabler/icons-react";
@@ -7,6 +7,7 @@ import { BackButton } from "@/components/ui/back-button";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { ProjectChat } from "@/components/projects/project-chat";
+import { markProjectRead } from "@/server/actions/projects";
 
 type Msg = {
   id: string;
@@ -53,6 +54,12 @@ export function ConversationScreen({
 }) {
   const t = useTranslations();
   const [membersOpen, setMembersOpen] = useState(false);
+
+  // Opening the group marks its incoming messages read (clears the unread badge
+  // on the chats list + nav once you navigate back).
+  useEffect(() => {
+    markProjectRead(projectId).catch(() => {});
+  }, [projectId]);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-[var(--background)]">

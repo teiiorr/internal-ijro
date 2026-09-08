@@ -44,16 +44,23 @@ export default async function ContractorChatsPage() {
                 <div className="flex items-baseline justify-between gap-2">
                   <p className="truncate text-[15px] font-bold">{c.name}</p>
                   {c.lastMessage && (
-                    <span className="shrink-0 text-[11px] text-[var(--subtle)] tabular-nums">{formatChatTime(c.lastMessage.createdAt, locale)}</span>
+                    <span className={`shrink-0 text-[11px] tabular-nums ${c.unread > 0 ? "font-semibold text-[var(--primary)]" : "text-[var(--subtle)]"}`}>{formatChatTime(c.lastMessage.createdAt, locale)}</span>
                   )}
                 </div>
-                <p className="mt-0.5 truncate text-sm text-[var(--muted)]">
-                  {c.lastMessage
-                    ? `${c.lastMessage.userName ? shortName(c.lastMessage.userName) + ": " : ""}${c.lastMessage.content}`
-                    : c.curator
-                      ? `${t("contractor.chats.curator")}: ${shortName(c.curator.fullName)}`
-                      : t("contractor.chats.noMessages")}
-                </p>
+                <div className="mt-0.5 flex items-center gap-2">
+                  <p className={`min-w-0 flex-1 truncate text-sm ${c.unread > 0 ? "font-semibold text-[var(--foreground)]" : "text-[var(--muted)]"}`}>
+                    {c.lastMessage
+                      ? `${c.lastMessage.userName ? shortName(c.lastMessage.userName) + ": " : ""}${c.lastMessage.content}`
+                      : c.curator
+                        ? `${t("contractor.chats.curator")}: ${shortName(c.curator.fullName)}`
+                        : t("contractor.chats.noMessages")}
+                  </p>
+                  {c.unread > 0 && (
+                    <span className="grid h-[18px] min-w-[18px] shrink-0 place-items-center rounded-full bg-[var(--primary)] px-1.5 text-[11px] font-bold text-white tabular-nums">
+                      {c.unread > 99 ? "99+" : c.unread}
+                    </span>
+                  )}
+                </div>
                 {!c.curator && (
                   <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-[var(--warning)]"><UserIcon className="size-3.5" />{t("contractor.chats.noCurator")}</span>
                 )}

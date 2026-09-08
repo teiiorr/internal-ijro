@@ -236,6 +236,7 @@ export async function getContractorChatProjects(contractorUserId: string) {
 
   const ids = prjs.map((p) => p.id);
   const lastByProject = new Map<string, { content: string; createdAt: Date | string; userName: string | null }>();
+  const unreadByProject = new Map<string, number>();
   const curatorIds = Array.from(new Set(prjs.map((p) => p.curatorUserId).filter((x): x is string => !!x)));
   const curById = new Map<string, { fullName: string; avatarUrl: string | null }>();
 
@@ -247,6 +248,15 @@ export async function getContractorChatProjects(contractorUserId: string) {
       .where(and(inArray(projectMessages.projectId, ids), sql`${projectMessages.stageId} is null`))
       .orderBy(desc(projectMessages.createdAt));
     for (const m of msgs) if (!lastByProject.has(m.projectId)) lastByProject.set(m.projectId, { content: m.content, createdAt: m.createdAt, userName: m.userName });
+
+    // Unread for the studio = our-side messages (any channel) not yet read by them.
+    for (const r of await db
+      .select({ projectId: projectMessages.projectId, c: sql<number>`count(*)::int` })
+      .from(projectMessages)
+      .where(and(inArray(projectMessages.projectId, ids), sql`${projectMessages.userId} <> ${contractorUserId}`, sql`${projectMessages.readByContractorAt} is null`))
+      .groupBy(projectMessages.projectId)) {
+      unreadByProject.set(r.projectId, Number(r.c));
+    }
   }
   if (curatorIds.length) {
     const curs = await db.select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl }).from(users).where(inArray(users.id, curatorIds));
@@ -259,8 +269,23 @@ export async function getContractorChatProjects(contractorUserId: string) {
     posterUrl: p.posterUrl,
     curator: p.curatorUserId ? curById.get(p.curatorUserId) ?? null : null,
     lastMessage: lastByProject.get(p.id) ?? null,
+    unread: unreadByProject.get(p.id) ?? 0,
   }));
   return { company, chats };
+}
+
+/** Total unread chat messages for a studio (drives the nav badge). */
+export async function getContractorUnreadCount(contractorUserId: string): Promise<number> {
+  const [me] = await db.select({ email: users.email }).from(users).where(eq(users.id, contractorUserId)).limit(1);
+  if (!me) return 0;
+  const [company] = await db.select({ id: externalCompanies.id }).from(externalCompanies).where(eq(externalCompanies.contactEmail, me.email)).limit(1);
+  if (!company) return 0;
+  const [r] = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(projectMessages)
+    .innerJoin(projects, eq(projects.id, projectMessages.projectId))
+    .where(and(eq(projects.externalCompanyId, company.id), sql`${projectMessages.userId} <> ${contractorUserId}`, sql`${projectMessages.readByContractorAt} is null`));
+  return Number(r?.c ?? 0);
 }
 
 export async function listProjectsForContractor(contractorUserId: string, locale = "uz-latn") {

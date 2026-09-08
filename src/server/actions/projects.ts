@@ -479,6 +479,22 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
   revalidatePath(`/contractor/chats/${parsed.projectId}`);
 }
 
+/** Mark a project's incoming messages as read for the caller's side (studio →
+ *  read_by_contractor, staff → read_by_curator). Called when a group is opened. */
+export async function markProjectRead(projectId: string) {
+  const me = await requireUser();
+  await assertProjectAccess(me, projectId);
+  const isKontragent = me.position === "kontragent";
+  const readCol = isKontragent ? projectMessages.readByContractorAt : projectMessages.readByCuratorAt;
+  await db
+    .update(projectMessages)
+    .set(isKontragent ? { readByContractorAt: new Date() } : { readByCuratorAt: new Date() })
+    .where(and(eq(projectMessages.projectId, projectId), sql`${projectMessages.userId} <> ${me.id}`, sql`${readCol} is null`));
+  revalidatePath("/contractor/chats");
+  revalidatePath("/contractor", "layout"); // refresh the bottom-nav unread badge
+  revalidatePath("/contractors");
+}
+
 // Deliverables (contractor uploads)
 export async function submitDeliverable(opts: {
   projectId: string;
