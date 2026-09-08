@@ -35,7 +35,7 @@ export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
                 )}
               >
                 <span className="relative">
-                  <Icon className={cn("size-6 shrink-0", active && "drop-shadow-[0_0_8px_var(--primary-glow)]")} />
+                  <Icon className={cn("size-6 shrink-0")} />
                   {badge && (
                     <span className="absolute -right-2 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-[var(--primary)] px-1 text-[10px] font-bold text-white tabular-nums ring-2 ring-[var(--glass-fill-strong)]">
                       {unread > 99 ? "99+" : unread}

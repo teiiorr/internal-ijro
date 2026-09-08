@@ -15,3 +15,7 @@ uploads/
 
 # Next.js generated (build-mode specific) — never commit
 next-env.d.ts
+
+# tooling
+CLAUDE.md
+.claude/

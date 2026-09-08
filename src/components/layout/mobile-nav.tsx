@@ -107,7 +107,7 @@ export function MobileNav({ position, userId, isOwner, reviewCount = 0 }: { posi
             return (
               <li key={href} className="min-w-0">
                 <Link href={href} className={cell(active)}>
-                  <Icon className={cn("size-6 shrink-0", active && "drop-shadow-[0_0_8px_var(--primary-glow)]")} />
+                  <Icon className={cn("size-6 shrink-0")} />
                   <span className="max-w-full truncate px-1 text-[11px] font-bold leading-none">{t(key)}</span>
                 </Link>
               </li>

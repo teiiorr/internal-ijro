@@ -35,7 +35,7 @@ export function RetryButton({ label, reconnectedLabel }: { label: string; reconn
         setBusy(true);
         window.location.reload();
       }}
-      className="inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-6 py-3 text-[15px] font-bold text-white shadow-[0_8px_24px_-8px_var(--primary-glow)] transition-all hover:bg-[var(--primary-hover)] active:scale-[0.98] disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-6 py-3 text-[15px] font-bold text-white shadow-[var(--shadow-1)] transition-all hover:bg-[var(--primary-hover)] active:scale-[0.98] disabled:opacity-60"
     >
       <RefreshCw className={`size-4 ${busy ? "animate-spin" : ""}`} aria-hidden />
       {online ? reconnectedLabel : label}
