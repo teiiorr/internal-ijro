@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { StudioStageUpload } from "@/components/contractor/studio-stage-upload";
+import { StageSubmitButton } from "@/components/contractor/stage-submit-button";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
@@ -44,15 +45,21 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
 
   const s = data.stage;
   const total = data.siblings.length;
-  const statusMeta =
+  // Review-aware badge: while active it reflects whose turn it is.
+  const statusMeta: { tone: StatusTone; label: string } =
     s.status === "completed"
-      ? { tone: "green" as StatusTone, label: t("projects.stagePath.done") }
-      : s.status === "active"
-        ? { tone: "amber" as StatusTone, label: t("projects.stagePath.active") }
-        : { tone: "red" as StatusTone, label: t("projects.stagePath.locked") };
+      ? { tone: "green", label: t("review.status.accepted") }
+      : s.status === "locked"
+        ? { tone: "red", label: t("projects.stagePath.locked") }
+        : s.reviewStatus === "submitted"
+          ? { tone: "muted", label: t("review.status.submitted") }
+          : s.reviewStatus === "changes_requested"
+            ? { tone: "red", label: t("review.status.changes_requested") }
+            : { tone: "amber", label: t("review.status.in_progress") };
 
   const messages = await getStageMessages(id, stageId);
   const locked = s.status === "locked";
+  const changesRequested = s.status === "active" && s.reviewStatus === "changes_requested";
 
   return (
     <div className="space-y-5">
@@ -93,7 +100,30 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
         </CardContent>
       </Card>
 
-      {/* Submit your work — the primary action for this stage */}
+      {/* What BKRM expects this stage */}
+      {s.requirements && (
+        <Card>
+          <CardContent className="space-y-2 p-5 sm:p-6">
+            <h3 className="text-base font-semibold">{t("review.requirements")}</h3>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--muted)]">{s.requirements}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Changes requested — what to fix, then resubmit */}
+      {changesRequested && s.reviewNote && (
+        <Card className="border-[var(--danger)]/45">
+          <CardContent className="space-y-1 p-5 sm:p-6">
+            <div className="flex items-center gap-2">
+              <StatusTag tone="red" size="sm">{t("review.changesRequestedTitle")}</StatusTag>
+              {s.reviewedAt && <span className="text-xs text-[var(--muted)]">{formatDate(s.reviewedAt, locale)}</span>}
+            </div>
+            <p className="whitespace-pre-wrap pt-1 text-sm leading-relaxed">{s.reviewNote}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Submit your work — add files, then hand off for review */}
       <Card>
         <CardContent className="space-y-4 p-5 sm:p-6">
           <h3 className="text-base font-semibold">{t("projects.stageDocs.title")}</h3>
@@ -103,7 +133,10 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
               {t("projects.stagePath.lockedHint")}
             </div>
           ) : (
-            <StudioStageUpload projectId={id} stageId={s.id} maxBytes={MAX_UPLOAD_BYTES} size="lg" fullWidth label={t("contractor.submitWork")} />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="sm:flex-1"><StageSubmitButton stageId={s.id} reviewStatus={s.reviewStatus} fullWidth /></div>
+              <StudioStageUpload projectId={id} stageId={s.id} maxBytes={MAX_UPLOAD_BYTES} size="lg" label={t("review.addFile")} />
+            </div>
           )}
           <StageDocuments stageId={s.id} documents={data.documents} canManage={false} suggestions={data.categorySuggestions} maxBytes={MAX_UPLOAD_BYTES} />
         </CardContent>

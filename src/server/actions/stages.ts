@@ -3,8 +3,8 @@ import { revalidatePath } from "next/cache";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { projects, projectStages, stageDocuments, stagePayments, users } from "@/lib/db/schema";
-import { requireProjectEditor } from "@/lib/session";
+import { externalCompanies, projects, projectCurators, projectMessages, projectStages, stageDocuments, stagePayments, users } from "@/lib/db/schema";
+import { requireProjectEditor, requireUser } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { deleteFileByUrl } from "@/lib/upload";
@@ -13,6 +13,20 @@ import { recalcProjectProgress } from "@/lib/projects/recalc";
 function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/projects/${projectId}`);
   revalidatePath(`/projects/${projectId}/stages/${stageId}`);
+  // Studio-side surfaces mirror the same stage.
+  revalidatePath(`/contractor/projects/${projectId}`);
+  revalidatePath(`/contractor/projects/${projectId}/stages/${stageId}`);
+  revalidatePath(`/contractor/projects`);
+}
+
+/** Resolve the studio (kontragent) user who owns a project, via company email. */
+async function resolveStudioContactId(projectId: string): Promise<string | null> {
+  const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (!prj?.ec) return null;
+  const [company] = await db.select({ email: externalCompanies.contactEmail }).from(externalCompanies).where(eq(externalCompanies.id, prj.ec)).limit(1);
+  if (!company?.email) return null;
+  const [u] = await db.select({ id: users.id }).from(users).where(eq(users.email, company.email)).limit(1);
+  return u?.id ?? null;
 }
 
 async function directorIds(): Promise<string[]> {
@@ -93,6 +107,13 @@ export async function completeStage(stageId: string) {
           status: "active",
           startedAt: now,
           updatedAt: now,
+          // Fresh active stage → studio's turn again; clear prior review metadata.
+          reviewStatus: "in_progress",
+          reviewNote: null,
+          reviewedByUserId: null,
+          reviewedAt: null,
+          submittedAt: null,
+          submittedByUserId: null,
           reminderApproachingSentAt: null,
           reminderOverdueSentAt: null,
           reminderStaleSentAt: null,
@@ -130,6 +151,21 @@ export async function completeStage(stageId: string) {
       title: `${prj!.name}: ${result.stage.name}`,
       message: "Bosqich yakunlandi / Этап завершён",
       link: `/projects/${result.stage.projectId}/stages/${stageId}`,
+      entityType: "project_stage",
+      entityId: stageId,
+    });
+  }
+
+  // Notify: the STUDIO that their stage work was accepted (acceptance is no
+  // longer invisible to them).
+  const studioContactId = await resolveStudioContactId(result.stage.projectId);
+  if (studioContactId) {
+    await notify({
+      userIds: [studioContactId],
+      type: "stage.accepted",
+      title: `${prj!.name}: ${result.stage.name}`,
+      message: "Bosqich qabul qilindi / Этап принят",
+      link: `/contractor/projects/${result.stage.projectId}/stages/${stageId}`,
       entityType: "project_stage",
       entityId: stageId,
     });
@@ -206,10 +242,11 @@ export async function reopenStage(stageId: string) {
       else break;
     }
 
-    // Block start → active again; every later stage in the block → locked.
+    // Block start → active again; the just-reopened work is effectively awaiting
+    // BKRM once more, so review_status → 'submitted'.
     await tx
       .update(projectStages)
-      .set({ status: "active", completedAt: null, updatedAt: now })
+      .set({ status: "active", completedAt: null, updatedAt: now, reviewStatus: "submitted" })
       .where(eq(projectStages.id, start.id));
     for (const s of all) {
       if (s.orderIndex > start.orderIndex && s.orderIndex <= stage.orderIndex) {
@@ -241,6 +278,111 @@ export async function reopenStage(stageId: string) {
   await recalcProjectProgress(projectId);
   await logActivity({ userId: me.id, action: "stage.reopened", entityType: "project_stage", entityId: stageId });
   stageLinks(projectId, stageId);
+}
+
+// ---------- review sub-machine (studio ↔ staff loop) ----------
+
+/**
+ * STUDIO hands the active stage's work to BKRM for review. Separate, deliberate
+ * act from uploading files (which stays a plain attach).
+ */
+export async function submitStageWork(stageId: string) {
+  const me = await requireUser();
+  const [stage] = await db.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
+  if (!stage) throw new Error("not_found");
+  if (stage.status !== "active") throw new Error("stage_not_active");
+  if (stage.reviewStatus !== "in_progress" && stage.reviewStatus !== "changes_requested") throw new Error("already_submitted");
+
+  // A kontragent may only submit their own project's stage.
+  if (me.position === "kontragent") {
+    const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
+    const owned = prj?.ec
+      ? await db.select({ id: externalCompanies.id }).from(externalCompanies).where(and(eq(externalCompanies.id, prj.ec), eq(externalCompanies.contactEmail, me.email))).limit(1)
+      : [];
+    if (owned.length === 0) throw new Error("forbidden");
+  }
+
+  // Must have something to hand off.
+  const [cnt] = await db.select({ c: sql<number>`count(*)::int` }).from(stageDocuments).where(eq(stageDocuments.stageId, stageId));
+  if (!cnt || cnt.c === 0) throw new Error("nothing_to_submit");
+
+  const now = new Date();
+  await db.update(projectStages).set({ reviewStatus: "submitted", submittedAt: now, submittedByUserId: me.id, updatedAt: now }).where(eq(projectStages.id, stageId));
+  await logActivity({ userId: me.id, action: "stage.submitted", entityType: "project_stage", entityId: stageId, newValue: { name: stage.name } });
+
+  // Notify the curators (our side) — their turn now.
+  const [prj] = await db.select({ name: projects.name, curatorUserId: projects.curatorUserId }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
+  const recipients = new Set<string>();
+  if (prj?.curatorUserId) recipients.add(prj.curatorUserId);
+  try {
+    const rows = await db.select({ userId: projectCurators.userId }).from(projectCurators).where(eq(projectCurators.projectId, stage.projectId));
+    for (const r of rows) recipients.add(r.userId);
+  } catch { /* projectCurators not migrated */ }
+  recipients.delete(me.id);
+  if (recipients.size > 0) {
+    await notify({
+      userIds: [...recipients],
+      type: "stage.submitted",
+      title: `${prj?.name}: ${stage.name}`,
+      message: "Studiya ishni koʻrib chiqishga yubordi / Студия отправила работу на проверку",
+      link: `/projects/${stage.projectId}/stages/${stageId}`,
+      entityType: "project_stage",
+      entityId: stageId,
+    });
+  }
+  stageLinks(stage.projectId, stageId);
+}
+
+/**
+ * STAFF bounces the submitted work back with a note. Stays 'active'; only the
+ * review sub-machine changes. The note is echoed into the stage chat for history.
+ */
+export async function requestStageChanges(stageId: string, note: string) {
+  const me = await requireProjectEditor();
+  const text = (note ?? "").trim();
+  if (text.length < 2) throw new Error("note_required");
+  const [stage] = await db.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
+  if (!stage) throw new Error("not_found");
+  if (stage.status !== "active") throw new Error("stage_not_active");
+
+  const now = new Date();
+  await db.update(projectStages).set({ reviewStatus: "changes_requested", reviewNote: text, reviewedByUserId: me.id, reviewedAt: now, updatedAt: now }).where(eq(projectStages.id, stageId));
+  // Preserve the ask in the conversation.
+  await db.insert(projectMessages).values({ projectId: stage.projectId, stageId, userId: me.id, content: text });
+  await logActivity({ userId: me.id, action: "stage.changes_requested", entityType: "project_stage", entityId: stageId, newValue: { note: text } });
+
+  const studioContactId = await resolveStudioContactId(stage.projectId);
+  const [prj] = await db.select({ name: projects.name }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
+  if (studioContactId) {
+    await notify({
+      userIds: [studioContactId],
+      type: "stage.changes_requested",
+      title: `${prj?.name}: ${stage.name}`,
+      message: text.length > 120 ? `${text.slice(0, 117)}…` : text,
+      link: `/contractor/projects/${stage.projectId}/stages/${stageId}`,
+      entityType: "project_stage",
+      entityId: stageId,
+    });
+  }
+  stageLinks(stage.projectId, stageId);
+}
+
+/**
+ * STAFF accepts the submitted work → advances the pipeline. Thin wrapper over
+ * completeStage (which now also notifies the studio of acceptance).
+ */
+export async function acceptStage(stageId: string) {
+  return completeStage(stageId);
+}
+
+/** STAFF sets what the studio must deliver this stage (read-only to studio). */
+export async function setStageRequirements(stageId: string, requirements: string | null) {
+  const me = await requireProjectEditor();
+  const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
+  if (!row) throw new Error("not_found");
+  await db.update(projectStages).set({ requirements: requirements?.trim() || null, updatedAt: new Date() }).where(eq(projectStages.id, stageId));
+  await logActivity({ userId: me.id, action: "stage.requirements_set", entityType: "project_stage", entityId: stageId });
+  stageLinks(row.projectId, stageId);
 }
 
 // ---------- field updaters ----------

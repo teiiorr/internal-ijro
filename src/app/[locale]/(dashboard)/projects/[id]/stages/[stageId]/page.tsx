@@ -15,7 +15,7 @@ import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { canEditProjects, canViewMoney, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
 import { StagePayments } from "@/components/projects/stage-payments";
-import { CompleteStageButton } from "@/components/projects/complete-stage-button";
+import { StageReviewBar } from "@/components/projects/stage-review-bar";
 import { ReopenStageButton } from "@/components/projects/reopen-stage-button";
 import { EditStageDialog } from "@/components/projects/edit-stage-dialog";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
@@ -45,12 +45,17 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   // Only the most-recently completed stage can be un-completed (matches reopenStage's guard).
   const lastCompleted = [...data.siblings].reverse().find((x) => x.status === "completed");
   const isLastCompleted = s.status === "completed" && lastCompleted?.id === s.id;
-  const statusMeta =
+  // Review-aware badge: while active it reflects whose court the ball is in.
+  const statusMeta: { tone: StatusTone; label: string } =
     s.status === "completed"
-      ? { tone: "green" as StatusTone, label: t("projects.stagePath.done") }
-      : s.status === "active"
-        ? { tone: "amber" as StatusTone, label: t("projects.stagePath.active") }
-        : { tone: "red" as StatusTone, label: t("projects.stagePath.locked") };
+      ? { tone: "green", label: t("projects.stagePath.done") }
+      : s.status === "locked"
+        ? { tone: "red", label: t("projects.stagePath.locked") }
+        : s.reviewStatus === "submitted"
+          ? { tone: "amber", label: t("review.turn.bkrmStaff") }
+          : s.reviewStatus === "changes_requested"
+            ? { tone: "red", label: t("review.status.changes_requested") }
+            : { tone: "muted", label: t("review.turn.studioStaff") };
 
   return (
     <div className="space-y-6">
@@ -144,17 +149,19 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
         </Card>
       </div>
 
-      {/* primary action — bottom right */}
+      {/* Review — accept & advance / request changes */}
       {canManage && s.status === "active" && (
-        <div className="flex flex-col items-end gap-2 pt-1">
-          {s.mergeWithNext && (
-            <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
-              <Info className="size-3.5 shrink-0" />
-              {t("projects.stageActions.mergeHint")}
-            </p>
-          )}
-          <CompleteStageButton stageId={s.id} />
-        </div>
+        <Card>
+          <CardContent className="space-y-3 p-5 sm:p-6">
+            {s.mergeWithNext && (
+              <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
+                <Info className="size-3.5 shrink-0" />
+                {t("projects.stageActions.mergeHint")}
+              </p>
+            )}
+            <StageReviewBar stageId={s.id} reviewStatus={s.reviewStatus} />
+          </CardContent>
+        </Card>
       )}
 
       {/* Undo an accidental completion — only the last completed stage */}

@@ -19,6 +19,7 @@ import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { StudioDocuments } from "@/components/contractor/studio-documents";
 import { StudioStageUpload } from "@/components/contractor/studio-stage-upload";
+import { StageSubmitButton } from "@/components/contractor/stage-submit-button";
 import { ContractorChatTab } from "./contractor-chat-tab";
 import { derivedStatus } from "@/lib/projects/progress";
 import { formatDate } from "@/lib/dates";
@@ -99,6 +100,14 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                 <span className="text-xs font-medium tabular-nums text-[var(--muted)]">
                   {t("projects.stagePath.stageOf", { n: activeStage.orderIndex + 1, total: sp.stages.length })}
                 </span>
+                {/* Whose turn — submission status */}
+                {activeStage.reviewStatus === "submitted" ? (
+                  <StatusTag tone="muted" size="sm">{t("review.status.submitted")}</StatusTag>
+                ) : activeStage.reviewStatus === "changes_requested" ? (
+                  <StatusTag tone="red" size="sm">{t("review.status.changes_requested")}</StatusTag>
+                ) : (
+                  <StatusTag tone="amber" size="sm">{t("review.turn.studio")}</StatusTag>
+                )}
               </div>
               <h2 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">{activeStage.name}</h2>
               {activeStage.plannedDeadline && (
@@ -108,10 +117,17 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                   <DeadlineCountdown deadline={activeStage.plannedDeadline} />
                 </div>
               )}
+              {activeStage.reviewStatus === "changes_requested" && activeStage.reviewNote && (
+                <div className="rounded-2xl border border-[var(--danger)]/40 bg-[var(--danger)]/8 p-3.5 text-sm">
+                  <p className="mb-1 font-semibold text-[var(--danger)]">{t("review.changesRequestedTitle")}</p>
+                  <p className="whitespace-pre-wrap leading-relaxed text-[var(--foreground)]">{activeStage.reviewNote}</p>
+                </div>
+              )}
               <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center">
                 <div className="sm:flex-1">
-                  <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="lg" fullWidth label={t("contractor.submitWork")} />
+                  <StageSubmitButton stageId={activeStage.id} reviewStatus={activeStage.reviewStatus} fullWidth />
                 </div>
+                <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="lg" label={t("review.addFile")} />
                 <Link
                   href={`/contractor/projects/${id}/stages/${activeStage.id}`}
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[var(--border-strong)] px-5 text-[15px] font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--glass-fill)] active:scale-95"

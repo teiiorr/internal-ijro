@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { IconSearch as Search, IconAlertTriangle as Alert, IconLoader2 as Loader, IconCircleCheck as Check } from "@tabler/icons-react";
+import { IconSearch as Search, IconAlertTriangle as Alert, IconLoader2 as Loader, IconCircleCheck as Check, IconHandFinger as Hand } from "@tabler/icons-react";
 import { StatCard } from "@/components/ui/stat-card";
 import { ContractorProjectCard } from "./contractor-project-card";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
@@ -30,10 +30,12 @@ type Proj = {
   projectTypeName?: string | null;
   activeStageName?: string | null;
   activeStageIndex?: number | null;
+  activeStageReviewStatus?: string | null;
   totalStages?: number;
 };
 
-type Filter = "all" | "overdue" | "in_progress" | "completed";
+type Filter = "all" | "needs_you" | "overdue" | "in_progress" | "completed";
+type Turn = "studio" | "bkrm" | null;
 
 export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
   const t = useTranslations();
@@ -50,12 +52,22 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
         const derived = derivedStatus(p.progressPercentage, p.statusOverride);
         const due = p.deadline ? new Date(p.deadline) : null;
         const overdue = !!due && due < today && derived !== "completed" && derived !== "on_hold";
-        return { ...p, derived, overdue };
+        // Whose turn: only meaningful while there's an active stage.
+        const rs = p.activeStageReviewStatus;
+        const turn: Turn =
+          derived === "completed" || !rs ? null : rs === "submitted" ? "bkrm" : "studio";
+        return { ...p, derived, overdue, turn };
       })
-      .sort((a, b) => (a.overdue !== b.overdue ? (a.overdue ? -1 : 1) : PRIORITY[a.derived] - PRIORITY[b.derived]));
+      // "Your turn" first, then overdue, then by lifecycle.
+      .sort((a, b) => {
+        if ((a.turn === "studio") !== (b.turn === "studio")) return a.turn === "studio" ? -1 : 1;
+        if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
+        return PRIORITY[a.derived] - PRIORITY[b.derived];
+      });
   }, [projects]);
 
   const counts = useMemo(() => ({
+    needs_you: decorated.filter((p) => p.turn === "studio").length,
     overdue: decorated.filter((p) => p.overdue).length,
     in_progress: decorated.filter((p) => p.derived === "in_progress" && !p.overdue).length,
     completed: decorated.filter((p) => p.derived === "completed").length,
@@ -65,6 +77,7 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
     const term = q.trim().toLowerCase();
     return decorated.filter((p) => {
       if (term && !p.name.toLowerCase().includes(term)) return false;
+      if (filter === "needs_you") return p.turn === "studio";
       if (filter === "overdue") return p.overdue;
       if (filter === "in_progress") return p.derived === "in_progress";
       if (filter === "completed") return p.derived === "completed";
@@ -84,8 +97,11 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
 
   return (
     <div className="space-y-5">
-      {/* KPI tiles — clickable filters. "What needs me" first. */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      {/* KPI tiles — clickable filters. "Needs you" first (the actionable one). */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <button type="button" onClick={() => toggle("needs_you")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "needs_you" && "ring-2 ring-[var(--primary)] rounded-2xl")}>
+          <StatCard label={t("review.needsYou")} value={counts.needs_you} tone="primary" icon={<Hand className="size-4" />} />
+        </button>
         <button type="button" onClick={() => toggle("overdue")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "overdue" && "ring-2 ring-[var(--danger)] rounded-2xl")}>
           <StatCard label={t("projects.atRisk")} value={counts.overdue} tone="danger" icon={<Alert className="size-4" />} />
         </button>
@@ -136,6 +152,8 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
               deadlineLabel={p.deadline ? formatDate(p.deadline, locale) : null}
               overdue={p.overdue}
               overdueLabel={t("projects.atRisk")}
+              turnLabel={p.turn === "studio" ? t("review.turn.studio") : p.turn === "bkrm" ? t("review.turn.bkrm") : null}
+              turnTone={p.turn === "studio" ? "amber" : "muted"}
             />
           ))}
         </div>

@@ -284,11 +284,11 @@ export async function listProjectsForContractor(contractorUserId: string, locale
 
   // Enrich with the active stage name + "stage X of N" — the "where am I" signal.
   const ids = prjs.map((p) => p.id);
-  const activeByProject = new Map<string, { name: string; orderIndex: number }>();
+  const activeByProject = new Map<string, { name: string; orderIndex: number; reviewStatus: string }>();
   const countByProject = new Map<string, number>();
   if (ids.length) {
     const act = await db
-      .select({ projectId: projectStages.projectId, name: projectStages.name, orderIndex: projectStages.orderIndex })
+      .select({ projectId: projectStages.projectId, name: projectStages.name, orderIndex: projectStages.orderIndex, reviewStatus: projectStages.reviewStatus })
       .from(projectStages)
       .where(and(inArray(projectStages.projectId, ids), eq(projectStages.status, "active")));
     for (const a of act) if (!activeByProject.has(a.projectId)) activeByProject.set(a.projectId, a);
@@ -309,6 +309,7 @@ export async function listProjectsForContractor(contractorUserId: string, locale
         projectTypeName: typeLabel(r, locale),
         activeStageName: a?.name ?? null,
         activeStageIndex: a ? a.orderIndex + 1 : null,
+        activeStageReviewStatus: a?.reviewStatus ?? null,
         totalStages: countByProject.get(r.id) ?? 0,
       };
     }),

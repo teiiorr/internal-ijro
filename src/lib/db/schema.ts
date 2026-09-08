@@ -708,6 +708,18 @@ export const projectStages = pgTable(
     responsibleUserId: uuid("responsible_user_id").references(() => users.id, {
       onDelete: "set null",
     }),
+    /** Review sub-machine, meaningful only while status='active'. Drives "whose
+     *  turn is it": 'in_progress'|'changes_requested' → studio owes work,
+     *  'submitted' → BKRM owes a review. Acceptance collapses into status→completed. */
+    reviewStatus: varchar("review_status", { length: 20 }).default("in_progress").notNull(),
+    /** Latest curator change-request note (studio sees it). */
+    reviewNote: text("review_note"),
+    reviewedByUserId: uuid("reviewed_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }),
+    submittedByUserId: uuid("submitted_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    /** What the studio must deliver this stage (read-only to studio). */
+    requirements: text("requirements"),
     startedAt: timestamp("started_at", { withTimezone: true }),
     completedAt: timestamp("completed_at", { withTimezone: true }),
     // Cron dedupe: one reminder of each kind per active stage; cleared on transition.

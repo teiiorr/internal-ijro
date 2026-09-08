@@ -40,6 +40,11 @@ export type StageView = {
   id: string;
   orderIndex: number;
   status: string;
+  reviewStatus: string;
+  reviewNote: string | null;
+  reviewedAt: Date | null;
+  submittedAt: Date | null;
+  requirements: string | null;
   name: string;
   plannedStartDate: string | null;
   plannedDeadline: string | null;
@@ -86,6 +91,11 @@ export async function getStageProject(projectId: string, locale: string) {
       id: projectStages.id,
       orderIndex: projectStages.orderIndex,
       status: projectStages.status,
+      reviewStatus: projectStages.reviewStatus,
+      reviewNote: projectStages.reviewNote,
+      reviewedAt: projectStages.reviewedAt,
+      submittedAt: projectStages.submittedAt,
+      requirements: projectStages.requirements,
       snapshot: projectStages.name,
       plannedStartDate: projectStages.plannedStartDate,
       plannedDeadline: projectStages.plannedDeadline,
@@ -120,6 +130,11 @@ export async function getStageProject(projectId: string, locale: string) {
       id: s.id,
       orderIndex: s.orderIndex,
       status: s.status,
+      reviewStatus: s.reviewStatus,
+      reviewNote: s.reviewNote,
+      reviewedAt: s.reviewedAt,
+      submittedAt: s.submittedAt,
+      requirements: s.requirements,
       name: stageName(s, locale),
       plannedStartDate: s.plannedStartDate,
       plannedDeadline: s.plannedDeadline,
@@ -185,6 +200,11 @@ export async function getStage(stageId: string, locale: string) {
       projectCuratorUserId: projects.curatorUserId,
       orderIndex: projectStages.orderIndex,
       status: projectStages.status,
+      reviewStatus: projectStages.reviewStatus,
+      reviewNote: projectStages.reviewNote,
+      reviewedAt: projectStages.reviewedAt,
+      submittedAt: projectStages.submittedAt,
+      requirements: projectStages.requirements,
       snapshot: projectStages.name,
       plannedStartDate: projectStages.plannedStartDate,
       plannedDeadline: projectStages.plannedDeadline,
@@ -256,6 +276,11 @@ export async function getStage(stageId: string, locale: string) {
       projectCuratorUserId: s.projectCuratorUserId,
       orderIndex: s.orderIndex,
       status: s.status,
+      reviewStatus: s.reviewStatus,
+      reviewNote: s.reviewNote,
+      reviewedAt: s.reviewedAt,
+      submittedAt: s.submittedAt,
+      requirements: s.requirements,
       name: stageName(s, locale),
       plannedStartDate: s.plannedStartDate,
       plannedDeadline: s.plannedDeadline,

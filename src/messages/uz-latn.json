@@ -1196,5 +1196,35 @@
     "pending": "Kutilmoqda",
     "prev": "Oldingi",
     "next": "Keyingi"
+  },
+  "review": {
+    "turn": {
+      "studio": "Sizning navbatingiz",
+      "bkrm": "BKRM koʻrib chiqmoqda",
+      "studioStaff": "Studiyada",
+      "bkrmStaff": "Sizda — koʻrib chiqing"
+    },
+    "status": {
+      "in_progress": "Ishlanmoqda",
+      "submitted": "Koʻrib chiqilmoqda",
+      "changes_requested": "Oʻzgartirish soʻraldi",
+      "accepted": "Qabul qilindi"
+    },
+    "submit": "Koʻrib chiqishga yuborish",
+    "resubmit": "Qayta yuborish",
+    "submittedWait": "Yuborildi — BKRM koʻrib chiqmoqda",
+    "addFile": "Fayl qoʻshish",
+    "requirements": "Talablar",
+    "noRequirements": "Talablar koʻrsatilmagan",
+    "accept": "Qabul qilish va davom etish",
+    "requestChanges": "Oʻzgartirish soʻrash",
+    "notePlaceholder": "Nima tuzatish kerak?",
+    "awaitingReview": "Studiya ishni yubordi — koʻrib chiqing",
+    "needsYou": "Sizdan kutilmoqda",
+    "nothingToSubmit": "Avval fayl yuklang",
+    "submitSuccess": "Koʻrib chiqishga yuborildi",
+    "changesSent": "Oʻzgartirish soʻraldi",
+    "cancel": "Bekor qilish",
+    "changesRequestedTitle": "Oʻzgartirish soʻraldi"
   }
 }

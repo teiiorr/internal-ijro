@@ -64,3 +64,25 @@ export function derivedStatus(
   if (progress <= 0) return "not_started";
   return "in_progress";
 }
+
+/**
+ * Whose court is the ball in — the single source of truth for the "your turn"
+ * signal on BOTH the studio and staff sides. Meaningful only for typed
+ * (stage-based) projects; every surface derives from these two helpers so no
+ * two views can disagree.
+ *
+ *   'studio'  — the studio owes work (drafting or fixing after changes requested)
+ *   'bkrm'    — BKRM owes a review (studio has submitted)
+ *   'nobody'  — nothing to do here (future/locked, or completed)
+ */
+export type Turn = "studio" | "bkrm" | "nobody";
+
+export function stageTurn(stage: { status: string; reviewStatus?: string | null }): Turn {
+  if (stage.status !== "active") return "nobody"; // locked (future) or completed (done)
+  return stage.reviewStatus === "submitted" ? "bkrm" : "studio";
+}
+
+export function projectTurn(stages: { status: string; reviewStatus?: string | null }[]): Turn {
+  const active = stages.find((s) => s.status === "active");
+  return active ? stageTurn(active) : "nobody";
+}

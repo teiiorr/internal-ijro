@@ -16,6 +16,9 @@ export interface ContractorProjectCardProps {
   deadlineLabel?: string | null;
   overdue?: boolean;
   overdueLabel?: string;
+  /** "Whose turn" signal — the studio's most actionable cue. */
+  turnLabel?: string | null;
+  turnTone?: StatusTone;
 }
 
 /** Big, information-first project card for the studio portal — name leads, clear
@@ -42,6 +45,11 @@ export function ContractorProjectCard(p: ContractorProjectCardProps) {
           <StatusTag tone={p.statusTone} className="mt-0.5 shrink-0">{p.statusLabel}</StatusTag>
         </div>
         {p.typeName && <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{p.typeName}</p>}
+        {p.turnLabel && (
+          <div className="mt-1.5">
+            <StatusTag tone={p.turnTone ?? "muted"} size="sm">{p.turnLabel}</StatusTag>
+          </div>
+        )}
 
         <div className="mt-auto pt-3">
           <div className="flex items-center gap-3">

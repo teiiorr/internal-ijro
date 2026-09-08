@@ -1196,5 +1196,35 @@
     "pending": "Ожидается",
     "prev": "Назад",
     "next": "Вперёд"
+  },
+  "review": {
+    "turn": {
+      "studio": "Ваша очередь",
+      "bkrm": "BKRM проверяет",
+      "studioStaff": "У студии",
+      "bkrmStaff": "У вас — на проверке"
+    },
+    "status": {
+      "in_progress": "В работе",
+      "submitted": "На проверке",
+      "changes_requested": "Запрошены правки",
+      "accepted": "Принято"
+    },
+    "submit": "Отправить на проверку",
+    "resubmit": "Отправить повторно",
+    "submittedWait": "Отправлено — BKRM проверяет",
+    "addFile": "Добавить файл",
+    "requirements": "Требования",
+    "noRequirements": "Требования не указаны",
+    "accept": "Принять и продолжить",
+    "requestChanges": "Запросить изменения",
+    "notePlaceholder": "Что нужно исправить?",
+    "awaitingReview": "Студия отправила работу — проверьте",
+    "needsYou": "Ждут вас",
+    "nothingToSubmit": "Сначала загрузите файл",
+    "submitSuccess": "Отправлено на проверку",
+    "changesSent": "Запрошены изменения",
+    "cancel": "Отмена",
+    "changesRequestedTitle": "Запрошены изменения"
   }
 }

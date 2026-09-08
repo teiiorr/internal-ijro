@@ -1196,5 +1196,35 @@
     "pending": "Кутилмоқда",
     "prev": "Олдинги",
     "next": "Кейинги"
+  },
+  "review": {
+    "turn": {
+      "studio": "Сизнинг навбатингиз",
+      "bkrm": "BKRM кўриб чиқмоқда",
+      "studioStaff": "Студияда",
+      "bkrmStaff": "Сизда — кўриб чиқинг"
+    },
+    "status": {
+      "in_progress": "Ишланмоқда",
+      "submitted": "Кўриб чиқилмоқда",
+      "changes_requested": "Ўзгартириш сўралди",
+      "accepted": "Қабул қилинди"
+    },
+    "submit": "Кўриб чиқишга юбориш",
+    "resubmit": "Қайта юбориш",
+    "submittedWait": "Юборилди — BKRM кўриб чиқмоқда",
+    "addFile": "Файл қўшиш",
+    "requirements": "Талаблар",
+    "noRequirements": "Талаблар кўрсатилмаган",
+    "accept": "Қабул қилиш ва давом этиш",
+    "requestChanges": "Ўзгартириш сўраш",
+    "notePlaceholder": "Нима тузатиш керак?",
+    "awaitingReview": "Студия ишни юборди — кўриб чиқинг",
+    "needsYou": "Сиздан кутилмоқда",
+    "nothingToSubmit": "Аввал файл юкланг",
+    "submitSuccess": "Кўриб чиқишга юборилди",
+    "changesSent": "Ўзгартириш сўралди",
+    "cancel": "Бекор қилиш",
+    "changesRequestedTitle": "Ўзгартириш сўралди"
   }
 }
