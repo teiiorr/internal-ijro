@@ -119,7 +119,10 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={t("common.search")}
-          className="h-11 w-full rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
+          type="search"
+          inputMode="search"
+          enterKeyHint="search"
+          className="h-12 w-full rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-base text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
         />
       </div>
 

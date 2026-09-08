@@ -54,7 +54,7 @@ export default async function ContractorLayout({ children }: { children: React.R
   return (
     <SessionProvider>
       <RouteProgress />
-      <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative">
+      <div className="min-h-screen flex flex-col pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0 relative">
         <Header userName={company.length > 0 ? company[0].name : session.user.fullName} avatarUrl={me?.avatarUrl} rawName menuLinks={menuLinks} />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <aside className="hidden md:block w-[272px] shrink-0">

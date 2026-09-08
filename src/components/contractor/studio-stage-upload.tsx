@@ -15,6 +15,7 @@ export function StudioStageUpload({
   size = "sm",
   fullWidth = false,
   label,
+  variant = "default",
 }: {
   projectId: string;
   stageId: string;
@@ -22,6 +23,7 @@ export function StudioStageUpload({
   size?: "sm" | "default" | "lg";
   fullWidth?: boolean;
   label?: string;
+  variant?: "default" | "outline" | "secondary" | "ghost";
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -58,7 +60,7 @@ export function StudioStageUpload({
   return (
     <>
       <input ref={fileRef} type="file" className="sr-only" onChange={onPick} />
-      <Button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} size={size} className={fullWidth ? "w-full" : undefined}>
+      <Button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} size={size} variant={variant} className={fullWidth ? "w-full" : undefined}>
         {uploading ? <Loader className="size-4 animate-spin" /> : <Upload className="size-4" />}
         {label ?? t("common.upload")}
       </Button>

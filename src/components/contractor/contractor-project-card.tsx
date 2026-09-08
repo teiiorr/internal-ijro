@@ -2,6 +2,7 @@ import Link from "next/link";
 import { IconStack2 as Layers, IconCalendarEvent as Calendar } from "@tabler/icons-react";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Marquee } from "@/components/ui/marquee";
 
 export interface ContractorProjectCardProps {
   href: string;
@@ -21,58 +22,61 @@ export interface ContractorProjectCardProps {
   turnTone?: StatusTone;
 }
 
-/** Big, information-first project card for the studio portal — name leads, clear
- *  progress + status + "where am I" (stage) + deadline, no poster wall. */
+/** Telegram-style project row for the studio portal: poster, two-line content,
+ *  the actionable signal (your turn / overdue) promoted via a leading accent
+ *  stripe + a loud pill; long text scrolls (Marquee) so rows keep even height. */
 export function ContractorProjectCard(p: ContractorProjectCardProps) {
+  // The one thing that matters most on this row, loudest.
+  const accent = p.overdue ? "bg-[var(--danger)]" : p.turnTone === "amber" ? "bg-[var(--warning)]" : null;
+
   return (
     <Link
       href={p.href}
-      className="group flex gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 shadow-[var(--shadow-1)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-[0.995] sm:p-4"
+      className="group relative flex gap-3 overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3 shadow-[var(--shadow-1)] transition-colors hover:border-[var(--primary)] active:scale-[0.995]"
     >
-      <div className="relative size-20 shrink-0 overflow-hidden rounded-xl bg-[var(--surface-2)] sm:size-24">
+      {accent && <span className={`absolute inset-y-0 left-0 w-1 ${accent}`} aria-hidden />}
+
+      <div className="relative size-14 shrink-0 overflow-hidden rounded-2xl bg-[var(--surface-2)]">
         {p.posterUrl ? (
           <SmoothImage src={p.posterUrl} alt={p.name} className="size-full object-cover object-[center_25%]" />
         ) : (
           <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
-            <span className="select-none text-3xl font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span>
+            <span className="select-none text-2xl font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span>
           </div>
         )}
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="min-w-0 flex-1 text-base font-bold leading-snug tracking-tight break-words sm:text-lg">{p.name}</h3>
-          <StatusTag tone={p.statusTone} className="mt-0.5 shrink-0">{p.statusLabel}</StatusTag>
+        <div className="flex items-center gap-2">
+          <Marquee className="min-w-0 flex-1 text-[15px] font-bold leading-snug tracking-tight">{p.name}</Marquee>
+          {p.deadlineLabel && (
+            <span className={`inline-flex shrink-0 items-center gap-1 text-[11px] font-medium tabular-nums ${p.overdue ? "text-[var(--danger)]" : "text-[var(--subtle)]"}`}>
+              <Calendar className="size-3.5" />{p.deadlineLabel}
+            </span>
+          )}
         </div>
-        {p.typeName && <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{p.typeName}</p>}
-        {p.turnLabel && (
-          <div className="mt-1.5">
-            <StatusTag tone={p.turnTone ?? "muted"} size="sm">{p.turnLabel}</StatusTag>
+
+        {/* Subtitle: where am I (stage) or type. */}
+        {(p.stageLabel || p.typeName) && (
+          <div className="mt-0.5 flex items-center gap-1 text-xs text-[var(--muted)]">
+            {p.stageLabel && <Layers className="size-3.5 shrink-0" />}
+            <Marquee className="min-w-0 flex-1">{p.stageLabel ?? p.typeName}</Marquee>
           </div>
         )}
 
-        <div className="mt-auto pt-3">
-          <div className="flex items-center gap-3">
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--surface-3)]">
-              <div className="h-full rounded-full bg-[var(--success)] transition-[width] duration-500" style={{ width: `${p.progress}%` }} />
-            </div>
-            <span className="shrink-0 text-sm font-bold tabular-nums">{p.progress}%</span>
+        {/* Progress + the actionable pill. */}
+        <div className="mt-2 flex items-center gap-2">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-3)]">
+            <div className="h-full rounded-full bg-[var(--success)]" style={{ width: `${p.progress}%` }} />
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-            {p.stageLabel && (
-              <span className="inline-flex min-w-0 items-center gap-1 text-[var(--muted)]">
-                <Layers className="size-3.5 shrink-0" />
-                <span className="truncate">{p.stageLabel}</span>
-              </span>
-            )}
-            {p.deadlineLabel && (
-              <span className={`inline-flex items-center gap-1 font-medium ${p.overdue ? "text-[var(--danger)]" : "text-[var(--muted)]"}`}>
-                <Calendar className="size-3.5 shrink-0" />
-                {p.deadlineLabel}
-                {p.overdue && p.overdueLabel ? ` · ${p.overdueLabel}` : ""}
-              </span>
-            )}
-          </div>
+          <span className="shrink-0 text-xs font-bold tabular-nums text-[var(--muted)]">{p.progress}%</span>
+          {p.overdue && p.overdueLabel ? (
+            <StatusTag tone="red" size="sm" className="shrink-0">{p.overdueLabel}</StatusTag>
+          ) : p.turnLabel ? (
+            <StatusTag tone={p.turnTone ?? "muted"} size="sm" className="shrink-0">{p.turnLabel}</StatusTag>
+          ) : (
+            <StatusTag tone={p.statusTone} size="sm" className="shrink-0">{p.statusLabel}</StatusTag>
+          )}
         </div>
       </div>
     </Link>

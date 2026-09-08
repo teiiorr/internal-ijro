@@ -126,7 +126,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                 <div className="sm:flex-1">
                   <StageSubmitButton stageId={activeStage.id} reviewStatus={activeStage.reviewStatus} fullWidth />
                 </div>
-                <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="lg" label={t("review.addFile")} />
+                <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="lg" label={t("review.addFile")} variant="outline" />
                 <Link
                   href={`/contractor/projects/${id}/stages/${activeStage.id}`}
                   className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[var(--border-strong)] px-5 text-[15px] font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--glass-fill)] active:scale-95"

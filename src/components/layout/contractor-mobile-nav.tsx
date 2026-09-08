@@ -20,7 +20,7 @@ export function ContractorMobileNav() {
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-3 pt-1">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
       <ul className="grid grid-cols-3 rounded-3xl glass-strong overflow-hidden">
         {ITEMS.map(({ href, icon: Icon, key }) => {
           const active = isActive(href);

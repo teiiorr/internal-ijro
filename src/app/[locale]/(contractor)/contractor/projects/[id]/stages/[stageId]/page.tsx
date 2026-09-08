@@ -135,7 +135,7 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
           ) : (
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <div className="sm:flex-1"><StageSubmitButton stageId={s.id} reviewStatus={s.reviewStatus} fullWidth /></div>
-              <StudioStageUpload projectId={id} stageId={s.id} maxBytes={MAX_UPLOAD_BYTES} size="lg" label={t("review.addFile")} />
+              <StudioStageUpload projectId={id} stageId={s.id} maxBytes={MAX_UPLOAD_BYTES} size="lg" label={t("review.addFile")} variant="outline" />
             </div>
           )}
           <StageDocuments stageId={s.id} documents={data.documents} canManage={false} suggestions={data.categorySuggestions} maxBytes={MAX_UPLOAD_BYTES} />

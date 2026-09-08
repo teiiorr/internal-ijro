@@ -40,6 +40,21 @@ export function formatDateMaybeTime(d: Date | string, locale = "uz-latn") {
   return hasTime(d) ? formatDateTime(d, locale) : formatDate(d, locale);
 }
 
+/** Compact Telegram-style timestamp for chat/list rows: HH:mm today,
+ *  "Yesterday" localized, else a short "D-mon" date. */
+export function formatChatTime(d: Date | string, locale = "uz-latn") {
+  const x = toTashkent(new Date(d));
+  const now = toTashkent(new Date());
+  const startOf = (t: Date) => Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate());
+  const diffDays = Math.round((startOf(now) - startOf(x)) / 86_400_000);
+  const hh = String(x.getUTCHours()).padStart(2, "0");
+  const mm = String(x.getUTCMinutes()).padStart(2, "0");
+  if (diffDays <= 0) return `${hh}:${mm}`;
+  if (diffDays === 1) return locale === "ru" ? "Вчера" : locale === "uz-cyrl" ? "Кеча" : "Kecha";
+  const months = MONTHS[locale] ?? MONTHS["uz-latn"];
+  return `${x.getUTCDate()}-${months[x.getUTCMonth()]}`;
+}
+
 export function deadlineRelative(
   deadline: Date | string | null | undefined,
   opts?: { completed?: boolean },

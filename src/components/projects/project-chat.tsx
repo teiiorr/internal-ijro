@@ -223,7 +223,7 @@ export function ProjectChat({
             <div key={m.id}>
               {showDate && (
                 <div className="flex justify-center py-2.5">
-                  <span className="rounded-full bg-[var(--surface-3)] px-3 py-1 text-[11px] font-semibold text-[var(--muted)]">
+                  <span className="glass-soft rounded-full px-3 py-1 text-[11px] font-semibold text-[var(--muted)]">
                     {dateSeparator(m.createdAt)}
                   </span>
                 </div>
@@ -326,7 +326,7 @@ export function ProjectChat({
             type="button"
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className="grid size-9 sm:size-10 shrink-0 place-items-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95 disabled:opacity-50"
+            className="grid size-11 sm:size-10 shrink-0 place-items-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95 disabled:opacity-50"
           >
             <Paperclip className="size-[18px] sm:size-5" />
           </button>
@@ -344,7 +344,7 @@ export function ProjectChat({
             type="button"
             onClick={send}
             disabled={uploading || (!text.trim() && !staged)}
-            className="grid size-9 sm:size-10 shrink-0 place-items-center rounded-full bg-[var(--primary)] text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-40"
+            className="grid size-11 sm:size-10 shrink-0 place-items-center rounded-full bg-[var(--primary)] text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-40"
           >
             {uploading ? <Loader className="size-[18px] sm:size-5 animate-spin" /> : <Send className="size-[18px] sm:size-5" />}
           </button>
