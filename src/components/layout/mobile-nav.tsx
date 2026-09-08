@@ -35,7 +35,7 @@ const ITEMS: NavItem[] = [
 // The three destinations that stay pinned in the bar (+ a More button).
 const PINNED = ["/dashboard", "/tasks", "/projects"];
 
-export function MobileNav({ position, userId, isOwner }: { position: Position; userId: string; isOwner?: boolean }) {
+export function MobileNav({ position, userId, isOwner, reviewCount = 0 }: { position: Position; userId: string; isOwner?: boolean; reviewCount?: number }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -82,10 +82,15 @@ export function MobileNav({ position, userId, isOwner }: { position: Position; u
                 href={href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "flex min-h-[86px] flex-col items-center justify-center gap-1.5 rounded-2xl px-1 py-3 text-center transition-colors",
+                  "relative flex min-h-[86px] flex-col items-center justify-center gap-1.5 rounded-2xl px-1 py-3 text-center transition-colors",
                   active ? "bg-[var(--primary)] text-white" : "text-[var(--foreground)] hover:bg-[var(--glass-fill)]"
                 )}
               >
+                {key === "contractors" && reviewCount > 0 && (
+                  <span className="absolute right-2 top-2 grid h-5 min-w-5 place-items-center rounded-full bg-[var(--warning)] px-1.5 text-[11px] font-bold text-white tabular-nums">
+                    {reviewCount > 99 ? "99+" : reviewCount}
+                  </span>
+                )}
                 <Icon className="size-6 shrink-0" />
                 <span className="line-clamp-2 text-[11px] font-semibold leading-tight">{t(key)}</span>
               </Link>
@@ -109,7 +114,8 @@ export function MobileNav({ position, userId, isOwner }: { position: Position; u
             );
           })}
           <li className="min-w-0">
-            <button onClick={() => setOpen(true)} className={cn(cell(moreActive || open), "w-full")}>
+            <button onClick={() => setOpen(true)} className={cn(cell(moreActive || open), "relative w-full")}>
+              {reviewCount > 0 && <span className="absolute right-[calc(50%-18px)] top-2 size-2 rounded-full bg-[var(--warning)]" />}
               <Menu className="size-6 shrink-0" />
               <span className="max-w-full truncate px-1 text-[11px] font-bold leading-none">{t("more")}</span>
             </button>

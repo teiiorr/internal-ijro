@@ -10,6 +10,10 @@ import { SessionProvider } from "next-auth/react";
 import { RouteProgress } from "@/components/layout/route-progress";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
+import { getReviewQueueCount } from "@/server/queries/stages";
+
+const STUDIO_VIEWERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"];
+const STUDIO_EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -17,6 +21,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (session.user.position === "kontragent") redirect("/contractor/projects");
   const owner = isOwner(session.user.email);
   const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);
+  // "Waiting on you" review count — only for staff who can open the Студии section.
+  const canSeeStudios = STUDIO_VIEWERS.includes(session.user.position) || STUDIO_EXTRA_USERS.includes(session.user.id);
+  const reviewCount = canSeeStudios ? await getReviewQueueCount() : 0;
 
   return (
     <SessionProvider>
@@ -24,13 +31,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative">
         <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
-          <Sidebar position={session.user.position} userId={session.user.id} isOwner={owner} />
+          <Sidebar position={session.user.position} userId={session.user.id} isOwner={owner} reviewCount={reviewCount} />
           <main className="flex-1 px-3 sm:px-4 md:px-6 lg:px-8 py-5 sm:py-6 md:py-8 min-w-0 flex flex-col">
             <div className="flex-1">{children}</div>
             <AppFooter />
           </main>
         </div>
-        <MobileNav position={session.user.position} userId={session.user.id} isOwner={owner} />
+        <MobileNav position={session.user.position} userId={session.user.id} isOwner={owner} reviewCount={reviewCount} />
       </div>
     </SessionProvider>
   );

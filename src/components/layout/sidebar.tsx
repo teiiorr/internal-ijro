@@ -44,7 +44,7 @@ const ITEMS: Item[] = [
   { href: "/owner",             icon: ShieldCheck,     key: "owner",          allowed: [],                                                                 section: "system", ownerOnly: true },
 ];
 
-export function Sidebar({ position, userId, isOwner }: { position: Position; userId: string; isOwner?: boolean }) {
+export function Sidebar({ position, userId, isOwner, reviewCount = 0 }: { position: Position; userId: string; isOwner?: boolean; reviewCount?: number }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const visible = ITEMS.filter((i) => (i.ownerOnly ? !!isOwner : i.allowed.includes(position) || i.allowedUserIds?.includes(userId)));
@@ -74,7 +74,12 @@ export function Sidebar({ position, userId, isOwner }: { position: Position; use
                       )}
                     >
                       <Icon className={cn("size-[22px] shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
-                      <span className="min-w-0 truncate">{t(key)}</span>
+                      <span className="min-w-0 flex-1 truncate">{t(key)}</span>
+                      {key === "contractors" && reviewCount > 0 && (
+                        <span className={cn("grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-bold tabular-nums", active ? "bg-white/25 text-white" : "bg-[var(--warning)] text-white")}>
+                          {reviewCount > 99 ? "99+" : reviewCount}
+                        </span>
+                      )}
                     </Link>
                   );
                 })}

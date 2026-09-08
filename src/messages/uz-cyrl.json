@@ -773,7 +773,12 @@
     "reject": "Рад этиш",
     "rejectReasonPlaceholder": "Рад этиш сабаби…",
     "reasonLabel": "Сабаб",
-    "ratingScale": "{r} / 5"
+    "ratingScale": "{r} / 5",
+    "reviewQueue": {
+      "title": "Сизни кутмоқда",
+      "submitted": "юборилди",
+      "count": "та кўриб чиқиш"
+    }
   },
   "reports": {
     "standupTitle": "Кунлик стендап",

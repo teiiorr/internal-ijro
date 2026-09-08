@@ -773,7 +773,12 @@
     "reject": "Rad etish",
     "rejectReasonPlaceholder": "Rad etish sababi…",
     "reasonLabel": "Sabab",
-    "ratingScale": "{r} / 5"
+    "ratingScale": "{r} / 5",
+    "reviewQueue": {
+      "title": "Sizni kutmoqda",
+      "submitted": "yuborildi",
+      "count": "ta koʻrib chiqish"
+    }
   },
   "reports": {
     "standupTitle": "Kunlik standup",

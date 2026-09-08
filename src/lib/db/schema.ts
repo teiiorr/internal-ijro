@@ -734,6 +734,8 @@ export const projectStages = pgTable(
     orderUniq: uniqueIndex("project_stages_order_uniq").on(t.projectId, t.orderIndex),
     statusIdx: index("project_stages_status_idx").on(t.status),
     responsibleIdx: index("project_stages_responsible_idx").on(t.responsibleUserId),
+    // Partial index backing the cross-studio review queue (migration 0025).
+    reviewIdx: index("project_stages_review_idx").on(t.reviewStatus).where(sql`status = 'active'`),
   })
 );
 

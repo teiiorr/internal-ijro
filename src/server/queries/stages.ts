@@ -418,3 +418,48 @@ export async function listStageNameOptions(locale: string) {
   }
   return out;
 }
+
+/**
+ * Cross-studio "waiting on you" queue: every ACTIVE stage a studio has
+ * submitted for review, grouped by studio, oldest first. Hits the partial
+ * index project_stages_review_idx (migration 0025).
+ */
+export async function getReviewQueue() {
+  const rows = await db
+    .select({
+      stageId: projectStages.id,
+      stageName: projectStages.name,
+      submittedAt: projectStages.submittedAt,
+      projectId: projects.id,
+      projectName: projects.name,
+      studioId: externalCompanies.id,
+      studioName: externalCompanies.name,
+      studioLogo: externalCompanies.logoUrl,
+      submittedByName: users.fullName,
+    })
+    .from(projectStages)
+    .innerJoin(projects, eq(projects.id, projectStages.projectId))
+    .innerJoin(externalCompanies, eq(externalCompanies.id, projects.externalCompanyId))
+    .leftJoin(users, eq(users.id, projectStages.submittedByUserId))
+    .where(and(eq(projectStages.status, "active"), eq(projectStages.reviewStatus, "submitted")))
+    .orderBy(asc(projectStages.submittedAt));
+
+  type Stage = { stageId: string; projectId: string; projectName: string; stageName: string; submittedAt: Date | string | null; submittedByName: string | null };
+  const groups = new Map<string, { studioId: string; studioName: string; studioLogo: string | null; oldestSubmittedAt: Date | string | null; stages: Stage[] }>();
+  for (const r of rows) {
+    const g = groups.get(r.studioId) ?? { studioId: r.studioId, studioName: r.studioName, studioLogo: r.studioLogo, oldestSubmittedAt: r.submittedAt, stages: [] };
+    g.stages.push({ stageId: r.stageId, projectId: r.projectId, projectName: r.projectName, stageName: r.stageName, submittedAt: r.submittedAt, submittedByName: r.submittedByName });
+    groups.set(r.studioId, g);
+  }
+  return [...groups.values()];
+}
+
+/** Count of submitted-for-review active stages across all studios (nav badge). */
+export async function getReviewQueueCount(): Promise<number> {
+  const [r] = await db
+    .select({ c: sql<number>`count(*)::int` })
+    .from(projectStages)
+    .innerJoin(projects, eq(projects.id, projectStages.projectId))
+    .where(and(eq(projectStages.status, "active"), eq(projectStages.reviewStatus, "submitted"), sql`${projects.externalCompanyId} is not null`));
+  return Number(r?.c ?? 0);
+}
