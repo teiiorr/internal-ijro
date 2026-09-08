@@ -1,0 +1,60 @@
+name: Sync project status from Google Sheet
+
+# Joriy holatni Google Sheets'dan har 2 soatda tortib oladi (5 soatdan ancha tez).
+# GitHub runner'ida ishlaydi — drojletga hech qanday yuk tushmaydi; server faqat
+# kichik sinxronni bajaradi. Qo'lda ishga tushirish ham mumkin (dryRun bilan tekshiruv).
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: "Faqat tekshirish (hech narsa yozmaydi)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: sync-project-status
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping sync endpoint
+        env:
+          APP_URL: ${{ vars.APP_URL || 'https://app.markaz-ijro.uz' }}
+          SYNC_SECRET: ${{ secrets.SHEET_SYNC_SECRET }}
+          DRY_RUN: ${{ github.event.inputs.dryRun }}
+        run: |
+          URL="$APP_URL/api/cron/sync-project-status"
+          if [ "$DRY_RUN" = "true" ]; then URL="$URL?dryRun=1"; fi
+          echo "POST $URL"
+          code=$(curl -sS --max-time 60 --retry 2 --retry-all-errors --retry-delay 10 \
+            -o /tmp/sync.json -w "%{http_code}" \
+            -X POST "$URL" -H "x-sync-secret: $SYNC_SECRET" || echo 000)
+          echo "HTTP $code"
+          cat /tmp/sync.json 2>/dev/null || true
+          echo
+          case "$code" in
+            200)
+              echo "✓ sync ok" ;;
+            401)
+              # Server maxfiy sözni kutmoqda. GitHub'da secret bor bölsa — u NOTOG'RI
+              # (drift): buni jimgina o'tkazib bo'lmaydi. Bo'sh bo'lsa — hali sozlanmagan.
+              if [ -n "$SYNC_SECRET" ]; then
+                echo "::error::SHEET_SYNC_SECRET server bilan mos emas (401) — secretlarni tekshiring"; exit 1
+              else
+                echo "::warning::sync hali sozlanmagan: GitHub'da SHEET_SYNC_SECRET secret'i yo'q (401)"
+              fi ;;
+            503)
+              echo "::warning::sync serverda o'chiq: .env dagi SHEET_SYNC_SECRET yo'q (503)" ;;
+            000|429|500|502|504)
+              # O'tkinchi nosozlik (Google/tarmoq/parse) — hech narsa yozilmaydi, keyingi
+              # ishga tushishda o'z-o'zidan tuzaladi. Ishni yiqitmaymiz (shovqin bo'lmasin).
+              echo "::warning::o'tkinchi sync nosozligi (keyingi safar tuzaladi) — HTTP $code" ;;
+            *)
+              echo "::error::kutilmagan sync xatosi HTTP $code"; exit 1 ;;
+          esac

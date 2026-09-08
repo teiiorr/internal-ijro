@@ -246,6 +246,12 @@ export const projects = pgTable(
     statusOverride: varchar("status_override", { length: 20 }),
     /** Erkin matnli "joriy holat" (current state) — menejerlar yangilab turadigan qisqa izoh. */
     currentStatus: text("current_status"),
+    /**
+     * Google Sheets sinxroni öz oxirgi marta yozgan qiymat. Sinxron faqat varaqdagi
+     * matn ÖZGARGANda (bu ustundan farq qilganda) yozadi — şu tariqa ilova içida
+     * qölda kiritilgan yangi izohni eskirgan varaq üstiga yozib öçirmaydi.
+     */
+    sheetSyncedStatus: text("sheet_synced_status"),
     createdByUserId: uuid("created_by_user_id").references(() => users.id, {
       onDelete: "set null",
     }),
