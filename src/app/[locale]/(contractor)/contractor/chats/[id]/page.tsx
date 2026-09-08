@@ -26,12 +26,18 @@ export default async function ContractorChatPage({ params }: { params: Promise<{
   const messages = await getStageMessages(id, null);
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
+  // Group members: our-side curator(s) + the studio.
+  const members = [
+    ...data.curators.map((c) => ({ id: c.id, name: c.fullName, role: t("conversation.curator"), avatarUrl: c.avatarUrl })),
+    ...(data.company ? [{ id: "studio", name: data.company.name, role: t("conversation.studio"), avatarUrl: data.company.logoUrl ?? null }] : []),
+  ];
+
   return (
     <ConversationScreen
       title={data.project.name}
+      avatarUrl={data.project.posterUrl}
       backHref="/contractor/chats"
-      curators={data.curators}
-      subtitle={t("contractor.chats.noCurator")}
+      members={members}
       openHref={`/contractor/projects/${id}`}
       openLabel={t("contractor.chats.openProject")}
       projectId={id}

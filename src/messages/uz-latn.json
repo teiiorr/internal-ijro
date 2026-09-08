@@ -923,7 +923,12 @@
       "status": "Holat",
       "rating": "Reyting",
       "specialization": "Mutaxassisligi",
-      "noCompany": "Bog'langan kompaniya yo'q."
+      "noCompany": "Bog'langan kompaniya yo'q.",
+      "contact": "Aloqa",
+      "appearance": "Koʻrinish",
+      "theme": "Mavzu",
+      "language": "Til",
+      "nda": "NDA"
     },
     "portalLabel": "Studiya portali",
     "budget": {
@@ -1232,5 +1237,13 @@
     "changesSent": "Oʻzgartirish soʻraldi",
     "cancel": "Bekor qilish",
     "changesRequestedTitle": "Oʻzgartirish soʻraldi"
+  },
+  "conversation": {
+    "participants": "ishtirokchi",
+    "members": "Ishtirokchilar",
+    "curator": "Kurator",
+    "studio": "Studiya",
+    "you": "Siz",
+    "group": "Guruh"
   }
 }

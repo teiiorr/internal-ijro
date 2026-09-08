@@ -923,7 +923,12 @@
       "status": "Ҳолат",
       "rating": "Рейтинг",
       "specialization": "Мутахассислиги",
-      "noCompany": "Боғланган компания йўқ."
+      "noCompany": "Боғланган компания йўқ.",
+      "contact": "Алоқа",
+      "appearance": "Кўриниш",
+      "theme": "Мавзу",
+      "language": "Тил",
+      "nda": "NDA"
     },
     "portalLabel": "Студия портали",
     "budget": {
@@ -1232,5 +1237,13 @@
     "changesSent": "Ўзгартириш сўралди",
     "cancel": "Бекор қилиш",
     "changesRequestedTitle": "Ўзгартириш сўралди"
+  },
+  "conversation": {
+    "participants": "иштирокчи",
+    "members": "Иштирокчилар",
+    "curator": "Куратор",
+    "studio": "Студия",
+    "you": "Сиз",
+    "group": "Гуруҳ"
   }
 }

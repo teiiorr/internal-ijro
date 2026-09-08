@@ -923,7 +923,12 @@
       "status": "Статус",
       "rating": "Рейтинг",
       "specialization": "Специализация",
-      "noCompany": "Компания не подключена."
+      "noCompany": "Компания не подключена.",
+      "contact": "Контакты",
+      "appearance": "Оформление",
+      "theme": "Тема",
+      "language": "Язык",
+      "nda": "NDA"
     },
     "portalLabel": "Портал студии",
     "budget": {
@@ -1232,5 +1237,13 @@
     "changesSent": "Запрошены изменения",
     "cancel": "Отмена",
     "changesRequestedTitle": "Запрошены изменения"
+  },
+  "conversation": {
+    "participants": "участник(ов)",
+    "members": "Участники",
+    "curator": "Куратор",
+    "studio": "Студия",
+    "you": "Вы",
+    "group": "Группа"
   }
 }

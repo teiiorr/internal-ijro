@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { getProject, getStageMessages } from "@/server/queries/projects";
 import { ConversationScreen } from "@/components/projects/conversation-screen";
@@ -10,6 +11,7 @@ export default async function StudioConversationPage({ params }: { params: Promi
   if (!session?.user) redirect("/login");
   if (!["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(session.user.position) && !EXTRA_USERS.includes(session.user.id)) redirect("/dashboard");
 
+  const t = await getTranslations();
   const { id, projectId } = await params;
   const data = await getProject(projectId);
   // Only a project that actually belongs to this studio.
@@ -18,12 +20,17 @@ export default async function StudioConversationPage({ params }: { params: Promi
   const messages = await getStageMessages(projectId, null);
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
+  const members = [
+    ...data.curators.map((c) => ({ id: c.id, name: c.fullName, role: t("conversation.curator"), avatarUrl: c.avatarUrl })),
+    ...(data.company ? [{ id: "studio", name: data.company.name, role: t("conversation.studio"), avatarUrl: data.company.logoUrl ?? null }] : []),
+  ];
+
   return (
     <ConversationScreen
       title={data.project.name}
+      avatarUrl={data.project.posterUrl}
       backHref={`/contractors/${id}`}
-      curators={data.curators}
-      subtitle={data.company?.name ?? null}
+      members={members}
       projectId={projectId}
       stageId={null}
       messages={messages}
