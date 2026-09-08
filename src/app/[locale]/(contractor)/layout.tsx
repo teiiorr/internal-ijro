@@ -10,7 +10,7 @@ import { Header } from "@/components/layout/header";
 import { ContractorMobileNav } from "@/components/layout/contractor-mobile-nav";
 import { AppFooter } from "@/components/layout/app-footer";
 import { RouteProgress } from "@/components/layout/route-progress";
-import { IconFolder as Folder, IconLayoutDashboard as LayoutDashboard, IconMessageCircle as MessageCircle, IconUser as UserIcon, IconSettings as Settings, IconFileText as FileText } from "@tabler/icons-react";
+import { IconFolder as Folder, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
 
 export default async function ContractorLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -42,20 +42,20 @@ export default async function ContractorLayout({ children }: { children: React.R
     redirect("/contractor-nda");
   }
 
+  // Two destinations only: the work (Projects) and communication (Chats).
+  // Notifications + Settings live in the Header (bell + avatar menu); Profile is
+  // a menu link (below) + the mobile bottom bar.
   const NAV = [
-    { href: "/contractor/dashboard", icon: LayoutDashboard, label: t("nav.dashboard") },
     { href: "/contractor/projects", icon: Folder, label: t("nav.projects") },
     { href: "/contractor/chats", icon: MessageCircle, label: t("nav.chats") },
-    { href: "/contractor/profile", icon: UserIcon, label: t("nav.profile") },
-    { href: "/notifications", icon: FileText, label: t("nav.notifications") },
-    { href: "/settings", icon: Settings, label: t("nav.settings") },
   ];
+  const menuLinks = [{ href: "/contractor/profile", label: t("nav.profile") }];
 
   return (
     <SessionProvider>
       <RouteProgress />
       <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative">
-        <Header userName={company.length > 0 ? company[0].name : session.user.fullName} avatarUrl={me?.avatarUrl} rawName />
+        <Header userName={company.length > 0 ? company[0].name : session.user.fullName} avatarUrl={me?.avatarUrl} rawName menuLinks={menuLinks} />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <aside className="hidden md:block w-[272px] shrink-0">
             <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass-strong">

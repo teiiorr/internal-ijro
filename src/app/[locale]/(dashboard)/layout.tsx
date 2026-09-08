@@ -14,7 +14,7 @@ import { users } from "@/lib/db/schema";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (session.user.position === "kontragent") redirect("/contractor/dashboard");
+  if (session.user.position === "kontragent") redirect("/contractor/projects");
   const owner = isOwner(session.user.email);
   const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);
 

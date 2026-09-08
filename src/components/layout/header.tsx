@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "@/i18n/navigation";
-import { IconSearch as Search, IconLogout as LogOut, IconSettings as SettingsIcon } from "@tabler/icons-react";
+import { IconSearch as Search, IconLogout as LogOut, IconSettings as SettingsIcon, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
@@ -14,7 +14,7 @@ import { localizeName } from "@/lib/names";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
-export function Header({ userName, avatarUrl, rawName }: { userName: string; avatarUrl?: string | null; rawName?: boolean }) {
+export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: string; avatarUrl?: string | null; rawName?: boolean; menuLinks?: { href: string; label: string }[] }) {
   const t = useTranslations();
   const locale = useLocale();
   const displayName = rawName ? userName : localizeName(userName, locale);
@@ -83,6 +83,17 @@ export function Header({ userName, avatarUrl, rawName }: { userName: string; ava
                   <p className="text-xs font-medium text-[var(--muted)]">{t("header.signedInAs")}</p>
                   <p className="text-sm font-bold mt-1">{displayName}</p>
                 </div>
+                {menuLinks?.map((m) => (
+                  <Link
+                    key={m.href}
+                    href={m.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
+                  >
+                    {m.label}
+                    <ChevronRight className="size-4 text-[var(--subtle)]" />
+                  </Link>
+                ))}
                 <Link
                   href="/settings"
                   onClick={() => setMenuOpen(false)}

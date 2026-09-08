@@ -938,7 +938,9 @@
       "noMessages": "Xabar yo’q",
       "subtitle": "Loyihalar bo’yicha kuratoringiz bilan yozishing",
       "openProject": "Loyihani ochish"
-    }
+    },
+    "submitWork": "Ishni topshirish",
+    "openStage": "Bosqichni ochish"
   },
   "dashboard": {
     "title": "Bosh sahifa",

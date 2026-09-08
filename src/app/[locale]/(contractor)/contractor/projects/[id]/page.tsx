@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconCalendarClock as CalendarClock, IconArrowRight as ArrowRight } from "@tabler/icons-react";
+import { IconCalendarClock as CalendarClock, IconArrowRight as ArrowRight, IconCircleCheck as CircleCheck } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
@@ -12,23 +12,20 @@ import { getStageProject } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StagePath } from "@/components/projects/stage-path";
-import { ProjectPoster } from "@/components/projects/project-poster";
-import { FitText } from "@/components/ui/fit-text";
+import { SmoothImage } from "@/components/ui/smooth-image";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { MilestonesList } from "@/components/projects/milestones-list";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { StudioDocuments } from "@/components/contractor/studio-documents";
+import { StudioStageUpload } from "@/components/contractor/studio-stage-upload";
 import { ContractorChatTab } from "./contractor-chat-tab";
 import { derivedStatus } from "@/lib/projects/progress";
-import { isProjectGenre } from "@/lib/projects/genres";
 import { formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { and, desc, eq } from "drizzle-orm";
-
-const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
+import { desc, eq } from "drizzle-orm";
 
 export default async function ContractorProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -61,7 +58,6 @@ export default async function ContractorProjectPage({ params }: { params: Promis
       : status === "on_hold" ? "red"
       : "muted";
     const activeStage = sp.stages.find((s) => s.status === "active");
-    const currency = sp.project.budgetCurrency ?? "UZS";
 
     const docs = await db
       .select({
@@ -80,185 +76,143 @@ export default async function ContractorProjectPage({ params }: { params: Promis
     const folderSuggestions = [...new Set(docs.map((d) => d.category).filter((c): c is string => !!c))];
 
     return (
-      <div className="space-y-6 stagger-children">
+      <div className="space-y-5 stagger-children">
+        {/* Header — back + poster thumb + name */}
         <div className="flex items-center gap-3">
           <BackButton fallbackHref="/contractor/projects" />
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            {sp.project.posterUrl && (
+              <div className="relative size-11 shrink-0 overflow-hidden rounded-xl bg-[var(--surface-2)] sm:size-12">
+                <SmoothImage src={sp.project.posterUrl} alt={sp.project.name} className="size-full object-cover object-[center_25%]" />
+              </div>
+            )}
+            <h1 className="min-w-0 flex-1 text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{sp.project.name}</h1>
           </div>
         </div>
 
-        {/* Current stage — the studio's "what do I do next" */}
-        {activeStage && (
-          <Card>
-            <CardContent className="p-5 sm:p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <StatusTag tone="amber" size="sm">{t("projects.stagePath.currentStage")}</StatusTag>
-                    <span className="text-xs font-medium text-[var(--muted)] tabular-nums">
-                      {t("projects.stagePath.stageOf", { n: activeStage.orderIndex + 1, total: sp.stages.length })}
-                    </span>
-                  </div>
-                  <h2 className="mt-1.5 text-xl font-bold tracking-tight break-words sm:text-2xl">{activeStage.name}</h2>
-                  {activeStage.plannedDeadline && (
-                    <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[var(--muted)]">
-                      <CalendarClock className="size-4 shrink-0" />
-                      <span className="font-medium">{formatDate(activeStage.plannedDeadline, locale)}</span>
-                      <DeadlineCountdown deadline={activeStage.plannedDeadline} />
-                    </div>
-                  )}
+        {/* HERO — the one thing that matters: the active stage + submit in place */}
+        {activeStage ? (
+          <Card className="border-[var(--warning)]/45">
+            <CardContent className="space-y-4 p-5 sm:p-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusTag tone="amber" size="sm">{t("projects.stagePath.currentStage")}</StatusTag>
+                <span className="text-xs font-medium tabular-nums text-[var(--muted)]">
+                  {t("projects.stagePath.stageOf", { n: activeStage.orderIndex + 1, total: sp.stages.length })}
+                </span>
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">{activeStage.name}</h2>
+              {activeStage.plannedDeadline && (
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  <CalendarClock className="size-4 shrink-0 text-[var(--muted)]" />
+                  <span className="font-semibold">{formatDate(activeStage.plannedDeadline, locale)}</span>
+                  <DeadlineCountdown deadline={activeStage.plannedDeadline} />
+                </div>
+              )}
+              <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center">
+                <div className="sm:flex-1">
+                  <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="lg" fullWidth label={t("contractor.submitWork")} />
                 </div>
                 <Link
                   href={`/contractor/projects/${id}/stages/${activeStage.id}`}
-                  className="inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl bg-[var(--primary)] px-5 text-[15px] font-semibold text-[var(--primary-foreground)] shadow-[var(--shadow-1)] transition-all hover:brightness-110 hover:shadow-[var(--shadow-2)] active:scale-95"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[var(--border-strong)] px-5 text-[15px] font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--glass-fill)] active:scale-95"
                 >
-                  {t("common.open")}
+                  {t("contractor.openStage")}
                   <ArrowRight className="size-4" />
                 </Link>
               </div>
             </CardContent>
           </Card>
+        ) : (
+          <Card>
+            <CardContent className="flex items-center gap-3 p-5">
+              {status === "completed" && <CircleCheck className="size-5 shrink-0 text-[var(--success)]" />}
+              <StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag>
+            </CardContent>
+          </Card>
         )}
 
-        {sp.project.description && (
-          <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
-        )}
-
+        {/* Where am I — stage stepper */}
         <Card>
           <CardContent className="p-5 sm:p-6">
-            <h3 className="text-base font-semibold mb-4">{t("projects.details.title")}</h3>
-            <dl className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 lg:grid-cols-4 gap-2 text-sm">
+            <h3 className="mb-4 text-base font-semibold">{t("projects.stagePath.title")}</h3>
+            <StagePath projectId={sp.project.id} stages={sp.stages} basePath="/contractor/projects" />
+          </CardContent>
+        </Card>
+
+        {/* Talk to your curator */}
+        <Card>
+          <CardContent className="space-y-4 p-5 sm:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-base font-semibold">{t("projects.tabs.chat")}</h3>
+              {sp.curator && (
+                <div className="flex items-center gap-2">
+                  <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="xs" clickable={false} />
+                  <span className="truncate text-xs font-semibold text-[var(--muted)]">{shortName(sp.curator.fullName)}</span>
+                </div>
+              )}
+            </div>
+            <ContractorChatTab
+              projectId={data.project.id}
+              stages={sp.stages.map((s) => ({
+                id: s.id,
+                projectId: data.project.id,
+                name: s.name,
+                orderNumber: s.orderIndex + 1,
+                status: s.status,
+              }))}
+              currentUserId={session.user.id}
+            />
+          </CardContent>
+        </Card>
+
+        {/* All delivered files */}
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="mb-4 text-base font-semibold">{t("contractor.tabs.docs")}</h3>
+            <StudioDocuments projectId={id} documents={docs} suggestions={folderSuggestions} maxBytes={maxBytes} />
+          </CardContent>
+        </Card>
+
+        {/* Compact context — status, dates, curator, description. No internal money. */}
+        <Card>
+          <CardContent className="space-y-4 p-5 sm:p-6">
+            <dl className="detail-grid grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
                 <dd className="mt-0.5"><StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag></dd>
               </div>
-              {sp.type && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
-                  <dd className="font-semibold mt-0.5 truncate">{sp.type.name}</dd>
-                </div>
-              )}
-              {isProjectGenre(sp.project.genre) && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
-                  <dd className="mt-0.5"><StatusTag tone="muted">{t(`projects.genre.${sp.project.genre}` as "projects.genre.film")}</StatusTag></dd>
-                </div>
-              )}
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
-                <dd className="font-bold tabular-nums mt-0.5">{sp.project.progressPercentage}%</dd>
+                <dd className="mt-0.5 font-bold tabular-nums">{sp.project.progressPercentage}%</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue")}</dd>
+                <dd className="mt-0.5 font-semibold">{sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue")}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.deadline ? formatDate(sp.project.deadline, locale) : t("common.emptyValue")}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-                <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? money(Number(sp.project.budget), currency) : t("common.emptyValue")}</dd>
+                <dd className="mt-0.5 font-semibold">{sp.project.deadline ? formatDate(sp.project.deadline, locale) : t("common.emptyValue")}</dd>
               </div>
             </dl>
             {sp.curator && (
-              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--border)]">
+              <div className="flex items-center gap-2 border-t border-[var(--border)] pt-4">
                 <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="sm" clickable={false} />
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</p>
-                  <p className="font-semibold text-sm truncate">{shortName(sp.curator.fullName)}</p>
+                  <p className="truncate text-sm font-semibold">{shortName(sp.curator.fullName)}</p>
                 </div>
               </div>
             )}
+            {sp.project.description && (
+              <p className="whitespace-pre-wrap border-t border-[var(--border)] pt-4 text-sm leading-relaxed text-[var(--muted)]">{sp.project.description}</p>
+            )}
           </CardContent>
         </Card>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
-          <div className="space-y-6 order-2 lg:order-1 min-w-0">
-            <Card>
-              <CardContent className="p-5 sm:p-6">
-                <h3 className="text-base font-semibold mb-4">{t("projects.stagePath.title")}</h3>
-                <StagePath projectId={sp.project.id} stages={sp.stages} basePath="/contractor/projects" />
-              </CardContent>
-            </Card>
-
-            <Tabs defaultValue="docs">
-              <TabsList>
-                <TabsTrigger value="docs">{t("contractor.tabs.docs")}</TabsTrigger>
-                <TabsTrigger value="chat">{t("projects.tabs.chat")}</TabsTrigger>
-              </TabsList>
-              <TabsContent value="docs">
-                <Card><CardContent className="p-5 sm:p-6">
-                  <StudioDocuments projectId={id} documents={docs} suggestions={folderSuggestions} maxBytes={maxBytes} />
-                </CardContent></Card>
-              </TabsContent>
-              <TabsContent value="chat">
-                <Card><CardContent className="p-5 sm:p-6">
-                  <ContractorChatTab
-                    projectId={data.project.id}
-                    stages={sp.stages.map((s) => ({
-                      id: s.id,
-                      projectId: data.project.id,
-                      name: s.name,
-                      orderNumber: s.orderIndex + 1,
-                      status: s.status,
-                    }))}
-                    currentUserId={session.user.id}
-                  />
-                </CardContent></Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          <div className="space-y-6 order-1 lg:order-2">
-            <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={false} />
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <h3 className="text-base font-semibold">{t("projects.stagePayments.projectTotal")}</h3>
-                <dl className="space-y-2.5 text-sm">
-                  <div className="flex items-baseline gap-2">
-                    <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
-                    <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums">
-                      <FitText>{money(sp.totals.planned, currency)}</FitText>
-                    </dd>
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.paid")}</dt>
-                    <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums text-[var(--success)]">
-                      <FitText>{money(sp.totals.paid, currency)}</FitText>
-                    </dd>
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.remaining")}</dt>
-                    <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums text-[var(--warning)]">
-                      <FitText>{money(Math.max(0, sp.totals.planned - sp.totals.paid), currency)}</FitText>
-                    </dd>
-                  </div>
-                </dl>
-                {activeStage && (
-                  <div className="space-y-2 border-t border-[var(--border)] pt-3">
-                    <p className="text-sm text-[var(--muted)]">
-                      {t("projects.stagePath.currentStage")}: <span className="font-medium text-[var(--foreground)]">{activeStage.name}</span>
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 text-sm">
-                      <CalendarClock className="size-3.5 shrink-0 text-[var(--muted)]" />
-                      <span className={`font-medium ${activeStage.plannedDeadline ? "" : "text-[var(--muted)]"}`}>
-                        {activeStage.plannedDeadline ? formatDate(activeStage.plannedDeadline, locale) : t("projects.stageDeadline.notSet")}
-                      </span>
-                      {activeStage.plannedDeadline && <DeadlineCountdown deadline={activeStage.plannedDeadline} />}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
       </div>
     );
   }
 
-  // Legacy (milestone) project
+  // Legacy (milestone) project — same declutter: no internal money shown.
   const stages = data.milestones.map((m) => ({
     id: m.id,
     title: m.title,
@@ -272,69 +226,58 @@ export default async function ContractorProjectPage({ params }: { params: Promis
     <div className="space-y-6 stagger-children">
       <div className="flex items-center gap-3">
         <BackButton fallbackHref="/contractor/projects" />
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{data.project.name}</h1>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{data.project.name}</h1>
         </div>
       </div>
 
       {data.project.description && (
-        <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{data.project.description}</CardContent></Card>
+        <Card><CardContent className="whitespace-pre-wrap p-5 text-sm leading-relaxed">{data.project.description}</CardContent></Card>
       )}
 
       <Card>
-        <CardContent className="p-5 sm:p-6 space-y-4">
+        <CardContent className="space-y-4 p-5 sm:p-6">
           <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
-          <dl className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 gap-2 text-sm">
+          <dl className="detail-grid grid grid-cols-2 gap-2 text-sm min-[500px]:grid-cols-3">
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
               <dd className="mt-0.5"><Badge variant={data.project.status === "completed" ? "success" : "default"}>{t(`status.${data.project.status}` as "status.planning")}</Badge></dd>
             </div>
             <div>
               <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
-              <dd className="font-bold tabular-nums mt-0.5">{data.project.progressPercentage}%</dd>
+              <dd className="mt-0.5 font-bold tabular-nums">{data.project.progressPercentage}%</dd>
             </div>
             {data.project.startDate && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="font-semibold mt-0.5">{formatDate(data.project.startDate, locale)}</dd>
+                <dd className="mt-0.5 font-semibold">{formatDate(data.project.startDate, locale)}</dd>
               </div>
             )}
             {data.project.deadline && (
               <div>
                 <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="font-semibold mt-0.5">{formatDate(data.project.deadline, locale)}</dd>
+                <dd className="mt-0.5 font-semibold">{formatDate(data.project.deadline, locale)}</dd>
               </div>
             )}
           </dl>
           {data.curator && (
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--border)]">
+            <div className="flex items-center gap-2 border-t border-[var(--border)] pt-3">
               <UserAvatar name={data.curator.fullName} avatarUrl={data.curator.avatarUrl} size="sm" clickable={false} />
               <div className="min-w-0">
                 <p className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</p>
-                <p className="font-semibold text-sm truncate">{shortName(data.curator.fullName)}</p>
+                <p className="truncate text-sm font-semibold">{shortName(data.curator.fullName)}</p>
               </div>
             </div>
           )}
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="milestones">
+      <Tabs defaultValue="deliverables">
         <TabsList>
-          <TabsTrigger value="milestones">{t("projects.tabs.milestones")}</TabsTrigger>
           <TabsTrigger value="deliverables">{t("projects.tabs.deliverables")}</TabsTrigger>
+          <TabsTrigger value="milestones">{t("projects.tabs.milestones")}</TabsTrigger>
           <TabsTrigger value="chat">{t("projects.tabs.chat")}</TabsTrigger>
         </TabsList>
-        <TabsContent value="milestones">
-          <Card><CardContent className="p-6">
-            <MilestonesList
-              projectId={data.project.id}
-              items={data.milestones.map((m) => ({ ...m, paymentAmount: m.paymentAmount as string | null }))}
-              canManage={false}
-              canChangePayment={false}
-              showMoney={true}
-            />
-          </CardContent></Card>
-        </TabsContent>
         <TabsContent value="deliverables">
           <Card><CardContent className="p-6">
             <DeliverablesList
@@ -343,6 +286,17 @@ export default async function ContractorProjectPage({ params }: { params: Promis
               milestones={stages.map((s) => ({ id: s.id, title: s.title }))}
               canSubmit={true}
               canReview={false}
+            />
+          </CardContent></Card>
+        </TabsContent>
+        <TabsContent value="milestones">
+          <Card><CardContent className="p-6">
+            <MilestonesList
+              projectId={data.project.id}
+              items={data.milestones.map((m) => ({ ...m, paymentAmount: m.paymentAmount as string | null }))}
+              canManage={false}
+              canChangePayment={false}
+              showMoney={false}
             />
           </CardContent></Card>
         </TabsContent>

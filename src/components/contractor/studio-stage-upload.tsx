@@ -8,7 +8,21 @@ import { Button } from "@/components/ui/button";
 import { compressImage } from "@/lib/images/compress";
 
 /** Lets a studio upload a deliverable directly to the stage they're viewing. */
-export function StudioStageUpload({ projectId, stageId, maxBytes = 104857600 }: { projectId: string; stageId: string; maxBytes?: number }) {
+export function StudioStageUpload({
+  projectId,
+  stageId,
+  maxBytes = 104857600,
+  size = "sm",
+  fullWidth = false,
+  label,
+}: {
+  projectId: string;
+  stageId: string;
+  maxBytes?: number;
+  size?: "sm" | "default" | "lg";
+  fullWidth?: boolean;
+  label?: string;
+}) {
   const t = useTranslations();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -44,9 +58,9 @@ export function StudioStageUpload({ projectId, stageId, maxBytes = 104857600 }: 
   return (
     <>
       <input ref={fileRef} type="file" className="sr-only" onChange={onPick} />
-      <Button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} size="sm">
+      <Button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} size={size} className={fullWidth ? "w-full" : undefined}>
         {uploading ? <Loader className="size-4 animate-spin" /> : <Upload className="size-4" />}
-        {t("common.upload")}
+        {label ?? t("common.upload")}
       </Button>
     </>
   );
