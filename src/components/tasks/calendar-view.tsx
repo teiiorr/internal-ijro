@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 type Item = { id: string; title: string; deadline: Date | string | null; status: string };
 
-export function CalendarView({ tasks }: { tasks: Item[] }) {
+export function CalendarView({ tasks, hrefBase = "/tasks" }: { tasks: Item[]; hrefBase?: string }) {
   const [cursor, setCursor] = useState(new Date());
   const days = useMemo(() => {
     const start = startOfWeek(startOfMonth(cursor), { weekStartsOn: 1 });
@@ -44,7 +44,7 @@ export function CalendarView({ tasks }: { tasks: Item[] }) {
               {dayTasks.map((t) => (
                 <Link
                   key={t.id}
-                  href={`/tasks/${t.id}`}
+                  href={`${hrefBase}/${t.id}`}
                   className={cn(
                     "block truncate rounded px-1.5 py-0.5 text-xs",
                     t.status === "completed" ? "bg-[var(--success)]/20" : t.status === "rejected" ? "bg-[var(--danger)]/20" : "bg-[var(--primary)]/15"

@@ -219,35 +219,3 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
 }
 
 void gte; void lte; void inArray;
-
-/**
- * Studiyaga (kontragent foydalanuvçiga) tayinlangan BARÇA vazifalar — barça loyihalar
- * böyiça, alohida "Vazifalar" bölimi uçun. Loyiha va bosqiç nomi bilan birga.
- */
-export async function getContractorTasks(contractorUserId: string) {
-  return db
-    .select({
-      id: tasks.id,
-      title: tasks.title,
-      description: tasks.description,
-      priority: tasks.priority,
-      deadline: tasks.deadline,
-      status: tasks.status,
-      createdAt: tasks.createdAt,
-      projectId: projects.id,
-      projectName: projects.name,
-      stageName: projectStages.name,
-      myStatus: taskAssignees.status,
-      responseText: taskAssignees.responseText,
-      responseFileUrl: taskAssignees.responseFileUrl,
-      responseFileName: taskAssignees.responseFileName,
-      responseSubmittedAt: taskAssignees.responseSubmittedAt,
-    })
-    .from(tasks)
-    .innerJoin(taskAssignees, and(eq(taskAssignees.taskId, tasks.id), eq(taskAssignees.userId, contractorUserId)))
-    // leftJoin: loyihasi öçirilgan (projectId → null) vazifalar ham körinsin — bu sahifa
-    // endi studiya vazifalarini köradigan yagona joy.
-    .leftJoin(projects, eq(projects.id, tasks.projectId))
-    .leftJoin(projectStages, eq(projectStages.id, tasks.stageId))
-    .orderBy(desc(tasks.createdAt));
-}

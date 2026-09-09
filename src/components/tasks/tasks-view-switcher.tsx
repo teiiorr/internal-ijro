@@ -28,7 +28,7 @@ function DeadlinePill({ deadline, completed }: { deadline: Date | string | null;
   return <DeadlineCountdown deadline={deadline} completed={completed} />;
 }
 
-export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
+export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; hrefBase?: string }) {
   const t = useTranslations();
   const locale = useLocale();
   const [view, setView] = useState<"list" | "calendar">("list");
@@ -64,7 +64,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
               return (
                 <Link
                   key={row.id}
-                  href={`/tasks/${row.id}`}
+                  href={`${hrefBase}/${row.id}`}
                   className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:bg-[var(--surface-2)] transition-colors active:scale-[0.99]"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -110,7 +110,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
                   const rel = deadlineRelative(row.deadline, { completed }, locale);
                   return (
                     <TableRow key={row.id} className={cn(rel.tone === "overdue" && "bg-[var(--danger-soft)]/40")}>
-                      <TableCell><Link href={`/tasks/${row.id}`} className="font-medium hover:underline">{row.title}</Link></TableCell>
+                      <TableCell><Link href={`${hrefBase}/${row.id}`} className="font-medium hover:underline">{row.title}</Link></TableCell>
                       <TableCell><TaskStatusBadge status={row.status} /></TableCell>
                       <TableCell><TaskPriorityBadge priority={row.priority} /></TableCell>
                       <TableCell>
@@ -133,7 +133,7 @@ export function TasksViewSwitcher({ tasks }: { tasks: T[] }) {
         </>
       )}
 
-      {view === "calendar" && <CalendarView tasks={tasks} />}
+      {view === "calendar" && <CalendarView tasks={tasks} hrefBase={hrefBase} />}
     </div>
   );
 }
