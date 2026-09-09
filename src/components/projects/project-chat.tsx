@@ -183,8 +183,8 @@ function MessageRow({
                 )}
               </div>
             )}
-            {m.content.trim() && <p className="whitespace-pre-wrap">{m.content}</p>}
-            <p className={`mt-0.5 text-right text-[10px] leading-none ${mine ? "text-white/55" : "text-[var(--muted)]"}`}>
+            {m.content.trim() && <p className="whitespace-pre-wrap text-center">{m.content}</p>}
+            <p className={`mt-0.5 text-center text-[10px] leading-none ${mine ? "text-white/55" : "text-[var(--muted)]"}`}>
               {m.editedAt ? "✎ " : ""}{isOptimistic ? "..." : timeOnly(m.createdAt, locale)}
             </p>
           </div>

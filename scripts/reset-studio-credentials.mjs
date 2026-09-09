@@ -34,6 +34,13 @@ const bcrypt = require("bcryptjs");
 const argv = process.argv.slice(2);
 const APPLY = argv.includes("--apply");
 const PASSWORDS_ONLY = argv.includes("--passwords-only");
+// --handles: login = Instagram uslubidagi handle (masalan "Bolalar_Production"),
+// email/domen emas. MChJ va ortiqcha tirelar olib taşlanadi.
+const HANDLES = argv.includes("--handles");
+// --password=... : hammaga bir xil parol. --handles bilan standart "studiya123".
+const PW_OVERRIDE =
+  (argv.find((a) => a.startsWith("--password=")) ?? "").split("=").slice(1).join("=") ||
+  (HANDLES ? "studiya123" : "");
 const DOMAIN = (argv.find((a) => a.startsWith("--domain=")) ?? "--domain=studiya.uz").split("=")[1];
 const ONLY = (argv.find((a) => a.startsWith("--only=")) ?? "--only=").split("=").slice(1).join("=").trim().toLowerCase();
 const BCRYPT_COST = 12; // must match src/lib/auth/password.ts
@@ -67,8 +74,22 @@ function slugify(name, max = 40) {
   return s || "studiya";
 }
 
+// Instagram uslubidagi handle: "Kids content" → "Kids_Content", "Iloomina" →
+// "Iloomina". MChJ va boshqa yuridik shakllar, qo'shtirnoq va tirelar olib
+// tashlanadi; so'zlar bosh harf bilan "_" orqali ulanadi. Auth login'i katta-kichik
+// harfga sezgir emas (kiritma lowercase qilinadi), shu bois DB'ga lowercase yoziladi.
+function handleize(name) {
+  let s = String(name || "").replace(APOS, " ");
+  s = [...s.toLowerCase()].map((ch) => (CYR[ch] !== undefined ? CYR[ch] : ch)).join("");
+  s = s.replace(/\b(mchj|mchs|ooo|yatt|xk|llc|ltd|ip)\b/g, " "); // yuridik shakllarni olib tashlaymiz
+  const words = s.split(/[^a-z0-9]+/).filter(Boolean);
+  const handle = words.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join("_");
+  return handle || "Studiya";
+}
+
 // Readable password: Capitalized word (>= 4 chars) + 4 random digits (>= 8 total).
 function makePassword(slug) {
+  if (PW_OVERRIDE) return PW_OVERRIDE; // --password / --handles → hammaga bir xil parol
   let word = (slug.split("-")[0] || "studio").replace(/[^a-z0-9]/g, "");
   if (word.length < 4) word = "studio";
   word = word.slice(0, 10);
@@ -125,11 +146,25 @@ async function main() {
       continue;
     }
 
-    // Full mode: uniform login studio-<slug>@DOMAIN, unique across the users table.
-    let login = `studio-${slug}@${DOMAIN}`;
-    if (login !== currentEmail) {
-      let n = 2;
-      while (used.has(login)) { login = `studio-${slug}-${n}@${DOMAIN}`; n++; }
+    // Login: --handles bo'lsa Instagram uslubidagi handle, aks holda studio-<slug>@DOMAIN.
+    // DB'ga har doim lowercase yoziladi (auth kiritmani lowercase qiladi); ko'rsatiladigan
+    // handle CamelCase bo'lishi mumkin — login katta-kichik harfga sezgir emas.
+    let login, display;
+    if (HANDLES) {
+      const h = handleize(c.name);
+      display = h;
+      login = h.toLowerCase();
+      if (login !== currentEmail) {
+        let n = 2;
+        while (used.has(login)) { login = `${h.toLowerCase()}_${n}`; display = `${h}_${n}`; n++; }
+      }
+    } else {
+      login = `studio-${slug}@${DOMAIN}`;
+      display = login;
+      if (login !== currentEmail) {
+        let n = 2;
+        while (used.has(login)) { login = `studio-${slug}-${n}@${DOMAIN}`; display = login; n++; }
+      }
     }
     used.add(login);
 
@@ -138,6 +173,7 @@ async function main() {
       action: userId ? "update" : "create",
       userId,
       login,
+      display,
       oldLogin: currentEmail || "—",
       password: makePassword(slug),
       loginChanged: login !== currentEmail,
@@ -150,7 +186,7 @@ async function main() {
   for (const p of plan) {
     console.log(
       pad(p.company.name, 34),
-      pad(p.login ?? "—", 40),
+      pad(p.display ?? p.login ?? "—", 40),
       pad(p.password ?? "—", 12),
       p.action + (p.reason ? ` (${p.reason})` : ""),
     );
@@ -219,7 +255,7 @@ async function main() {
     // Authoritative credential list (copy this — plaintext passwords are NOT recoverable later).
     console.log("\n=== CREDENTIALS (save this — passwords are bcrypt-hashed and cannot be shown again) ===");
     console.log("login\tpassword\tstudio");
-    for (const p of changed) console.log(`${p.login}\t${p.password}\t${p.company.name}`);
+    for (const p of changed) console.log(`${p.display ?? p.login}\t${p.password}\t${p.company.name}`);
   } else {
     console.log("\nDRY RUN — nothing written. Re-run with --apply to perform the changes above.");
   }

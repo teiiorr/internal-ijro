@@ -41,7 +41,8 @@ export default function LoginPage() {
       <form onSubmit={onSubmit} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="email">{t("auth.login.email")}</Label>
-          <Input id="email" name="email" type="email" autoComplete="email" required />
+          {/* type=text — studiyalar Instagram uslubidagi handle bilan, xodimlar email bilan kiradi */}
+          <Input id="email" name="email" type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">{t("auth.login.password")}</Label>

@@ -36,8 +36,10 @@ declare module "next-auth" {
   }
 }
 
+// Login = email (xodimlar) yoki Instagram uslubidagi handle (studiyalar, masalan
+// "bolalar_production"). Şu bois "@" majburiy emas — oddiy login satri qabul qilinadi.
 const credsSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().min(1),
   password: z.string().min(1),
   totp: z.string().optional(),
 });

@@ -41,6 +41,10 @@ export function MobileNav({ position, userId, isOwner, reviewCount = 0, showCont
   const [open, setOpen] = useState(false);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+
+  // Töliq ekranli studiya suhbati oçilganda pastki panelni berkitamiz.
+  if (/^\/contractors\/[^/]+\/chat\/[^/]+/.test(pathname)) return null;
+
   const allowed = ITEMS.filter((i) => {
     // Studiyalar bölimi kirişni server hal qiladi (egasi ruxsat bergan xodimlar ham köradi).
     if (i.key === "contractors") return showContractors;

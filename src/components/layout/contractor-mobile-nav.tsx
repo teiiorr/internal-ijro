@@ -19,6 +19,10 @@ export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
+  // Töliq ekranli suhbat (chat oynasi) oçilganda pastki panelni berkitamiz —
+  // u kompozitor (yozuv maydoni) bilan xalaqit bermasin.
+  if (/^\/contractor\/chats\/[^/]+/.test(pathname)) return null;
+
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
       <ul className="grid grid-cols-3 rounded-3xl glass-strong overflow-hidden">
