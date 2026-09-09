@@ -1,4 +1,5 @@
 import "server-only";
+import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
@@ -138,6 +139,16 @@ export async function syncProjectStatusesFromSheet(opts: { dryRun?: boolean } = 
           newValue: { currentStatus: plan.to, source: "google_sheet" },
         });
       } catch { /* audit — ikkinçi darajali, sinxronni toʼxtatmaydi */ }
+    }
+    // Yangilangan bölsa — sahifalarni qayta yaratamiz, toki yangi holat darhol körinsin.
+    if (plans.length) {
+      revalidatePath("/dashboard");
+      revalidatePath("/projects");
+      revalidatePath("/contractors");
+      for (const plan of plans) {
+        revalidatePath(`/projects/${plan.id}`);
+        revalidatePath(`/contractor/projects/${plan.id}`);
+      }
     }
   }
 
