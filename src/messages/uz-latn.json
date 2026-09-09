@@ -975,7 +975,9 @@
       "respond": "Javob yozish",
       "responsePlaceholder": "Javobingizni yozing...",
       "responseSent": "Javob yuborildi",
-      "changesRequested": "Qayta ko'rib chiqish so'raldi"
+      "changesRequested": "Qayta ko'rib chiqish so'raldi",
+      "discussInChat": "Chatda muhokama",
+      "sharedToChat": "Chatga yuborildi"
     }
   },
   "dashboard": {
@@ -1160,6 +1162,20 @@
     "logs": {
       "title": "Barcha loglar",
       "latest": "So'nggi 500 ta ko'rsatilmoqda — to'liq ro'yxat XLSX'da"
+    },
+    "studioActivity": {
+      "title": "Studiyalar faoliyati",
+      "subtitle": "Faqat studiyalarning platformaga kirishlari va harakatlari",
+      "studio": "Studiya",
+      "empty": "Hozircha faoliyat yo'q",
+      "actions": {
+        "login": "Tizimga kirdi",
+        "deliverableSubmitted": "Ish topshirdi",
+        "taskResponse": "Vazifaga javob berdi",
+        "docAdded": "Hujjat yukladi",
+        "docRemoved": "Hujjatni o'chirdi",
+        "ndaAccepted": "NDA'ni qabul qildi"
+      }
     },
     "system": {
       "title": "Dev vositalar va tizim",

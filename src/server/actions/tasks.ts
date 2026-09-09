@@ -19,6 +19,7 @@ import { requireUser } from "@/lib/session";
 import { canAssignTaskTo, type ActorContext } from "@/lib/permissions";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
+import { postProjectMessage } from "@/server/actions/projects";
 import { TASK_PRIORITIES, TASK_STATUSES, canTransition } from "@/lib/permissions/tasks";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
@@ -207,6 +208,34 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
   revalidatePath(`/contractor/projects/${parsed.projectId}`);
   revalidatePath("/contractors");
   return { id: insertedId };
+}
+
+/**
+ * Vazifani loyiha suhbatiga (chatiga) yuboradi — muhokama qiliş uçun. Vazifaning
+ * bosqiç kanaliga (yoki umumiy kanalga) matnli xabar sifatida joylaştiriladi.
+ * Ham studiya, ham nazoratchi mas'ul çaqira oladi: kirişni postProjectMessage
+ * boşqaradi (studiya faqat öz loyihasiga; xodimlar erkin) va ikkinçi tomonni
+ * xabardor qiladi ("eslatma").
+ */
+export async function shareTaskToChat(taskId: string) {
+  await requireUser();
+  const [task] = await db
+    .select({ id: tasks.id, title: tasks.title, projectId: tasks.projectId, stageId: tasks.stageId, deadline: tasks.deadline, description: tasks.description })
+    .from(tasks)
+    .where(eq(tasks.id, taskId))
+    .limit(1);
+  if (!task || !task.projectId) throw new Error("not_found");
+
+  const lines = [`📋 Vazifa: «${task.title}»`];
+  if (task.deadline) lines.push(`🗓 ${new Date(task.deadline).toISOString().slice(0, 10)}`);
+  if (task.description?.trim()) lines.push("", task.description.trim());
+
+  await postProjectMessage({
+    projectId: task.projectId,
+    ...(task.stageId ? { stageId: task.stageId } : {}),
+    content: lines.join("\n"),
+  });
+  return { ok: true };
 }
 
 export async function changeTaskStatus(taskId: string, nextStatus: (typeof TASK_STATUSES)[number], rejectionReason?: string) {

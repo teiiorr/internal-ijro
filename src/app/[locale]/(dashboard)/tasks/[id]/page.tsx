@@ -15,6 +15,7 @@ import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-c
 import { MyResponseCard } from "@/components/tasks/my-response-card";
 import { IconPrinter as Printer } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
+import { ShareTaskChatButton } from "@/components/tasks/share-task-chat-button";
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -58,6 +59,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         <h1 className="text-base sm:text-lg font-semibold tracking-tight leading-snug flex-1 min-w-0 break-words">
           {data.task.title}
         </h1>
+        {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
         <Button asChild variant="outline" size="sm" className="shrink-0">
           <a href={`/api/export/task/${data.task.id}`} target="_blank">
             <Printer className="size-4" /> {t("tasks.print")}

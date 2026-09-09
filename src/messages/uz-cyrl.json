@@ -975,7 +975,9 @@
       "respond": "Жавоб ёзиш",
       "responsePlaceholder": "Жавобингизни ёзинг...",
       "responseSent": "Жавоб юборилди",
-      "changesRequested": "Қайта кўриб чиқиш сўралди"
+      "changesRequested": "Қайта кўриб чиқиш сўралди",
+      "discussInChat": "Чатда муҳокама",
+      "sharedToChat": "Чатга юборилди"
     }
   },
   "dashboard": {
@@ -1156,6 +1158,20 @@
       "delete": "Ўчирилди",
       "update": "Ўзгартирилди",
       "empty": "Ҳозирча ўзгаришлар йўқ"
+    },
+    "studioActivity": {
+      "title": "Студиялар фаолияти",
+      "subtitle": "Фақат студияларнинг платформага киришлари ва ҳаракатлари",
+      "studio": "Студия",
+      "empty": "Ҳозирча фаолият йўқ",
+      "actions": {
+        "login": "Тизимга кирди",
+        "deliverableSubmitted": "Иш топширди",
+        "taskResponse": "Вазифага жавоб берди",
+        "docAdded": "Ҳужжат юклади",
+        "docRemoved": "Ҳужжатни ўчирди",
+        "ndaAccepted": "NDA'ни қабул қилди"
+      }
     },
     "logs": {
       "title": "Барча логлар",

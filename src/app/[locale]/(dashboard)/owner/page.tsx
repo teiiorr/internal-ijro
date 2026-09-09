@@ -6,7 +6,7 @@ import { isOwner, OWNER_TITLE } from "@/lib/permissions/owner";
 import { localizeName } from "@/lib/names";
 import { formatDateTime } from "@/lib/dates";
 import { getSystemStats, getRecentChanges, getSystemInfo, changeKind } from "@/server/queries/owner";
-import { listAudit } from "@/server/queries/audit";
+import { listAudit, listStudioActivity } from "@/server/queries/audit";
 import { listEmployees } from "@/server/queries/employees";
 import { listAllGrants, MANAGED_CAPABILITIES } from "@/lib/permissions/grants";
 import { PermissionsManager } from "@/components/owner/permissions-manager";
@@ -31,13 +31,14 @@ export default async function OwnerPage() {
   const t = await getTranslations();
   const locale = await getLocale();
 
-  const [stats, changes, logs, sys, emps, grants] = await Promise.all([
+  const [stats, changes, logs, sys, emps, grants, studioActivity] = await Promise.all([
     getSystemStats(),
     getRecentChanges(40),
     listAudit({ scope: "all" }),
     getSystemInfo(),
     listEmployees({ status: "active" }),
     listAllGrants(),
+    listStudioActivity(200),
   ]);
 
   const permCapabilities = MANAGED_CAPABILITIES.map((key) => ({
@@ -212,7 +213,46 @@ export default async function OwnerPage() {
         </Card>
       </section>
 
-      {/* 4. Dasturçi vositalari / tizim ma'lumoti */}
+      {/* 4. Studiyalar faoliyati — faqat kontragent (studiya) foydalanuvçilarining loglari:
+          platformaga kirişlari va harakatlari. */}
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-base font-semibold">
+            {t("owner.studioActivity.title")}{" "}
+            <span className="text-[var(--muted)] font-normal tabular-nums">({studioActivity.length})</span>
+          </h2>
+          <p className="mt-0.5 text-xs text-[var(--muted)]">{t("owner.studioActivity.subtitle")}</p>
+        </div>
+        <Card>
+          <CardContent className="p-0 max-h-[560px] overflow-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("audit.table.time")}</TableHead>
+                  <TableHead>{t("owner.studioActivity.studio")}</TableHead>
+                  <TableHead>{t("audit.table.action")}</TableHead>
+                  <TableHead>{t("audit.table.ip")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {studioActivity.length === 0 && (
+                  <TableRow><TableCell colSpan={4} className="text-center text-sm text-[var(--muted)] py-8">{t("owner.studioActivity.empty")}</TableCell></TableRow>
+                )}
+                {studioActivity.map((r) => (
+                  <TableRow key={r.id}>
+                    <TableCell className="text-xs tabular-nums whitespace-nowrap">{formatDateTime(r.createdAt as Date, locale)}</TableCell>
+                    <TableCell className="text-sm"><span className="inline-flex items-center gap-1.5">{r.userName && <UserAvatar name={r.userName} avatarUrl={r.userAvatarUrl} size="xs" clickable={false} />}{r.userName ?? "—"}</span></TableCell>
+                    <TableCell className="text-sm">{studioActionLabel(t, r.action)}</TableCell>
+                    <TableCell className="text-xs text-[var(--muted)]">{r.ipAddress ?? "—"}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* 5. Dasturçi vositalari / tizim ma'lumoti */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">{t("owner.system.title")}</h2>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -299,6 +339,20 @@ export default async function OwnerPage() {
       </section>
     </div>
   );
+}
+
+// Studiya harakatlarining öqiladigan nomlari. Nomalum harakatlar xom kod böyicha körsatiladi.
+const STUDIO_ACTION_KEYS: Record<string, string> = {
+  "auth.login_success": "owner.studioActivity.actions.login",
+  "deliverable.submitted": "owner.studioActivity.actions.deliverableSubmitted",
+  "task.response_submitted": "owner.studioActivity.actions.taskResponse",
+  "stage.document_added": "owner.studioActivity.actions.docAdded",
+  "stage.document_removed": "owner.studioActivity.actions.docRemoved",
+  "contractor.nda_accepted": "owner.studioActivity.actions.ndaAccepted",
+};
+function studioActionLabel(t: Awaited<ReturnType<typeof getTranslations>>, action: string): string {
+  const key = STUDIO_ACTION_KEYS[action];
+  return key ? t(key as "owner.studioActivity.actions.login") : action;
 }
 
 function InfoRow({ k, v }: { k: string; v: string }) {

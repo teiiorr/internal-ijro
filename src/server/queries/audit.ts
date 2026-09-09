@@ -49,3 +49,27 @@ export async function listAudit(f: AuditFilters, limit = 500) {
     .orderBy(desc(activityLog.createdAt))
     .limit(limit);
 }
+
+/**
+ * Egasi paneli uçun: FAQAT studiyalar (kontragentlar) faoliyati — platformaga
+ * kirişlari (auth.login_success) va boşqa qaydga olingan amallari. Eng yangisi ustda.
+ */
+export async function listStudioActivity(limit = 200) {
+  return db
+    .select({
+      id: activityLog.id,
+      action: activityLog.action,
+      entityType: activityLog.entityType,
+      entityId: activityLog.entityId,
+      createdAt: activityLog.createdAt,
+      ipAddress: activityLog.ipAddress,
+      userId: activityLog.userId,
+      userName: users.fullName,
+      userAvatarUrl: users.avatarUrl,
+    })
+    .from(activityLog)
+    .innerJoin(users, eq(users.id, activityLog.userId))
+    .where(eq(users.position, "kontragent"))
+    .orderBy(desc(activityLog.createdAt))
+    .limit(limit);
+}

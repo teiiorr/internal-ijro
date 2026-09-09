@@ -3,14 +3,14 @@ import { useState, useTransition } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { IconClipboardList as ClipboardList, IconLoader2 as Loader, IconCircleCheck as CircleCheck } from "@tabler/icons-react";
+import { IconClipboardList as ClipboardList, IconLoader2 as Loader, IconCircleCheck as CircleCheck, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
-import { submitTaskResponse } from "@/server/actions/tasks";
+import { submitTaskResponse, shareTaskToChat } from "@/server/actions/tasks";
 
 export type StudioTask = {
   id: string; title: string; description: string | null; priority: string;
@@ -28,6 +28,7 @@ function TaskRow({ task }: { task: StudioTask }) {
   const [pending, start] = useTransition();
   const [text, setText] = useState("");
   const [openResp, setOpenResp] = useState(false);
+  const [sharePending, startShare] = useTransition();
   // "Javob berilgan" holatini FAQAT status böyiça aniqlaymiz. Eski responseText'ga
   // qarab bölmaydi: xodim javobni rad etsa, status qayta in_progress böladi (lekin
   // eski matn qoladi) — studiya qayta javob yoza olishi kerak.
@@ -51,6 +52,18 @@ function TaskRow({ task }: { task: StudioTask }) {
     });
   }
 
+  function share() {
+    startShare(async () => {
+      try {
+        await shareTaskToChat(task.id);
+        toast.success(t("contractor.tasks.sharedToChat"));
+        router.refresh();
+      } catch {
+        toast.error(t("common.error"));
+      }
+    });
+  }
+
   return (
     <div className="rounded-xl border border-[var(--border)] p-3.5">
       <div className="flex flex-wrap items-center gap-2">
@@ -66,6 +79,12 @@ function TaskRow({ task }: { task: StudioTask }) {
           <DeadlineCountdown deadline={task.deadline} />
         </div>
       )}
+      <div className="mt-2.5">
+        <Button type="button" variant="ghost" size="sm" disabled={sharePending} onClick={share} className="h-8 px-2 text-[var(--primary)]">
+          {sharePending ? <Loader className="size-4 animate-spin" /> : <MessageCircle className="size-4" />}
+          {t("contractor.tasks.discussInChat")}
+        </Button>
+      </div>
       {answered ? (
         <div className="mt-2.5 rounded-lg bg-[var(--surface-2)] p-2.5 text-sm">
           <p className="mb-0.5 flex items-center gap-1 text-xs font-semibold text-[var(--success)]"><CircleCheck className="size-3.5" />{t("contractor.tasks.answered")}</p>

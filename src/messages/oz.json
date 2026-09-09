@@ -975,7 +975,9 @@
       "respond": "Javob yoziş",
       "responsePlaceholder": "Javobingizni yozing...",
       "responseSent": "Javob yuborildi",
-      "changesRequested": "Qayta körib çiqiş söraldi"
+      "changesRequested": "Qayta körib çiqiş söraldi",
+      "discussInChat": "Çatda muhokama",
+      "sharedToChat": "Çatga yuborildi"
     }
   },
   "dashboard": {
@@ -1156,6 +1158,20 @@
       "delete": "Öçirildi",
       "update": "Özgartirildi",
       "empty": "Hozirça özgarişlar yöq"
+    },
+    "studioActivity": {
+      "title": "Studiyalar faoliyati",
+      "subtitle": "Faqat studiyalarning platformaga kirişlari va harakatlari",
+      "studio": "Studiya",
+      "empty": "Hozirça faoliyat yöq",
+      "actions": {
+        "login": "Tizimga kirdi",
+        "deliverableSubmitted": "Iş topşirdi",
+        "taskResponse": "Vazifaga javob berdi",
+        "docAdded": "Hujjat yukladi",
+        "docRemoved": "Hujjatni öçirdi",
+        "ndaAccepted": "NDA'ni qabul qildi"
+      }
     },
     "logs": {
       "title": "Barça loglar",

@@ -975,7 +975,9 @@
       "respond": "Ответить",
       "responsePlaceholder": "Напишите ваш ответ...",
       "responseSent": "Ответ отправлен",
-      "changesRequested": "Запрошены изменения"
+      "changesRequested": "Запрошены изменения",
+      "discussInChat": "Обсудить в чате",
+      "sharedToChat": "Отправлено в чат"
     }
   },
   "dashboard": {
@@ -1156,6 +1158,20 @@
       "delete": "Удалено",
       "update": "Изменено",
       "empty": "Изменений пока нет"
+    },
+    "studioActivity": {
+      "title": "Активность студий",
+      "subtitle": "Только входы студий на платформу и их действия",
+      "studio": "Студия",
+      "empty": "Пока нет активности",
+      "actions": {
+        "login": "Вход в систему",
+        "deliverableSubmitted": "Сдал(а) работу",
+        "taskResponse": "Ответил(а) на задачу",
+        "docAdded": "Загрузил(а) документ",
+        "docRemoved": "Удалил(а) документ",
+        "ndaAccepted": "Принял(а) NDA"
+      }
     },
     "logs": {
       "title": "Все логи",
