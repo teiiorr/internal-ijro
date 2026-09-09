@@ -95,7 +95,7 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
                   </Link>
                 ))}
                 <Link
-                  href="/settings"
+                  href={pathname.startsWith("/contractor") ? "/contractor/settings" : "/settings"}
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
                 >

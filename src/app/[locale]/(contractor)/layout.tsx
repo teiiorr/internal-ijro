@@ -11,7 +11,7 @@ import { Header } from "@/components/layout/header";
 import { ContractorMobileNav } from "@/components/layout/contractor-mobile-nav";
 import { AppFooter } from "@/components/layout/app-footer";
 import { RouteProgress } from "@/components/layout/route-progress";
-import { IconFolder as Folder, IconMessageCircle as MessageCircle, IconClipboardList as ClipboardList } from "@tabler/icons-react";
+import { IconFolder as Folder, IconMessageCircle as MessageCircle, IconClipboardList as ClipboardList, IconSettings as Settings } from "@tabler/icons-react";
 
 export default async function ContractorLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -50,6 +50,7 @@ export default async function ContractorLayout({ children }: { children: React.R
     { href: "/contractor/projects", icon: Folder, label: t("nav.projects") },
     { href: "/contractor/tasks", icon: ClipboardList, label: t("nav.tasks") },
     { href: "/contractor/chats", icon: MessageCircle, label: t("nav.chats") },
+    { href: "/contractor/settings", icon: Settings, label: t("nav.settings") },
   ];
   const menuLinks = [{ href: "/contractor/profile", label: t("nav.profile") }];
   const unread = await getContractorUnreadCount(session.user.id);
