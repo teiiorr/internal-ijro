@@ -79,7 +79,9 @@ function slugify(name, max = 40) {
 // tashlanadi; so'zlar bosh harf bilan "_" orqali ulanadi. Auth login'i katta-kichik
 // harfga sezgir emas (kiritma lowercase qilinadi), shu bois DB'ga lowercase yoziladi.
 function handleize(name) {
-  let s = String(name || "").replace(APOS, " ");
+  // Apostroflarni ("o'", "g'", tutuq belgisi, qo'shtirnoq) AJRATGICH emas, BUTUNLAY
+  // olib tashlaymiz — "O'zbekiston" → "Ozbekiston", "Ma'rifat" → "Marifat".
+  let s = String(name || "").replace(APOS, "");
   s = [...s.toLowerCase()].map((ch) => (CYR[ch] !== undefined ? CYR[ch] : ch)).join("");
   s = s.replace(/\b(mchj|mchs|ooo|yatt|xk|llc|ltd|ip)\b/g, " "); // yuridik shakllarni olib tashlaymiz
   const words = s.split(/[^a-z0-9]+/).filter(Boolean);
