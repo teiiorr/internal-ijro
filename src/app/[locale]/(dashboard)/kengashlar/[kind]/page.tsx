@@ -104,23 +104,34 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
                       <span className="shrink-0 text-xs text-[var(--muted)] sm:text-sm">{formatDateMaybeTime(m.scheduledAt, locale)}</span>
                       <ChevronDown className="size-4 shrink-0 text-[var(--muted)] transition-transform group-open:rotate-180" />
                     </summary>
-                    <ol className="mt-3 space-y-2 border-t border-[var(--border)] pt-3 text-sm">
+                    <div className="mt-3 border-t border-[var(--border)] pt-3">
                       {items.length === 0 ? (
-                        <li className="text-[var(--muted)]">{t("kengash.emptyAgenda")}</li>
+                        <p className="text-sm text-[var(--muted)]">{t("kengash.emptyAgenda")}</p>
                       ) : (
-                        
-                        items.map((it, i) => (
-                          <li key={it.id} className="flex gap-2">
-                            <span className="shrink-0 font-semibold tabular-nums text-[var(--muted)]">{i + 1}.</span>
-                            <span className="min-w-0">
-                              {it.topic}
-                              {it.projectName ? <span className="text-[var(--muted)]"> — {it.projectName}</span> : null}
-                              {it.presenterName ? <span className="text-[var(--muted)]"> ({it.presenterName})</span> : null}
-                            </span>
-                          </li>
-                        ))
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b border-[var(--border)] text-left text-xs font-semibold text-[var(--muted)]">
+                                <th className="w-8 py-2 pr-2 font-semibold">№</th>
+                                <th className="py-2 pr-4 font-semibold">{t("kengash.topic")}</th>
+                                <th className="py-2 pr-4 font-semibold">{t("kengash.project")}</th>
+                                <th className="py-2 font-semibold">{t("kengash.presenter")}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {items.map((it, i) => (
+                                <tr key={it.id} className="border-b border-[var(--border)] align-top last:border-0">
+                                  <td className="py-2 pr-2 font-semibold tabular-nums text-[var(--muted)]">{i + 1}</td>
+                                  <td className="py-2 pr-4 font-medium">{it.topic}</td>
+                                  <td className="py-2 pr-4 text-[var(--muted)]">{it.projectName ?? "—"}</td>
+                                  <td className="py-2 text-[var(--muted)]">{it.presenterName ?? "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       )}
-                    </ol>
+                    </div>
                   </details>
                 );
               })}
