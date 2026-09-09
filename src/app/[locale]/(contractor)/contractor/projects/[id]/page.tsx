@@ -99,14 +99,12 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                 <span className="text-xs font-medium tabular-nums text-[var(--muted)]">
                   {t("projects.stagePath.stageOf", { n: activeStage.orderIndex + 1, total: sp.stages.length })}
                 </span>
-                {/* Navbat kimda — topşiriş holati */}
+                {/* Topşiriş holati (faqat ma'noli holatlar; "sizning navbatingiz" körsatilmaydi) */}
                 {activeStage.reviewStatus === "submitted" ? (
                   <StatusTag tone="muted" size="sm">{t("review.status.submitted")}</StatusTag>
                 ) : activeStage.reviewStatus === "changes_requested" ? (
                   <StatusTag tone="red" size="sm">{t("review.status.changes_requested")}</StatusTag>
-                ) : (
-                  <StatusTag tone="amber" size="sm">{t("review.turn.studio")}</StatusTag>
-                )}
+                ) : null}
               </div>
               <h2 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">{activeStage.name}</h2>
               {activeStage.plannedDeadline && (
@@ -122,18 +120,11 @@ export default async function ContractorProjectPage({ params }: { params: Promis
                   <p className="whitespace-pre-wrap leading-relaxed text-[var(--foreground)]">{activeStage.reviewNote}</p>
                 </div>
               )}
-              <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center">
-                <div className="sm:flex-1">
-                  <StageSubmitButton stageId={activeStage.id} reviewStatus={activeStage.reviewStatus} fullWidth />
-                </div>
-                <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="lg" label={t("review.addFile")} variant="outline" />
-                <Link
-                  href={`/contractor/projects/${id}/stages/${activeStage.id}`}
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-[var(--border-strong)] px-5 text-[15px] font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--glass-fill)] active:scale-95"
-                >
-                  {t("contractor.openStage")}
-                  <ArrowRight className="size-4" />
-                </Link>
+              {/* Ikki amal — çapda fayl qöşiş, öngda körikka yuboriş (asosiy, kök). Uzun
+                  "bosqiçni ochiş" tugmasi olib taşlandi — bu sahifaning özi bosqiç sahifasi. */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="default" label={t("review.addFile")} variant="outline" />
+                <StageSubmitButton stageId={activeStage.id} reviewStatus={activeStage.reviewStatus} size="default" />
               </div>
             </CardContent>
           </Card>

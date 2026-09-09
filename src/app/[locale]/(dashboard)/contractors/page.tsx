@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/lib/auth";
+import { timeAgo } from "@/lib/dates";
 import { listContractorsWithProjects } from "@/server/queries/projects";
 import { getReviewQueue } from "@/server/queries/stages";
 import { CreateStudioButton } from "@/components/contractor/studio-crud-dialogs";
@@ -12,6 +13,7 @@ export default async function ContractorsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
   if (!(await canViewContractorChats(session.user))) redirect("/dashboard");
   const canManage = isContractorManager(session.user);
 
@@ -26,7 +28,13 @@ export default async function ContractorsPage() {
 
       {canManage && <ReviewQueuePanel groups={reviewGroups} />}
 
-      <StudioGrid studios={rows.map((c) => ({ ...c, rating: c.rating as string | null }))} />
+      <StudioGrid
+        studios={rows.map((c) => ({
+          ...c,
+          rating: c.rating as string | null,
+          lastOnlineLabel: c.lastLoginAt ? timeAgo(c.lastLoginAt, locale) : null,
+        }))}
+      />
     </div>
   );
 }

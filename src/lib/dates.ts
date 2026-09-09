@@ -14,6 +14,28 @@ const REL: Record<string, { overdue: string; today: string; tomorrow: string; da
   ru: { overdue: "Просрочено", today: "Сегодня", tomorrow: "Завтра", daysLeft: "дн. осталось", dayUnit: "дн." },
 };
 
+// Nisbiy vaqt — "3 soat oldin", "1 kun oldin". SERVER'da hisoblanadi (Date.now()),
+// şuning uçun mijoz gidratsiyasida nomuvofiqlik bölmaydi. 30 kundan eskisi — absolyut sana.
+const AGO: Record<string, { now: string; min: (n: number) => string; hour: (n: number) => string; day: (n: number) => string }> = {
+  "uz-latn": { now: "hozirgina", min: (n) => `${n} daqiqa oldin`, hour: (n) => `${n} soat oldin`, day: (n) => `${n} kun oldin` },
+  "uz-cyrl": { now: "ҳозиргина", min: (n) => `${n} дақиқа олдин`, hour: (n) => `${n} соат олдин`, day: (n) => `${n} кун олдин` },
+  oz: { now: "hozirgina", min: (n) => `${n} daqiqa oldin`, hour: (n) => `${n} soat oldin`, day: (n) => `${n} kun oldin` },
+  ru: { now: "только что", min: (n) => `${n} мин. назад`, hour: (n) => `${n} ч. назад`, day: (n) => `${n} дн. назад` },
+};
+
+export function timeAgo(d: Date | string, locale = "uz-latn") {
+  const a = AGO[locale] ?? AGO["uz-latn"];
+  const ms = Date.now() - new Date(d).getTime();
+  if (ms < 60000) return a.now;
+  const min = Math.floor(ms / 60000);
+  if (min < 60) return a.min(min);
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return a.hour(hr);
+  const day = Math.floor(hr / 24);
+  if (day < 30) return a.day(day);
+  return formatDate(d, locale);
+}
+
 export function formatDate(d: Date | string, locale = "uz-latn") {
   const x = toTashkent(new Date(d));
   const months = MONTHS[locale] ?? MONTHS["uz-latn"];

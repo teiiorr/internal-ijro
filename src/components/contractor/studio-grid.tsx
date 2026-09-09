@@ -2,12 +2,12 @@
 import { useState, useMemo, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { IconSearch, IconCheck, IconX, IconAlertTriangle, IconClock } from "@tabler/icons-react";
+import { IconSearch, IconCheck, IconX, IconAlertTriangle } from "@tabler/icons-react";
 import { SmoothImage } from "@/components/ui/smooth-image";
+import { StatusTag } from "@/components/ui/status-tag";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/dates";
 import { approveContractor, rejectContractor } from "@/server/actions/projects";
 import { cn } from "@/lib/utils";
 
@@ -25,14 +25,14 @@ type Studio = {
   createdAt: Date | string;
   projects: Proj[];
   waiting: number;
-  lastLoginAt: Date | string | null;
+  // Server'da hisoblangan nisbiy "oxirgi kirish" matni ("3 soat oldin"); null — hech qachon kirmagan.
+  lastOnlineLabel: string | null;
 };
 
 const initial = (name: string) => name.replace(/["'«»“”]/g, "").trim().charAt(0).toUpperCase() || "?";
 
 export function StudioGrid({ studios }: { studios: Studio[] }) {
   const t = useTranslations();
-  const locale = useLocale();
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -73,7 +73,7 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
         // Loyiha muqovalari kabi katta kvadrat plitkalar
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((s) => (
-            <StudioCard key={s.id} s={s} t={t} locale={locale} router={router} />
+            <StudioCard key={s.id} s={s} t={t} router={router} />
           ))}
         </div>
       )}
@@ -81,13 +81,10 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
   );
 }
 
-function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof useTranslations>; locale: string; router: ReturnType<typeof useRouter> }) {
+function StudioCard({ s, t, router }: { s: Studio; t: ReturnType<typeof useTranslations>; router: ReturnType<typeof useRouter> }) {
   const [pending, start] = useTransition();
   const [rejecting, setRejecting] = useState(false);
   const [reason, setReason] = useState("");
-  const total = s.projects.length;
-  const completed = s.projects.filter((p) => p.status === "completed").length;
-  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   function approve() {
     start(async () => {
@@ -120,29 +117,22 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
               <span className="select-none text-5xl font-black text-[var(--subtle)]">{initial(s.name)}</span>
             </div>
           )}
-          {total > 0 && (
-            <span className="absolute left-2 top-2 rounded-md bg-black/40 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
-              {pct}%
-            </span>
-          )}
           {s.waiting > 0 && (
             <span className="absolute right-2 top-2 grid size-7 place-items-center rounded-lg bg-[var(--warning)] text-white shadow-sm" title={t("contractors.inReview")}>
               <IconAlertTriangle className="size-4" />
             </span>
           )}
-          {total > 0 && (
-            <div className="absolute inset-x-0 bottom-0 h-1.5 bg-black/15">
-              <div className="h-full bg-[var(--success)]" style={{ width: `${pct}%` }} />
-            </div>
-          )}
         </div>
 
-        {/* Futer — nom markazda, ostida oxirgi kiriş (studiya oxirgi marta qaçon onlayn bölgan) */}
-        <div className="space-y-1.5 px-1.5 pb-1 pt-2.5">
+        {/* Futer — nom markazda, ostida oxirgi kirish (yashil plashka) */}
+        <div className="space-y-2 px-1.5 pb-1 pt-2.5">
           <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug">{s.name}</p>
-          <div className="flex items-center justify-center gap-1 text-xs text-[var(--muted)]" title={t("contractors.lastOnline")}>
-            <IconClock className="size-3.5 shrink-0" />
-            <span className="truncate">{s.lastLoginAt ? formatDate(s.lastLoginAt, locale) : t("contractors.neverOnline")}</span>
+          <div className="flex justify-center">
+            {s.lastOnlineLabel ? (
+              <StatusTag tone="green" size="sm">{s.lastOnlineLabel}</StatusTag>
+            ) : (
+              <StatusTag tone="muted" size="sm">{t("contractors.neverOnline")}</StatusTag>
+            )}
           </div>
         </div>
       </Link>

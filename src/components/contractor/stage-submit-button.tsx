@@ -16,10 +16,12 @@ export function StageSubmitButton({
   stageId,
   reviewStatus,
   fullWidth = false,
+  size = "lg",
 }: {
   stageId: string;
   reviewStatus: string;
   fullWidth?: boolean;
+  size?: "default" | "lg";
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -50,7 +52,7 @@ export function StageSubmitButton({
   }
 
   return (
-    <Button onClick={onClick} disabled={pending} size="lg" className={fullWidth ? "w-full" : undefined}>
+    <Button onClick={onClick} disabled={pending} size={size} className={fullWidth ? "w-full" : undefined}>
       {isResubmit ? <Refresh className="size-4" /> : <Send className="size-4" />}
       {isResubmit ? t("review.resubmit") : t("review.submit")}
     </Button>

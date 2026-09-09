@@ -4,9 +4,9 @@ import { IconStarFilled as Star, IconMail as Mail, IconPhone as Phone, IconClock
 import { auth } from "@/lib/auth";
 import { BackButton } from "@/components/ui/back-button";
 import { Card, CardContent } from "@/components/ui/card";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { StatusTag } from "@/components/ui/status-tag";
 import { SmoothImage } from "@/components/ui/smooth-image";
-import { formatDate } from "@/lib/dates";
+import { timeAgo } from "@/lib/dates";
 import {
   getContractorDetail,
   getContractorReviewProjects,
@@ -59,8 +59,6 @@ export default async function ContractorDetailPage({
 
   let chatTotal = 0;
   for (const r of msgCounts) chatTotal += Number(r.cnt);
-  const statusTone: StatusTone = company.status === "approved" ? "green" : company.status === "rejected" ? "red" : "amber";
-
   return (
     <div className="space-y-5 stagger-children">
       <BackButton fallbackHref="/contractors" />
@@ -79,7 +77,6 @@ export default async function ContractorDetailPage({
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">{company.name}</h1>
-                <StatusTag tone={statusTone} size="lg">{t(`status.${company.status}` as "status.pending")}</StatusTag>
                 {company.rating && (
                   <StatusTag tone="amber" size="lg"><Star className="size-4" />{Number(company.rating).toFixed(1)}</StatusTag>
                 )}
@@ -101,7 +98,7 @@ export default async function ContractorDetailPage({
           <div className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[var(--surface-2)] px-3 py-2 text-sm">
             <Clock className="size-4 text-[var(--muted)]" />
             <span className="text-[var(--muted)]">{t("contractors.lastOnline")}:</span>
-            <span className="font-semibold">{lastLoginAt ? formatDate(lastLoginAt as Date, locale) : t("contractors.neverOnline")}</span>
+            <span className="font-semibold">{lastLoginAt ? timeAgo(lastLoginAt as Date, locale) : t("contractors.neverOnline")}</span>
           </div>
         </CardContent>
       </Card>
