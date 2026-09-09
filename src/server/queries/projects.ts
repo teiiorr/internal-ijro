@@ -676,6 +676,8 @@ export async function getProjectChannels(projectId: string) {
       replyToContent: replyMsg.content,
       replyToUserName: replyUser.fullName,
       stageId: projectMessages.stageId,
+      readByCuratorAt: projectMessages.readByCuratorAt,
+      readByContractorAt: projectMessages.readByContractorAt,
     })
     .from(projectMessages)
     .innerJoin(users, eq(users.id, projectMessages.userId))

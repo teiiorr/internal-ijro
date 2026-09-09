@@ -1,9 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconCalendarClock as CalendarClock, IconArrowRight as ArrowRight, IconCircleCheck as CircleCheck, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
+import { IconArrowRight as ArrowRight, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
-import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { externalCompanies, projectStages, stageDocuments } from "@/lib/db/schema";
@@ -18,8 +17,6 @@ import { MilestonesList } from "@/components/projects/milestones-list";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
 import { StudioDocuments } from "@/components/contractor/studio-documents";
-import { StudioStageUpload } from "@/components/contractor/studio-stage-upload";
-import { StageSubmitButton } from "@/components/contractor/stage-submit-button";
 import { derivedStatus } from "@/lib/projects/progress";
 import { formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
@@ -57,7 +54,6 @@ export default async function ContractorProjectPage({ params }: { params: Promis
       : status === "in_progress" ? "amber"
       : status === "on_hold" ? "red"
       : "muted";
-    const activeStage = sp.stages.find((s) => s.status === "active");
 
     const docs = await db
       .select({
@@ -89,53 +85,6 @@ export default async function ContractorProjectPage({ params }: { params: Promis
             <h1 className="min-w-0 flex-1 text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{sp.project.name}</h1>
           </div>
         </div>
-
-        {/* HERO — eng muhim narsa: faol bosqich + şu yerning özida topşiriş */}
-        {activeStage ? (
-          <Card className="border-[var(--warning)]/45">
-            <CardContent className="space-y-4 p-5 sm:p-6">
-              <div className="flex flex-wrap items-center gap-2">
-                <StatusTag tone="amber" size="sm">{t("projects.stagePath.currentStage")}</StatusTag>
-                <span className="text-xs font-medium tabular-nums text-[var(--muted)]">
-                  {t("projects.stagePath.stageOf", { n: activeStage.orderIndex + 1, total: sp.stages.length })}
-                </span>
-                {/* Topşiriş holati (faqat ma'noli holatlar; "sizning navbatingiz" körsatilmaydi) */}
-                {activeStage.reviewStatus === "submitted" ? (
-                  <StatusTag tone="muted" size="sm">{t("review.status.submitted")}</StatusTag>
-                ) : activeStage.reviewStatus === "changes_requested" ? (
-                  <StatusTag tone="red" size="sm">{t("review.status.changes_requested")}</StatusTag>
-                ) : null}
-              </div>
-              <h2 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">{activeStage.name}</h2>
-              {activeStage.plannedDeadline && (
-                <div className="flex flex-wrap items-center gap-2 text-sm">
-                  <CalendarClock className="size-4 shrink-0 text-[var(--muted)]" />
-                  <span className="font-semibold">{formatDate(activeStage.plannedDeadline, locale)}</span>
-                  <DeadlineCountdown deadline={activeStage.plannedDeadline} />
-                </div>
-              )}
-              {activeStage.reviewStatus === "changes_requested" && activeStage.reviewNote && (
-                <div className="rounded-2xl border border-[var(--danger)]/40 bg-[var(--danger)]/8 p-3.5 text-sm">
-                  <p className="mb-1 font-semibold text-[var(--danger)]">{t("review.changesRequestedTitle")}</p>
-                  <p className="whitespace-pre-wrap leading-relaxed text-[var(--foreground)]">{activeStage.reviewNote}</p>
-                </div>
-              )}
-              {/* Ikki amal — çapda fayl qöşiş, öngda körikka yuboriş (asosiy, kök). Uzun
-                  "bosqiçni ochiş" tugmasi olib taşlandi — bu sahifaning özi bosqiç sahifasi. */}
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <StudioStageUpload projectId={id} stageId={activeStage.id} maxBytes={maxBytes} size="default" label={t("review.addFile")} variant="outline" />
-                <StageSubmitButton stageId={activeStage.id} reviewStatus={activeStage.reviewStatus} size="default" />
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="flex items-center gap-3 p-5">
-              {status === "completed" && <CircleCheck className="size-5 shrink-0 text-[var(--success)]" />}
-              <StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Qayerdaman — bosqichlar körsatkichi */}
         <Card>

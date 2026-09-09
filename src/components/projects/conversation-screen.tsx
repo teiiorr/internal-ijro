@@ -26,6 +26,8 @@ type Msg = {
   replyToId?: string | null;
   replyToContent?: string | null;
   replyToUserName?: string | null;
+  readByCuratorAt?: Date | string | null;
+  readByContractorAt?: Date | string | null;
 };
 export type Member = { id: string; name: string; role: string; avatarUrl: string | null };
 /** Bir suhbat kanali: umumiy (stageId=null) yoki bitta bosqiç. */
@@ -51,6 +53,7 @@ export function ConversationScreen({
   maxBytes,
   readOnly = false,
   canModerate = false,
+  viewerIsContractor = false,
 }: {
   title: string;
   avatarUrl?: string | null;
@@ -65,6 +68,7 @@ export function ConversationScreen({
   maxBytes?: number;
   readOnly?: boolean;
   canModerate?: boolean;
+  viewerIsContractor?: boolean;
 }) {
   const t = useTranslations();
   const [mounted, setMounted] = useState(false);
@@ -164,6 +168,7 @@ export function ConversationScreen({
           fill
           readOnly={readOnly}
           canModerate={canModerate}
+          viewerIsContractor={viewerIsContractor}
           projectId={projectId}
           stageId={selected.stageId}
           messages={selected.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))}

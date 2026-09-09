@@ -14,6 +14,8 @@ import {
   IconPencil as Pencil,
   IconTrash as Trash,
   IconCopy as Copy,
+  IconCheck as Check,
+  IconChecks as Checks,
 } from "@tabler/icons-react";
 import { compressImage } from "@/lib/images/compress";
 import { toast } from "sonner";
@@ -32,6 +34,10 @@ type Msg = {
   replyToId?: string | null;
   replyToContent?: string | null;
   replyToUserName?: string | null;
+  // Telegram uslubidagi tasdiq uçun: qarama-qarşi tomon xabarni öqiganda örnatiladi.
+  // undefined bölsa — manba öqiş ma'lumotini bermaydi, belgisiz körsatiladi.
+  readByCuratorAt?: Date | string | null;
+  readByContractorAt?: Date | string | null;
 };
 
 function humanSize(bytes: number): string {
@@ -76,6 +82,7 @@ function MessageRow({
   isOptimistic,
   locale,
   readOnly,
+  viewerIsContractor,
   onReply,
   onMenu,
 }: {
@@ -85,6 +92,7 @@ function MessageRow({
   isOptimistic: boolean;
   locale: string;
   readOnly: boolean;
+  viewerIsContractor: boolean;
   onReply: (m: Msg) => void;
   onMenu: (m: Msg) => void;
 }) {
@@ -184,8 +192,14 @@ function MessageRow({
               </div>
             )}
             {m.content.trim() && <p className="whitespace-pre-wrap text-center">{m.content}</p>}
-            <p className={`mt-0.5 text-center text-[10px] leading-none ${mine ? "text-white/55" : "text-[var(--muted)]"}`}>
-              {m.editedAt ? "✎ " : ""}{isOptimistic ? "..." : timeOnly(m.createdAt, locale)}
+            <p className={`mt-0.5 inline-flex items-center justify-center gap-1 text-[10px] leading-none ${mine ? "text-white/55" : "text-[var(--muted)]"}`}>
+              <span>{m.editedAt ? "✎ " : ""}{isOptimistic ? "..." : timeOnly(m.createdAt, locale)}</span>
+              {/* Telegram uslubidagi tasdiq — faqat öz xabarlarimda, manba öqiş ma'lumotini bergan bölsa */}
+              {mine && !isOptimistic && (m.readByCuratorAt !== undefined || m.readByContractorAt !== undefined) && (
+                (viewerIsContractor ? !!m.readByCuratorAt : !!m.readByContractorAt)
+                  ? <Checks className="size-3.5 shrink-0 text-[#4fc3f7]" aria-label="ko'rildi" />
+                  : <Check className="size-3 shrink-0 text-white/55" aria-label="yuborildi" />
+              )}
             </p>
           </div>
         </div>
@@ -207,6 +221,7 @@ export function ProjectChat({
   fill = false,
   readOnly = false,
   canModerate = false,
+  viewerIsContractor = false,
 }: {
   projectId: string;
   stageId?: string | null;
@@ -220,6 +235,8 @@ export function ProjectChat({
   readOnly?: boolean;
   /** Egasi/muharrir — istalgan xabarni öçira oladi (nafaqat özinikini). */
   canModerate?: boolean;
+  /** Köruvçi studiyami (kontragent)? Tasdiq belgisi (bir/ikki quş) uçun kerak. */
+  viewerIsContractor?: boolean;
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -371,6 +388,7 @@ export function ProjectChat({
                 isOptimistic={m.id.startsWith("optimistic-")}
                 locale={locale}
                 readOnly={readOnly}
+                viewerIsContractor={viewerIsContractor}
                 onReply={startReply}
                 onMenu={setMenuFor}
               />

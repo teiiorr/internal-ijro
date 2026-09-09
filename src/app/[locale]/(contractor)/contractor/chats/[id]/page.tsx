@@ -49,6 +49,7 @@ export default async function ContractorChatPage({ params }: { params: Promise<{
       currentUserId={session.user.id}
       currentUserName={session.user.fullName}
       maxBytes={maxBytes}
+      viewerIsContractor
     />
   );
 }
