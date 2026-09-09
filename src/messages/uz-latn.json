@@ -6,11 +6,11 @@
   },
   "developer": {
     "title": "Dastur muallifi",
-    "p1": "Ushbu platforma — dastlabki g'oyadan so'nggi ijrogacha — to'la-to'kis Bahtiyor Murodxo'jayev tomonidan yaratilgan. Har bir chizgi, har bir amal va butun tuzilma uning zahmati va bilimi mahsulidir.",
-    "p2": "Loyiha O'zbekiston Respublikasi qonunchiligiga muvofiq intellektual mulk sifatida rasman ro'yxatdan o'tkazilgan va davlat himoyasi ostidadir.",
-    "p3": "Dasturning biror bo'lagini — kodi, tuzilishi yoki g'oyasini — muallifning yozma ruxsatisiz nusxalash, tarqatish, o'zgartirish yoxud tijorat maqsadida ishlatish qat'iyan man etiladi. Aks holda amaldagi qonunchilikka muvofiq javobgarlik yuzaga keladi.",
-    "lex": "Batafsil — Lex.uz",
-    "contacts": "Takliflar va yaxshilanishlar yuzasidan bog'laning:"
+    "p1": "Bu platforma ilk g'oyadan to bugungi ko'rinishigacha butunlay Bahtiyor Murodxo'jayev tomonidan yaratilgan. Uning har bir funktsiyasi, har bir chizig'i va butun arxitekturasida muallifning fikri, mehnati va ilhomi mujassam.",
+    "p2": "Ushbu asar O'zbekiston Respublikasi qonunchiligiga muvofiq intellektual mulk sifatida rasman ro'yxatdan o'tkazilgan va davlat himoyasi ostida turadi.",
+    "p3": "Dasturning kodi, arxitekturasi yoki g'oyasi kabi biror bo'lagini muallifning yozma ruxsatisiz nusxalash, tarqatish, o'zgartirish yoki tijorat maqsadida ishlatish qat'iyan man etiladi. Aks holda amaldagi qonunchilikka muvofiq javobgarlik yuzaga keladi.",
+    "lex": "Batafsil: Lex.uz",
+    "contacts": "Har bir taklif va fikringiz muallif uchun qadrli. Bemalol bog'laning:"
   },
   "offline": {
     "title": "Internet aloqasi yo'q",
