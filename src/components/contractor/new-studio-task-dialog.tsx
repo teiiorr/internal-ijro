@@ -70,11 +70,11 @@ export function NewStudioTaskDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm"><ClipboardPlus className="size-4" />{t("tasks.studioTask.new")}</Button>
+        <Button size="sm" className="gap-1.5"><ClipboardPlus className="size-4" />{t("tasks.studioTask.new")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader><DialogTitle>{t("tasks.studioTask.dialogTitle")}</DialogTitle></DialogHeader>
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} className="min-w-0 space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="st-title">{t("tasks.fields.title")}</Label>
             <Input id="st-title" name="title" required minLength={2} maxLength={500} autoComplete="off" />
@@ -100,7 +100,7 @@ export function NewStudioTaskDialog({
             </div>
           )}
           <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
+            <div className="min-w-0 space-y-1.5">
               <Label>{t("tasks.fields.priority")}</Label>
               <Select value={priority} onValueChange={setPriority}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -111,7 +111,7 @@ export function NewStudioTaskDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
+            <div className="min-w-0 space-y-1.5">
               <Label htmlFor="st-deadline">{t("tasks.fields.deadline")}</Label>
               <Input id="st-deadline" name="deadline" type="date" />
             </div>

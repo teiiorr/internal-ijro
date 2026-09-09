@@ -84,6 +84,12 @@ export function StudioProjectsList({
 
             {isOpen && (
               <div className="space-y-4 border-t border-[var(--border)] p-4">
+                {/* Studiyaga vazifa beriş — eng ustda, qulay joyda (bosqiç böyiça, standart joriy bosqiç) */}
+                {isEditor && (
+                  <div className="flex justify-end">
+                    <NewStudioTaskDialog projectId={p.id} stages={p.stages} defaultStageId={a?.id ?? null} />
+                  </div>
+                )}
                 {a ? (
                   <>
                     {/* özgartiriş sörovi izohi (xodim oxirgi marta nimani söraganini körsatadi) */}
@@ -112,13 +118,6 @@ export function StudioProjectsList({
                   </>
                 ) : (
                   <p className="text-sm text-[var(--muted)]">{t("review.status.accepted")}</p>
-                )}
-
-                {/* Studiyaga vazifa beriş (bosqiç böyiça) — faqat muharrirlar uçun */}
-                {isEditor && (
-                  <div className="flex justify-end border-t border-[var(--border)] pt-3">
-                    <NewStudioTaskDialog projectId={p.id} stages={p.stages} defaultStageId={a?.id ?? null} />
-                  </div>
                 )}
               </div>
             )}
