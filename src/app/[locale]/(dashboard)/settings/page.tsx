@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { notificationSettings, users } from "@/lib/db/schema";
 import { SettingsTabs } from "@/components/settings/settings-tabs";
+import { DeveloperCard } from "@/components/settings/developer-card";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -24,6 +25,7 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold tracking-tight">{t("settings.pageTitle")}</h1>
+      <DeveloperCard />
       <SettingsTabs
         init={{
           languagePreference: me.languagePreference,

@@ -4,6 +4,14 @@
     "tagline": "Vazifalar, loyihalar va kadrlarni boşqariş",
     "organizationName": "Bolalar Kontentini Rivojlantiriş Markazi"
   },
+  "developer": {
+    "title": "Dastur muallifi",
+    "p1": "Uşbu platforma — dastlabki ğoyadan sönggi ijrogaça — töla-tökis Bahtiyor Murodxöjayev tomonidan yaratilgan. Har bir çizgi, har bir amal va butun tuzilma uning zahmati va bilimi mahsulidir.",
+    "p2": "Loyiha Özbekiston Respublikasi qonunçiligiga muvofiq intellektual mulk sifatida rasman röyxatdan ötkazilgan va davlat himoyasi ostidadir.",
+    "p3": "Dasturning biror bölagini — kodi, tuzilişi yoki ğoyasini — muallifning yozma ruxsatisiz nusxalaş, tarqatiş, özgartiriş yoxud tijorat maqsadida işlatiş qat'iyan man etiladi. Aks holda amaldagi qonunçilikka muvofiq javobgarlik yuzaga keladi.",
+    "lex": "Batafsil — Lex.uz",
+    "contacts": "Takliflar va yaxşilanişlar yuzasidan boğlaning:"
+  },
   "offline": {
     "title": "Internet aloqasi yöq",
     "subtitle": "Tarmoq ulanişi yöqoldi. Wi-Fi yoki mobil internetni tekşirib, qayta urinib köring.",

@@ -10,6 +10,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { formatDate } from "@/lib/dates";
+import { DeveloperCard } from "@/components/settings/developer-card";
 
 export default async function ContractorProfilePage() {
   const session = await auth();
@@ -82,6 +83,9 @@ export default async function ContractorProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Dastur muallifi haqida */}
+      <DeveloperCard />
     </div>
   );
 }
