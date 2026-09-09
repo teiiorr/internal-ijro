@@ -411,12 +411,12 @@
       "uploadError": "Faylni yuklashda xatolik",
       "reply": "Javob berish",
       "edit": "Tahrirlash",
-      "delete": "Oʻchirish",
+      "delete": "O'chirish",
       "copy": "Nusxa olish",
       "copied": "Nusxa olindi",
       "edited": "tahrirlandi",
       "editing": "Tahrirlash",
-      "deletePrompt": "Xabar oʻchirilsinmi?"
+      "deletePrompt": "Xabar o'chirilsinmi?"
     },
     "studioFiles": {
       "title": "Studiya hujjatlari",
@@ -795,9 +795,9 @@
     "reviewQueue": {
       "title": "Sizni kutmoqda",
       "submitted": "yuborildi",
-      "count": "ta koʻrib chiqish"
+      "count": "ta ko'rib chiqish"
     },
-    "inReview": "Koʻrib chiqish"
+    "inReview": "Ko'rib chiqish"
   },
   "reports": {
     "standupTitle": "Kunlik standup",
@@ -944,7 +944,7 @@
       "specialization": "Mutaxassisligi",
       "noCompany": "Bog'langan kompaniya yo'q.",
       "contact": "Aloqa",
-      "appearance": "Koʻrinish",
+      "appearance": "Ko'rinish",
       "theme": "Mavzu",
       "language": "Til",
       "nda": "NDA"
@@ -965,8 +965,8 @@
       "empty": "Hozircha loyiha chatlari yo'q",
       "curator": "Nazoratchi mas'ul",
       "noCurator": "Nazoratchi mas'ul tayinlanmagan",
-      "noMessages": "Xabar yo’q",
-      "subtitle": "Loyihalar bo’yicha nazoratchi mas'ul bilan yozishing",
+      "noMessages": "Xabar yo'q",
+      "subtitle": "Loyihalar bo'yicha nazoratchi mas'ul bilan yozishing",
       "openProject": "Loyihani ochish"
     },
     "submitWork": "Ishni topshirish",
@@ -1257,32 +1257,32 @@
   "review": {
     "turn": {
       "studio": "Sizning navbatingiz",
-      "bkrm": "BKRM koʻrib chiqmoqda",
+      "bkrm": "BKRM ko'rib chiqmoqda",
       "studioStaff": "Studiyada",
-      "bkrmStaff": "Sizda — koʻrib chiqing"
+      "bkrmStaff": "Sizda — ko'rib chiqing"
     },
     "status": {
       "in_progress": "Ishlanmoqda",
-      "submitted": "Koʻrib chiqilmoqda",
-      "changes_requested": "Oʻzgartirish soʻraldi",
+      "submitted": "Ko'rib chiqilmoqda",
+      "changes_requested": "O'zgartirish so'raldi",
       "accepted": "Qabul qilindi"
     },
-    "submit": "Koʻrib chiqishga yuborish",
+    "submit": "Ko'rib chiqishga yuborish",
     "resubmit": "Qayta yuborish",
-    "submittedWait": "Yuborildi — BKRM koʻrib chiqmoqda",
-    "addFile": "Fayl qoʻshish",
+    "submittedWait": "Yuborildi — BKRM ko'rib chiqmoqda",
+    "addFile": "Fayl qo'shish",
     "requirements": "Talablar",
-    "noRequirements": "Talablar koʻrsatilmagan",
+    "noRequirements": "Talablar ko'rsatilmagan",
     "accept": "Qabul qilish va davom etish",
-    "requestChanges": "Oʻzgartirish soʻrash",
+    "requestChanges": "O'zgartirish so'rash",
     "notePlaceholder": "Nima tuzatish kerak?",
-    "awaitingReview": "Studiya ishni yubordi — koʻrib chiqing",
+    "awaitingReview": "Studiya ishni yubordi — ko'rib chiqing",
     "needsYou": "Sizdan kutilmoqda",
     "nothingToSubmit": "Avval fayl yuklang",
-    "submitSuccess": "Koʻrib chiqishga yuborildi",
-    "changesSent": "Oʻzgartirish soʻraldi",
+    "submitSuccess": "Ko'rib chiqishga yuborildi",
+    "changesSent": "O'zgartirish so'raldi",
     "cancel": "Bekor qilish",
-    "changesRequestedTitle": "Oʻzgartirish soʻraldi"
+    "changesRequestedTitle": "O'zgartirish so'raldi"
   },
   "conversation": {
     "participants": "ishtirokchi",
