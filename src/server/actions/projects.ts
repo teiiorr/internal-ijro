@@ -898,43 +898,6 @@ export async function updateContractorNotes(companyId: string, notes: string) {
   revalidatePath(`/contractors/${companyId}`);
 }
 
-export async function loadStageMessagesForProject(projectId: string) {
-  await requireUser();
-  const stageRows = await db
-    .select({ id: projectStages.id })
-    .from(projectStages)
-    .where(eq(projectStages.projectId, projectId));
-  const stageIds = stageRows.map((s) => s.id);
-
-  const allMsgs = await db
-    .select({
-      id: projectMessages.id,
-      content: projectMessages.content,
-      createdAt: projectMessages.createdAt,
-      userId: projectMessages.userId,
-      userName: users.fullName,
-      attachments: projectMessages.attachments,
-      stageId: projectMessages.stageId,
-    })
-    .from(projectMessages)
-    .innerJoin(users, eq(users.id, projectMessages.userId))
-    .where(eq(projectMessages.projectId, projectId))
-    .orderBy(projectMessages.createdAt);
-
-  const byStage: Record<string, typeof allMsgs> = {};
-  const general: typeof allMsgs = [];
-
-  for (const m of allMsgs) {
-    if (m.stageId) {
-      (byStage[m.stageId] ??= []).push(m);
-    } else {
-      general.push(m);
-    }
-  }
-
-  return { byStage, general };
-}
-
 // --- Studiya CRUD ---
 
 export async function renameContractor(companyId: string, name: string) {

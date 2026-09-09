@@ -52,7 +52,6 @@ export function NormativeDocuments({
   const [linkTitle, setLinkTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const uncategorized = t("projects.stageDocs.uncategorized");
-  const dlId = "normative-folders";
 
   const groups = useMemo(() => {
     const map = new Map<string, Doc[]>();

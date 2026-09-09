@@ -6,7 +6,6 @@ import {
   taskAssignees,
   users,
   projects,
-  projectStages,
   departments,
   taskChecklistItems,
   taskComments,
@@ -14,7 +13,7 @@ import {
   taskDependencies,
   type Position,
 } from "@/lib/db/schema";
-import { TASK_STATUSES, type TaskStatus, type TaskPriority } from "@/lib/permissions/tasks";
+import { type TaskStatus, type TaskPriority } from "@/lib/permissions/tasks";
 
 export type TaskListFilters = {
   search?: string | null;
@@ -163,32 +162,6 @@ export async function getTask(id: string) {
     attachments,
     dependencies: deps,
   };
-}
-
-export async function getTaskCountsByStatus(actorId: string, actorPosition: Position): Promise<Record<TaskStatus, number>> {
-  const base = ["mutaxassis"].includes(actorPosition)
-    ? eq(tasks.assignedToUserId, actorId)
-    : undefined;
-  const rows = await db
-    .select({ status: tasks.status, c: sql<number>`count(*)::int` })
-    .from(tasks)
-    .where(base)
-    .groupBy(tasks.status);
-  const out: Record<string, number> = {};
-  for (const s of TASK_STATUSES) out[s] = 0;
-  for (const r of rows) out[r.status] = Number(r.c);
-  return out as Record<TaskStatus, number>;
-}
-
-export async function getOverdueTaskCount(actorId: string, actorPosition: Position): Promise<number> {
-  const base = ["mutaxassis"].includes(actorPosition)
-    ? eq(tasks.assignedToUserId, actorId)
-    : undefined;
-  const where = base
-    ? and(base, sql`${tasks.deadline} < now()`, sql`${tasks.status} not in ('completed','rejected')`)
-    : and(sql`${tasks.deadline} < now()`, sql`${tasks.status} not in ('completed','rejected')`);
-  const rows = await db.select({ c: sql<number>`count(*)::int` }).from(tasks).where(where);
-  return Number(rows[0]?.c ?? 0);
 }
 
 // Ijroçi sifatida hech qaçon körinmasligi kerak bölgan aniq rahbarlar (ism böyiça,

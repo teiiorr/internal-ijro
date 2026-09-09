@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   projects,
@@ -301,67 +301,6 @@ export async function getStage(stageId: string, locale: string) {
   };
 }
 
-export type StageProjectFilters = {
-  typeId?: string | null;
-  status?: string | null;
-  responsibleUserId?: string | null;
-  from?: string | null;
-  to?: string | null;
-  payment?: "paid" | "unpaid" | null;
-  overdue?: boolean | null;
-};
-
-/** Turi belgilangan loyihalar röyxati, loyihalararo filtrlar bilan (tur/holat/mas'ul/sana/tölangan/muddati ötgan). */
-export async function listStageProjects(f: StageProjectFilters, locale: string) {
-  const conds = [sql`${projects.projectTypeId} is not null`];
-  if (f.typeId) conds.push(sql`${projects.projectTypeId} = ${f.typeId}`);
-  if (f.status) conds.push(sql`${projects.status} = ${f.status}`);
-  if (f.responsibleUserId)
-    conds.push(sql`exists (select 1 from ${projectStages} s where s.project_id = ${projects.id} and s.responsible_user_id = ${f.responsibleUserId})`);
-  if (f.from) conds.push(gte(projects.deadline, f.from));
-  if (f.to) conds.push(lte(projects.deadline, f.to));
-  if (f.payment === "unpaid")
-    conds.push(sql`exists (select 1 from ${stagePayments} sp join ${projectStages} s on s.id = sp.stage_id where s.project_id = ${projects.id} and sp.status <> 'paid')`);
-  if (f.payment === "paid")
-    conds.push(sql`not exists (select 1 from ${stagePayments} sp join ${projectStages} s on s.id = sp.stage_id where s.project_id = ${projects.id} and sp.status <> 'paid')`);
-  if (f.overdue)
-    conds.push(sql`exists (select 1 from ${projectStages} s where s.project_id = ${projects.id} and s.status = 'active' and s.planned_deadline < now()::date)`);
-
-  const rows = await db
-    .select({
-      id: projects.id,
-      name: projects.name,
-      status: projects.status,
-      statusOverride: projects.statusOverride,
-      progressPercentage: projects.progressPercentage,
-      deadline: projects.deadline,
-      createdAt: projects.createdAt,
-      curatorName: users.fullName,
-      typeUz: projectTypes.nameUzLatn,
-      typeCy: projectTypes.nameUzCyrl,
-      typeRu: projectTypes.nameRu,
-      // faol bosqiç xulosasi
-      activeStageName: sql<string | null>`(
-        select coalesce(ti.name_uz_latn, s.name) from ${projectStages} s
-        left join ${stageTemplateItems} ti on ti.id = s.template_item_id
-        where s.project_id = ${projects.id} and s.status = 'active' order by s.order_index limit 1)`,
-      activeStageDeadline: sql<string | null>`(
-        select s.planned_deadline from ${projectStages} s
-        where s.project_id = ${projects.id} and s.status = 'active' order by s.order_index limit 1)`,
-    })
-    .from(projects)
-    .leftJoin(users, eq(users.id, projects.curatorUserId))
-    .leftJoin(projectTypes, eq(projectTypes.id, projects.projectTypeId))
-    .where(and(...conds))
-    .orderBy(desc(projects.createdAt))
-    .limit(200);
-
-  return rows.map((r) => ({
-    ...r,
-    typeName: localizedTypeName({ nameUzLatn: r.typeUz ?? "", nameUzCyrl: r.typeCy ?? "", nameRu: r.typeRu ?? "" }, locale),
-  }));
-}
-
 /** 9 ta faol tur, lokallaştirilgan — yaratiş formasi va filtr paneli uçun. */
 /** Loyiha turi böyiça guruhlangan bosqiç nomi variantlari, şunda röyxat filtri
  *  "bosqiç" ochilma röyxatini tanlangan tur bilan çeklaydi. value = nusxa nameUzLatn
@@ -392,31 +331,6 @@ export async function listStageOptionsByType(locale: string): Promise<Record<str
 export async function listProjectTypes(locale: string) {
   const rows = await db.select().from(projectTypes).where(eq(projectTypes.isActive, true)).orderBy(asc(projectTypes.orderIndex));
   return rows.map((r) => ({ id: r.id, code: r.code, name: localizedTypeName(r, locale) }));
-}
-
-/**
- * Barcha şablonlar böyiça noyob bosqiç nomlari, lokallaştirilgan — "joriy holat
- * böyiça filtr" ochilma röyxatini ta'minlaydi (masalan, "Adabiy ssenariy", "Postprodakshn").
- * `value` — bu Uz-Latn nomi, u project_stages.name (nusxa) bilan mos keladi.
- */
-export async function listStageNameOptions(locale: string) {
-  const rows = await db
-    .selectDistinct({
-      uz: stageTemplateItems.nameUzLatn,
-      cy: stageTemplateItems.nameUzCyrl,
-      ru: stageTemplateItems.nameRu,
-      order: stageTemplateItems.orderIndex,
-    })
-    .from(stageTemplateItems)
-    .orderBy(asc(stageTemplateItems.orderIndex), asc(stageTemplateItems.nameUzLatn));
-  const seen = new Set<string>();
-  const out: { value: string; name: string }[] = [];
-  for (const r of rows) {
-    if (seen.has(r.uz)) continue;
-    seen.add(r.uz);
-    out.push({ value: r.uz, name: localizedTypeName({ nameUzLatn: r.uz, nameUzCyrl: r.cy, nameRu: r.ru }, locale) });
-  }
-  return out;
 }
 
 /**

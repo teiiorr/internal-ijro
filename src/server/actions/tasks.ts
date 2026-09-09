@@ -550,12 +550,4 @@ export async function reviewAssigneeResponse(
 }
 
 // Ijroçi özini "in_progress" (boşladi) deb belgilaydi
-export async function setMyAssigneeStatus(taskId: string, next: "in_progress" | "todo") {
-  const me = await requireUser();
-  await db
-    .update(taskAssignees)
-    .set({ status: next, updatedAt: new Date() })
-    .where(and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, me.id)));
-  revalidatePath(`/tasks/${taskId}`);
-}
 

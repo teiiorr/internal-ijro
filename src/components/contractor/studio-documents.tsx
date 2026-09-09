@@ -57,7 +57,6 @@ export function StudioDocuments({
   const [uploading, setUploading] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
   const uncategorized = t("projects.stageDocs.uncategorized");
-  const dlId = `sfolders-${projectId}`;
 
   const groups = useMemo(() => {
     const map = new Map<string, Doc[]>();

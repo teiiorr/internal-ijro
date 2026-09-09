@@ -220,11 +220,6 @@ export async function listContractorsWithProjects() {
   }));
 }
 
-export async function getContractor(id: string) {
-  const r = await db.select().from(externalCompanies).where(eq(externalCompanies.id, id)).limit(1);
-  return r[0] ?? null;
-}
-
 /**
  * Studiya uçun Telegram uslubidagi çatlar röyxati: har bir loyiha uçun bitta suhbat,
  * har biri loyiha kuratori (biz tomon — ular gaplaşadigan odam) va oxirgi xabar bilan.

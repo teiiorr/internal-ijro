@@ -55,7 +55,6 @@ export function StageDocuments({
   const [uploading, setUploading] = useState(false);
   const [pickerKey, setPickerKey] = useState(0); // muvaffaqiyatli qöşilgandan söng FileInput ni tozalash uçun oşiramiz
   const uncategorized = t("projects.stageDocs.uncategorized");
-  const dlId = `folders-${stageId}`;
 
   // Hujjatlarni papkalar böyicha guruhlaymiz: avval nomlangan papkalar A→Z, oxirida "kategoriyasiz" bölimi.
   const groups = useMemo(() => {

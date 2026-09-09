@@ -406,15 +406,6 @@ export async function setStageRequirements(stageId: string, requirements: string
 
 // ---------- maydon yangilagiçlar ----------
 
-export async function setStageResponsible(stageId: string, userId: string | null) {
-  const me = await requireProjectEditor();
-  const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-  if (!row) throw new Error("not_found");
-  await db.update(projectStages).set({ responsibleUserId: userId, updatedAt: new Date() }).where(eq(projectStages.id, stageId));
-  await logActivity({ userId: me.id, action: "stage.responsible_changed", entityType: "project_stage", entityId: stageId, newValue: { responsibleUserId: userId } });
-  stageLinks(row.projectId, stageId);
-}
-
 export async function setStageDeadline(stageId: string, date: string | null) {
   const me = await requireProjectEditor();
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
@@ -424,19 +415,6 @@ export async function setStageDeadline(stageId: string, date: string | null) {
     .set({ plannedDeadline: date, updatedAt: new Date(), reminderApproachingSentAt: null, reminderOverdueSentAt: null })
     .where(eq(projectStages.id, stageId));
   await logActivity({ userId: me.id, action: "stage.deadline_changed", entityType: "project_stage", entityId: stageId, newValue: { plannedDeadline: date } });
-  stageLinks(row.projectId, stageId);
-}
-
-export async function setStagePlannedAmount(stageId: string, amount: number | null) {
-  const me = await requireProjectEditor();
-  const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-  if (!row) throw new Error("not_found");
-  await db
-    .update(projectStages)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .set({ plannedAmount: amount != null ? (amount as any) : null, updatedAt: new Date() })
-    .where(eq(projectStages.id, stageId));
-  await logActivity({ userId: me.id, action: "stage.planned_amount_changed", entityType: "project_stage", entityId: stageId, newValue: { plannedAmount: amount } });
   stageLinks(row.projectId, stageId);
 }
 
