@@ -2,7 +2,8 @@
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useTransition } from "react";
-import { IconChevronDown as ChevronDown, IconSearch as Search } from "@tabler/icons-react";
+import { IconChevronDown as ChevronDown, IconSearch as Search, IconFilter as Filter } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
 // Havodor punktir uslubidagi element — fayl taşlash maydoni bilan bir xil uslubda.
 const FIELD =
@@ -62,6 +63,9 @@ export function ProjectsFilters({
   const searchParam = params.get("search") ?? "";
 
   const [search, setSearch] = useState(searchParam);
+  // Mobil'da barcha filtrlar bitta "Filtrlar" tugmasi ostiga yiğiladi.
+  const [open, setOpen] = useState(false);
+  const activeCount = [typeId, stage, payment, overdue ? "1" : "", sort && sort !== "created" ? sort : ""].filter(Boolean).length;
 
   function push(patch: Record<string, string | null>) {
     const next = new URLSearchParams(params.toString());
@@ -83,8 +87,9 @@ export function ProjectsFilters({
   const stageOpts = typeId ? stagesByType[typeId] ?? [] : [];
 
   return (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-      <div className="relative sm:col-span-3">
+    <div className="space-y-2">
+      {/* Qidiruv — doim körinadi */}
+      <div className="relative">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
         <input
           type="search"
@@ -95,8 +100,26 @@ export function ProjectsFilters({
         />
       </div>
 
-      {/* Tur tanlanganda bosqiç ham tozalanadi (variantlar turga boğliq). */}
-      <Sel value={typeId} onChange={(v) => push({ typeId: v || null, stage: null })}>
+      {/* Mobil'da bitta "Filtrlar" tugmasi — bosilganda barcha selektlar chiqadi */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`${FIELD} flex items-center justify-between sm:hidden`}
+      >
+        <span className="inline-flex items-center gap-2">
+          <Filter className="size-4 text-[var(--muted)]" />
+          {t("projects.filters.title")}
+          {activeCount > 0 && (
+            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--primary)] px-1.5 text-[11px] font-bold text-white tabular-nums">{activeCount}</span>
+          )}
+        </span>
+        <ChevronDown className={cn("size-4 text-[var(--muted)] transition-transform", open && "rotate-180")} />
+      </button>
+
+      {/* Selektlar: mobil'da yopiq bo'lsa yashiringan; sm+ da doim ko'rinadi (tör) */}
+      <div className={cn("grid grid-cols-1 gap-2 sm:grid-cols-3", !open && "hidden sm:grid")}>
+        {/* Tur tanlanganda bosqiç ham tozalanadi (variantlar turga boğliq). */}
+        <Sel value={typeId} onChange={(v) => push({ typeId: v || null, stage: null })}>
         <option value="">{t("projects.filters.allTypes")}</option>
         {types.map((pt) => (
           <option key={pt.id} value={pt.id}>{pt.name}</option>
@@ -137,6 +160,7 @@ export function ProjectsFilters({
         />
         {t("projects.filters.overdue")}
       </label>
+      </div>
     </div>
   );
 }
