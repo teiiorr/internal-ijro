@@ -474,7 +474,11 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
         type: "project.message",
         title: `${me.fullName} · ${prj.name}`,
         message: preview,
-        link: me.position === "kontragent" ? `/projects/${parsed.projectId}` : `/contractor/chats/${parsed.projectId}`,
+        // Studiya yozdi → xodim haqiqiy chat sahifasiga ötadi (/projects/[id] da chat yöq).
+        // Xodim yozdi → studiya öz chatiga ötadi.
+        link: me.position === "kontragent"
+          ? (prj.ec ? `/contractors/${prj.ec}/chat/${parsed.projectId}` : `/projects/${parsed.projectId}`)
+          : `/contractor/chats/${parsed.projectId}`,
         entityType: "project",
         entityId: parsed.projectId,
       });
@@ -606,12 +610,14 @@ export async function reviewDeliverable(deliverableId: string, status: "approved
   });
   const d = await db.select().from(deliverables).where(eq(deliverables.id, deliverableId)).limit(1);
   if (d.length > 0) {
+    // Havola topshiruvchi tomoniga mos: kontragent → /contractor/projects, xodim → /projects.
+    const [sub] = await db.select({ position: users.position }).from(users).where(eq(users.id, d[0].submittedByUserId)).limit(1);
     await notify({
       userIds: [d[0].submittedByUserId],
       type: "deliverable.reviewed",
       title: `Deliverable ${status}`,
       message: adminFeedback ?? "",
-      link: `/contractor/projects`,
+      link: sub?.position === "kontragent" ? `/contractor/projects` : `/projects`,
       entityType: "deliverable",
       entityId: deliverableId,
     });

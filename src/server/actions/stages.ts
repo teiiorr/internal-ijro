@@ -216,7 +216,7 @@ export async function completeStage(stageId: string) {
 export async function reopenStage(stageId: string) {
   const me = await requireProjectEditor();
 
-  const projectId = await db.transaction(async (tx) => {
+  const { projectId, startStageId } = await db.transaction(async (tx) => {
     const rows = await tx.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
     if (rows.length === 0) throw new Error("not_found");
     const stage = rows[0];
@@ -274,11 +274,27 @@ export async function reopenStage(stageId: string) {
       .set({ status: "planning", completedAt: null, updatedAt: now })
       .where(and(eq(projects.id, stage.projectId), eq(projects.status, "completed")));
 
-    return stage.projectId;
+    return { projectId: stage.projectId, startStageId: start.id };
   });
 
   await recalcProjectProgress(projectId);
   await logActivity({ userId: me.id, action: "stage.reopened", entityType: "project_stage", entityId: stageId });
+
+  // Studiyaga xabar beramiz — navbat yana ularga ötdi (acceptStage/requestStageChanges kabi).
+  const studioContactId = await resolveStudioContactId(projectId);
+  if (studioContactId) {
+    const [prj] = await db.select({ name: projects.name }).from(projects).where(eq(projects.id, projectId)).limit(1);
+    await notify({
+      userIds: [studioContactId],
+      type: "stage.changes_requested",
+      title: `${prj?.name}`,
+      message: "Bosqich qayta ochildi — sizning navbatingiz / Этап переоткрыт",
+      link: `/contractor/projects/${projectId}/stages/${startStageId}`,
+      entityType: "project_stage",
+      entityId: startStageId,
+    });
+  }
+
   stageLinks(projectId, stageId);
 }
 
@@ -313,7 +329,7 @@ export async function submitStageWork(stageId: string) {
   await logActivity({ userId: me.id, action: "stage.submitted", entityType: "project_stage", entityId: stageId, newValue: { name: stage.name } });
 
   // Kuratorlarga (bizning tomon) xabar beramiz — endi ularning navbati.
-  const [prj] = await db.select({ name: projects.name, curatorUserId: projects.curatorUserId }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
+  const [prj] = await db.select({ name: projects.name, curatorUserId: projects.curatorUserId, ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
   const recipients = new Set<string>();
   if (prj?.curatorUserId) recipients.add(prj.curatorUserId);
   try {
@@ -327,7 +343,8 @@ export async function submitStageWork(stageId: string) {
       type: "stage.submitted",
       title: `${prj?.name}: ${stage.name}`,
       message: "Studiya ishni ko'rib chiqishga yubordi / Студия отправила работу на проверку",
-      link: `/projects/${stage.projectId}/stages/${stageId}`,
+      // Studiyalar ish maydoniga ötadi (u yerda qabul qilish / o'zgartirish so'rash boshqaruvlari bor).
+      link: prj?.ec ? `/contractors/${prj.ec}?review=${stage.projectId}` : `/projects/${stage.projectId}/stages/${stageId}`,
       entityType: "project_stage",
       entityId: stageId,
     });

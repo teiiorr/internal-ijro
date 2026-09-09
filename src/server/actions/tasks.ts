@@ -200,12 +200,13 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
     type: "task.assigned",
     title: `${regNum}: ${parsed.title}`,
     message: "Sizga yangi vazifa berildi",
-    link: `/contractor/projects/${parsed.projectId}`,
+    // Studiya kontragent → öz Vazifalar sahifasidagi vazifaga bevosita ötadi.
+    link: `/contractor/tasks/${insertedId}`,
     entityType: "task",
     entityId: insertedId,
   });
 
-  revalidatePath(`/contractor/projects/${parsed.projectId}`);
+  revalidatePath(`/contractor/tasks`);
   revalidatePath("/contractors");
   return { id: insertedId };
 }
@@ -336,15 +337,21 @@ export async function addComment(input: z.infer<typeof commentSchema>) {
     }
     recipients.delete(me.id);
     if (recipients.size > 0) {
-      await notify({
-        userIds: Array.from(recipients),
-        type: "task.comment",
-        title: `Comment on: ${t[0].title}`,
-        message: parsed.content.slice(0, 280),
-        link: `/tasks/${parsed.taskId}`,
-        entityType: "task",
-        entityId: parsed.taskId,
-      });
+      // Izohlar — ichki (xodimlar) hamkorligi; studiya vazifa sahifasida izoh körinmaydi,
+      // shu bois kontragent qabul qiluvchilarni bildirishnomadan çiqaramiz (ölik havola bölmasin).
+      const recs = await db.select({ id: users.id, position: users.position }).from(users).where(inArray(users.id, Array.from(recipients)));
+      const staffRecipients = recs.filter((u) => u.position !== "kontragent").map((u) => u.id);
+      if (staffRecipients.length > 0) {
+        await notify({
+          userIds: staffRecipients,
+          type: "task.comment",
+          title: `Comment on: ${t[0].title}`,
+          message: parsed.content.slice(0, 280),
+          link: `/tasks/${parsed.taskId}`,
+          entityType: "task",
+          entityId: parsed.taskId,
+        });
+      }
     }
   }
   revalidatePath(`/tasks/${parsed.taskId}`);
@@ -525,16 +532,21 @@ export async function reviewAssigneeResponse(
     newValue: { assigneeUserId, feedback: feedback ?? null },
   });
 
+  // Bildirishnoma havolasi qabul qiluvchi tomoniga mos bölishi kerak: studiya (kontragent)
+  // ijrochi dashboard /tasks sahifasiga kira olmaydi (u yerdan qaytariladi).
+  const [asg] = await db.select({ position: users.position }).from(users).where(eq(users.id, assigneeUserId)).limit(1);
+  const reviewLink = asg?.position === "kontragent" ? `/contractor/tasks/${taskId}` : `/tasks/${taskId}`;
   await notify({
     userIds: [assigneeUserId],
     type: decision === "completed" ? "task.approved" : "task.rejected",
     title: `${t[0].title}`,
     message: decision === "completed" ? "Sizning javobingiz qabul qilindi." : feedback ?? "Sizning javobingiz rad etildi.",
-    link: `/tasks/${taskId}`,
+    link: reviewLink,
     entityType: "task",
     entityId: taskId,
   });
   revalidatePath(`/tasks/${taskId}`);
+  revalidatePath(`/contractor/tasks/${taskId}`);
 }
 
 // Ijroçi özini "in_progress" (boşladi) deb belgilaydi

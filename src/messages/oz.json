@@ -416,7 +416,8 @@
       "copied": "Nusxa olindi",
       "edited": "tahrirlandi",
       "editing": "Tahrirlaş",
-      "deletePrompt": "Xabar öçirilsinmi?"
+      "deletePrompt": "Xabar öçirilsinmi?",
+      "sendError": "Xabar yuborilmadi"
     },
     "studioFiles": {
       "title": "Studiya hujjatlari",

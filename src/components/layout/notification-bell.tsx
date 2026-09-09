@@ -4,6 +4,7 @@ import Link from "next/link";
 import { IconBell as Bell, IconChecks as CheckCheck } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations, useLocale } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { markAllRead } from "@/server/actions/notifications";
 import { formatDateTime } from "@/lib/dates";
@@ -20,6 +21,9 @@ type Item = {
 export function NotificationBell() {
   const t = useTranslations();
   const locale = useLocale();
+  const pathname = usePathname();
+  // Studiya portalida bildirishnomalar sahifasi /contractor ostida (dashboard yo'q).
+  const notifsHref = pathname.startsWith("/contractor") ? "/contractor/notifications" : "/notifications";
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(0);
   const [items, setItems] = useState<Item[]>([]);
@@ -98,7 +102,7 @@ export function NotificationBell() {
               items.map((n) => (
                 <Link
                   key={n.id}
-                  href={n.link ?? "/notifications"}
+                  href={n.link ?? notifsHref}
                   onClick={() => setOpen(false)}
                   className={cn(
                     "block px-5 py-3.5 border-b border-[var(--border)] last:border-0 hover:bg-[var(--glass-fill)] transition-colors relative",
@@ -114,7 +118,7 @@ export function NotificationBell() {
             )}
           </div>
           <div className="px-5 py-3 border-t border-[var(--border)] bg-[var(--glass-fill-soft)]">
-            <Link href="/notifications" onClick={() => setOpen(false)} className="text-sm text-[var(--primary)] font-bold hover:underline">
+            <Link href={notifsHref} onClick={() => setOpen(false)} className="text-sm text-[var(--primary)] font-bold hover:underline">
               {t("notifications.viewAll")}
             </Link>
           </div>
