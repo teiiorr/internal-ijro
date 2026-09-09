@@ -10,7 +10,7 @@ type AgendaRow = {
   id: string;
   topic: string;
   projectName: string | null;
-  presenterName: string | null;
+  studioName: string | null;
 };
 type Option = { id: string; name: string };
 
@@ -18,20 +18,17 @@ export function CouncilAgenda({
   meetingId,
   items,
   projects,
-  employees,
   canManage,
 }: {
   meetingId: string;
   items: AgendaRow[];
   projects: Option[];
-  employees: Option[];
   canManage: boolean;
 }) {
   const t = useTranslations();
   const [pending, start] = useTransition();
   const [topic, setTopic] = useState("");
   const [projectText, setProjectText] = useState("");
-  const [presenterText, setPresenterText] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const field =
@@ -40,10 +37,9 @@ export function CouncilAgenda({
   function add() {
     setError(null);
     if (!topic.trim()) { setError(t("kengash.newTopic")); return; }
-    // Kiritilgan qiymat röyxatdagi loyiha/xodimga mos kelsa, id böyicha boğlanadi;
-    // aks holda erkin matn körinişida nom sifatida saqlanadi.
+    // Kiritilgan qiymat röyxatdagi loyihaga mos kelsa, id böyicha boğlanadi (studiya
+    // loyihadan avtomatik aniqlanadi); aks holda erkin matn nom sifatida saqlanadi.
     const proj = projects.find((p) => p.name.trim().toLowerCase() === projectText.trim().toLowerCase());
-    const pres = employees.find((u) => u.name.trim().toLowerCase() === presenterText.trim().toLowerCase());
     start(async () => {
       try {
         await addAgendaItem({
@@ -51,37 +47,37 @@ export function CouncilAgenda({
           topic: topic.trim(),
           projectId: proj?.id ?? null,
           projectName: proj ? null : projectText.trim() || null,
-          presenterUserId: pres?.id ?? null,
-          presenterName: pres ? null : presenterText.trim() || null,
+          presenterUserId: null,
+          presenterName: null,
         });
-        setTopic(""); setProjectText(""); setPresenterText("");
+        setTopic(""); setProjectText("");
       } catch (e) { setError((e as Error).message); }
     });
   }
 
   return (
     <div className="space-y-4">
-      {/* desktop jadvali */}
+      {/* desktop jadvali — kataklar chegarali (körinishi uçun) */}
       <div className="hidden overflow-x-auto sm:block">
-        <table className="w-full text-sm">
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-[var(--border)] text-left text-xs font-semibold text-[var(--muted)]">
-              <th className="w-10 py-2.5 pr-2 font-semibold">№</th>
-              <th className="py-2.5 pr-4 font-semibold">{t("kengash.topic")}</th>
-              <th className="py-2.5 pr-4 font-semibold">{t("kengash.project")}</th>
-              <th className="py-2.5 pr-4 font-semibold">{t("kengash.presenter")}</th>
-              {canManage && <th className="w-10 py-2.5" />}
+            <tr className="text-left text-xs font-semibold text-[var(--muted)]">
+              <th className="w-10 border border-[var(--border)] px-2 py-2.5 font-semibold">№</th>
+              <th className="border border-[var(--border)] px-3 py-2.5 font-semibold">{t("kengash.topic")}</th>
+              <th className="border border-[var(--border)] px-3 py-2.5 font-semibold">{t("kengash.project")}</th>
+              <th className="border border-[var(--border)] px-3 py-2.5 font-semibold">{t("kengash.studio")}</th>
+              {canManage && <th className="w-10 border border-[var(--border)] py-2.5" />}
             </tr>
           </thead>
           <tbody>
             {items.map((row, i) => (
-              <tr key={row.id} className="border-b border-[var(--border)] last:border-0 align-top">
-                <td className="py-3 pr-2 font-semibold tabular-nums text-[var(--muted)]">{i + 1}</td>
-                <td className="py-3 pr-4 font-medium">{row.topic}</td>
-                <td className="py-3 pr-4 text-[var(--muted)]">{row.projectName ?? "—"}</td>
-                <td className="py-3 pr-4 text-[var(--muted)]">{row.presenterName ?? "—"}</td>
+              <tr key={row.id} className="align-top">
+                <td className="border border-[var(--border)] px-2 py-3 font-semibold tabular-nums text-[var(--muted)]">{i + 1}</td>
+                <td className="border border-[var(--border)] px-3 py-3 font-medium">{row.topic}</td>
+                <td className="border border-[var(--border)] px-3 py-3 text-[var(--muted)]">{row.projectName ?? "—"}</td>
+                <td className="border border-[var(--border)] px-3 py-3 text-[var(--muted)]">{row.studioName ?? "—"}</td>
                 {canManage && (
-                  <td className="py-2">
+                  <td className="border border-[var(--border)] px-1 py-2 text-center">
                     <Button variant="ghost" size="icon-sm" disabled={pending} aria-label={t("common.delete")} onClick={() => start(async () => { await deleteAgendaItem(row.id); })}>
                       <Trash2 className="size-4" />
                     </Button>
@@ -90,7 +86,7 @@ export function CouncilAgenda({
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={canManage ? 5 : 4} className="py-8 text-center text-[var(--muted)]">{t("kengash.noItems")}</td></tr>
+              <tr><td colSpan={canManage ? 5 : 4} className="border border-[var(--border)] py-8 text-center text-[var(--muted)]">{t("kengash.noItems")}</td></tr>
             )}
           </tbody>
         </table>
@@ -115,8 +111,8 @@ export function CouncilAgenda({
                 <dd className="font-medium">{row.projectName ?? "—"}</dd>
               </div>
               <div className="flex gap-2">
-                <dt className="w-24 shrink-0 text-[var(--muted)]">{t("kengash.presenter")}</dt>
-                <dd className="font-medium">{row.presenterName ?? "—"}</dd>
+                <dt className="w-24 shrink-0 text-[var(--muted)]">{t("kengash.studio")}</dt>
+                <dd className="font-medium">{row.studioName ?? "—"}</dd>
               </div>
             </dl>
           </div>
@@ -126,7 +122,7 @@ export function CouncilAgenda({
 
       {/* qator qöşiş */}
       {canManage && (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_200px_200px_auto] sm:items-center">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_220px_auto] sm:items-center">
           <Input placeholder={t("kengash.topic")} value={topic} onChange={(e) => setTopic(e.target.value)} />
           <input
             list={`proj-${meetingId}`}
@@ -138,17 +134,6 @@ export function CouncilAgenda({
           />
           <datalist id={`proj-${meetingId}`}>
             {projects.map((p) => <option key={p.id} value={p.name} />)}
-          </datalist>
-          <input
-            list={`pres-${meetingId}`}
-            className={field}
-            placeholder={t("kengash.presenterField")}
-            value={presenterText}
-            onChange={(e) => setPresenterText(e.target.value)}
-            maxLength={255}
-          />
-          <datalist id={`pres-${meetingId}`}>
-            {employees.map((u) => <option key={u.id} value={u.name} />)}
           </datalist>
           <Button onClick={add} disabled={pending}><Plus className="size-4" />{t("kengash.addItem")}</Button>
         </div>

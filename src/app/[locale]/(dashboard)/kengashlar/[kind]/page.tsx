@@ -2,10 +2,9 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
 import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown, IconArchive as Archive } from "@tabler/icons-react";
-import { sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { projects, users } from "@/lib/db/schema";
+import { projects } from "@/lib/db/schema";
 import { getCouncilPage } from "@/server/queries/councils";
 import { Card, CardContent } from "@/components/ui/card";
 import { CouncilAgenda } from "@/components/councils/council-agenda";
@@ -26,14 +25,9 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
   const me = session.user;
   const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
 
-  const [{ upcoming, agenda, meetings, agendaByMeeting }, projectOpts, employeeOpts] = await Promise.all([
+  const [{ upcoming, agenda, meetings, agendaByMeeting }, projectOpts] = await Promise.all([
     getCouncilPage(kind),
     db.select({ id: projects.id, name: projects.name }).from(projects).orderBy(projects.name),
-    db
-      .select({ id: users.id, name: users.fullName })
-      .from(users)
-      .where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`)
-      .orderBy(users.fullName),
   ]);
 
   const heading = kind === "ekspert" ? t("kengash.ekspertHeading") : t("kengash.smetaHeading");
@@ -67,7 +61,6 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
               meetingId={upcoming.id}
               items={agenda}
               projects={projectOpts}
-              employees={employeeOpts}
               canManage={canManage}
             />
           </CardContent>
@@ -109,22 +102,22 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
                         <p className="text-sm text-[var(--muted)]">{t("kengash.emptyAgenda")}</p>
                       ) : (
                         <div className="overflow-x-auto">
-                          <table className="w-full text-sm">
+                          <table className="w-full border-collapse text-sm">
                             <thead>
-                              <tr className="border-b border-[var(--border)] text-left text-xs font-semibold text-[var(--muted)]">
-                                <th className="w-8 py-2 pr-2 font-semibold">№</th>
-                                <th className="py-2 pr-4 font-semibold">{t("kengash.topic")}</th>
-                                <th className="py-2 pr-4 font-semibold">{t("kengash.project")}</th>
-                                <th className="py-2 font-semibold">{t("kengash.presenter")}</th>
+                              <tr className="text-left text-xs font-semibold text-[var(--muted)]">
+                                <th className="w-8 border border-[var(--border)] px-2 py-2 font-semibold">№</th>
+                                <th className="border border-[var(--border)] px-3 py-2 font-semibold">{t("kengash.topic")}</th>
+                                <th className="border border-[var(--border)] px-3 py-2 font-semibold">{t("kengash.project")}</th>
+                                <th className="border border-[var(--border)] px-3 py-2 font-semibold">{t("kengash.studio")}</th>
                               </tr>
                             </thead>
                             <tbody>
                               {items.map((it, i) => (
-                                <tr key={it.id} className="border-b border-[var(--border)] align-top last:border-0">
-                                  <td className="py-2 pr-2 font-semibold tabular-nums text-[var(--muted)]">{i + 1}</td>
-                                  <td className="py-2 pr-4 font-medium">{it.topic}</td>
-                                  <td className="py-2 pr-4 text-[var(--muted)]">{it.projectName ?? "—"}</td>
-                                  <td className="py-2 text-[var(--muted)]">{it.presenterName ?? "—"}</td>
+                                <tr key={it.id} className="align-top">
+                                  <td className="border border-[var(--border)] px-2 py-2 font-semibold tabular-nums text-[var(--muted)]">{i + 1}</td>
+                                  <td className="border border-[var(--border)] px-3 py-2 font-medium">{it.topic}</td>
+                                  <td className="border border-[var(--border)] px-3 py-2 text-[var(--muted)]">{it.projectName ?? "—"}</td>
+                                  <td className="border border-[var(--border)] px-3 py-2 text-[var(--muted)]">{it.studioName ?? "—"}</td>
                                 </tr>
                               ))}
                             </tbody>

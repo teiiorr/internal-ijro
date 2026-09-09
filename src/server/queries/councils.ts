@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, desc, eq, gte, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { councilMeetings, councilAgendaItems, projects, users } from "@/lib/db/schema";
+import { councilMeetings, councilAgendaItems, projects, users, externalCompanies } from "@/lib/db/schema";
 
 export type AgendaRow = {
   id: string;
@@ -9,6 +9,7 @@ export type AgendaRow = {
   topic: string;
   projectId: string | null;
   projectName: string | null;
+  studioName: string | null;
   presenterUserId: string | null;
   presenterName: string | null;
 };
@@ -40,11 +41,13 @@ export async function getCouncilPage(kind: string) {
         topic: councilAgendaItems.topic,
         projectId: councilAgendaItems.projectId,
         projectName: sql<string | null>`coalesce(${projects.name}, ${councilAgendaItems.projectName})`,
+        studioName: externalCompanies.name,
         presenterUserId: councilAgendaItems.presenterUserId,
         presenterName: sql<string | null>`coalesce(${users.fullName}, ${councilAgendaItems.presenterName})`,
       })
       .from(councilAgendaItems)
       .leftJoin(projects, eq(projects.id, councilAgendaItems.projectId))
+      .leftJoin(externalCompanies, eq(externalCompanies.id, projects.externalCompanyId))
       .leftJoin(users, eq(users.id, councilAgendaItems.presenterUserId))
       .where(eq(councilAgendaItems.meetingId, upcoming.id))
       .orderBy(asc(councilAgendaItems.orderIndex));
@@ -60,12 +63,14 @@ export async function getCouncilPage(kind: string) {
       topic: councilAgendaItems.topic,
       projectId: councilAgendaItems.projectId,
       projectName: sql<string | null>`coalesce(${projects.name}, ${councilAgendaItems.projectName})`,
+      studioName: externalCompanies.name,
       presenterUserId: councilAgendaItems.presenterUserId,
       presenterName: sql<string | null>`coalesce(${users.fullName}, ${councilAgendaItems.presenterName})`,
     })
     .from(councilAgendaItems)
     .innerJoin(councilMeetings, eq(councilMeetings.id, councilAgendaItems.meetingId))
     .leftJoin(projects, eq(projects.id, councilAgendaItems.projectId))
+    .leftJoin(externalCompanies, eq(externalCompanies.id, projects.externalCompanyId))
     .leftJoin(users, eq(users.id, councilAgendaItems.presenterUserId))
     .where(eq(councilMeetings.kind, kind))
     .orderBy(asc(councilAgendaItems.orderIndex));
