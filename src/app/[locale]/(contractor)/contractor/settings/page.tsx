@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { notificationSettings, users } from "@/lib/db/schema";
 import { SettingsTabs } from "@/components/settings/settings-tabs";
+import { DeveloperCard } from "@/components/settings/developer-card";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function ContractorSettingsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("settings.pageTitle")}</h1>
+      <DeveloperCard />
       <SettingsTabs
         init={{
           languagePreference: me.languagePreference,

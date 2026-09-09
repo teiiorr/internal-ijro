@@ -1,7 +1,5 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import Link from "next/link";
-import { IconArrowRight as ArrowRight, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -86,38 +84,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </div>
         </div>
 
-        {/* Qayerdaman — bosqichlar körsatkichi */}
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="mb-4 text-base font-semibold">{t("projects.stagePath.title")}</h3>
-            <StagePath projectId={sp.project.id} stages={sp.stages} basePath="/contractor/projects" />
-          </CardContent>
-        </Card>
-
-        {/* Kurator bilan suhbat — töliq ekranli suhbatni ochadi */}
-        <Link
-          href={`/contractor/chats/${id}`}
-          className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-[0.995]"
-        >
-          <div className="grid size-11 shrink-0 place-items-center rounded-xl bg-[var(--surface-2)] text-[var(--primary)]">
-            <MessageCircle className="size-5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-semibold">{t("projects.tabs.chat")}</p>
-            {sp.curator && <p className="truncate text-xs text-[var(--muted)]">{shortName(sp.curator.fullName)}</p>}
-          </div>
-          <ArrowRight className="size-4 shrink-0 text-[var(--subtle)]" />
-        </Link>
-
-        {/* Topşirilgan barcha fayllar */}
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="mb-4 text-base font-semibold">{t("contractor.tabs.docs")}</h3>
-            <StudioDocuments projectId={id} documents={docs} suggestions={folderSuggestions} maxBytes={maxBytes} />
-          </CardContent>
-        </Card>
-
-        {/* Ixcham ma'lumot — holat, sanalar, kurator, tavsif. Ichki moliya körsatilmaydi. */}
+        {/* Ixcham ma'lumot — eng ustda: holat, bajarilish, sanalar, kurator, tavsif */}
         <Card>
           <CardContent className="space-y-4 p-5 sm:p-6">
             <dl className="detail-grid grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
@@ -150,6 +117,22 @@ export default async function ContractorProjectPage({ params }: { params: Promis
             {sp.project.description && (
               <p className="whitespace-pre-wrap border-t border-[var(--border)] pt-4 text-sm leading-relaxed text-[var(--muted)]">{sp.project.description}</p>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Qayerdaman — bosqichlar körsatkichi */}
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="mb-4 text-base font-semibold">{t("projects.stagePath.title")}</h3>
+            <StagePath projectId={sp.project.id} stages={sp.stages} basePath="/contractor/projects" />
+          </CardContent>
+        </Card>
+
+        {/* Topşirilgan barcha fayllar */}
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+            <h3 className="mb-4 text-base font-semibold">{t("contractor.tabs.docs")}</h3>
+            <StudioDocuments projectId={id} documents={docs} suggestions={folderSuggestions} maxBytes={maxBytes} />
           </CardContent>
         </Card>
       </div>
