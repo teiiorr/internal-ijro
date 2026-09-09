@@ -52,6 +52,7 @@ jobs:
           rsync -az public/ "$HOST:$REMOTE/public/"
           rsync -az --delete node_modules/ "$HOST:$REMOTE/node_modules/"
           rsync -az drizzle/ "$HOST:$REMOTE/drizzle/"
+          rsync -az scripts/ "$HOST:$REMOTE/scripts/"
           rsync -az package.json "$HOST:$REMOTE/package.json"
 
           ssh "$HOST" "ln -sfn /var/lib/markaz-ijro/uploads $REMOTE/uploads 2>/dev/null; systemctl start markaz-ijro"
