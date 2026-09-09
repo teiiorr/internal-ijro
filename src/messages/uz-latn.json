@@ -977,7 +977,8 @@
       "responseSent": "Javob yuborildi",
       "changesRequested": "Qayta ko'rib chiqish so'raldi",
       "discussInChat": "Chatda muhokama",
-      "sharedToChat": "Chatga yuborildi"
+      "sharedToChat": "Chatga yuborildi",
+      "empty": "Hozircha vazifalar yo'q"
     }
   },
   "dashboard": {

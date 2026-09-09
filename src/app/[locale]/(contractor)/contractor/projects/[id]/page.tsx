@@ -9,8 +9,6 @@ import { db } from "@/lib/db";
 import { externalCompanies, projectStages, stageDocuments } from "@/lib/db/schema";
 import { getProject } from "@/server/queries/projects";
 import { getStageProject } from "@/server/queries/stages";
-import { getContractorProjectTasks } from "@/server/queries/tasks";
-import { StudioTasksCard } from "@/components/contractor/studio-tasks-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StagePath } from "@/components/projects/stage-path";
@@ -48,8 +46,6 @@ export default async function ContractorProjectPage({ params }: { params: Promis
 
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
   const typed = !!data.project.projectTypeId;
-  // Studiyaga berilgan vazifalar — ikkala turdagi loyihada ham körsatiladi.
-  const studioTasks = await getContractorProjectTasks(id, session.user.id);
 
   if (typed) {
     const sp = await getStageProject(id, locale);
@@ -181,9 +177,6 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           </CardContent>
         </Card>
 
-        {/* Studiyaga berilgan vazifalar */}
-        <StudioTasksCard tasks={studioTasks} />
-
         {/* Ixcham ma'lumot — holat, sanalar, kurator, tavsif. Ichki moliya körsatilmaydi. */}
         <Card>
           <CardContent className="space-y-4 p-5 sm:p-6">
@@ -282,8 +275,6 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           )}
         </CardContent>
       </Card>
-
-      <StudioTasksCard tasks={studioTasks} />
 
       <Tabs defaultValue="deliverables">
         <TabsList>

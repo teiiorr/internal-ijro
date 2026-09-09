@@ -1,7 +1,7 @@
 "use client";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { IconFolder as Folder, IconMessageCircle as MessageCircle, IconUser as UserIcon } from "@tabler/icons-react";
+import { IconFolder as Folder, IconMessageCircle as MessageCircle, IconUser as UserIcon, IconClipboardList as ClipboardList } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string };
@@ -10,6 +10,7 @@ type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>
 // Header'da turadi; studiyaga har kuni kerak böladigan hamma narsa şu yerda bir bosişda.
 const ITEMS: NavItem[] = [
   { href: "/contractor/projects", icon: Folder, key: "projects" },
+  { href: "/contractor/tasks", icon: ClipboardList, key: "tasks" },
   { href: "/contractor/chats", icon: MessageCircle, key: "chats" },
   { href: "/contractor/profile", icon: UserIcon, key: "profile" },
 ];
@@ -25,7 +26,7 @@ export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
-      <ul className="grid grid-cols-3 rounded-3xl glass-strong overflow-hidden">
+      <ul className="grid grid-cols-4 rounded-3xl glass-strong overflow-hidden">
         {ITEMS.map(({ href, icon: Icon, key }) => {
           const active = isActive(href);
           const badge = key === "chats" && unread > 0;

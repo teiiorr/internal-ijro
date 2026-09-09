@@ -977,7 +977,8 @@
       "responseSent": "Javob yuborildi",
       "changesRequested": "Qayta körib çiqiş söraldi",
       "discussInChat": "Çatda muhokama",
-      "sharedToChat": "Çatga yuborildi"
+      "sharedToChat": "Çatga yuborildi",
+      "empty": "Hozirça vazifalar yöq"
     }
   },
   "dashboard": {

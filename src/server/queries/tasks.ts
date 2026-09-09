@@ -221,10 +221,10 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
 void gte; void lte; void inArray;
 
 /**
- * Studiya (kontragent) uçun: berilgan loyihadagi va ayni şu studiyaga tayinlangan
- * vazifalar. Bosqiç nomi, muddat, ustuvorlik va studiyaning öz javobi/holati bilan.
+ * Studiyaga (kontragent foydalanuvçiga) tayinlangan BARÇA vazifalar — barça loyihalar
+ * böyiça, alohida "Vazifalar" bölimi uçun. Loyiha va bosqiç nomi bilan birga.
  */
-export async function getContractorProjectTasks(projectId: string, contractorUserId: string) {
+export async function getContractorTasks(contractorUserId: string) {
   return db
     .select({
       id: tasks.id,
@@ -234,6 +234,8 @@ export async function getContractorProjectTasks(projectId: string, contractorUse
       deadline: tasks.deadline,
       status: tasks.status,
       createdAt: tasks.createdAt,
+      projectId: projects.id,
+      projectName: projects.name,
       stageName: projectStages.name,
       myStatus: taskAssignees.status,
       responseText: taskAssignees.responseText,
@@ -243,7 +245,9 @@ export async function getContractorProjectTasks(projectId: string, contractorUse
     })
     .from(tasks)
     .innerJoin(taskAssignees, and(eq(taskAssignees.taskId, tasks.id), eq(taskAssignees.userId, contractorUserId)))
+    // leftJoin: loyihasi öçirilgan (projectId → null) vazifalar ham körinsin — bu sahifa
+    // endi studiya vazifalarini köradigan yagona joy.
+    .leftJoin(projects, eq(projects.id, tasks.projectId))
     .leftJoin(projectStages, eq(projectStages.id, tasks.stageId))
-    .where(eq(tasks.projectId, projectId))
     .orderBy(desc(tasks.createdAt));
 }

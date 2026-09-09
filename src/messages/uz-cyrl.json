@@ -977,7 +977,8 @@
       "responseSent": "Жавоб юборилди",
       "changesRequested": "Қайта кўриб чиқиш сўралди",
       "discussInChat": "Чатда муҳокама",
-      "sharedToChat": "Чатга юборилди"
+      "sharedToChat": "Чатга юборилди",
+      "empty": "Ҳозирча вазифалар йўқ"
     }
   },
   "dashboard": {

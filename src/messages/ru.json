@@ -977,7 +977,8 @@
       "responseSent": "Ответ отправлен",
       "changesRequested": "Запрошены изменения",
       "discussInChat": "Обсудить в чате",
-      "sharedToChat": "Отправлено в чат"
+      "sharedToChat": "Отправлено в чат",
+      "empty": "Пока нет задач"
     }
   },
   "dashboard": {

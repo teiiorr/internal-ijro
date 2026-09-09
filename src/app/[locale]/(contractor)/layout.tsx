@@ -11,7 +11,7 @@ import { Header } from "@/components/layout/header";
 import { ContractorMobileNav } from "@/components/layout/contractor-mobile-nav";
 import { AppFooter } from "@/components/layout/app-footer";
 import { RouteProgress } from "@/components/layout/route-progress";
-import { IconFolder as Folder, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
+import { IconFolder as Folder, IconMessageCircle as MessageCircle, IconClipboardList as ClipboardList } from "@tabler/icons-react";
 
 export default async function ContractorLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -48,6 +48,7 @@ export default async function ContractorLayout({ children }: { children: React.R
   // menyu havolasi (quyida) + mobil pastki panelda.
   const NAV = [
     { href: "/contractor/projects", icon: Folder, label: t("nav.projects") },
+    { href: "/contractor/tasks", icon: ClipboardList, label: t("nav.tasks") },
     { href: "/contractor/chats", icon: MessageCircle, label: t("nav.chats") },
   ];
   const menuLinks = [{ href: "/contractor/profile", label: t("nav.profile") }];

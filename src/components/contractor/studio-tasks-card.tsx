@@ -16,6 +16,7 @@ export type StudioTask = {
   id: string; title: string; description: string | null; priority: string;
   deadline: Date | string | null; status: string; stageName: string | null;
   myStatus: string; responseText: string | null; responseSubmittedAt: Date | string | null;
+  projectName?: string | null;
 };
 
 const statusTone = (s: string): StatusTone => (s === "completed" ? "green" : s === "under_review" ? "amber" : s === "rejected" ? "red" : "muted");
@@ -71,7 +72,9 @@ function TaskRow({ task }: { task: StudioTask }) {
         <StatusTag tone={prioTone(task.priority)} size="sm">{t(`tasks.priority.${task.priority}` as "tasks.priority.low")}</StatusTag>
         <StatusTag tone={statusTone(task.status)} size="sm">{t(`tasks.status.${task.status}` as "tasks.status.in_progress")}</StatusTag>
       </div>
-      {task.stageName && <p className="mt-1 text-xs text-[var(--muted)]">{task.stageName}</p>}
+      {(task.projectName || task.stageName) && (
+        <p className="mt-1 text-xs text-[var(--muted)]">{[task.projectName, task.stageName].filter(Boolean).join(" · ")}</p>
+      )}
       {task.description && <p className="mt-1.5 whitespace-pre-wrap text-sm text-[var(--foreground)]">{task.description}</p>}
       {task.deadline && (
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
@@ -119,6 +122,15 @@ function TaskRow({ task }: { task: StudioTask }) {
   );
 }
 
+/** Faqat vazifalar röyxati (öramsiz) — alohida "Vazifalar" sahifasi uçun. */
+export function StudioTasksList({ tasks }: { tasks: StudioTask[] }) {
+  return (
+    <div className="space-y-2.5">
+      {tasks.map((task) => <TaskRow key={task.id} task={task} />)}
+    </div>
+  );
+}
+
 export function StudioTasksCard({ tasks }: { tasks: StudioTask[] }) {
   const t = useTranslations();
   if (tasks.length === 0) return null;
@@ -126,9 +138,7 @@ export function StudioTasksCard({ tasks }: { tasks: StudioTask[] }) {
     <Card>
       <CardContent className="p-5 sm:p-6">
         <h3 className="mb-4 flex items-center gap-2 text-base font-semibold"><ClipboardList className="size-4 text-[var(--muted)]" />{t("contractor.tasks.title")}</h3>
-        <div className="space-y-2.5">
-          {tasks.map((task) => <TaskRow key={task.id} task={task} />)}
-        </div>
+        <StudioTasksList tasks={tasks} />
       </CardContent>
     </Card>
   );
