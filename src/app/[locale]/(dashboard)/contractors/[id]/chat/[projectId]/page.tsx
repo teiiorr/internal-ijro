@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { getProject, getStageMessages } from "@/server/queries/projects";
+import { getProject, getProjectChannels } from "@/server/queries/projects";
 import { ConversationScreen } from "@/components/projects/conversation-screen";
 import { canViewContractorChats, isContractorManager, canModerateContractorChats } from "@/lib/permissions/contractors";
 
@@ -19,7 +19,11 @@ export default async function StudioConversationPage({ params }: { params: Promi
   // Faqat haqiqatan ham şu studiyaga tegişli loyiha.
   if (!data || data.project.externalCompanyId !== id) notFound();
 
-  const messages = await getStageMessages(projectId, null);
+  const ch = await getProjectChannels(projectId);
+  const channels = [
+    { stageId: null, label: t("conversation.general"), messages: ch.general },
+    ...ch.stages.map((s) => ({ stageId: s.id, label: `${s.orderIndex + 1}. ${s.name}`, messages: ch.byStage[s.id] ?? [] })),
+  ];
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
   const members = [
@@ -34,8 +38,7 @@ export default async function StudioConversationPage({ params }: { params: Promi
       backHref={`/contractors/${id}`}
       members={members}
       projectId={projectId}
-      stageId={null}
-      messages={messages}
+      channels={channels}
       currentUserId={session.user.id}
       currentUserName={session.user.fullName}
       maxBytes={maxBytes}

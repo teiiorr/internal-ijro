@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { externalCompanies } from "@/lib/db/schema";
-import { getProject, getStageMessages } from "@/server/queries/projects";
+import { getProject, getProjectChannels } from "@/server/queries/projects";
 import { ConversationScreen } from "@/components/projects/conversation-screen";
 import { eq } from "drizzle-orm";
 
@@ -23,7 +23,11 @@ export default async function ContractorChatPage({ params }: { params: Promise<{
   const data = await getProject(id);
   if (!data || data.project.externalCompanyId !== myCompany.id) notFound();
 
-  const messages = await getStageMessages(id, null);
+  const ch = await getProjectChannels(id);
+  const channels = [
+    { stageId: null, label: t("conversation.general"), messages: ch.general },
+    ...ch.stages.map((s) => ({ stageId: s.id, label: `${s.orderIndex + 1}. ${s.name}`, messages: ch.byStage[s.id] ?? [] })),
+  ];
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
 
   // Guruh a'zolari: biz tomondagi kurator(lar) + studiya.
@@ -41,8 +45,7 @@ export default async function ContractorChatPage({ params }: { params: Promise<{
       openHref={`/contractor/projects/${id}`}
       openLabel={t("contractor.chats.openProject")}
       projectId={id}
-      stageId={null}
-      messages={messages}
+      channels={channels}
       currentUserId={session.user.id}
       currentUserName={session.user.fullName}
       maxBytes={maxBytes}

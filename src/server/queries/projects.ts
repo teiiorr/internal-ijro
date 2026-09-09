@@ -631,6 +631,47 @@ export async function getStageMessages(projectId: string, stageId: string | null
     .orderBy(asc(projectMessages.createdAt));
 }
 
+/**
+ * Loyihaning barcha suhbat kanallari uçun ma'lumot: bosqiçlar röyxati + har bir
+ * bosqiç va "Umumiy masalalar" (stageId=null) uçun xabarlar. Bir sörovda oladi.
+ */
+export async function getProjectChannels(projectId: string) {
+  const stages = await db
+    .select({ id: projectStages.id, name: projectStages.name, orderIndex: projectStages.orderIndex, status: projectStages.status })
+    .from(projectStages)
+    .where(eq(projectStages.projectId, projectId))
+    .orderBy(asc(projectStages.orderIndex));
+
+  const replyMsg = alias(projectMessages, "reply_msg_ch");
+  const replyUser = alias(users, "reply_user_ch");
+  const rows = await db
+    .select({
+      id: projectMessages.id,
+      content: projectMessages.content,
+      createdAt: projectMessages.createdAt,
+      userId: projectMessages.userId,
+      userName: users.fullName,
+      userAvatarUrl: users.avatarUrl,
+      attachments: projectMessages.attachments,
+      editedAt: projectMessages.editedAt,
+      replyToId: projectMessages.replyToId,
+      replyToContent: replyMsg.content,
+      replyToUserName: replyUser.fullName,
+      stageId: projectMessages.stageId,
+    })
+    .from(projectMessages)
+    .innerJoin(users, eq(users.id, projectMessages.userId))
+    .leftJoin(replyMsg, eq(replyMsg.id, projectMessages.replyToId))
+    .leftJoin(replyUser, eq(replyUser.id, replyMsg.userId))
+    .where(eq(projectMessages.projectId, projectId))
+    .orderBy(asc(projectMessages.createdAt));
+
+  const general = rows.filter((r) => !r.stageId);
+  const byStage: Record<string, typeof rows> = {};
+  for (const r of rows) if (r.stageId) (byStage[r.stageId] ??= []).push(r);
+  return { stages, general, byStage };
+}
+
 export async function getContractorDocuments(companyId: string) {
   return db
     .select({
