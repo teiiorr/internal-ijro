@@ -207,7 +207,17 @@ export async function listContractorsWithProjects() {
     .groupBy(projects.externalCompanyId)) {
     if (r.ec) waiting.set(r.ec, Number(r.c));
   }
-  return companies.map((c) => ({ ...c, projects: byCompany.get(c.id) ?? [], waiting: waiting.get(c.id) ?? 0 }));
+  // Har bir studiyaning oxirgi platformaga kirişi (users.lastLoginAt, email böyiça bogʻlanadi).
+  const lastLoginByEmail = new Map<string, Date | null>();
+  for (const u of await db.select({ email: users.email, lastLoginAt: users.lastLoginAt }).from(users).where(eq(users.position, "kontragent"))) {
+    lastLoginByEmail.set(u.email.toLowerCase(), (u.lastLoginAt as Date | null) ?? null);
+  }
+  return companies.map((c) => ({
+    ...c,
+    projects: byCompany.get(c.id) ?? [],
+    waiting: waiting.get(c.id) ?? 0,
+    lastLoginAt: c.contactEmail ? lastLoginByEmail.get(c.contactEmail.toLowerCase()) ?? null : null,
+  }));
 }
 
 export async function getContractor(id: string) {
@@ -444,6 +454,19 @@ export async function getContractorDetail(companyId: string) {
   const [company] = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
   if (!company) return null;
 
+  // Studiyaning oxirgi platformaga kirişi (users.lastLoginAt, email böyiça bogʻlanadi).
+  let lastLoginAt: Date | null = null;
+  if (company.contactEmail) {
+    const [u] = await db
+      .select({ lastLoginAt: users.lastLoginAt })
+      .from(users)
+      // Registrsiz solishtirish — grid (listContractorsWithProjects) bilan bir xil,
+      // chunki external_companies.contact_email doim kiçik harfda saqlanmaydi.
+      .where(and(sql`lower(${users.email}) = ${company.contactEmail.toLowerCase()}`, eq(users.position, "kontragent")))
+      .limit(1);
+    lastLoginAt = (u?.lastLoginAt as Date | null) ?? null;
+  }
+
   const prjs = await db
     .select({
       id: projects.id,
@@ -460,7 +483,7 @@ export async function getContractorDetail(companyId: string) {
     .orderBy(desc(projects.createdAt));
 
   const projectIds = prjs.map((p) => p.id);
-  if (projectIds.length === 0) return { company, projects: [], stages: [], lastActivity: null };
+  if (projectIds.length === 0) return { company, projects: [], stages: [], lastActivity: null, lastLoginAt };
 
   const stages = await db
     .select({
@@ -489,7 +512,7 @@ export async function getContractorDetail(companyId: string) {
     .limit(1);
   const lastActivity = [lastMsg?.ts, lastDoc?.ts].filter(Boolean).sort((a, b) => (b as Date).getTime() - (a as Date).getTime())[0] ?? null;
 
-  return { company, projects: prjs, stages, lastActivity };
+  return { company, projects: prjs, stages, lastActivity, lastLoginAt };
 }
 
 /**

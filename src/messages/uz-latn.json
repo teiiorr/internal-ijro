@@ -726,6 +726,8 @@
     "logoSaved": "Logo saqlandi",
     "logoError": "Logo yuklashda xatolik",
     "projectsCount": "{n} ta loyiha",
+    "lastOnline": "Oxirgi kirish",
+    "neverOnline": "Kirmagan",
     "noProjects": "Loyihalar yo'q",
     "createStudio": "Studiya qo'shish",
     "editName": "Nomini o'zgartirish",

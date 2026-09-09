@@ -4,13 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
-import {
-  IconSearch, IconFolder, IconStarFilled, IconMail, IconPhone, IconCheck, IconX, IconChevronRight, IconCalendarEvent,
-} from "@tabler/icons-react";
+import { IconSearch, IconCheck, IconX, IconAlertTriangle, IconClock } from "@tabler/icons-react";
 import { SmoothImage } from "@/components/ui/smooth-image";
-import { StatCard } from "@/components/ui/stat-card";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
-import { Marquee } from "@/components/ui/marquee";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/dates";
 import { approveContractor, rejectContractor } from "@/server/actions/projects";
@@ -30,33 +25,21 @@ type Studio = {
   createdAt: Date | string;
   projects: Proj[];
   waiting: number;
+  lastLoginAt: Date | string | null;
 };
 
-const STATUS_TONE: Record<string, StatusTone> = { approved: "green", pending: "amber", rejected: "red" };
 const initial = (name: string) => name.replace(/["'«»“”]/g, "").trim().charAt(0).toUpperCase() || "?";
-
-type Filter = "all" | "review" | "pending" | "approved" | "rejected";
 
 export function StudioGrid({ studios }: { studios: Studio[] }) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<Filter>("all");
-
-  const counts = useMemo(() => ({
-    total: studios.length,
-    review: studios.filter((s) => s.waiting > 0).length,
-    pending: studios.filter((s) => s.status === "pending").length,
-    approved: studios.filter((s) => s.status === "approved").length,
-    rejected: studios.filter((s) => s.status === "rejected").length,
-  }), [studios]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
     return studios
       .filter((s) => {
-        if (filter === "review" ? s.waiting === 0 : filter !== "all" && s.status !== filter) return false;
         if (!q) return true;
         return (
           s.name.toLowerCase().includes(q) ||
@@ -66,54 +49,19 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
       })
       // Körib çiqiş kutayotgan studiyalar röyxatning tepasiga çiqadi.
       .sort((a, b) => (b.waiting > 0 ? 1 : 0) - (a.waiting > 0 ? 1 : 0));
-  }, [query, filter, studios]);
-
-  const toggle = (f: Filter) => setFilter((c) => (c === f ? "all" : f));
+  }, [query, studios]);
 
   return (
     <div className="space-y-5">
-      {/* Saralaş KPI qatori — avval "körigingizni kutmoqda" (amal talab qiladigani) */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
-        <button type="button" onClick={() => toggle("review")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "review" && "rounded-2xl ring-2 ring-[var(--primary)]")}>
-          <StatCard label={t("contractors.inReview")} value={counts.review} tone="primary" filled={counts.review > 0} />
-        </button>
-        <StatCard label={t("contractors.total")} value={counts.total} />
-        <button type="button" onClick={() => toggle("pending")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "pending" && "rounded-2xl ring-2 ring-[var(--warning)]")}>
-          <StatCard label={t("contractors.pendingTitle")} value={counts.pending} tone="warning" filled={counts.pending > 0} />
-        </button>
-        <button type="button" onClick={() => toggle("approved")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "approved" && "rounded-2xl ring-2 ring-[var(--success)]")}>
-          <StatCard label={t("contractors.approvedTitle")} value={counts.approved} tone="success" />
-        </button>
-        <button type="button" onClick={() => toggle("rejected")} className={cn("text-left transition-transform active:scale-[0.98]", filter === "rejected" && "rounded-2xl ring-2 ring-[var(--danger)]")}>
-          <StatCard label={t("contractors.rejectedTitle")} value={counts.rejected} tone="danger" />
-        </button>
-      </div>
-
-      {/* Qidiruv + yorliqlar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("common.search")}
-            className="h-11 w-full rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
-          />
-        </div>
-        <div className="flex gap-1 overflow-x-auto rounded-[10px] bg-[var(--surface-3)] p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {([
-            ["all", t("common.all")],
-            ["pending", t("contractors.pendingTitle")],
-            ["approved", t("contractors.approvedTitle")],
-            ["rejected", t("contractors.rejectedTitle")],
-          ] as const).map(([k, label]) => (
-            <button key={k} type="button" onClick={() => setFilter(k)}
-              className={cn("shrink-0 whitespace-nowrap rounded-[8px] px-3 py-1.5 text-sm font-semibold transition-all sm:px-4",
-                filter === k ? "bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-1)]" : "text-[var(--muted)] hover:text-[var(--foreground)]")}>
-              {label}
-            </button>
-          ))}
-        </div>
+      {/* Qidiruv */}
+      <div className="relative">
+        <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t("common.search")}
+          className="h-11 w-full rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
+        />
       </div>
 
       {filtered.length === 0 ? (
@@ -122,7 +70,8 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
           <p className="text-sm font-medium">{t("contractors.none")}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        // Loyiha muqovalari kabi katta kvadrat plitkalar
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((s) => (
             <StudioCard key={s.id} s={s} t={t} locale={locale} router={router} />
           ))}
@@ -136,7 +85,9 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
   const [pending, start] = useTransition();
   const [rejecting, setRejecting] = useState(false);
   const [reason, setReason] = useState("");
-  const tone = STATUS_TONE[s.status] ?? "muted";
+  const total = s.projects.length;
+  const completed = s.projects.filter((p) => p.status === "completed").length;
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   function approve() {
     start(async () => {
@@ -153,82 +104,71 @@ function StudioCard({ s, t, locale, router }: { s: Studio; t: ReturnType<typeof 
   }
 
   return (
-    <div className={cn("flex flex-col rounded-2xl border bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]", s.waiting > 0 ? "border-[var(--warning)]/55" : "border-[var(--border)]")}>
-      {/* Sarlavha: logo + nom + holat */}
-      <div className="flex items-start gap-3">
-        <Link href={`/contractors/${s.id}`} className="shrink-0">
-          <div className="grid size-14 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-2)] ring-1 ring-[var(--border)]">
-            {s.logoUrl ? (
-              <SmoothImage src={s.logoUrl} alt={s.name} className="size-full object-contain p-1" />
-            ) : (
-              <span className="text-2xl font-black text-[var(--subtle)]">{initial(s.name)}</span>
-            )}
-          </div>
-        </Link>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <Link href={`/contractors/${s.id}`} className="min-w-0 flex-1">
-              {/* Uzun nomlar kesilmasdan suriladi (marquee) — loyihalar röyxatidagi kabi. */}
-              <Marquee className="text-base font-bold leading-snug tracking-tight transition-colors hover:text-[var(--primary)]">{s.name}</Marquee>
-            </Link>
-            <StatusTag tone={tone} size="sm" className="shrink-0">{t(`status.${s.status}` as "status.pending")}</StatusTag>
-          </div>
-          {s.contactPerson && <Marquee className="mt-0.5 text-xs font-medium text-[var(--muted)]">{s.contactPerson}</Marquee>}
-          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-[var(--subtle)]">
-            {s.contactEmail && <span className="inline-flex min-w-0 max-w-full items-center gap-1 truncate"><IconMail className="size-3 shrink-0" />{s.contactEmail}</span>}
-            {s.contactPhone && <span className="inline-flex items-center gap-1"><IconPhone className="size-3 shrink-0" />{s.contactPhone}</span>}
+    <div
+      className={cn(
+        "group flex flex-col rounded-2xl border bg-[var(--card)] p-2 shadow-[var(--shadow-1)] transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)]",
+        s.waiting > 0 ? "border-[var(--warning)]/60" : "border-[var(--border)]"
+      )}
+    >
+      <Link href={`/contractors/${s.id}`} className="block">
+        {/* Muqova — logo yoki bosh harf */}
+        <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
+          {s.logoUrl ? (
+            <SmoothImage src={s.logoUrl} alt={s.name} className="size-full object-contain p-3" />
+          ) : (
+            <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
+              <span className="select-none text-5xl font-black text-[var(--subtle)]">{initial(s.name)}</span>
+            </div>
+          )}
+          {total > 0 && (
+            <span className="absolute left-2 top-2 rounded-md bg-black/40 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
+              {pct}%
+            </span>
+          )}
+          {s.waiting > 0 && (
+            <span className="absolute right-2 top-2 grid size-7 place-items-center rounded-lg bg-[var(--warning)] text-white shadow-sm" title={t("contractors.inReview")}>
+              <IconAlertTriangle className="size-4" />
+            </span>
+          )}
+          {total > 0 && (
+            <div className="absolute inset-x-0 bottom-0 h-1.5 bg-black/15">
+              <div className="h-full bg-[var(--success)]" style={{ width: `${pct}%` }} />
+            </div>
+          )}
+        </div>
+
+        {/* Futer — nom markazda, ostida oxirgi kiriş (studiya oxirgi marta qaçon onlayn bölgan) */}
+        <div className="space-y-1.5 px-1.5 pb-1 pt-2.5">
+          <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug">{s.name}</p>
+          <div className="flex items-center justify-center gap-1 text-xs text-[var(--muted)]" title={t("contractors.lastOnline")}>
+            <IconClock className="size-3.5 shrink-0" />
+            <span className="truncate">{s.lastLoginAt ? formatDate(s.lastLoginAt, locale) : t("contractors.neverOnline")}</span>
           </div>
         </div>
-      </div>
+      </Link>
 
-      {/* Meta qatori — avval körib çiqiş kutilmoqda yorliği (loyiha uslubidagi törtburçak yorliq) */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[var(--muted)]">
-        {s.waiting > 0 && (
-          <StatusTag tone="amber" size="sm">{s.waiting} {t("contractors.inReview")}</StatusTag>
-        )}
-        <span className="inline-flex items-center gap-1 font-semibold text-[var(--primary)]"><IconFolder className="size-3.5" />{t("contractors.projectsCount", { n: s.projects.length })}</span>
-        {s.rating && <span className="inline-flex items-center gap-1 font-semibold text-[var(--warning)]"><IconStarFilled className="size-3.5" />{t("contractors.ratingScale", { r: Number(s.rating).toFixed(1) })}</span>}
-        <span className="inline-flex items-center gap-1"><IconCalendarEvent className="size-3.5" />{formatDate(s.createdAt as string, locale)}</span>
-      </div>
-
-      {/* Rad etiş sababi */}
-      {s.status === "rejected" && s.rejectionReason && (
-        <p className="mt-2 rounded-lg bg-[var(--danger-soft)] px-2.5 py-1.5 text-xs text-[var(--danger)]">
-          <span className="font-semibold">{t("contractors.reasonLabel")}:</span> {s.rejectionReason}
-        </p>
+      {/* Kutilayotgan studiyalar uçun tasdiqlaş/rad etiş — havoladan taşqarida */}
+      {s.status === "pending" && (
+        <div className="mt-1 border-t border-[var(--border)] px-1.5 pt-2">
+          {rejecting ? (
+            <div className="flex flex-col gap-1.5">
+              <input
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                placeholder={t("contractors.rejectReasonPlaceholder")}
+                className="h-9 w-full rounded-lg border border-[var(--input)] bg-[var(--surface)] px-2.5 text-xs focus-visible:border-[var(--danger)] focus-visible:outline-none"
+              />
+              <Button size="sm" variant="destructive" className="w-full" onClick={reject} disabled={pending || !reason.trim()}>{t("contractors.reject")}</Button>
+              <Button size="sm" variant="ghost" className="w-full" onClick={() => { setRejecting(false); setReason(""); }}>{t("common.cancel")}</Button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              <Button size="sm" variant="success" className="w-full" onClick={approve} disabled={pending}><IconCheck className="size-4" />{t("contractors.approve")}</Button>
+              <Button size="sm" variant="outline" className="w-full text-[var(--danger)]" onClick={() => setRejecting(true)} disabled={pending}><IconX className="size-4" />{t("contractors.reject")}</Button>
+            </div>
+          )}
+        </div>
       )}
-
-      {/* Pastki paneldagi amallar */}
-      <div className="mt-3 flex items-center justify-between gap-2 border-t border-[var(--border)] pt-3">
-        {s.status === "pending" ? (
-          <div className="flex flex-1 flex-wrap items-center gap-2">
-            {rejecting ? (
-              <div className="flex w-full flex-col gap-2">
-                <input
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  placeholder={t("contractors.rejectReasonPlaceholder")}
-                  className="h-9 w-full rounded-lg border border-[var(--input)] bg-[var(--surface)] px-2.5 text-xs focus-visible:border-[var(--danger)] focus-visible:outline-none"
-                />
-                <div className="flex gap-2">
-                  <Button size="sm" variant="ghost" onClick={() => { setRejecting(false); setReason(""); }}>{t("common.cancel")}</Button>
-                  <Button size="sm" variant="destructive" onClick={reject} disabled={pending || !reason.trim()}>{t("contractors.reject")}</Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <Button size="sm" variant="outline" onClick={() => setRejecting(true)} disabled={pending} className="text-[var(--danger)]"><IconX className="size-4" />{t("contractors.reject")}</Button>
-                <Button size="sm" variant="success" onClick={approve} disabled={pending}><IconCheck className="size-4" />{t("contractors.approve")}</Button>
-              </>
-            )}
-          </div>
-        ) : (
-          <span />
-        )}
-        <Link href={`/contractors/${s.id}`} className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:text-[var(--primary)]">
-          {t("common.open")}<IconChevronRight className="size-3.5" />
-        </Link>
-      </div>
     </div>
   );
 }

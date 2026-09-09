@@ -30,7 +30,7 @@ export function ChatsList({ chats }: { chats: Chat[] }) {
   return (
     <div className="space-y-3">
       {/* Yopişib turadigan xira şişa qidiruvi — ilova header'i ostida töliq enda. */}
-      <div className="sticky top-[68px] z-20 -mx-3 glass-soft px-3 py-2 sm:-mx-4 sm:top-[84px] sm:px-4">
+      <div className="sticky top-[68px] z-20 -mx-3 bg-[var(--background)] px-3 py-2 sm:-mx-4 sm:top-[84px] sm:px-4">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
           <input

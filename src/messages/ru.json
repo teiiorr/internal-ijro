@@ -726,6 +726,8 @@
     "logoSaved": "Лого сохранено",
     "logoError": "Ошибка загрузки лого",
     "projectsCount": "Проектов: {n}",
+    "lastOnline": "Последний вход",
+    "neverOnline": "Не входил(а)",
     "noProjects": "Нет проектов",
     "createStudio": "Добавить студию",
     "editName": "Изменить название",

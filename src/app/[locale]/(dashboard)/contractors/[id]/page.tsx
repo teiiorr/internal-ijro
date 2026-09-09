@@ -1,10 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { IconStarFilled as Star, IconMail as Mail, IconPhone as Phone, IconFolder as Folder, IconFile as File, IconClockHour4 as Clock, IconShieldCheck as Shield } from "@tabler/icons-react";
+import { IconStarFilled as Star, IconMail as Mail, IconPhone as Phone, IconClockHour4 as Clock } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { BackButton } from "@/components/ui/back-button";
 import { Card, CardContent } from "@/components/ui/card";
-import { StatCard } from "@/components/ui/stat-card";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { formatDate } from "@/lib/dates";
@@ -46,7 +45,7 @@ export default async function ContractorDetailPage({
   const detail = await getContractorDetail(id);
   if (!detail) notFound();
 
-  const { company, projects: prjs, lastActivity } = detail;
+  const { company, projects: prjs, lastActivity, lastLoginAt } = detail;
   // Körib chiqiş huquqi = körib chiqiş server action'lari qöllaydigan aynan şu tekşiruv.
   const isEditor = canEditProjects(session.user.email) || (await hasGrant(session.user.id, "projects.edit"));
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
@@ -99,11 +98,10 @@ export default async function ContractorDetailPage({
             )}
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard label={t("contractors.detail.tabs.projects")} value={prjs.length} icon={<Folder className="size-4" />} tone="primary" />
-            <StatCard label={t("contractors.detail.tabs.docs")} value={docs.length} icon={<File className="size-4" />} />
-            <StatCard label={t("contractors.detail.tabs.chat")} value={chatTotal} icon={<Clock className="size-4" />} />
-            <StatCard label="NDA" value={company.ndaAcceptedAt ? "✓" : "—"} icon={<Shield className="size-4" />} tone={company.ndaAcceptedAt ? "success" : "default"} hint={company.ndaAcceptedAt ? formatDate(company.ndaAcceptedAt as Date, locale) : undefined} />
+          <div className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[var(--surface-2)] px-3 py-2 text-sm">
+            <Clock className="size-4 text-[var(--muted)]" />
+            <span className="text-[var(--muted)]">{t("contractors.lastOnline")}:</span>
+            <span className="font-semibold">{lastLoginAt ? formatDate(lastLoginAt as Date, locale) : t("contractors.neverOnline")}</span>
           </div>
         </CardContent>
       </Card>
