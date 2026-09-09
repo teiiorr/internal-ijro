@@ -197,7 +197,7 @@ function MessageRow({
               {/* Telegram uslubidagi tasdiq — faqat öz xabarlarimda, manba öqiş ma'lumotini bergan bölsa */}
               {mine && !isOptimistic && (m.readByCuratorAt !== undefined || m.readByContractorAt !== undefined) && (
                 (viewerIsContractor ? !!m.readByCuratorAt : !!m.readByContractorAt)
-                  ? <Checks className="size-3.5 shrink-0 text-[#4fc3f7]" aria-label="ko'rildi" />
+                  ? <Checks className="size-3.5 shrink-0 text-[#4fc3f7]" aria-label="koʻrildi" />
                   : <Check className="size-3 shrink-0 text-white/55" aria-label="yuborildi" />
               )}
             </p>

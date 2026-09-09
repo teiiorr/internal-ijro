@@ -33,7 +33,7 @@ export async function DeveloperCard() {
             <p className="leading-relaxed">{t("p2")}</p>
             <p className="leading-relaxed text-[var(--muted)]">{t("p3")}</p>
             <a
-              href="https://lex.uz"
+              href="https://lex.uz/uz/docs/-1022944"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline"

@@ -342,7 +342,7 @@ export async function submitStageWork(stageId: string) {
       userIds: [...recipients],
       type: "stage.submitted",
       title: `${prj?.name}: ${stage.name}`,
-      message: "Studiya ishni ko'rib chiqishga yubordi / Студия отправила работу на проверку",
+      message: "Studiya ishni koʻrib chiqishga yubordi / Студия отправила работу на проверку",
       // Studiyalar ish maydoniga ötadi (u yerda qabul qilish / o'zgartirish so'rash boshqaruvlari bor).
       link: prj?.ec ? `/contractors/${prj.ec}?review=${stage.projectId}` : `/projects/${stage.projectId}/stages/${stageId}`,
       entityType: "project_stage",

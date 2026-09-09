@@ -99,9 +99,9 @@ export async function buildEmployeeCardPdf(userId: string): Promise<Buffer | nul
         </Text>
         <View style={s.divider} />
 
-        <Text style={s.h2}>Shaxsiy ma'lumotlar</Text>
+        <Text style={s.h2}>Shaxsiy maʼlumotlar</Text>
         <Field label="Telefon" value={user.phone} />
-        <Field label="Tug'ilgan sana" value={profile?.birthDate ?? null} />
+        <Field label="Tugʻilgan sana" value={profile?.birthDate ?? null} />
         <Field label="Oilaviy holati" value={profile?.maritalStatus ?? null} />
         <Field label="Manzil" value={profile?.address ?? null} />
 
@@ -119,11 +119,11 @@ export async function buildEmployeeCardPdf(userId: string): Promise<Buffer | nul
         <Text style={s.h2}>Ish faoliyati</Text>
         <Field label="Ishga kirgan sana" value={user.hireDate} />
         <Field label="Holati" value={user.status} />
-        <Field label="Bo'shatilgan sana" value={user.terminationDate} />
+        <Field label="Boʻshatilgan sana" value={user.terminationDate} />
 
         <Text style={s.h2}>Lavozim tarixi</Text>
         {history.length === 0 ? (
-          <Text style={s.small}>O'zgarishlar qayd etilmagan.</Text>
+          <Text style={s.small}>Oʻzgarishlar qayd etilmagan.</Text>
         ) : (
           history.map((h) => (
             <Text key={h.id} style={{ fontSize: 13, marginBottom: 2 }}>

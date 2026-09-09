@@ -127,7 +127,7 @@ export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; 
               </TableBody>
             </Table>
             {tasks.length === 0 && (
-              <EmptyState icon={Inbox} title={t("tasks.emptyList")} description="Hozircha topshiriqlar yo'q." />
+              <EmptyState icon={Inbox} title={t("tasks.emptyList")} description="Hozircha topshiriqlar yoʻq." />
             )}
           </div>
         </>

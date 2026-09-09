@@ -171,9 +171,9 @@ const s = StyleSheet.create({
 
 const POSITION_LABEL: Record<string, string> = {
   direktor: "Direktor",
-  orinbosar: "O'rinbosar",
+  orinbosar: "Oʻrinbosar",
   koordinator: "Koordinator",
-  bolim_boshligi: "Bo'lim Boshlig'i",
+  bolim_boshligi: "Boʻlim Boshligʻi",
   bosh_mutaxassis: "Bosh mutaxassis",
   yetakchi_mutaxassis: "Yetakchi mutaxassis",
   mutaxassis: "Mutaxassis",
@@ -192,7 +192,7 @@ const STATUS_UZ: Record<string, string> = {
 const PRIORITY_UZ: Record<string, string> = {
   urgent: "Shoshilinch",
   high: "Yuqori",
-  medium: "O'rta",
+  medium: "Oʻrta",
   low: "Past",
 };
 

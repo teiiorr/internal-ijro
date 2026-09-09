@@ -8,7 +8,7 @@
     "title": "Dastur muallifi",
     "p1": "Bu platforma ilk ğoyadan to bugungi körinişigacha butunlay Bahtiyor Murodxöjayev tomonidan yaratilgan. Uning har bir funktsiyasi, har bir çiziği va butun arxitekturasida muallifning fikri, mehnati va ilhomi mujassam.",
     "p2": "Uşbu asar Özbekiston Respublikasi qonunçiligiga muvofiq intellektual mulk sifatida rasman röyxatdan ötkazilgan va davlat himoyasi ostida turadi.",
-    "p3": "Dasturning kodi, arxitekturasi yoki ğoyasi kabi biror bölagini muallifning yozma ruxsatisiz nusxalaş, tarqatiş, özgartiriş yoki tijorat maqsadida işlatiş qat'iyan man etiladi. Aks holda amaldagi qonunçilikka muvofiq javobgarlik yuzaga keladi.",
+    "p3": "Dasturning kodi, arxitekturasi yoki ğoyasi kabi biror bölagini muallifning yozma ruxsatisiz nusxalaş, tarqatiş, özgartiriş yoki tijorat maqsadida işlatiş qatʼiyan man etiladi. Aks holda amaldagi qonunçilikka muvofiq javobgarlik yuzaga keladi.",
     "lex": "Batafsil: Lex.uz",
     "contacts": "Har bir taklif va fikringiz muallif uchun qadrli. Bemalol boğlaning:"
   },
@@ -77,7 +77,7 @@
     "department": "Bölim",
     "position": "Lavozim",
     "head": "Rahbar",
-    "members": "A'zolar",
+    "members": "Aʼzolar",
     "progress": "Bajariliş",
     "weight": "Vazn",
     "payment": "Tölov",
@@ -86,7 +86,7 @@
     "rating": "Reyting",
     "confirmDelete": "Rostdan ham öçirilsinmi?",
     "noResults": "Natija topilmadi",
-    "noData": "Ma'lumot yöq",
+    "noData": "Maʼlumot yöq",
     "today": "Bugun",
     "yesterday": "Keça",
     "week": "Hafta",
@@ -126,7 +126,7 @@
     "smetaKengash": "Smeta Komissiyasi",
     "more": "Köproq",
     "owner": "Egasi paneli",
-    "normativeDocs": "Me'yoriy hujjatlar",
+    "normativeDocs": "Meʼyoriy hujjatlar",
     "tanlov": "Tanlov",
     "chats": "Çatlar"
   },
@@ -349,7 +349,7 @@
       "name": "Loyiha nomi",
       "description": "Tavsif",
       "type": "Turi",
-      "curator": "Nazoratçi mas'ul",
+      "curator": "Nazoratçi masʼul",
       "contractor": "Studiya",
       "startDate": "Boşlaniş sanasi",
       "deadline": "Tugatiş muddati",
@@ -361,7 +361,7 @@
       "projectTypeHint": "Tur tanlansa, uşbu turga mos bosqiçlar avtomatik qöşiladi.",
       "currentStatus": "Joriy holat",
       "currentStatusPlaceholder": "Loyihaning hozirgi holati haqida qisqaça…",
-      "responsible": "Mas'ul",
+      "responsible": "Masʼul",
       "responsibleHint": "Barça bosqiçlarga qöllanadi (keyin alohida özgartiriş mumkin).",
       "nameRequired": "Nomni kiriting",
       "genre": "Kontent turi",
@@ -443,7 +443,7 @@
     "headers": {
       "name": "Nomi",
       "type": "Turi",
-      "curator": "Nazoratçi mas'ul",
+      "curator": "Nazoratçi masʼul",
       "company": "Kompaniya",
       "progress": "Bajariliş",
       "deadline": "Muddat",
@@ -461,7 +461,7 @@
       "removed": "Studiya olib taşlandi",
       "hint": "Röyxatdan ötmagan studiyani ham qölda qöşişingiz mumkin"
     },
-    "curatorLabel": "Nazoratçi mas'ul",
+    "curatorLabel": "Nazoratçi masʼul",
     "deliverable": {
       "types": {
         "document": "Hujjat",
@@ -585,8 +585,8 @@
       "title": "Filtrlar",
       "type": "Tur",
       "allTypes": "Barça turlar",
-      "responsible": "Mas'ul",
-      "allResponsible": "Barça mas'ullar",
+      "responsible": "Masʼul",
+      "allResponsible": "Barça masʼullar",
       "payment": "Tölov",
       "paid": "Tölangan",
       "unpaid": "Tölanmagan",
@@ -661,7 +661,7 @@
       "emergencyContactPhone": "Aloqa telefoni",
       "emergencyContactRelation": "Aloqasi",
       "address": "Manzil",
-      "education": "Ma'lumot",
+      "education": "Maʼlumot",
       "hr_notes": "HR yozuvlari",
       "printPdf": "PDF kartoçka",
       "viewOnly": "Faqat köriş.",
@@ -678,7 +678,7 @@
         "contract": "Mehnat şartnomasi",
         "passport": "Pasport",
         "diploma": "Diplom",
-        "medical": "Tibbiy ma'lumotnoma",
+        "medical": "Tibbiy maʼlumotnoma",
         "certificate": "Sertifikat",
         "other": "Boşqa"
       }
@@ -711,7 +711,7 @@
     "table": {
       "name": "Nomi",
       "head": "Rahbar",
-      "members": "A'zolar"
+      "members": "Aʼzolar"
     },
     "fields": {
       "name": "Nomi",
@@ -753,14 +753,14 @@
     "delete": "Öçiriş",
     "fields": {
       "name": "Studiya nomi",
-      "contactPerson": "Mas'ul şaxs",
+      "contactPerson": "Masʼul şaxs",
       "email": "Email (login)",
       "password": "Parol",
       "phone": "Telefon"
     },
     "detail": {
       "tabs": {
-        "info": "Ma'lumotlar",
+        "info": "Maʼlumotlar",
         "projects": "Loyihalar",
         "chat": "Suhbat",
         "docs": "Hujjatlar",
@@ -771,7 +771,7 @@
       "notesPlaceholder": "Studiya haqida içki eslatmalar...",
       "notesSaved": "Qayd saqlandi",
       "notesSave": "Saqlaş",
-      "loginInfo": "Tizimga kiriş ma'lumotlari",
+      "loginInfo": "Tizimga kiriş maʼlumotlari",
       "statsProjects": "Loyihalar",
       "statsDocs": "Hujjatlar",
       "statsLastActivity": "Oxirgi faollik",
@@ -928,10 +928,10 @@
     "statusLabel": "Sizning studiya arizangiz holati:",
     "nda": {
       "title": "Maxfiylik kelişuvi",
-      "body1": "Uşbu kelişuvni qabul qiliş orqali siz uşbu portal orqali ulaşilgan barça ma'lumotlar, hujjatlar va aloqalarni qat'iy maxfiy saqlaşga rozilik bildirasiz.",
+      "body1": "Uşbu kelişuvni qabul qiliş orqali siz uşbu portal orqali ulaşilgan barça maʼlumotlar, hujjatlar va aloqalarni qatʼiy maxfiy saqlaşga rozilik bildirasiz.",
       "body2": "Kelişuvni buziş şartnomani bekor qiliş va Özbekiston Respublikasi qonunçiligiga muvofiq huquqiy oqibatlarga olib kelişi mumkin.",
       "accept": "Qabul qilaman",
-      "description1": "Mazkur maxfiylik kelişuvini qabul qiliş orqali siz uşbu portal orqali ulaşilgan barça ma'lumotlarni qat'iy maxfiy saqlaşga rozilik bildirasiz.",
+      "description1": "Mazkur maxfiylik kelişuvini qabul qiliş orqali siz uşbu portal orqali ulaşilgan barça maʼlumotlarni qatʼiy maxfiy saqlaşga rozilik bildirasiz.",
       "description2": "Kelişuvni buziş Özbekiston Respublikasi qonunçiligiga muvofiq şartnomani bekor qilişga va huquqiy oqibatlarga olib kelişi mumkin.",
       "acceptBtn": "Qabul qilaman"
     },
@@ -972,10 +972,10 @@
     "chats": {
       "title": "Çatlar",
       "empty": "Hozirça loyiha çatlari yöq",
-      "curator": "Nazoratçi mas'ul",
-      "noCurator": "Nazoratçi mas'ul tayinlanmagan",
+      "curator": "Nazoratçi masʼul",
+      "noCurator": "Nazoratçi masʼul tayinlanmagan",
       "noMessages": "Xabar yöq",
-      "subtitle": "Loyihalar böyiça nazoratçi mas'ul bilan yozişing",
+      "subtitle": "Loyihalar böyiça nazoratçi masʼul bilan yozişing",
       "openProject": "Loyihani oçiş"
     },
     "submitWork": "Işni topşiriş",
@@ -1125,14 +1125,14 @@
     "topic": "Mavzu",
     "project": "Loyiha",
     "studio": "Studiya",
-    "presenter": "Ma'ruzaçi",
+    "presenter": "Maʼruzaçi",
     "addItem": "Qöşiş",
     "noItems": "Kun tartibi böş",
     "history": "Majlislar tarixi",
     "selectProject": "Loyihani tanlang",
-    "selectPresenter": "Ma'ruzaçini tanlang",
+    "selectPresenter": "Maʼruzaçini tanlang",
     "projectField": "Loyiha — tanlang yoki yozing",
-    "presenterField": "Ma'ruzaçi — tanlang yoki yozing",
+    "presenterField": "Maʼruzaçi — tanlang yoki yozing",
     "newTopic": "Yangi mavzu",
     "emptyAgenda": "Kun tartibi böş"
   },
@@ -1183,12 +1183,12 @@
         "taskResponse": "Vazifaga javob berdi",
         "docAdded": "Hujjat yukladi",
         "docRemoved": "Hujjatni öçirdi",
-        "ndaAccepted": "NDA'ni qabul qildi"
+        "ndaAccepted": "NDAʼni qabul qildi"
       }
     },
     "logs": {
       "title": "Barça loglar",
-      "latest": "Sönggi 500 ta körsatilmoqda — töliq röyxat XLSX'da"
+      "latest": "Sönggi 500 ta körsatilmoqda — töliq röyxat XLSXʼda"
     },
     "system": {
       "title": "Dev vositalar va tizim",
@@ -1197,7 +1197,7 @@
       "uptime": "Işlaş vaqti",
       "platform": "Platforma",
       "memory": "Xotira",
-      "database": "Ma'lumotlar bazasi",
+      "database": "Maʼlumotlar bazasi",
       "connections": "Ulanişlar",
       "topTables": "Eng katta jadvallar",
       "backup": "Zaxira nusxa",
@@ -1206,14 +1206,14 @@
       "backupCount": "Nusxalar soni",
       "backupTotal": "Jami hajmi",
       "backupNone": "Zaxira nusxa yöq",
-      "backupUnavailable": "Ma'lumot yöq (server yölidan taşqarida)",
+      "backupUnavailable": "Maʼlumot yöq (server yölidan taşqarida)",
       "env": "Muhit sozlamalari",
       "secrets": "Maxfiy kalitlar"
     }
   },
   "normative": {
-    "title": "Me'yoriy hujjatlar",
-    "subtitle": "Taşkilotning me'yoriy hujjatlari — papkalar böyiça saqlanadi",
+    "title": "Meʼyoriy hujjatlar",
+    "subtitle": "Taşkilotning meʼyoriy hujjatlari — papkalar böyiça saqlanadi",
     "orLink": "yoki havola",
     "linkTitlePlaceholder": "Havola nomi",
     "addLink": "Havola qöşiş",
@@ -1296,7 +1296,7 @@
   "conversation": {
     "participants": "iştirokçi",
     "members": "Iştirokçilar",
-    "curator": "Nazoratçi mas'ul",
+    "curator": "Nazoratçi masʼul",
     "studio": "Studiya",
     "you": "Siz",
     "group": "Guruh",

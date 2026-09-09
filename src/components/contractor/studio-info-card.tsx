@@ -73,7 +73,7 @@ export function StudioInfoCard({ company, stats, canManage = true }: { company: 
       toast.success("Logo yuklandi");
       router.refresh();
     } catch {
-      toast.error("Logo yuklab bo'lmadi");
+      toast.error("Logo yuklab boʻlmadi");
     } finally {
       setUploading(false);
     }

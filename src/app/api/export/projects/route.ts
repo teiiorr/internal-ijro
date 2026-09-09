@@ -17,12 +17,12 @@ const HEADERS = [
   { header: "Boshlanish sanasi", key: "start", width: 15 },
   { header: "Tugash sanasi", key: "end", width: 15 },
   { header: "Jami byudjet", key: "planned", width: 18 },
-  { header: "Jami to'langan", key: "paid", width: 18 },
+  { header: "Jami toʻlangan", key: "paid", width: 18 },
   { header: "Jami qoldiq", key: "remaining", width: 18 },
   { header: "Joriy bosqich", key: "stage", width: 24 },
   { header: "Joriy bosqich summasi", key: "stagePlanned", width: 20 },
-  { header: "Joriy bosqich to'lovi", key: "stagePaid", width: 20 },
-  { header: "Joriy bosqich qoldig'i", key: "stageRemaining", width: 20 },
+  { header: "Joriy bosqich toʻlovi", key: "stagePaid", width: 20 },
+  { header: "Joriy bosqich qoldigʻi", key: "stageRemaining", width: 20 },
 ];
 const MONEY_COLS = ["planned", "paid", "remaining", "stagePlanned", "stagePaid", "stageRemaining"];
 
