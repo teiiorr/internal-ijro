@@ -526,6 +526,18 @@ export async function getContractorReviewProjects(companyId: string) {
     totals.set(r.projectId, Number(r.c));
   }
 
+  // Har bir loyihaning barcha bosqichlari (vazifa dialogidagi tanlagich uçun).
+  const stagesByProject = new Map<string, { id: string; name: string; orderIndex: number; status: string }[]>();
+  for (const s of await db
+    .select({ projectId: projectStages.projectId, id: projectStages.id, name: projectStages.name, orderIndex: projectStages.orderIndex, status: projectStages.status })
+    .from(projectStages)
+    .where(inArray(projectStages.projectId, ids))
+    .orderBy(asc(projectStages.orderIndex))) {
+    const arr = stagesByProject.get(s.projectId) ?? [];
+    arr.push({ id: s.id, name: s.name, orderIndex: s.orderIndex, status: s.status });
+    stagesByProject.set(s.projectId, arr);
+  }
+
   const acts = await db
     .select({
       projectId: projectStages.projectId,
@@ -582,6 +594,7 @@ export async function getContractorReviewProjects(companyId: string) {
     return {
       ...p,
       totalStages: totals.get(p.id) ?? 0,
+      stages: stagesByProject.get(p.id) ?? [],
       activeStage: a,
       docs: a ? docsByStage.get(a.id) ?? [] : [],
       suggestions: a ? suggestionsByStage.get(a.id) ?? [] : [],

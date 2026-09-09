@@ -7,6 +7,7 @@ import { SmoothImage } from "@/components/ui/smooth-image";
 import { StageDocuments } from "@/components/projects/stage-documents";
 import { StageReviewBar } from "@/components/projects/stage-review-bar";
 import { StageRequirementsEditor } from "./stage-requirements-editor";
+import { NewStudioTaskDialog } from "./new-studio-task-dialog";
 import { formatDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export type ReviewProject = {
   id: string; name: string; status: string; progressPercentage: number | null;
   deadline: string | Date | null; posterUrl: string | null; curatorName: string | null;
   totalStages: number; activeStage: ActiveStage | null; docs: Doc[]; suggestions: string[];
+  stages: { id: string; name: string; orderIndex: number; status: string }[];
   turn: "studio" | "bkrm" | "nobody";
 };
 
@@ -110,6 +112,13 @@ export function StudioProjectsList({
                   </>
                 ) : (
                   <p className="text-sm text-[var(--muted)]">{t("review.status.accepted")}</p>
+                )}
+
+                {/* Studiyaga vazifa beriş (bosqiç böyiça) — faqat muharrirlar uçun */}
+                {isEditor && (
+                  <div className="flex justify-end border-t border-[var(--border)] pt-3">
+                    <NewStudioTaskDialog projectId={p.id} stages={p.stages} defaultStageId={a?.id ?? null} />
+                  </div>
                 )}
               </div>
             )}

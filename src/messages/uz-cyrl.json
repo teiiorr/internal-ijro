@@ -314,6 +314,14 @@
     "print": "Босма",
     "deadline": {
       "deadlineLabel": "Бажариш муддати"
+    },
+    "studioTask": {
+      "new": "Вазифа бериш",
+      "dialogTitle": "Студияга вазифа бериш",
+      "stage": "Босқич",
+      "stageHint": "Стандарт — лойиҳанинг жорий босқичи",
+      "titleRequired": "Вазифа номини киритинг",
+      "created": "Вазифа берилди"
     }
   },
   "projects": {
@@ -960,7 +968,15 @@
       "openProject": "Лойиҳани очиш"
     },
     "submitWork": "Ишни топшириш",
-    "openStage": "Босқични очиш"
+    "openStage": "Босқични очиш",
+    "tasks": {
+      "title": "Вазифалар",
+      "answered": "Жавоб юборилган",
+      "respond": "Жавоб ёзиш",
+      "responsePlaceholder": "Жавобингизни ёзинг...",
+      "responseSent": "Жавоб юборилди",
+      "changesRequested": "Қайта кўриб чиқиш сўралди"
+    }
   },
   "dashboard": {
     "title": "Бош саҳифа",

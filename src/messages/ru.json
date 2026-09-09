@@ -314,6 +314,14 @@
     "print": "Печать",
     "deadline": {
       "deadlineLabel": "Срок выполнения"
+    },
+    "studioTask": {
+      "new": "Дать задачу",
+      "dialogTitle": "Задача для студии",
+      "stage": "Этап",
+      "stageHint": "По умолчанию — текущий этап проекта",
+      "titleRequired": "Введите название задачи",
+      "created": "Задача создана"
     }
   },
   "projects": {
@@ -960,7 +968,15 @@
       "openProject": "Открыть проект"
     },
     "submitWork": "Отправить работу",
-    "openStage": "Открыть этап"
+    "openStage": "Открыть этап",
+    "tasks": {
+      "title": "Задачи",
+      "answered": "Ответ отправлен",
+      "respond": "Ответить",
+      "responsePlaceholder": "Напишите ваш ответ...",
+      "responseSent": "Ответ отправлен",
+      "changesRequested": "Запрошены изменения"
+    }
   },
   "dashboard": {
     "title": "Главная",

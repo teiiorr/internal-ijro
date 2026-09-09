@@ -11,9 +11,14 @@ import {
   taskAttachments,
   taskDependencies,
   users,
+  projects,
+  externalCompanies,
+  projectStages,
 } from "@/lib/db/schema";
 import { requireUser } from "@/lib/session";
 import { canAssignTaskTo, type ActorContext } from "@/lib/permissions";
+import { canEditProjects } from "@/lib/permissions/project-editors";
+import { hasGrant } from "@/lib/permissions/grants";
 import { TASK_PRIORITIES, TASK_STATUSES, canTransition } from "@/lib/permissions/tasks";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
@@ -101,6 +106,107 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
 
   revalidatePath("/tasks");
   return { id: inserted.id };
+}
+
+const studioTaskSchema = z.object({
+  projectId: z.string().uuid(),
+  stageId: z.string().uuid().nullable().optional(),
+  title: z.string().min(2).max(500),
+  description: z.string().max(5000).nullable().optional(),
+  priority: z.enum(TASK_PRIORITIES).default("medium"),
+  deadline: z.string().datetime().nullable().optional(),
+});
+
+/**
+ * Studiyaga (kontragentga) vazifa beradi — "Studiyalar" bölimidan. Ichki vazifa
+ * oqimidan ATAYLAB ajratilgan: bu yerda ijroçi — studiyaning kontragent
+ * foydalanuvçisi, şu bois ichki `canAssignTaskTo` (u kontragentni bloklaydi)
+ * chetlab ötiladi va o'rniga loyiha-muharrir huquqi tekşiriladi. Vazifa loyiha
+ * bosqichiga bog'lanishi mumkin (ixtiyoriy; standart — joriy bosqich, uni mijoz
+ * tanlaydi). Mavjud ichki vazifa mantig'iga tegilmaydi.
+ */
+export async function createStudioTask(input: z.infer<typeof studioTaskSchema>): Promise<{ id: string }> {
+  const me = await requireUser();
+  const parsed = studioTaskSchema.parse(input);
+
+  // Faqat loyiha muharrirlari studiyaga vazifa bera oladi (Studiyalar sahifasidagi isEditor bilan bir xil).
+  const isEditor = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
+  if (!isEditor) throw new Error("forbidden");
+
+  // Loyiha → studiya (external_companies) → kontragent foydalanuvçini aniqlaymiz.
+  const [prj] = await db
+    .select({ id: projects.id, externalCompanyId: projects.externalCompanyId })
+    .from(projects)
+    .where(eq(projects.id, parsed.projectId))
+    .limit(1);
+  if (!prj || !prj.externalCompanyId) throw new Error("not_a_studio_project");
+  const [company] = await db
+    .select({ email: externalCompanies.contactEmail })
+    .from(externalCompanies)
+    .where(eq(externalCompanies.id, prj.externalCompanyId))
+    .limit(1);
+  if (!company?.email) throw new Error("studio_has_no_login");
+  const [studioUser] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.email, company.email), eq(users.position, "kontragent")))
+    .limit(1);
+  if (!studioUser) throw new Error("studio_has_no_login");
+
+  // Bosqiç berilgan bölsa — u ayni şu loyihaga tegişli ekanini tekşiramiz.
+  let stageId: string | null = null;
+  if (parsed.stageId) {
+    const [st] = await db
+      .select({ id: projectStages.id })
+      .from(projectStages)
+      .where(and(eq(projectStages.id, parsed.stageId), eq(projectStages.projectId, parsed.projectId)))
+      .limit(1);
+    if (!st) throw new Error("stage_not_in_project");
+    stageId = st.id;
+  }
+
+  const regNum = await nextRegistrationNumber();
+  const insertedId = await db.transaction(async (tx) => {
+    const ins = await tx
+      .insert(tasks)
+      .values({
+        registrationNumber: regNum,
+        title: parsed.title,
+        description: parsed.description ?? null,
+        assignedToUserId: studioUser.id,
+        createdByUserId: me.id,
+        projectId: parsed.projectId,
+        stageId,
+        priority: parsed.priority,
+        deadline: parsed.deadline ? new Date(parsed.deadline) : null,
+        status: "in_progress",
+      })
+      .returning({ id: tasks.id });
+    const id = ins[0].id;
+    await tx.insert(taskAssignees).values({ taskId: id, userId: studioUser.id, status: "in_progress" as const });
+    return id;
+  });
+
+  await logActivity({
+    userId: me.id,
+    action: "task.created_for_studio",
+    entityType: "task",
+    entityId: insertedId,
+    newValue: { title: parsed.title, registrationNumber: regNum, projectId: parsed.projectId, stageId },
+  });
+  await notify({
+    userIds: [studioUser.id],
+    type: "task.assigned",
+    title: `${regNum}: ${parsed.title}`,
+    message: "Sizga yangi vazifa berildi",
+    link: `/contractor/projects/${parsed.projectId}`,
+    entityType: "task",
+    entityId: insertedId,
+  });
+
+  revalidatePath(`/contractor/projects/${parsed.projectId}`);
+  revalidatePath("/contractors");
+  return { id: insertedId };
 }
 
 export async function changeTaskStatus(taskId: string, nextStatus: (typeof TASK_STATUSES)[number], rejectionReason?: string) {

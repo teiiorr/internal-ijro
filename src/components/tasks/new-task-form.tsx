@@ -111,7 +111,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
         </div>
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="deadline">{t("tasks.fields.deadline")}</Label>
-          <Input id="deadline" name="deadline" type="datetime-local" />
+          <Input id="deadline" name="deadline" type="date" />
         </div>
       </div>
 

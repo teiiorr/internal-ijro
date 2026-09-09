@@ -6,6 +6,7 @@ import {
   taskAssignees,
   users,
   projects,
+  projectStages,
   departments,
   taskChecklistItems,
   taskComments,
@@ -218,3 +219,31 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
 }
 
 void gte; void lte; void inArray;
+
+/**
+ * Studiya (kontragent) uçun: berilgan loyihadagi va ayni şu studiyaga tayinlangan
+ * vazifalar. Bosqiç nomi, muddat, ustuvorlik va studiyaning öz javobi/holati bilan.
+ */
+export async function getContractorProjectTasks(projectId: string, contractorUserId: string) {
+  return db
+    .select({
+      id: tasks.id,
+      title: tasks.title,
+      description: tasks.description,
+      priority: tasks.priority,
+      deadline: tasks.deadline,
+      status: tasks.status,
+      createdAt: tasks.createdAt,
+      stageName: projectStages.name,
+      myStatus: taskAssignees.status,
+      responseText: taskAssignees.responseText,
+      responseFileUrl: taskAssignees.responseFileUrl,
+      responseFileName: taskAssignees.responseFileName,
+      responseSubmittedAt: taskAssignees.responseSubmittedAt,
+    })
+    .from(tasks)
+    .innerJoin(taskAssignees, and(eq(taskAssignees.taskId, tasks.id), eq(taskAssignees.userId, contractorUserId)))
+    .leftJoin(projectStages, eq(projectStages.id, tasks.stageId))
+    .where(eq(tasks.projectId, projectId))
+    .orderBy(desc(tasks.createdAt));
+}

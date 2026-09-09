@@ -314,6 +314,14 @@
     "print": "Bosma",
     "deadline": {
       "deadlineLabel": "Bajariş muddati"
+    },
+    "studioTask": {
+      "new": "Vazifa beriş",
+      "dialogTitle": "Studiyaga vazifa beriş",
+      "stage": "Bosqiç",
+      "stageHint": "Standart — loyihaning joriy bosqiçi",
+      "titleRequired": "Vazifa nomini kiriting",
+      "created": "Vazifa berildi"
     }
   },
   "projects": {
@@ -960,7 +968,15 @@
       "openProject": "Loyihani oçiş"
     },
     "submitWork": "Işni topşiriş",
-    "openStage": "Bosqiçni oçiş"
+    "openStage": "Bosqiçni oçiş",
+    "tasks": {
+      "title": "Vazifalar",
+      "answered": "Javob yuborilgan",
+      "respond": "Javob yoziş",
+      "responsePlaceholder": "Javobingizni yozing...",
+      "responseSent": "Javob yuborildi",
+      "changesRequested": "Qayta körib çiqiş söraldi"
+    }
   },
   "dashboard": {
     "title": "Boş sahifa",

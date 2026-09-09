@@ -317,6 +317,8 @@ export const tasks = pgTable(
     description: text("description"),
     projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),
     milestoneId: uuid("milestone_id").references(() => milestones.id, { onDelete: "set null" }),
+    /** Studiyaga berilgan vazifa qaysi bosqichga tegişli (ixtiyoriy). Bosqiç öçirilsa null. */
+    stageId: uuid("stage_id").references((): AnyPgColumn => projectStages.id, { onDelete: "set null" }),
     parentTaskId: uuid("parent_task_id").references((): AnyPgColumn => tasks.id, {
       onDelete: "set null",
     }),
