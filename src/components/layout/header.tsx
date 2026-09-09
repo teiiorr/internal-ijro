@@ -42,9 +42,9 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
 
   return (
     <header className="sticky top-0 z-30 glass-bar">
-      <div className="h-[60px] sm:h-[68px] flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 max-w-[1500px] mx-auto">
+      <div className="h-[68px] sm:h-[84px] flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 max-w-[1500px] mx-auto">
         <Link href="/dashboard" className="flex items-center mr-1 sm:mr-3 shrink-0">
-          <BrandLogo className="h-10 sm:h-14" />
+          <BrandLogo className="h-12 sm:h-16" />
         </Link>
 
         {onTasks && (
