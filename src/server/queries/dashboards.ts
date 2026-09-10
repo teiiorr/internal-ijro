@@ -50,7 +50,7 @@ export async function getTopAssigneesByCompleted(limit = 5) {
     })
     .from(tasks)
     .innerJoin(users, eq(users.id, tasks.assignedToUserId))
-    .where(sql`${tasks.completedAt} >= now() - interval '30 days'`)
+    .where(sql`${tasks.completedAt} >= now() - interval '30 days' AND ${users.hidden} = false`)
     .groupBy(tasks.assignedToUserId, users.fullName, users.avatarUrl)
     .orderBy(desc(sql`count(*)`))
     .limit(limit);
@@ -67,7 +67,7 @@ export async function getTopAssigneesByOverdue(limit = 5) {
     })
     .from(tasks)
     .innerJoin(users, eq(users.id, tasks.assignedToUserId))
-    .where(sql`${tasks.deadline} < now() AND ${tasks.status} not in ('completed','rejected')`)
+    .where(sql`${tasks.deadline} < now() AND ${tasks.status} not in ('completed','rejected') AND ${users.hidden} = false`)
     .groupBy(tasks.assignedToUserId, users.fullName, users.avatarUrl)
     .orderBy(desc(sql`count(*)`))
     .limit(limit);
@@ -147,7 +147,7 @@ export async function getDepartmentWorkload() {
     FROM tasks t
     LEFT JOIN users u ON u.id = t.assigned_to_user_id
     LEFT JOIN departments d ON d.id = u.department_id
-    WHERE t.status not in ('completed','rejected')
+    WHERE t.status not in ('completed','rejected') AND (u.hidden = false OR u.id IS NULL)
     GROUP BY d.name
     ORDER BY (sum(case when t.status='in_progress' then 1 else 0 end)
             + sum(case when t.status='under_review' then 1 else 0 end)

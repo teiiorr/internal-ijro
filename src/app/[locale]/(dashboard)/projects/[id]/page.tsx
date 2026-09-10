@@ -47,7 +47,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const curatorOptions = await db
     .select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl })
     .from(users)
-    .where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`)
+    .where(sql`${users.status}='active' AND ${users.position} <> 'kontragent' AND ${users.hidden} = false`)
     .orderBy(users.fullName);
   const editProject = {
     id: data.project.id,

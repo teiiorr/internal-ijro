@@ -53,6 +53,8 @@ export async function listEmployees(filters: EmployeeListFilters = {}): Promise<
   if (filters.hireDateTo) where.push(lte(users.hireDate, filters.hireDateTo));
   // Faqat içki xodimlar — HR reyestri heç qaçon kontragentlarni körsatmaydi
   where.push(sql`${users.position} <> 'kontragent'`);
+  // Yashirin xodimlar hech qaysi ro'yxatda ko'rinmaydi
+  where.push(sql`${users.hidden} = false`);
 
   const condition = where.length > 0 ? and(...where) : undefined;
 
@@ -121,15 +123,15 @@ export async function getEmployeeCounts() {
   const total = await db
     .select({ c: sql<number>`count(*)::int` })
     .from(users)
-    .where(sql`${users.position} <> 'kontragent' AND ${users.status} = 'active'`);
+    .where(sql`${users.position} <> 'kontragent' AND ${users.status} = 'active' AND ${users.hidden} = false`);
   const pending = await db
     .select({ c: sql<number>`count(*)::int` })
     .from(users)
-    .where(sql`${users.status} = 'pending'`);
+    .where(sql`${users.status} = 'pending' AND ${users.hidden} = false`);
   const newThisMonth = await db
     .select({ c: sql<number>`count(*)::int` })
     .from(users)
-    .where(sql`${users.hireDate} >= date_trunc('month', now())::date`);
+    .where(sql`${users.hireDate} >= date_trunc('month', now())::date AND ${users.hidden} = false`);
   const onLeaveNow = await db
     .select({ c: sql<number>`count(distinct ${leaves.userId})::int` })
     .from(leaves)
@@ -153,7 +155,7 @@ export async function getBirthdaysThisWeek() {
     .from(users)
     .innerJoin(employeeProfiles, eq(employeeProfiles.userId, users.id))
     .where(
-      sql`${users.status} = 'active' AND extract(week from ${employeeProfiles.birthDate}) = extract(week from now())`
+      sql`${users.status} = 'active' AND ${users.hidden} = false AND extract(week from ${employeeProfiles.birthDate}) = extract(week from now())`
     )
     .orderBy(asc(employeeProfiles.birthDate));
 }

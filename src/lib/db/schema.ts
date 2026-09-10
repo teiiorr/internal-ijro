@@ -70,6 +70,8 @@ export const users = pgTable(
       onDelete: "set null",
     }),
     status: varchar("status", { length: 20 }).default("pending").notNull().$type<UserStatus>(),
+    /** Yashirin xodim: DB'da mavjud va tizimga kira oladi, biroq frontend ro'yxatlari/tanlovlari/panellarida ko'rsatilmaydi. */
+    hidden: boolean("hidden").default(false).notNull(),
     hireDate: date("hire_date"),
     terminationDate: date("termination_date"),
     languagePreference: varchar("language_preference", { length: 10 }).default("uz-latn").notNull(),

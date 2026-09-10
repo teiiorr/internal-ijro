@@ -19,9 +19,9 @@ export default async function NewProjectPage() {
   if (!canEditProjects(session.user.email)) redirect("/projects");
   const [companies, curators, responsibles, typeRows] = await Promise.all([
     db.select({ id: externalCompanies.id, name: externalCompanies.name }).from(externalCompanies).where(eq(externalCompanies.status, "approved")).orderBy(externalCompanies.name),
-    db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`).orderBy(users.fullName),
+    db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent' AND ${users.hidden} = false`).orderBy(users.fullName),
     // mas'ul har qanday faol içki xodim böla oladi (taşqi kontragentlar emas)
-    db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent'`).orderBy(users.fullName),
+    db.select({ id: users.id, fullName: users.fullName }).from(users).where(sql`${users.status}='active' AND ${users.position} <> 'kontragent' AND ${users.hidden} = false`).orderBy(users.fullName),
     db.select().from(projectTypes).where(eq(projectTypes.isActive, true)).orderBy(projectTypes.orderIndex),
   ]);
   const types = typeRows.map((r) => ({ id: r.id, name: localizedTypeName(r, locale) }));

@@ -50,7 +50,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
         db
           .select({ id: usersTable.id, fullName: usersTable.fullName })
           .from(usersTable)
-          .where(sql`${usersTable.position} in ('direktor','orinbosar','koordinator','bolim_boshligi','bosh_mutaxassis','yetakchi_mutaxassis') AND ${usersTable.status} = 'active'`)
+          .where(sql`${usersTable.position} in ('direktor','orinbosar','koordinator','bolim_boshligi','bosh_mutaxassis','yetakchi_mutaxassis') AND ${usersTable.status} = 'active' AND ${usersTable.hidden} = false`)
           .orderBy(usersTable.fullName),
       ])
     : [[], []];

@@ -19,8 +19,8 @@ export async function getSystemStats() {
     usersTotal, usersActive, projectsTotal, projectsActive, tasksTotal,
     stagesTotal, docsTotal, companiesTotal, notifsTotal, logsTotal, deptTotal,
   ] = await Promise.all([
-    one(db.select({ n: cnt() }).from(users)),
-    one(db.select({ n: cnt() }).from(users).where(sql`${users.status} = 'active'`)),
+    one(db.select({ n: cnt() }).from(users).where(sql`${users.hidden} = false`)),
+    one(db.select({ n: cnt() }).from(users).where(sql`${users.status} = 'active' AND ${users.hidden} = false`)),
     one(db.select({ n: cnt() }).from(projects)),
     one(db.select({ n: cnt() }).from(projects).where(sql`${projects.status} not in ('completed','cancelled')`)),
     one(db.select({ n: cnt() }).from(tasks)),

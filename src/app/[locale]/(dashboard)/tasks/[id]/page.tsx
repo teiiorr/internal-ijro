@@ -49,7 +49,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const allUsers = await db
     .select({ id: usersTbl.id, fullName: usersTbl.fullName, avatarUrl: usersTbl.avatarUrl })
     .from(usersTbl)
-    .where(sql`${usersTbl.status} = 'active'`)
+    .where(sql`${usersTbl.status} = 'active' AND ${usersTbl.hidden} = false`)
     .orderBy(usersTbl.fullName);
 
   return (

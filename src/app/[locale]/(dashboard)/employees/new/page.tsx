@@ -18,7 +18,7 @@ export default async function NewEmployeePage() {
     db
       .select({ id: users.id, fullName: users.fullName })
       .from(users)
-      .where(sql`${users.position} in ('direktor','orinbosar','koordinator','bolim_boshligi','bosh_mutaxassis','yetakchi_mutaxassis') AND ${users.status} = 'active'`)
+      .where(sql`${users.position} in ('direktor','orinbosar','koordinator','bolim_boshligi','bosh_mutaxassis','yetakchi_mutaxassis') AND ${users.status} = 'active' AND ${users.hidden} = false`)
       .orderBy(users.fullName),
   ]);
   void eq;

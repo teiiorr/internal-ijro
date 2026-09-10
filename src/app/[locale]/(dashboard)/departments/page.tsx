@@ -18,7 +18,7 @@ export default async function DepartmentsPage() {
     db
       .select({ id: users.id, fullName: users.fullName })
       .from(users)
-      .where(sql`${users.position} in ('direktor','orinbosar','koordinator','bolim_boshligi') AND ${users.status} = 'active'`)
+      .where(sql`${users.position} in ('direktor','orinbosar','koordinator','bolim_boshligi') AND ${users.status} = 'active' AND ${users.hidden} = false`)
       .orderBy(users.fullName),
   ]);
 

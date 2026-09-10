@@ -1,5 +1,5 @@
 import "server-only";
-import { asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { departments, users, coordinatorAssignments } from "@/lib/db/schema";
 
@@ -20,7 +20,7 @@ export async function listDepartments(): Promise<DepartmentRow[]> {
       parentDepartmentId: departments.parentDepartmentId,
       headUserId: departments.headUserId,
       headFullName: users.fullName,
-      memberCount: sql<number>`(select count(*)::int from users u where u.department_id = ${departments.id})`,
+      memberCount: sql<number>`(select count(*)::int from users u where u.department_id = ${departments.id} and u.hidden = false)`,
     })
     .from(departments)
     .leftJoin(users, eq(users.id, departments.headUserId))
@@ -38,5 +38,5 @@ export async function listCoordinators(departmentId: string) {
     .select({ userId: users.id, fullName: users.fullName, email: users.email })
     .from(coordinatorAssignments)
     .innerJoin(users, eq(users.id, coordinatorAssignments.coordinatorUserId))
-    .where(eq(coordinatorAssignments.departmentId, departmentId));
+    .where(and(eq(coordinatorAssignments.departmentId, departmentId), eq(users.hidden, false)));
 }

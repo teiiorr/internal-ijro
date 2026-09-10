@@ -187,7 +187,7 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
     })
     .from(users)
     .leftJoin(departments, eq(departments.id, users.departmentId))
-    .where(and(sql`${users.status} = 'active'`, sql`${users.position} <> 'kontragent'`, ...excluded))
+    .where(and(sql`${users.status} = 'active'`, sql`${users.position} <> 'kontragent'`, sql`${users.hidden} = false`, ...excluded))
     .orderBy(users.fullName);
 }
 
