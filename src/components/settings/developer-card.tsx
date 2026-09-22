@@ -4,6 +4,7 @@ import {
   IconCode as Code,
   IconShieldLock as ShieldLock,
   IconExternalLink as ExternalLink,
+  IconCertificate as Certificate,
   IconBrandTelegram as Telegram,
   IconBrandInstagram as Instagram,
   IconPhone as Phone,
@@ -32,15 +33,26 @@ export async function DeveloperCard() {
           <div className="space-y-2">
             <p className="leading-relaxed">{t("p2")}</p>
             <p className="leading-relaxed text-[var(--muted)]">{t("p3")}</p>
-            <a
-              href="https://lex.uz/uz/docs/-1022944"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline"
-            >
-              <ExternalLink className="size-3.5" />
-              {t("lex")}
-            </a>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5">
+              <a
+                href="/guvohnoma-dgu-68862.pdf"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline"
+              >
+                <Certificate className="size-4" />
+                {t("cert")}
+              </a>
+              <a
+                href="https://lex.uz/uz/docs/-1022944"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline"
+              >
+                <ExternalLink className="size-3.5" />
+                {t("lex")}
+              </a>
+            </div>
           </div>
         </div>
 

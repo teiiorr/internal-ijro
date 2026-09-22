@@ -7,10 +7,11 @@
   "developer": {
     "title": "Dastur muallifi",
     "p1": "Bu platforma ilk gʻoyadan to bugungi koʻrinishigacha butunlay Baxtiyor Murodxoʻjayev tomonidan yaratilgan. Uning har bir funksiyasi, har bir chizigʻi va butun arxitekturasida muallifning fikri, mehnati va ilhomi mujassam.",
-    "p2": "Ushbu asar Oʻzbekiston Respublikasi qonunchiligiga muvofiq intellektual mulk sifatida rasman roʻyxatdan oʻtkazilgan va davlat himoyasi ostida turadi.",
+    "p2": "Ushbu asar Oʻzbekiston Respublikasi qonunchiligiga muvofiq intellektual mulk sifatida rasman roʻyxatdan oʻtkazilgan va davlat himoyasi ostida turadi. Guvohnoma № DGU 68862 (Oʻzbekiston Respublikasi Adliya vazirligi, 22.09.2026).",
     "p3": "Dasturning kodi, arxitekturasi yoki gʻoyasi kabi biror boʻlagini muallifning yozma ruxsatisiz nusxalash, tarqatish, oʻzgartirish yoki tijorat maqsadida ishlatish qatʼiyan man etiladi. Aks holda amaldagi qonunchilikka muvofiq javobgarlik yuzaga keladi.",
     "lex": "Batafsil: Lex.uz",
-    "contacts": "Har bir taklif va fikringiz muallif uchun qadrli. Bemalol bogʻlaning:"
+    "contacts": "Har bir taklif va fikringiz muallif uchun qadrli. Bemalol bogʻlaning:",
+    "cert": "Guvohnomani koʻrish (PDF)"
   },
   "offline": {
     "title": "Internet aloqasi yoʻq",
