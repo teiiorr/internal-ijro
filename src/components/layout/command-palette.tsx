@@ -109,14 +109,14 @@ export function CommandPalette() {
         className="flex items-center gap-2 rounded-full border border-[var(--input)] bg-[var(--glass-fill)] px-3 h-9 text-[13px] font-medium text-[var(--subtle)] hover:border-[var(--primary)] hover:text-[var(--foreground)] transition-colors"
       >
         <Search className="size-4" />
-        <span className="hidden lg:inline">{t("open")}</span>
-        <kbd className="hidden lg:inline rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-1.5 py-0.5 text-[10px] font-bold tabular-nums">⌘K</kbd>
+        <span className="hidden md:inline">{t("open")}</span>
+        <kbd className="hidden md:inline rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-1.5 py-0.5 text-[10px] font-bold">Ctrl + K</kbd>
       </button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="top-[12%] translate-y-0 max-w-xl p-0 gap-0 overflow-hidden">
+        <DialogContent className="top-[8%] sm:top-[12%] translate-y-0 w-[calc(100vw-1.25rem)] max-w-xl p-0 gap-0 overflow-hidden">
           <DialogTitle className="sr-only">{t("open")}</DialogTitle>
-          <div className="flex items-center gap-2.5 border-b border-[var(--border)] px-4">
+          <div className="flex items-center gap-2.5 border-b border-[var(--border)] pl-4 pr-14">
             <Search className="size-5 shrink-0 text-[var(--subtle)]" />
             <input
               autoFocus

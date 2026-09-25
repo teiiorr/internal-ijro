@@ -1068,7 +1068,7 @@
   },
   "commandPalette": {
     "placeholder": "Loyiha, vazifa, xodim, studiya yoki tanlov qidiring...",
-    "hint": "Ochish/yopish uchun ⌘K bosing.",
+    "hint": "Ochish/yopish uchun Ctrl + K bosing.",
     "groupPages": "Sahifalar",
     "noResults": "Natija yoʻq.",
     "open": "Qidiruv",
