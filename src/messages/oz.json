@@ -1067,10 +1067,19 @@
     }
   },
   "commandPalette": {
-    "placeholder": "Buyruq yoki sahifa nomini kiriting...",
+    "placeholder": "Loyiha, vazifa, xodim, studiya yoki tanlov qidiring...",
     "hint": "Oçiş/yopiş uçun ⌘K bosing.",
     "groupPages": "Sahifalar",
-    "noResults": "Natija yöq."
+    "noResults": "Natija yöq.",
+    "open": "Qidiruv",
+    "searching": "Qidirilmoqda...",
+    "groups": {
+      "projects": "Loyihalar",
+      "tasks": "Vazifalar",
+      "employees": "Xodimlar",
+      "studios": "Studiyalar",
+      "contests": "Tanlovlar"
+    }
   },
   "header": {
     "searchPlaceholder": "Vazifalarni qidiriş...",

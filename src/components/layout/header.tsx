@@ -7,6 +7,7 @@ import { IconSearch as Search, IconLogout as LogOut, IconSettings as SettingsIco
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
+import { CommandPalette } from "@/components/layout/command-palette";
 import { BrandLogo } from "@/components/brand-logo";
 import { signOut } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
@@ -62,6 +63,7 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
         )}
 
         <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
+          {!pathname.startsWith("/contractor") && <CommandPalette />}
           <NotificationBell />
           <LanguageSwitcher />
           <ThemeToggle />
