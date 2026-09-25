@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { notifications } from "@/lib/db/schema";
 import { sendMail } from "@/lib/email";
+import { publishNotification } from "@/lib/realtime/bus";
 import { deliverNotification, type DeliverArgs } from "./deliver";
 
 export type NotifyArgs = DeliverArgs;
@@ -15,6 +16,8 @@ export type NotifyArgs = DeliverArgs;
  */
 export async function notify(args: NotifyArgs): Promise<void> {
   await deliverNotification(db, args, (opts) => sendMail(opts));
+  // Real vaqtli signal — SSE orqali qo'ng'iroqni darhol yangilaydi (fallback: 60s polling).
+  for (const uid of new Set(args.userIds)) publishNotification(uid);
 }
 
 export async function markAllAsRead(userId: string): Promise<void> {

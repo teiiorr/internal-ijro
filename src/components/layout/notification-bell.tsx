@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { IconBell as Bell, IconChecks as CheckCheck } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations, useLocale } from "next-intl";
@@ -28,6 +29,11 @@ export function NotificationBell() {
   const [unread, setUnread] = useState(0);
   const [items, setItems] = useState<Item[]>([]);
   const ref = useRef<HTMLDivElement>(null);
+  const openRef = useRef(false);
+  useEffect(() => { openRef.current = open; }, [open]);
+  // Toast takrorlanmasligi uchun oxirgi ko'rilgan bildirishnoma id'si.
+  const lastTopRef = useRef<string | null>(null);
+  const seededRef = useRef(false);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -37,31 +43,70 @@ export function NotificationBell() {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    async function tick() {
-      try {
-        const r = await fetch("/api/notifications/unread-count", { cache: "no-store" });
-        if (!cancelled && r.ok) {
-          const j = (await r.json()) as { count: number };
-          setUnread(j.count);
-        }
-      } catch {}
-    }
-    tick();
-    const id = setInterval(tick, 60_000);
-    return () => { cancelled = true; clearInterval(id); };
+  const refreshCount = useCallback(async () => {
+    try {
+      const r = await fetch("/api/notifications/unread-count", { cache: "no-store" });
+      if (r.ok) {
+        const j = (await r.json()) as { count: number };
+        setUnread(j.count);
+      }
+    } catch { /* tarmoq xatosi — e'tiborsiz */ }
   }, []);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const r = await fetch("/api/notifications/recent", { cache: "no-store" });
       if (r.ok) {
         const j = (await r.json()) as { items: Item[] };
         setItems(j.items);
+        lastTopRef.current = j.items[0]?.id ?? null;
+        seededRef.current = true;
       }
-    } catch {}
-  }
+    } catch { /* tarmoq xatosi — e'tiborsiz */ }
+  }, []);
+
+  // Yangi bildirishnoma signali (SSE) yoki fallback polling kelganda.
+  const onIncoming = useCallback(async () => {
+    refreshCount();
+    try {
+      const r = await fetch("/api/notifications/recent", { cache: "no-store" });
+      if (!r.ok) return;
+      const j = (await r.json()) as { items: Item[] };
+      if (openRef.current) setItems(j.items);
+      const top = j.items[0];
+      if (top && !top.isRead && top.id !== lastTopRef.current) {
+        if (seededRef.current) toast(top.title, { description: top.message ?? undefined });
+        lastTopRef.current = top.id;
+      }
+      seededRef.current = true;
+    } catch { /* e'tiborsiz */ }
+  }, [refreshCount]);
+
+  // Boshlang'ich hisob + oxirgi bildirishnomani "urug'lash" (mavjudlariga toast chiqmasin).
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      await refreshCount();
+      if (!cancelled) await load();
+    })();
+    return () => { cancelled = true; };
+  }, [refreshCount, load]);
+
+  // Fallback: 60 soniyalik polling (SSE ishlamasa ham hisob yangilanadi).
+  useEffect(() => {
+    const id = setInterval(refreshCount, 60_000);
+    return () => clearInterval(id);
+  }, [refreshCount]);
+
+  // Real vaqt: SSE oqimi. Xatoda brauzer o'zi qayta ulanadi; polling zaxira bo'lib qoladi.
+  useEffect(() => {
+    let es: EventSource | null = null;
+    try {
+      es = new EventSource("/api/notifications/stream");
+      es.addEventListener("notify", () => { onIncoming(); });
+    } catch { /* EventSource qo'llab-quvvatlanmasa — polling ishlaydi */ }
+    return () => { es?.close(); };
+  }, [onIncoming]);
 
   function toggle() {
     const next = !open;
