@@ -58,18 +58,20 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
       <Card>
         <CardContent className="p-5 sm:p-6 space-y-5">
           {/* Muvozanatli sarlavha paneli: orqaga + sarlavha (çapda) + tahrirlaş (öngda) bitta qatorda. */}
-          <div className="flex items-start gap-3 sm:gap-4">
-            <BackButton fallbackHref={`/projects/${id}`} className="mt-0.5 shrink-0" />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-[var(--muted)]">
-                <Link href={`/projects/${id}`} className="hover:underline">{s.projectName}</Link>
-                {" · "}
-                {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
-              </p>
-              <h1 className="mt-1 text-xl font-bold tracking-tight leading-snug break-words sm:text-2xl">{s.name}</h1>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+            <div className="flex items-start gap-3 min-w-0 flex-1">
+              <BackButton fallbackHref={`/projects/${id}`} className="mt-0.5 shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-[var(--muted)]">
+                  <Link href={`/projects/${id}`} className="hover:underline">{s.projectName}</Link>
+                  {" · "}
+                  {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
+                </p>
+                <h1 className="mt-1 text-lg font-bold tracking-tight leading-snug break-words sm:text-2xl">{s.name}</h1>
+              </div>
             </div>
             {canManage && (
-              <div className="shrink-0">
+              <div className="shrink-0 pl-11 sm:pl-0">
                 <EditStageDialog
                   stage={{ id: s.id, name: s.name, plannedStartDate: s.plannedStartDate, plannedDeadline: s.plannedDeadline, plannedAmount: s.plannedAmount, contractNumber: s.contractNumber, responsibleUserId: s.responsibleUserId }}
                   users={assignable}

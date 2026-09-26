@@ -74,9 +74,9 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
                 {" · "}
                 {t("projects.stagePath.stageOf", { n: s.orderIndex + 1, total })}
               </p>
-              <h1 className="mt-1 text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{s.name}</h1>
+              <h1 className="mt-1 text-lg font-bold leading-snug tracking-tight break-words sm:text-2xl">{s.name}</h1>
             </div>
-            <StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag>
+            <div className="shrink-0"><StatusTag tone={statusMeta.tone}>{statusMeta.label}</StatusTag></div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4 text-sm">

@@ -54,17 +54,21 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="space-y-5 max-w-5xl stagger-children">
-      <div className="flex items-start gap-2 flex-wrap">
-        <BackButton fallbackHref="/tasks" className="mt-0.5" />
-        <h1 className="text-base sm:text-lg font-semibold tracking-tight leading-snug flex-1 min-w-0 break-words">
-          {data.task.title}
-        </h1>
-        {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
-        <Button asChild variant="outline" size="sm" className="shrink-0">
-          <a href={`/api/export/task/${data.task.id}`} target="_blank">
-            <Printer className="size-4" /> {t("tasks.print")}
-          </a>
-        </Button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-2">
+        <div className="flex items-start gap-2 min-w-0 flex-1">
+          <BackButton fallbackHref="/tasks" className="mt-0.5 shrink-0" />
+          <h1 className="min-w-0 flex-1 text-base sm:text-lg font-semibold tracking-tight leading-snug break-words">
+            {data.task.title}
+          </h1>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 pl-10 sm:pl-0 sm:shrink-0 sm:justify-end">
+          {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
+          <Button asChild variant="outline" size="sm" className="shrink-0">
+            <a href={`/api/export/task/${data.task.id}`} target="_blank">
+              <Printer className="size-4" /> {t("tasks.print")}
+            </a>
+          </Button>
+        </div>
       </div>
 
       <TaskHeaderCard

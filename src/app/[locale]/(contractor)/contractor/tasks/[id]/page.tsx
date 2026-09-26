@@ -27,12 +27,18 @@ export default async function ContractorTaskDetailPage({ params }: { params: Pro
 
   return (
     <div className="max-w-3xl space-y-5 stagger-children">
-      <div className="flex items-start gap-2 flex-wrap">
-        <BackButton fallbackHref="/contractor/tasks" className="mt-0.5" />
-        <h1 className="min-w-0 flex-1 break-words text-base font-semibold leading-snug tracking-tight sm:text-lg">
-          {data.task.title}
-        </h1>
-        {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-2">
+        <div className="flex items-start gap-2 min-w-0 flex-1">
+          <BackButton fallbackHref="/contractor/tasks" className="mt-0.5 shrink-0" />
+          <h1 className="min-w-0 flex-1 break-words text-base font-semibold leading-snug tracking-tight sm:text-lg">
+            {data.task.title}
+          </h1>
+        </div>
+        {data.task.projectId && (
+          <div className="pl-10 sm:pl-0 sm:shrink-0">
+            <ShareTaskChatButton taskId={data.task.id} />
+          </div>
+        )}
       </div>
 
       <TaskHeaderCard
