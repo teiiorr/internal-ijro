@@ -106,3 +106,10 @@ export function deadlineRelative(
   if (diffDays <= 14) return { text: `${diffDays} ${l.daysLeft}`, tone: "default" };
   return { text: formatDate(d, locale), tone: "default" };
 }
+
+/** Toshkent vaqti bo'yicha bugundan sanagacha bo'lgan kunlar (manfiy — kechikkan). */
+export function daysFromToday(date: string | Date): number {
+  const today = toTashkent(new Date()).toISOString().slice(0, 10);
+  const target = typeof date === "string" ? date.slice(0, 10) : toTashkent(date).toISOString().slice(0, 10);
+  return Math.round((Date.parse(`${target}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86_400_000);
+}

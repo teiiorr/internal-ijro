@@ -983,6 +983,66 @@ export const contestComments = pgTable(
   })
 );
 
+// ---------- Studiya ↔ xodim hamkorligi (studiya portali kengaytmasi) ----------
+// Barcha yangi ma'lumotlar ALOHIDA jadvallarda: mavjud `projects` / `project_stages`
+// select-all so'rovlari migratsiya qo'llanmagan bo'lsa ham buzilmaydi.
+
+/** "Joriy holat" yangilanishlari tarixi (kim, qachon). Asosiy matn — projects.current_status. */
+export const projectStatusUpdates = pgTable(
+  "project_status_updates",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+    text: text("text").notNull(),
+    updatedByUserId: uuid("updated_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({ projectIdx: index("project_status_updates_project_idx").on(t.projectId, t.createdAt) })
+);
+
+/** Studiyaning faol bosqich bo'yicha bajarilish hisobotlari (eng oxirgisi — joriy foiz). */
+export const stageProgressReports = pgTable(
+  "stage_progress_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    stageId: uuid("stage_id").notNull().references(() => projectStages.id, { onDelete: "cascade" }),
+    projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+    progress: integer("progress").notNull(),
+    note: text("note"),
+    reportedByUserId: uuid("reported_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    stageIdx: index("stage_progress_reports_stage_idx").on(t.stageId, t.createdAt),
+    progressCheck: check("stage_progress_reports_progress_chk", sql`${t.progress} BETWEEN 0 AND 100`),
+  })
+);
+
+/** Studiya so'rovlari: muddatni uzaytirish ('deadline') yoki muammo/yordam ('blocker'). */
+export const stageRequests = pgTable(
+  "stage_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+    stageId: uuid("stage_id").notNull().references(() => projectStages.id, { onDelete: "cascade" }),
+    /** 'deadline' | 'blocker' */
+    type: varchar("type", { length: 20 }).notNull(),
+    /** 'pending' | 'approved' | 'rejected' | 'resolved' */
+    status: varchar("status", { length: 20 }).default("pending").notNull(),
+    message: text("message").notNull(),
+    requestedDeadline: date("requested_deadline"),
+    requestedByUserId: uuid("requested_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    decidedByUserId: uuid("decided_by_user_id").references(() => users.id, { onDelete: "set null" }),
+    decisionNote: text("decision_note"),
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    projectIdx: index("stage_requests_project_idx").on(t.projectId),
+    statusIdx: index("stage_requests_status_idx").on(t.status),
+  })
+);
+
 // Qulaylik uçun aniqlangan tiplarni qayta eksport qilamiz
 export type User = typeof users.$inferSelect;
 export type CouncilMeeting = typeof councilMeetings.$inferSelect;
