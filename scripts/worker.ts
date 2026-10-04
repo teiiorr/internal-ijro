@@ -4,6 +4,7 @@ import postgres from "postgres";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import * as schema from "@/lib/db/schema";
 import { deliverNotification } from "@/lib/notifications/deliver";
+import { OWNER_EMAILS } from "@/lib/permissions/owner";
 import { runTaskReminders } from "./jobs/task-reminders";
 import { runCouncilResolutionReminders } from "./jobs/council-resolutions";
 import { runNormativeAckReminders } from "./jobs/normative-ack-reminders";
@@ -53,7 +54,7 @@ async function main() {
     const rows = await db
       .select({ id: users.id })
       .from(users)
-      .where(sql`${users.status}='active' AND ${users.position} in ('direktor','orinbosar')`);
+      .where(sql`${users.status}='active' AND (${users.position} in ('direktor','orinbosar') OR lower(${users.email}) in ${OWNER_EMAILS})`);
     return rows.map((r) => r.id);
   };
 

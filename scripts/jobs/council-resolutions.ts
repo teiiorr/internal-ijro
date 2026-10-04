@@ -1,8 +1,9 @@
-import { and, eq, inArray, isNotNull, isNull, lt, sql } from "drizzle-orm";
+import { and, eq, inArray, isNotNull, isNull, lt, or, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import * as schema from "../../src/lib/db/schema";
 import { councilResolutions } from "../../src/lib/db/tables/council-resolutions";
 import { deliverNotification } from "../../src/lib/notifications/deliver";
+import { OWNER_EMAILS } from "../../src/lib/permissions/owner";
 import {
   addDaysIso,
   dueReminderMessage,
@@ -113,7 +114,13 @@ export async function runCouncilResolutionReminders(db: Db, now = new Date()): P
       const leaders = await db
         .select({ id: users.id })
         .from(users)
-        .where(and(eq(users.status, "active"), inArray(users.position, ["direktor", "orinbosar"]), eq(users.hidden, false)));
+        .where(
+          and(
+            eq(users.status, "active"),
+            or(inArray(users.position, ["direktor", "orinbosar"]), inArray(sql`lower(${users.email})`, OWNER_EMAILS)),
+            eq(users.hidden, false)
+          )
+        );
       const leaderIds = leaders.map((u) => u.id);
 
       // Creators / responsibles must still be active internal employees.

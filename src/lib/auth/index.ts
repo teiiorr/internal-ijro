@@ -8,6 +8,7 @@ import { verifyPassword } from "./password";
 import { verifyTotp } from "./twofa";
 import { maybeSendNewDeviceEmail } from "./new-device";
 import { shortName } from "@/lib/names";
+import { effectivePosition } from "@/lib/permissions/owner";
 
 declare module "next-auth" {
   interface Session {
@@ -104,7 +105,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           email: user.email,
           fullName: user.fullName,
-          position: user.position,
+          // Platforma egasi bazadagi lavozimidan qat'i nazar direktor huquqlari bilan kiradi.
+          position: effectivePosition(user.email, user.position),
           departmentId: user.departmentId,
           status: user.status,
           languagePreference: user.languagePreference,

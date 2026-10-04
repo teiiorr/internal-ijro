@@ -1,8 +1,9 @@
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull, or, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import * as schema from "../../src/lib/db/schema";
 import { weeklySnapshots } from "../../src/lib/db/tables/weekly-brief";
 import { deliverNotification } from "../../src/lib/notifications/deliver";
+import { OWNER_EMAILS } from "../../src/lib/permissions/owner";
 import { ensureSnapshot } from "../../src/lib/reports/weekly-snapshot";
 import {
   lastCompletedWeekStart,
@@ -50,7 +51,7 @@ export async function runWeeklySnapshot(db: Db, now = new Date()): Promise<boole
         and(
           eq(users.status, "active"),
           eq(users.hidden, false),
-          inArray(users.position, [...WEEKLY_BRIEF_VIEWER_POSITIONS])
+          or(inArray(users.position, [...WEEKLY_BRIEF_VIEWER_POSITIONS]), inArray(sql`lower(${users.email})`, OWNER_EMAILS))
         )
       );
 

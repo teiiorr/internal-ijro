@@ -5,6 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { externalCompanies, projects, projectCurators, projectMessages, projectStages, stageDocuments, stagePayments, users } from "@/lib/db/schema";
 import { requireProjectEditor, requireUser } from "@/lib/session";
+import { OWNER_EMAILS } from "@/lib/permissions/owner";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { deleteFileByUrl } from "@/lib/upload";
@@ -36,7 +37,7 @@ async function directorIds(): Promise<string[]> {
   const rows = await db
     .select({ id: users.id })
     .from(users)
-    .where(sql`${users.status}='active' AND ${users.position} in ('direktor','orinbosar')`);
+    .where(sql`${users.status}='active' AND (${users.position} in ('direktor','orinbosar') OR lower(${users.email}) in ${OWNER_EMAILS})`);
   return rows.map((r) => r.id);
 }
 
