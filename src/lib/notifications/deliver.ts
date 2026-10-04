@@ -25,6 +25,17 @@ export type DeliverArgs = {
 
 export type Mailer = (opts: { to: string; subject: string; html: string }) => Promise<unknown>;
 
+/** notifications.title — varchar(255). Postgres belgilarni sanaydi, shuning uchun kod nuqtalari bo'yicha qisqartiramiz. */
+export function clampNotificationTitle(v: string, max = 255): string {
+  const cps = Array.from(v);
+  return cps.length > max ? cps.slice(0, max - 1).join("") + "…" : v;
+}
+
+/** Email HTML ichiga qo'yiladigan foydalanuvchi matnini zararsizlantiradi (HTML injection'dan himoya). */
+function escapeHtml(v: string): string {
+  return v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 export async function deliverNotification(
   db: PostgresJsDatabase<typeof schema>,
   args: DeliverArgs,
@@ -32,6 +43,8 @@ export async function deliverNotification(
 ): Promise<void> {
   if (args.userIds.length === 0) return;
   const uniq = Array.from(new Set(args.userIds));
+  // Uzun sarlavha (masalan, 500 belgili topshiriq nomi) INSERT'ni yiqitmasin.
+  const title = clampNotificationTitle(args.title);
 
   const settings = await db
     .select({
@@ -54,7 +67,7 @@ export async function deliverNotification(
     .map((uid) => ({
       userId: uid,
       type: args.type,
-      title: args.title,
+      title,
       message: args.message ?? null,
       link: args.link ?? null,
       relatedEntityType: args.entityType ?? null,
@@ -75,9 +88,12 @@ export async function deliverNotification(
         recipients.map((r) =>
           mailer({
             to: r.email,
-            subject: args.title,
-            html: `<p>${r.fullName},</p><p>${args.message ?? args.title}</p>${
-              args.link ? `<p><a href="${base}${args.link}">Open</a></p>` : ""
+            subject: title,
+            html: `<p>${escapeHtml(r.fullName)},</p><p>${escapeHtml(args.message ?? title)}</p>${
+              // Faqat ilova ichidagi nisbiy havolalar (/...) — tashqi URL yoki javascript: emas.
+              args.link && args.link.startsWith("/") && !args.link.startsWith("//")
+                ? `<p><a href="${escapeHtml(base + args.link)}">Open</a></p>`
+                : ""
             }`,
           })
         )
@@ -91,7 +107,7 @@ export async function deliverNotification(
     .filter((s): s is NonNullable<typeof s> => !!s && s.telegram === true && !!s.telegramChatId);
   if (tgTargets.length > 0) {
     await Promise.allSettled(
-      tgTargets.map((s) => sendTelegram(s.telegramChatId as string, args.title, args.message, args.link))
+      tgTargets.map((s) => sendTelegram(s.telegramChatId as string, title, args.message, args.link))
     );
   }
 }
