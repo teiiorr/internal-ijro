@@ -1,11 +1,18 @@
+import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users as usersTbl } from "@/lib/db/schema";
-import { getTask } from "@/server/queries/tasks";
+import { getTask, listAssignableUsers } from "@/server/queries/tasks";
+import { getTaskDeadlineRequests } from "@/server/queries/task-history";
+import { getNudgeStats } from "@/server/queries/task-control";
+import { EditTaskButton } from "@/components/staff/task-edit/edit-task-button";
+import { DeadlineRequestsCard } from "@/components/staff/task-edit/deadline-requests-card";
+import { TaskHistoryCard } from "@/components/staff/task-edit/task-history-card";
+import { CouncilResolutionBadge } from "@/components/staff/council-resolutions/council-resolution-badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CommentsSection } from "@/components/tasks/comments-section";
@@ -21,6 +28,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
+  const locale = await getLocale();
 
   const { id } = await params;
   const data = await getTask(id);
@@ -31,12 +39,26 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const myAssignment = data.assignees.find((a) => a.userId === me.id);
   const isAssignee = !!myAssignment;
   const canEdit = isCreator || isAssignee || ["direktor", "orinbosar"].includes(me.position);
+  // Tahrirlash, muddat so'rovlarini hal qilish va eslatish — topshiriq beruvchi yoki rahbariyat.
+  const canManage = isCreator || ["direktor", "orinbosar"].includes(me.position);
+  const isParticipant = isCreator || isAssignee || ["direktor", "orinbosar"].includes(me.position);
+  // Muddat UTC yarim tunda saqlanadi → Toshkent sanasi (YYYY-MM-DD).
+  const deadlineDate = data.task.deadline
+    ? new Date(new Date(data.task.deadline as Date).getTime() + 5 * 3600e3).toISOString().slice(0, 10)
+    : null;
+  const [requests, nudgeStats, people] = await Promise.all([
+    getTaskDeadlineRequests(id),
+    canManage ? getNudgeStats(id) : Promise.resolve({} as Record<string, { count: number; lastAt: string | null }>),
+    canManage ? listAssignableUsers(me.id, me.position, me.departmentId) : Promise.resolve([]),
+  ]);
+  const myPending = requests.find((r) => r.requestedById === me.id && r.status === "pending");
 
   const assigneesForCard: AssigneeItem[] = data.assignees.map((a) => ({
     userId: a.userId,
     fullName: a.fullName,
     position: a.position,
     departmentName: a.departmentName,
+    avatarUrl: a.avatarUrl,
     status: a.status as AssigneeItem["status"],
     responseText: a.responseText,
     responseFileUrl: a.responseFileUrl,
@@ -62,6 +84,13 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-2 pl-10 sm:pl-0 sm:shrink-0 sm:justify-end">
+          {canManage && (
+            <EditTaskButton
+              task={{ id: data.task.id, title: data.task.title, description: data.task.description, priority: data.task.priority, deadlineDate, status: data.task.status }}
+              assignees={data.assignees.map((a) => ({ userId: a.userId, fullName: a.fullName, avatarUrl: a.avatarUrl, status: a.status, hasResponse: !!a.responseSubmittedAt }))}
+              people={people}
+            />
+          )}
           {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
           <Button asChild variant="outline" size="sm" className="shrink-0">
             <a href={`/api/export/task/${data.task.id}`} target="_blank">
@@ -85,6 +114,10 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         projectName={data.project?.name ?? null}
       />
 
+      <Suspense fallback={null}>
+        <CouncilResolutionBadge taskId={id} />
+      </Suspense>
+
       {isAssignee && myAssignment && (
         <MyResponseCard
           taskId={data.task.id}
@@ -93,6 +126,8 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           responseFileUrl={myAssignment.responseFileUrl}
           responseFileName={myAssignment.responseFileName}
           responseSubmittedAt={myAssignment.responseSubmittedAt as Date | null}
+          deadlineDate={deadlineDate}
+          pendingDeadlineRequest={myPending ? { id: myPending.id, requestedDate: myPending.requestedDate, reason: myPending.reason } : null}
         />
       )}
 
@@ -101,7 +136,11 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         currentUserId={me.id}
         isCreator={isCreator}
         items={assigneesForCard}
+        nudgeStats={nudgeStats}
+        canNudge={canManage}
       />
+
+      {requests.length > 0 && <DeadlineRequestsCard requests={requests} canDecide={canManage && data.task.status !== "completed"} locale={locale} />}
 
       {data.task.rejectionReason && (
         <Card>
@@ -143,6 +182,12 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           </CardContent>
         </Card>
       </div>
+
+      {isParticipant && (
+        <Suspense fallback={null}>
+          <TaskHistoryCard taskId={id} taskCreatedAt={data.task.createdAt} locale={locale} />
+        </Suspense>
+      )}
     </div>
   );
 }

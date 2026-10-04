@@ -6,14 +6,17 @@ import { db } from "@/lib/db";
 import { notificationSettings, users } from "@/lib/db/schema";
 import { SettingsTabs } from "@/components/settings/settings-tabs";
 import { DeveloperCard } from "@/components/settings/developer-card";
+import { MyContactCardForm } from "@/components/staff/staff-directory/my-contact-card-form";
+import { getContactCard } from "@/server/queries/directory";
 
 export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
-  const [u, ns] = await Promise.all([
+  const [u, ns, card] = await Promise.all([
     db.select().from(users).where(eq(users.id, session.user.id)).limit(1),
     db.select().from(notificationSettings).where(eq(notificationSettings.userId, session.user.id)).limit(1),
+    getContactCard(session.user.id),
   ]);
   const me = u[0];
   const s = ns[0] ?? {
@@ -39,6 +42,7 @@ export default async function SettingsPage() {
           notifyMention: s.notifyMention,
         }}
       />
+      <MyContactCardForm init={{ ...card, phone: me.phone }} />
     </div>
   );
 }

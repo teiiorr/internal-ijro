@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, IconLayoutKanban as FolderKanban, IconUsers as Users, IconBuilding as Building2, IconHeartHandshake as Handshake, IconBell as Bell, IconFileText as ScrollText, IconSettings as Settings, IconPresentation as Presentation, IconCoins as Coins, IconShieldCheck as ShieldCheck, IconFileCheck as FileCheck2, IconCertificate as Certificate, IconMenu2 as Menu, IconX as X } from "@tabler/icons-react";
+import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, IconLayoutKanban as FolderKanban, IconUsers as Users, IconBuilding as Building2, IconHeartHandshake as Handshake, IconBell as Bell, IconFileText as ScrollText, IconSettings as Settings, IconPresentation as Presentation, IconCoins as Coins, IconShieldCheck as ShieldCheck, IconFileCheck as FileCheck2, IconCertificate as Certificate, IconMenu2 as Menu, IconX as X, IconCalendarCheck as CalendarCheck, IconSpeakerphone as Speakerphone, IconSitemap as Sitemap, IconReportAnalytics as ReportAnalytics } from "@tabler/icons-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 
@@ -17,13 +17,17 @@ const CONTRACTORS_EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
 // Töliq menyu (desktop sidebar bilan bir xil).
 const ITEMS: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, key: "dashboard", allowed: ALL },
+  { href: "/my-work", icon: CalendarCheck, key: "myWork", allowed: ALL },
   { href: "/tasks", icon: ListTodo, key: "tasks", allowed: STAFF },
   { href: "/projects", icon: FolderKanban, key: "projects", allowed: ALL },
+  { href: "/elonlar", icon: Speakerphone, key: "announcements", allowed: ALL },
+  { href: "/tuzilma", icon: Sitemap, key: "directory", allowed: ALL },
   { href: "/tanlov", icon: Certificate, key: "tanlov", allowed: ALL },
   { href: "/kengashlar/ekspert", icon: Presentation, key: "ekspertKengash", allowed: STAFF },
   { href: "/kengashlar/smeta", icon: Coins, key: "smetaKengash", allowed: STAFF },
   { href: "/employees", icon: Users, key: "employees", allowed: HR_ROLES },
   { href: "/meyoriy-hujjatlar", icon: FileCheck2, key: "normativeDocs", allowed: ALL },
+  { href: "/reports", icon: ReportAnalytics, key: "reports", allowed: ["direktor", "orinbosar", "koordinator", "bolim_boshligi"] },
   { href: "/departments", icon: Building2, key: "departments", allowed: ADMIN },
   { href: "/contractors", icon: Handshake, key: "contractors", allowed: ADMIN.concat("koordinator", "bolim_boshligi"), allowedUserIds: CONTRACTORS_EXTRA_USERS },
   { href: "/notifications", icon: Bell, key: "notifications", allowed: ALL },
@@ -71,17 +75,17 @@ export function MobileNav({ position, userId, isOwner, reviewCount = 0, showCont
       {/* töliq menyuli, pastdan kötariladigan varaq */}
       <div
         className={cn(
-          "md:hidden fixed inset-x-0 bottom-0 z-40 rounded-t-3xl glass-strong p-4 pb-8 transition-transform duration-300 ease-out",
+          "md:hidden fixed inset-x-0 bottom-0 z-40 flex max-h-[85dvh] flex-col rounded-t-3xl glass-strong p-4 pb-8 transition-transform duration-300 ease-out",
           open ? "translate-y-0" : "pointer-events-none translate-y-full"
         )}
       >
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex shrink-0 items-center justify-between">
           <p className="text-base font-bold">{t("more")}</p>
           <button onClick={() => setOpen(false)} aria-label={t("more")} className="grid size-9 place-items-center rounded-xl text-[var(--muted)] hover:bg-[var(--glass-fill)]">
             <X className="size-5" />
           </button>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid min-h-0 grid-cols-3 gap-2 overflow-y-auto overscroll-contain">
           {allowed.map(({ href, icon: Icon, key }) => {
             const active = isActive(href);
             return (

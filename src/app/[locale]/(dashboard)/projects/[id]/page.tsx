@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
@@ -32,6 +33,7 @@ import { StageProgressBadge } from "@/components/studio/stage-progress";
 import { StageRequestsList } from "@/components/studio/stage-requests";
 import { getLatestStageProgress, getLatestStatusUpdates, listStageRequests } from "@/server/queries/studio";
 import { isOwner } from "@/lib/permissions/owner";
+import { DeadlineHistoryCard } from "@/components/staff/deadline-slippage/deadline-history-card";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
@@ -217,6 +219,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <StagePath projectId={sp.project.id} stages={sp.stages} />
               </CardContent>
             </Card>
+
+            {/* Bosqich muddatlari o'zgarishlari tarixi (kim, qachon, nega) */}
+            <Suspense fallback={null}>
+              <DeadlineHistoryCard projectId={id} locale={locale} />
+            </Suspense>
 
             {/* Loyiha darajasidagi hujjat bölimlari — bosqiçlar ostidagi böş joyni töldiradi. */}
             <ProjectDocsPanels

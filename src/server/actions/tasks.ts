@@ -25,6 +25,17 @@ import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
 import { nextRegistrationNumber } from "@/lib/tasks/registration-number";
+import { taskDeadlineRequests } from "@/lib/db/tables/task-edit";
+
+/** Topshiriq yakunlanganda uning ochiq muddat soʻrovlari maʼnosiz — ularni bekor qilamiz (0031'gacha xavfsiz). */
+async function cancelPendingDeadlineRequests(taskId: string, byUserId: string) {
+  try {
+    await db
+      .update(taskDeadlineRequests)
+      .set({ status: "cancelled", decidedAt: new Date(), decidedByUserId: byUserId })
+      .where(and(eq(taskDeadlineRequests.taskId, taskId), eq(taskDeadlineRequests.status, "pending")));
+  } catch { /* 0031 migratsiyasi hali qoʻllanmagan */ }
+}
 
 const createSchema = z.object({
   title: z.string().min(2).max(500),
@@ -271,6 +282,7 @@ export async function changeTaskStatus(taskId: string, nextStatus: (typeof TASK_
       updatedAt: new Date(),
     })
     .where(eq(tasks.id, taskId));
+  if (nextStatus === "completed") await cancelPendingDeadlineRequests(taskId, me.id);
 
   await logActivity({
     userId: me.id,
@@ -512,6 +524,7 @@ export async function reviewAssigneeResponse(
       .update(tasks)
       .set({ status: "completed", completedAt: new Date(), updatedAt: new Date() })
       .where(eq(tasks.id, taskId));
+    await cancelPendingDeadlineRequests(taskId, me.id);
   } else if (decision === "rejected") {
     await db
       .update(tasks)

@@ -1,7 +1,7 @@
 "use client";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, IconLayoutKanban as FolderKanban, IconUsers as Users, IconBuilding as Building2, IconHeartHandshake as Handshake, IconBell as Bell, IconFileText as ScrollText, IconSettings as Settings, IconPresentation as Presentation, IconCoins as Coins, IconShieldCheck as ShieldCheck, IconFileCheck as FileCheck2, IconCertificate as Certificate } from "@tabler/icons-react";
+import { IconLayoutDashboard as LayoutDashboard, IconListCheck as ListTodo, IconLayoutKanban as FolderKanban, IconUsers as Users, IconBuilding as Building2, IconHeartHandshake as Handshake, IconBell as Bell, IconFileText as ScrollText, IconSettings as Settings, IconPresentation as Presentation, IconCoins as Coins, IconShieldCheck as ShieldCheck, IconFileCheck as FileCheck2, IconCertificate as Certificate, IconCalendarCheck as CalendarCheck, IconSpeakerphone as Speakerphone, IconSitemap as Sitemap, IconReportAnalytics as ReportAnalytics } from "@tabler/icons-react";
 import type { Position } from "@/lib/db/schema";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +19,7 @@ type IntlNav = {
   dashboard: string; tasks: string; projects: string; employees: string; departments: string;
   contractors: string; notifications: string; auditLog: string; settings: string;
   ekspertKengash: string; smetaKengash: string; owner: string; normativeDocs: string; tanlov: string;
+  myWork: string; announcements: string; directory: string; reports: string;
 };
 
 const ALL: Position[] = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"];
@@ -29,13 +30,17 @@ const CONTRACTORS_EXTRA_USERS = ["90956fa9-4892-4677-a31b-10af180e341a"];
 
 const ITEMS: Item[] = [
   { href: "/dashboard",         icon: LayoutDashboard, key: "dashboard",      allowed: ALL,                                                                section: "primary" },
+  { href: "/my-work",           icon: CalendarCheck,   key: "myWork",         allowed: ALL,                                                                section: "primary" },
   { href: "/tasks",             icon: ListTodo,        key: "tasks",          allowed: STAFF,                                                              section: "primary" },
   { href: "/projects",          icon: FolderKanban,    key: "projects",       allowed: ALL,                                                                section: "primary" },
+  { href: "/elonlar",           icon: Speakerphone,    key: "announcements",  allowed: ALL,                                                                section: "work" },
+  { href: "/tuzilma",           icon: Sitemap,         key: "directory",      allowed: ALL,                                                                section: "work" },
   { href: "/tanlov",            icon: Certificate,          key: "tanlov",         allowed: ALL,                                                                section: "work" },
   { href: "/kengashlar/ekspert", icon: Presentation,   key: "ekspertKengash", allowed: STAFF,                                                              section: "work" },
   { href: "/kengashlar/smeta",   icon: Coins,          key: "smetaKengash",   allowed: STAFF,                                                              section: "work" },
   { href: "/employees",         icon: Users,           key: "employees",      allowed: HR_ROLES,                                                           section: "work" },
   { href: "/meyoriy-hujjatlar", icon: FileCheck2,      key: "normativeDocs",  allowed: ALL,                                                                section: "work" },
+  { href: "/reports",           icon: ReportAnalytics, key: "reports",        allowed: ["direktor", "orinbosar", "koordinator", "bolim_boshligi"],          section: "work" },
   { href: "/departments",       icon: Building2,       key: "departments",    allowed: ADMIN,                                                              section: "work" },
   { href: "/contractors",       icon: Handshake,       key: "contractors",    allowed: ADMIN.concat("koordinator", "bolim_boshligi"), allowedUserIds: CONTRACTORS_EXTRA_USERS, section: "work" },
   { href: "/notifications",     icon: Bell,            key: "notifications",  allowed: ALL,                                                                section: "system" },

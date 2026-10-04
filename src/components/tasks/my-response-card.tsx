@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { IconRosetteDiscountCheck as BadgeCheck, IconFileText as FileText } from "@tabler/icons-react";
 import { submitTaskResponse } from "@/server/actions/tasks";
 import { formatDateTime } from "@/lib/dates";
+import { DeadlineRequestDialog } from "@/components/staff/task-edit/deadline-request-dialog";
 
 type Props = {
   taskId: string;
@@ -17,9 +18,13 @@ type Props = {
   responseFileUrl: string | null;
   responseFileName: string | null;
   responseSubmittedAt: Date | string | null;
+  /** Current deadline as a Tashkent calendar date ('YYYY-MM-DD'); enables the extension request. */
+  deadlineDate?: string | null;
+  /** The viewer's own pending deadline-extension request, if any. */
+  pendingDeadlineRequest?: { id: string; requestedDate: string; reason: string } | null;
 };
 
-export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl, responseFileName, responseSubmittedAt }: Props) {
+export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl, responseFileName, responseSubmittedAt, deadlineDate, pendingDeadlineRequest }: Props) {
   const t = useTranslations();
   const locale = useLocale();
   const [text, setText] = useState("");
@@ -96,6 +101,9 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
               </Button>
             </div>
           </form>
+        )}
+        {["todo", "in_progress", "rejected"].includes(myStatus) && typeof deadlineDate === "string" && (
+          <DeadlineRequestDialog taskId={taskId} currentDeadlineDate={deadlineDate} pending={pendingDeadlineRequest ?? null} />
         )}
       </div>
     </Card>

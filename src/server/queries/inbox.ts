@@ -2,6 +2,8 @@ import "server-only";
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { taskAssignees, tasks, users } from "@/lib/db/schema";
+import { taskDeadlineRequests } from "@/lib/db/tables/task-edit";
+import { diffDaysIso, toTashkentIso } from "@/components/staff/task-edit/task-edit-logic";
 
 export type InboxItem = {
   id: string;
@@ -70,6 +72,53 @@ export async function inboxMyActive(userId: string): Promise<InboxItem[]> {
     .orderBy(sql`${tasks.deadline} nulls last`)
     .limit(20);
   return rows.map((r) => ({ ...r, deadline: r.deadline, responseSubmittedAt: r.responseSubmittedAt as Date | null }));
+}
+
+export type DeadlineRequestInboxItem = {
+  requestId: string;
+  taskId: string;
+  title: string;
+  registrationNumber: string | null;
+  requesterName: string;
+  avatarUrl: string | null;
+  extraDays: number;
+  requestedDeadline: Date;
+  createdAt: Date;
+};
+
+/**
+ * "Tasdiq kutmoqda" — pending deadline-extension requests on tasks I created.
+ * Empty until the 0031 migration (task_deadline_requests) is applied.
+ */
+export async function inboxDeadlineRequests(userId: string): Promise<DeadlineRequestInboxItem[]> {
+  try {
+    const rows = await db
+      .select({
+        requestId: taskDeadlineRequests.id,
+        taskId: tasks.id,
+        title: tasks.title,
+        registrationNumber: tasks.registrationNumber,
+        requesterName: users.fullName,
+        avatarUrl: users.avatarUrl,
+        previousDeadline: taskDeadlineRequests.previousDeadline,
+        requestedDeadline: taskDeadlineRequests.requestedDeadline,
+        createdAt: taskDeadlineRequests.createdAt,
+      })
+      .from(taskDeadlineRequests)
+      .innerJoin(tasks, eq(tasks.id, taskDeadlineRequests.taskId))
+      .innerJoin(users, eq(users.id, taskDeadlineRequests.requestedByUserId))
+      .where(and(eq(tasks.createdByUserId, userId), eq(taskDeadlineRequests.status, "pending"), sql`${tasks.status} <> 'completed'`))
+      .orderBy(desc(taskDeadlineRequests.createdAt))
+      .limit(20);
+    return rows.map(({ previousDeadline, ...r }) => ({
+      ...r,
+      extraDays: previousDeadline
+        ? diffDaysIso(toTashkentIso(previousDeadline), toTashkentIso(r.requestedDeadline))
+        : 0,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 void isNull;

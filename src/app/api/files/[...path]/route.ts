@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createReadStream } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { Readable } from "node:stream";
+import { posix } from "node:path";
 import { auth } from "@/lib/auth";
 import { statFileForDownload } from "@/lib/upload";
+import { can } from "@/lib/permissions/capabilities";
 
 export const runtime = "nodejs";
 
@@ -56,6 +58,18 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   const { path } = await ctx.params;
   if (!path || path.length < 2) return new NextResponse("not_found", { status: 404 });
 
+  // Xodim hujjatlari (pasport, shartnoma skanlari) — faqat egasi yoki HR rollari.
+  // Segmentlar normallashtiriladi: "x/../employee-docs/..." yoki kodlangan "/" bilan
+  // tekshiruvni chetlab oʻtib boʻlmaydi; yuklamalar papkasidan tashqariga chiqish rad etiladi.
+  const segs = posix.normalize(path.join("/")).split("/").filter(Boolean);
+  if (segs.length < 2 || segs[0] === ".." || segs[0] === ".") return new NextResponse("not_found", { status: 404 });
+  const isEmployeeDoc = segs[0].toLowerCase() === "employee-docs";
+  if (isEmployeeDoc) {
+    const ownerId = segs[1].toLowerCase();
+    const isHr = can(session.user.position, "hr.documents");
+    if (session.user.id.toLowerCase() !== ownerId && !isHr) return new NextResponse("forbidden", { status: 403 });
+  }
+
   const fileName = path[path.length - 1];
   const subdir = path.slice(0, -1).join("/");
   const f = await statFileForDownload(subdir, fileName);
@@ -67,7 +81,11 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   const width = Number(req.nextUrl.searchParams.get("w"));
   if (width) {
     const resized = await tryResize(f.path, mime, width);
-    if (resized) return resized;
+    if (resized) {
+      // Maxfiy hujjat skanlari umumiy (proxy/CDN) keshida saqlanmasligi kerak.
+      if (isEmployeeDoc) resized.headers.set("Cache-Control", "private, no-store");
+      return resized;
+    }
   }
 
   // Faylni Buffer ga yuklash örniga diskdan oqim qilib uzatamiz — katta
@@ -78,7 +96,9 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   headers.set("Content-Type", isMedia ? mime : "application/octet-stream");
   headers.set("Content-Length", String(f.size));
   headers.set("Content-Disposition", `inline; filename="${fileName}"`);
-  if (isMedia) {
+  if (isEmployeeDoc) {
+    headers.set("Cache-Control", "private, no-store");
+  } else if (isMedia) {
     headers.set("Cache-Control", "public, max-age=31536000, immutable");
   }
   return new NextResponse(body, { headers });

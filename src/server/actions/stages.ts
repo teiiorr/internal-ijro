@@ -9,6 +9,7 @@ import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
+import { recordDeadlineChange } from "@/lib/projects/deadline-log";
 
 function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/projects/${projectId}`);
@@ -406,15 +407,37 @@ export async function setStageRequirements(stageId: string, requirements: string
 
 // ---------- maydon yangilagiçlar ----------
 
-export async function setStageDeadline(stageId: string, date: string | null) {
+export async function setStageDeadline(stageId: string, date: string | null, reason?: string | null) {
   const me = await requireProjectEditor();
-  const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
+  const why = z.string().nullish().parse(reason);
+  const [row] = await db
+    .select({ projectId: projectStages.projectId, plannedDeadline: projectStages.plannedDeadline })
+    .from(projectStages)
+    .where(eq(projectStages.id, stageId))
+    .limit(1);
   if (!row) throw new Error("not_found");
   await db
     .update(projectStages)
     .set({ plannedDeadline: date, updatedAt: new Date(), reminderApproachingSentAt: null, reminderOverdueSentAt: null })
     .where(eq(projectStages.id, stageId));
-  await logActivity({ userId: me.id, action: "stage.deadline_changed", entityType: "project_stage", entityId: stageId, newValue: { plannedDeadline: date } });
+  // Muddat tarixi (stage_deadline_changes) — jadval yoʻq boʻlsa ham tahrirni buzmaydi.
+  await recordDeadlineChange(db, {
+    stageId,
+    projectId: row.projectId,
+    oldDeadline: row.plannedDeadline,
+    newDeadline: date,
+    source: "manual",
+    reason: why ?? null,
+    changedByUserId: me.id,
+  });
+  await logActivity({
+    userId: me.id,
+    action: "stage.deadline_changed",
+    entityType: "project_stage",
+    entityId: stageId,
+    oldValue: { plannedDeadline: row.plannedDeadline },
+    newValue: { plannedDeadline: date },
+  });
   stageLinks(row.projectId, stageId);
 }
 
@@ -428,11 +451,16 @@ const updateStageSchema = z.object({
   plannedAmount: z.number().nullable().optional(),
   contractNumber: z.string().max(50).optional(),
   responsibleUserId: z.string().uuid().nullable().optional(),
+  deadlineChangeReason: z.string().max(1000).nullable().optional(),
 });
 export async function updateStage(stageId: string, input: z.infer<typeof updateStageSchema>) {
   const me = await requireProjectEditor();
   const parsed = updateStageSchema.parse(input);
-  const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
+  const [row] = await db
+    .select({ projectId: projectStages.projectId, plannedDeadline: projectStages.plannedDeadline })
+    .from(projectStages)
+    .where(eq(projectStages.id, stageId))
+    .limit(1);
   if (!row) throw new Error("not_found");
   await db
     .update(projectStages)
@@ -449,6 +477,18 @@ export async function updateStage(stageId: string, input: z.infer<typeof updateS
       reminderOverdueSentAt: null,
     })
     .where(eq(projectStages.id, stageId));
+  const newDeadline = parsed.plannedDeadline || null;
+  if (newDeadline !== (row.plannedDeadline ?? null)) {
+    await recordDeadlineChange(db, {
+      stageId,
+      projectId: row.projectId,
+      oldDeadline: row.plannedDeadline,
+      newDeadline,
+      source: "edit",
+      reason: parsed.deadlineChangeReason ?? null,
+      changedByUserId: me.id,
+    });
+  }
   await logActivity({ userId: me.id, action: "stage.updated", entityType: "project_stage", entityId: stageId, newValue: { name: parsed.name } });
   stageLinks(row.projectId, stageId);
 }

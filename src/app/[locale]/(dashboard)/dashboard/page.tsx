@@ -11,6 +11,9 @@ import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
 import { InboxWidget } from "@/components/dashboards/inbox-widget";
 import { ProjectStatusBoard } from "@/components/dashboards/project-status-board";
+import { PinnedAnnouncementsBanner } from "@/components/staff/announcements/pinned-banner";
+import { TodayStrip } from "@/components/staff/my-work/today-strip";
+import { AckWidget } from "@/components/staff/normative-ack/ack-widget";
 
 function WidgetSkeleton() {
   return <div className="h-32 rounded-2xl bg-[var(--surface-2)] animate-pulse" />;
@@ -58,8 +61,23 @@ export default async function DashboardPage() {
         </p>
       </div>
 
+      {/* Muhim eʼlonlar (qadalgan, oʻqilmagan) */}
+      <Suspense fallback={null}>
+        <PinnedAnnouncementsBanner userId={user.id} position={user.position} departmentId={user.departmentId} />
+      </Suspense>
+
+      {/* Bugungi ishlar qisqa lentasi → /my-work */}
+      <Suspense fallback={<WidgetSkeleton />}>
+        <TodayStrip userId={user.id} locale={locale} />
+      </Suspense>
+
       <Suspense fallback={<WidgetSkeleton />}>
         <InboxWidget userId={user.id} />
+      </Suspense>
+
+      {/* Meʼyoriy hujjatlar bilan tanishib chiqish kutilmoqda */}
+      <Suspense fallback={null}>
+        <AckWidget userId={user.id} />
       </Suspense>
 
       <Suspense fallback={<WidgetSkeleton />}>

@@ -23,6 +23,8 @@ import { shortName } from "@/lib/names";
 import { formatDate } from "@/lib/dates";
 import { getLocale } from "next-intl/server";
 import { AvatarUpload } from "@/components/hr/avatar-upload";
+import { can } from "@/lib/permissions/capabilities";
+import { getContactCard } from "@/server/queries/directory";
 
 export default async function EmployeePage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -34,11 +36,19 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
 
   const t = await getTranslations();
   const locale = await getLocale();
-  const [docs, history, leaves] = await Promise.all([
-    listEmployeeDocuments(id),
-    listPositionHistory(id),
-    listEmployeeLeaves(id),
+  // Maxfiylik: hujjatlar, tarix va taʼtillar faqat HR rollari yoki xodimning oʻziga;
+  // HR izohlari (notes_hr) — faqat HR rollariga.
+  const isSelf = data.user.id === session.user.id;
+  const isHr = can(session.user.position, "hr.documents");
+  const canSeePrivate = isHr || isSelf;
+  const [docs, history, leaves, contactCard] = await Promise.all([
+    canSeePrivate ? listEmployeeDocuments(id) : [],
+    canSeePrivate ? listPositionHistory(id) : [],
+    canSeePrivate ? listEmployeeLeaves(id) : [],
+    canSeePrivate ? null : getContactCard(id),
   ]);
+  // Mobil raqam boshqa xodimlarga faqat kontakt kartada show_mobile yoqilgan boʻlsa koʻrinadi.
+  const showPhone = canSeePrivate || contactCard?.showMobile === true;
 
   const canEdit = ["direktor", "orinbosar", "hr"].includes(session.user.position);
   const canArchive = ["direktor", "orinbosar", "hr"].includes(session.user.position);
@@ -101,10 +111,14 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
       <Tabs defaultValue="main">
         <TabsList>
           <TabsTrigger value="main">{t("employees.tabs.main")}</TabsTrigger>
-          <TabsTrigger value="docs">{t("employees.tabs.documents")}</TabsTrigger>
-          <TabsTrigger value="history">{t("employees.tabs.history")}</TabsTrigger>
-          <TabsTrigger value="leaves">{t("employees.tabs.leaves")}</TabsTrigger>
-          <TabsTrigger value="notes">{t("employees.tabs.notes")}</TabsTrigger>
+          {canSeePrivate && (
+            <>
+              <TabsTrigger value="docs">{t("employees.tabs.documents")}</TabsTrigger>
+              <TabsTrigger value="history">{t("employees.tabs.history")}</TabsTrigger>
+              <TabsTrigger value="leaves">{t("employees.tabs.leaves")}</TabsTrigger>
+            </>
+          )}
+          {isHr && <TabsTrigger value="notes">{t("employees.tabs.notes")}</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="main">
@@ -113,7 +127,7 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
             <CardContent>
               <div className="detail-grid grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-2 mb-6 text-sm">
                 <div><span className="text-xs font-medium text-[var(--muted)]">{t("common.email")}</span><p className="font-semibold mt-0.5">{data.user.email}</p></div>
-                <div><span className="text-xs font-medium text-[var(--muted)]">{t("common.phone")}</span><p className="font-semibold mt-0.5">{data.user.phone ?? "—"}</p></div>
+                <div><span className="text-xs font-medium text-[var(--muted)]">{t("common.phone")}</span><p className="font-semibold mt-0.5">{showPhone ? data.user.phone ?? "—" : "—"}</p></div>
                 <div><span className="text-xs font-medium text-[var(--muted)]">{t("employees.table.hireDate")}</span><p className="font-semibold mt-0.5">{data.user.hireDate ?? "—"}</p></div>
               </div>
               {canEdit ? <ProfileForm userId={data.user.id} profile={data.profile} /> : <p className="text-sm text-[var(--muted)]">{t("employees.profile.viewOnly")}</p>}
@@ -121,74 +135,80 @@ export default async function EmployeePage({ params }: { params: Promise<{ id: s
           </Card>
         </TabsContent>
 
-        <TabsContent value="docs">
-          <Card>
-            <CardContent className="p-6">
-              <DocumentsTab userId={data.user.id} documents={docs.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))} canEdit={canEdit} />
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {canSeePrivate && (
+          <>
+          <TabsContent value="docs">
+            <Card>
+              <CardContent className="p-6">
+                <DocumentsTab userId={data.user.id} documents={docs.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))} canEdit={canEdit} />
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="history">
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow><TableHead>{t("employees.history.date")}</TableHead><TableHead>{t("employees.history.from")}</TableHead><TableHead>{t("employees.history.to")}</TableHead><TableHead>{t("employees.history.reason")}</TableHead></TableRow>
-                </TableHeader>
-                <TableBody>
-                  {history.map((h) => (
-                    <TableRow key={h.id}>
-                      <TableCell>{formatDate(h.changeDate, locale)}</TableCell>
-                      <TableCell>{h.oldPosition ? t(`positions.${h.oldPosition}` as `positions.direktor`) : "—"}</TableCell>
-                      <TableCell>{t(`positions.${h.newPosition}` as `positions.direktor`)}</TableCell>
-                      <TableCell className="text-[var(--muted)]">{h.reason ?? "—"}</TableCell>
-                    </TableRow>
-                  ))}
-                  {history.length === 0 && (
-                    <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("employees.history.noHistory")}</TableCell></TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="history">
+            <Card>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow><TableHead>{t("employees.history.date")}</TableHead><TableHead>{t("employees.history.from")}</TableHead><TableHead>{t("employees.history.to")}</TableHead><TableHead>{t("employees.history.reason")}</TableHead></TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {history.map((h) => (
+                      <TableRow key={h.id}>
+                        <TableCell>{formatDate(h.changeDate, locale)}</TableCell>
+                        <TableCell>{h.oldPosition ? t(`positions.${h.oldPosition}` as `positions.direktor`) : "—"}</TableCell>
+                        <TableCell>{t(`positions.${h.newPosition}` as `positions.direktor`)}</TableCell>
+                        <TableCell className="text-[var(--muted)]">{h.reason ?? "—"}</TableCell>
+                      </TableRow>
+                    ))}
+                    {history.length === 0 && (
+                      <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("employees.history.noHistory")}</TableCell></TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="leaves">
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow><TableHead>{t("leaves.fields.type")}</TableHead><TableHead>{t("leaves.fields.start")}</TableHead><TableHead>{t("leaves.fields.end")}</TableHead><TableHead>{t("common.status")}</TableHead></TableRow>
-                </TableHeader>
-                <TableBody>
-                  {leaves.map((l) => (
-                    <TableRow key={l.id}>
-                      <TableCell>{l.type}</TableCell>
-                      <TableCell>{l.startDate}</TableCell>
-                      <TableCell>{l.endDate}</TableCell>
-                      <TableCell><Badge variant={l.status === "approved" ? "success" : l.status === "rejected" ? "danger" : "warning"}>{l.status}</Badge></TableCell>
-                    </TableRow>
-                  ))}
-                  {leaves.length === 0 && (
-                    <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("leaves.none")}</TableCell></TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
+          <TabsContent value="leaves">
+            <Card>
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow><TableHead>{t("leaves.fields.type")}</TableHead><TableHead>{t("leaves.fields.start")}</TableHead><TableHead>{t("leaves.fields.end")}</TableHead><TableHead>{t("common.status")}</TableHead></TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {leaves.map((l) => (
+                      <TableRow key={l.id}>
+                        <TableCell>{l.type}</TableCell>
+                        <TableCell>{l.startDate}</TableCell>
+                        <TableCell>{l.endDate}</TableCell>
+                        <TableCell><Badge variant={l.status === "approved" ? "success" : l.status === "rejected" ? "danger" : "warning"}>{l.status}</Badge></TableCell>
+                      </TableRow>
+                    ))}
+                    {leaves.length === 0 && (
+                      <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("leaves.none")}</TableCell></TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          </>
+        )}
 
-        <TabsContent value="notes">
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-sm text-[var(--muted)] mb-3">{t("employees.profile.notesNote")}</p>
-              <div className="whitespace-pre-wrap rounded-lg bg-[var(--secondary)] p-4 text-sm min-h-[120px]">
-                {data.profile?.notesHr || "—"}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {isHr && (
+          <TabsContent value="notes">
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-sm text-[var(--muted)] mb-3">{t("employees.profile.notesNote")}</p>
+                <div className="whitespace-pre-wrap rounded-lg bg-[var(--secondary)] p-4 text-sm min-h-[120px]">
+                  {data.profile?.notesHr || "—"}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

@@ -19,6 +19,7 @@ import { notify } from "@/lib/notifications";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
 import { isOwner } from "@/lib/permissions/owner";
+import { recordDeadlineChange } from "@/lib/projects/deadline-log";
 
 // ---------------- yordamchilar ----------------
 
@@ -253,11 +254,26 @@ export async function decideStageRequest(input: { requestId: string; decision: "
   const now = new Date();
   await db.transaction(async (tx) => {
     if (req.type === "deadline" && v.decision === "approved" && req.requestedDeadline) {
+      const [cur] = await tx
+        .select({ plannedDeadline: projectStages.plannedDeadline })
+        .from(projectStages)
+        .where(eq(projectStages.id, req.stageId));
       // Yangi muddat — eslatmalar yangi sanaga qaytadan ishlashi uchun belgilarni tozalaymiz.
       await tx
         .update(projectStages)
         .set({ plannedDeadline: req.requestedDeadline, reminderApproachingSentAt: null, reminderOverdueSentAt: null, updatedAt: now })
         .where(eq(projectStages.id, req.stageId));
+      // Muddat tarixi: SAVEPOINT ichida — jadval yoʻq boʻlsa ham tranzaksiya davom etadi.
+      await recordDeadlineChange(tx, {
+        stageId: req.stageId,
+        projectId: req.projectId,
+        oldDeadline: cur?.plannedDeadline ?? null,
+        newDeadline: req.requestedDeadline,
+        source: "studio_request",
+        stageRequestId: req.id,
+        reason: req.message?.slice(0, 1000) ?? null,
+        changedByUserId: me.id,
+      });
     }
     await tx
       .update(stageRequests)

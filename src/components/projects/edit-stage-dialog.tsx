@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { MoneyInput } from "@/components/ui/money-input";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { updateStage } from "@/server/actions/stages";
@@ -33,6 +34,7 @@ export function EditStageDialog({ stage, users = [], currency = "UZS" }: { stage
   const [name, setName] = useState(stage.name);
   const [startDate, setStartDate] = useState(stage.plannedStartDate ?? "");
   const [deadline, setDeadline] = useState(stage.plannedDeadline ?? "");
+  const [deadlineReason, setDeadlineReason] = useState("");
   const [amount, setAmount] = useState(stage.plannedAmount != null ? String(stage.plannedAmount) : "");
   const [contractNumber, setContractNumber] = useState(stage.contractNumber ?? "1");
   const [responsibleId, setResponsibleId] = useState<string | null>(stage.responsibleUserId ?? null);
@@ -59,7 +61,9 @@ export function EditStageDialog({ stage, users = [], currency = "UZS" }: { stage
           plannedAmount: amount ? Number(amount) : null,
           contractNumber: contractNumber.trim() || "1",
           responsibleUserId: responsibleId,
+          deadlineChangeReason: deadlineReason.trim() || null,
         });
+        setDeadlineReason("");
         setOpen(false);
         router.refresh();
       } catch (err) {
@@ -139,6 +143,19 @@ export function EditStageDialog({ stage, users = [], currency = "UZS" }: { stage
               <Input id="es-end" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
             </div>
           </div>
+          {deadline !== (stage.plannedDeadline ?? "") && (
+            <div className="space-y-1.5">
+              <Label htmlFor="es-deadline-reason">{t("staffX.deadlineSlippage.reasonLabel")}</Label>
+              <Textarea
+                id="es-deadline-reason"
+                value={deadlineReason}
+                onChange={(e) => setDeadlineReason(e.target.value)}
+                maxLength={1000}
+                rows={2}
+                className="min-h-[72px]"
+              />
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="es-amount">{t("projects.editStage.budget")}</Label>

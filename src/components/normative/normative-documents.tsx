@@ -10,6 +10,23 @@ import { removeNormativeDocument, setNormativeDocumentFolder, addNormativeLink }
 import { Input } from "@/components/ui/input";
 import { compressImage } from "@/lib/images/compress";
 import { formatDate } from "@/lib/dates";
+import { StatusTag } from "@/components/ui/status-tag";
+import { cn } from "@/lib/utils";
+import { RegistryFilters } from "@/components/staff/normative-ack/registry-filters";
+import { DocMetaDialog } from "@/components/staff/normative-ack/doc-meta-dialog";
+import { AckRequestDialog } from "@/components/staff/normative-ack/ack-request-dialog";
+import { AckProgress } from "@/components/staff/normative-ack/ack-progress";
+import {
+  DEFAULT_REGISTRY_FILTER,
+  canEditDocMeta,
+  filterRegistry,
+  isDocType,
+  registryYears,
+  ymdToDots,
+  type AckComposerOptions,
+  type DocMeta,
+  type RegistryFilter,
+} from "@/components/staff/normative-ack/logic";
 
 type Doc = {
   id: string;
@@ -20,7 +37,12 @@ type Doc = {
   isLink: boolean;
   uploadedAt: Date | string;
   uploaderName: string | null;
+  /** Reyestr: yuklovchi (Rekvizitlar huquqi uchun). */
+  uploadedByUserId?: string | null;
+  /** Reyestr rekvizitlari (normative-ack); 0031 qoʻllanmagan boʻlsa null. */
+  meta?: DocMeta | null;
 };
+type AckSummary = { requestId: string; total: number; acknowledged: number; deadline: string };
 type Staged = { file: File; originalSize: number; compressed: boolean };
 
 function humanSize(bytes: number | null): string {
@@ -34,12 +56,29 @@ export function NormativeDocuments({
   documents,
   canManage,
   maxBytes,
+  currentUserPosition,
+  currentUserId,
+  canSendAck = false,
+  ackSummaries,
+  allDocs,
+  ackOptions,
+  today,
 }: {
   documents: Doc[];
   canManage: boolean;
   maxBytes: number;
+  currentUserPosition?: string;
+  currentUserId?: string;
+  canSendAck?: boolean;
+  ackSummaries?: Record<string, AckSummary[]>;
+  allDocs?: { id: string; fileName: string }[];
+  /** "Tanishtirishga yuborish" dialog options (departments / positions / people within my scope). */
+  ackOptions?: AckComposerOptions;
+  /** Tashkent YYYY-MM-DD from the server (earliest acknowledgement deadline). */
+  today?: string;
 }) {
   const t = useTranslations();
+  const tn = useTranslations("staffX.normativeAck");
   const locale = useLocale();
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -52,10 +91,41 @@ export function NormativeDocuments({
   const [linkTitle, setLinkTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const uncategorized = t("projects.stageDocs.uncategorized");
+  const [filter, setFilter] = useState<RegistryFilter>(DEFAULT_REGISTRY_FILTER);
+  const [flashId, setFlashId] = useState<string | null>(null);
+
+  const filtered = useMemo(() => filterRegistry(documents, filter), [documents, filter]);
+  const years = useMemo(() => registryYears(documents), [documents]);
+  const docOptions = useMemo(
+    () => allDocs ?? documents.map((d) => ({ id: d.id, fileName: d.fileName })),
+    [allDocs, documents]
+  );
+  const docNames = useMemo(() => new Map(documents.map((d) => [d.id, d.fileName])), [documents]);
+  /** old document id → the document that replaces it (for the "Quyidagi hujjat oʻrniga" select). */
+  const supersedesOf = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const d of documents) {
+      const newer = d.meta?.supersededById;
+      if (newer && !map.has(newer)) map.set(newer, d.id);
+    }
+    return map;
+  }, [documents]);
+  const me = { id: currentUserId, position: currentUserPosition };
+  const canAck = canSendAck && !!ackOptions && !!today;
+
+  /** "Yangi tahriri →": clear the filters so the target is rendered, then scroll to it and flash it. */
+  function goToDoc(id: string) {
+    setFilter(DEFAULT_REGISTRY_FILTER);
+    setFlashId(id);
+    window.setTimeout(() => {
+      document.getElementById(`doc-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 60);
+    window.setTimeout(() => setFlashId((cur) => (cur === id ? null : cur)), 2200);
+  }
 
   const groups = useMemo(() => {
     const map = new Map<string, Doc[]>();
-    for (const d of documents) {
+    for (const d of filtered) {
       const key = (d.category ?? "").trim();
       const arr = map.get(key);
       if (arr) arr.push(d);
@@ -68,7 +138,7 @@ export function NormativeDocuments({
     const loose = map.get("");
     if (loose && loose.length) out.push({ key: "", name: uncategorized, docs: loose });
     return out;
-  }, [documents, uncategorized]);
+  }, [filtered, uncategorized]);
 
   const folderNames = useMemo(() => {
     const set = new Set<string>();
@@ -164,6 +234,8 @@ export function NormativeDocuments({
         <p className="text-sm text-[var(--muted)]">{t("projects.stageDocs.empty")}</p>
       ) : (
         <div className="space-y-4">
+          <RegistryFilters value={filter} onChange={setFilter} years={years} shown={filtered.length} total={documents.length} />
+          {filtered.length === 0 && <p className="text-sm text-[var(--muted)]">{tn("noMatches")}</p>}
           {groups.map((g) => (
             <section key={g.key || "__loose__"} className="space-y-2">
               <div className="flex items-center gap-2">
@@ -176,8 +248,24 @@ export function NormativeDocuments({
               <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2 sm:pl-6">
                 {g.docs.map((d) => {
                   const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date, locale)}`;
+                  const rm = d.meta ?? null;
+                  const repealed = rm?.status === "repealed";
+                  const newerId = repealed && rm?.supersededById && docNames.has(rm.supersededById) ? rm.supersededById : null;
+                  const hasChips = !!rm && (repealed || !!rm.docType || !!rm.docNumber || !!rm.docDate || !!rm.issuedBy || !!rm.summary);
+                  const editMeta = canEditDocMeta(me, d.uploadedByUserId);
+                  const summaries = ackSummaries?.[d.id] ?? [];
+                  const hasActions = editMeta || canAck || summaries.length > 0;
                   return (
-                    <li key={d.id} className="flex min-w-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5">
+                    <li
+                      key={d.id}
+                      id={`doc-${d.id}`}
+                      className={cn(
+                        "min-w-0 scroll-mt-24 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 transition-[opacity,box-shadow] duration-300",
+                        repealed && flashId !== d.id && "opacity-60",
+                        flashId === d.id && "shadow-[0_0_0_2px_var(--primary)]"
+                      )}
+                    >
+                    <div className="flex min-w-0 items-center gap-2">
                       <div className={`grid size-9 shrink-0 place-items-center rounded-lg ${d.isLink ? "bg-[var(--accent-soft,var(--primary-soft))] text-[var(--accent,var(--primary))]" : "bg-[var(--primary-soft)] text-[var(--primary)]"}`}>
                         {d.isLink ? <Link2 className="size-4" /> : <FileText className="size-4" />}
                       </div>
@@ -222,6 +310,56 @@ export function NormativeDocuments({
                           <Trash2 className="size-4" />
                         </Button>
                       )}
+                    </div>
+                    {hasChips && rm && (
+                      <div className="mt-2 min-w-0 space-y-1 sm:pl-11">
+                        <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-[11px]">
+                          {repealed && <StatusTag tone="red" size="sm">{tn("statusRepealed")}</StatusTag>}
+                          {isDocType(rm.docType) && (
+                            <span className="rounded-md bg-[var(--primary-soft)] px-1.5 py-0.5 font-semibold text-[var(--primary)]">{tn(`type.${rm.docType}`)}</span>
+                          )}
+                          {rm.docNumber && (
+                            <span className="rounded-md bg-[var(--surface-2)] px-1.5 py-0.5 font-semibold tabular-nums text-[var(--foreground)]">№ {rm.docNumber}</span>
+                          )}
+                          {rm.docDate && (
+                            <span className="rounded-md bg-[var(--surface-2)] px-1.5 py-0.5 tabular-nums text-[var(--muted)]">{ymdToDots(rm.docDate)}</span>
+                          )}
+                          {rm.issuedBy && (
+                            <span className="min-w-0 max-w-full truncate rounded-md bg-[var(--surface-2)] px-1.5 py-0.5 text-[var(--muted)]" title={rm.issuedBy}>{rm.issuedBy}</span>
+                          )}
+                          {newerId && (
+                            <a
+                              href={`#doc-${newerId}`}
+                              onClick={(e) => { e.preventDefault(); goToDoc(newerId); }}
+                              title={docNames.get(newerId)}
+                              className="font-semibold text-[var(--primary)] hover:underline"
+                            >
+                              {tn("newVersion")}
+                            </a>
+                          )}
+                        </div>
+                        {rm.summary && (
+                          <p className="line-clamp-2 whitespace-pre-line break-words text-xs text-[var(--muted)] [overflow-wrap:anywhere]" title={rm.summary}>{rm.summary}</p>
+                        )}
+                      </div>
+                    )}
+                    {hasActions && (
+                      <div className="mt-2 flex min-w-0 flex-wrap items-center gap-1.5 border-t border-[var(--border)] pt-2 sm:pl-11">
+                        {editMeta && (
+                          <DocMetaDialog
+                            doc={{ id: d.id, fileName: d.fileName, meta: rm }}
+                            otherDocs={docOptions}
+                            supersedesId={supersedesOf.get(d.id) ?? null}
+                          />
+                        )}
+                        {canAck && ackOptions && today && (
+                          <AckRequestDialog documentId={d.id} fileName={d.fileName} options={ackOptions} today={today} />
+                        )}
+                        {summaries.map((s) => (
+                          <AckProgress key={s.requestId} requestId={s.requestId} total={s.total} acknowledged={s.acknowledged} deadline={s.deadline} />
+                        ))}
+                      </div>
+                    )}
                     </li>
                   );
                 })}

@@ -11,7 +11,8 @@ import { ProjectsFilters } from "@/components/projects/projects-filters";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { ScrollMemory } from "@/components/scroll-memory";
 import { Marquee } from "@/components/ui/marquee";
-import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle } from "@tabler/icons-react";
+import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle, IconTimeline as Timeline, IconCash as Cash } from "@tabler/icons-react";
+import { canSeeMoney } from "@/lib/permissions/money";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors";
@@ -53,6 +54,12 @@ export default async function ProjectsPage({
   ]);
   const canCreate = canEditProjects(session.user.email);
   const canExport = canViewMoney(session.user.email); // hisobotda summalar bör → faqat allowlist uçun
+  const showPayments = await canSeeMoney({ id: session.user.id, email: session.user.email });
+  // Xronologiya (Gant) — joriy qidiruv/tur filtrlari bilan ochiladi.
+  const tl = new URLSearchParams();
+  if (search) tl.set("search", search);
+  if (projectTypeId) tl.set("typeId", projectTypeId);
+  const tlQs = tl.toString() ? `?${tl.toString()}` : "";
   // Excel eksporti hozir qöllangan filtrlarni aynan takrorlaydi.
   const exportParams = new URLSearchParams();
   if (search) exportParams.set("search", search);
@@ -147,7 +154,19 @@ export default async function ProjectsPage({
       <ScrollMemory />
       <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <Button asChild variant="outline" size="default">
+            <Link href={`/projects/timeline${tlQs}`} aria-label={t("staffX.portfolioTimeline.open")}>
+              <Timeline className="size-4" /> <span className="hidden sm:inline">{t("staffX.portfolioTimeline.open")}</span>
+            </Link>
+          </Button>
+          {showPayments && (
+            <Button asChild variant="outline" size="default">
+              <Link href="/projects/payments" aria-label={t("staffX.paymentsRegister.open")}>
+                <Cash className="size-4" /> <span className="hidden sm:inline">{t("staffX.paymentsRegister.open")}</span>
+              </Link>
+            </Button>
+          )}
           {canExport && (
             <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
               <a href={exportHref}><Download className="size-4" /> Excel hisoboti</a>

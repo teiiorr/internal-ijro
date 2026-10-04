@@ -104,14 +104,29 @@ export async function getTaskActivityTimeline(days = 30) {
   }));
 }
 
+/**
+ * Specialist dashboard counters. Counts the user's own task_assignees rows (so
+ * co-assignees are included) and compares Tashkent calendar dates, so a task due
+ * today is never "overdue" in the early-morning UTC/Tashkent gap. "Open" = my assignee
+ * row is todo/in_progress/rejected and the task itself is not completed (a director can
+ * complete a task while some assignee rows are still open).
+ */
 export async function getMyTasks(actorId: string) {
   const row = await db.execute<{ today: number; week: number; soon: number; overdue: number }>(sql`
     SELECT
-      count(*) FILTER (WHERE deadline::date = now()::date)::int AS today,
-      count(*) FILTER (WHERE deadline BETWEEN now() AND now() + interval '7 days')::int AS week,
-      count(*) FILTER (WHERE deadline BETWEEN now() AND now() + interval '24 hours' AND status NOT IN ('completed','rejected'))::int AS soon,
-      count(*) FILTER (WHERE deadline < now() AND status NOT IN ('completed','rejected'))::int AS overdue
-    FROM tasks WHERE assigned_to_user_id = ${actorId}
+      count(*) FILTER (WHERE x.dl = x.td AND x.is_open)::int AS today,
+      count(*) FILTER (WHERE x.dl BETWEEN x.td AND x.td + 6 AND x.is_open)::int AS week,
+      count(*) FILTER (WHERE x.dl BETWEEN x.td AND x.td + 1 AND x.is_open)::int AS soon,
+      count(*) FILTER (WHERE x.dl < x.td AND x.is_open)::int AS overdue
+    FROM (
+      SELECT
+        (t.deadline AT TIME ZONE 'Asia/Tashkent')::date AS dl,
+        (now() AT TIME ZONE 'Asia/Tashkent')::date AS td,
+        (ta.status IN ('todo','in_progress','rejected') AND t.status <> 'completed') AS is_open
+      FROM task_assignees ta
+      JOIN tasks t ON t.id = ta.task_id
+      WHERE ta.user_id = ${actorId} AND t.deadline IS NOT NULL
+    ) x
   `);
   const r = row[0];
   return {

@@ -11,6 +11,8 @@ import { formatDateTime } from "@/lib/dates";
 import { shortName } from "@/lib/names";
 import { toast } from "sonner";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { NudgeDialog } from "@/components/staff/task-control/nudge-dialog";
+import { IconBellRinging as BellRinging } from "@tabler/icons-react";
 
 export type AssigneeItem = {
   userId: string;
@@ -38,16 +40,24 @@ const STATUS_DOT: Record<string, string> = {
   rejected: "bg-[var(--danger)]",
 };
 
+const NUDGEABLE = ["todo", "in_progress", "rejected"];
+
 export function AssigneesCard({
   taskId,
   currentUserId,
   isCreator,
   items,
+  nudgeStats,
+  canNudge,
 }: {
   taskId: string;
   currentUserId: string;
   isCreator: boolean;
   items: AssigneeItem[];
+  /** Ijro nazorati: per-assignee nudge counters (userId → count / last nudge ISO time). */
+  nudgeStats?: Record<string, { count: number; lastAt: string | null }>;
+  /** Ijro nazorati: show the "Eslatish" button on rows still awaiting an answer. */
+  canNudge?: boolean;
 }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -120,6 +130,8 @@ export function AssigneesCard({
         {filtered.map((a) => {
           const isMe = a.userId === currentUserId;
           const isOpen = openId === a.userId;
+          const nudge = nudgeStats?.[a.userId];
+          const showNudge = !!canNudge && NUDGEABLE.includes(a.status) && a.position !== "kontragent";
           return (
             <div key={a.userId} className={cn(
               "rounded-lg transition-colors border",
@@ -127,9 +139,10 @@ export function AssigneesCard({
                 ? "bg-[var(--primary-soft-strong)] border-[var(--primary)]/30"
                 : "border-transparent hover:bg-[var(--surface-3)] hover:border-[var(--border)]"
             )}>
+              <div className="flex items-center">
               <button
                 onClick={() => setOpenId(isOpen ? null : a.userId)}
-                className="w-full flex items-center gap-3 px-4 py-3 text-left"
+                className="w-full min-w-0 flex items-center gap-3 px-4 py-3 text-left"
               >
                 <span className={cn("size-2 rounded-full shrink-0", STATUS_DOT[a.status])} />
                 <UserAvatar name={shortName(a.fullName)} avatarUrl={a.avatarUrl} size="md" department={a.departmentName} position={a.position} />
@@ -137,6 +150,11 @@ export function AssigneesCard({
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-[15px]">{shortName(a.fullName)}</p>
                     {a.status === "completed" && <BadgeCheck className="size-[18px] text-[var(--success)]" />}
+                    {nudge && nudge.count > 0 && (
+                      <span className="rounded-full bg-[var(--surface-3)] px-2 py-0.5 text-[11px] font-semibold text-[var(--muted)] whitespace-nowrap">
+                        {t("staffX.taskControl.nudgedTimes", { count: nudge.count })}
+                      </span>
+                    )}
                   </div>
                   <p className="text-[13px] text-[var(--muted)] truncate">{a.departmentName ?? "—"}</p>
                 </div>
@@ -148,6 +166,28 @@ export function AssigneesCard({
                   <ChevronDown className={cn("size-4 transition-transform", isOpen && "rotate-180")} />
                 </div>
               </button>
+              {showNudge && (
+                <div className="shrink-0 pr-3">
+                  <NudgeDialog
+                    taskId={taskId}
+                    assignees={[{
+                      userId: a.userId,
+                      fullName: a.fullName,
+                      avatarUrl: a.avatarUrl ?? null,
+                      status: a.status,
+                      lastNudgeAt: nudge?.lastAt ?? null,
+                    }]}
+                    preselect={[a.userId]}
+                    trigger={
+                      <Button type="button" variant="outline" size="sm" className="px-2.5 sm:px-3.5" aria-label={t("staffX.taskControl.nudge")}>
+                        <BellRinging className="size-4" />
+                        <span className="hidden sm:inline">{t("staffX.taskControl.nudge")}</span>
+                      </Button>
+                    }
+                  />
+                </div>
+              )}
+              </div>
 
               {isOpen && (
                 <div className="px-4 pb-4 pt-1 border-t border-[var(--border)] mt-1 space-y-3">

@@ -72,17 +72,17 @@ export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
       {/* to'liq menyuli, pastdan ko'tariladigan varaq */}
       <div
         className={cn(
-          "md:hidden fixed inset-x-0 bottom-0 z-40 rounded-t-3xl glass-strong p-4 pb-[max(2rem,env(safe-area-inset-bottom))] transition-transform duration-300 ease-out",
+          "md:hidden fixed inset-x-0 bottom-0 z-40 flex max-h-[85dvh] flex-col rounded-t-3xl glass-strong p-4 pb-[max(2rem,env(safe-area-inset-bottom))] transition-transform duration-300 ease-out",
           open ? "translate-y-0" : "pointer-events-none translate-y-full"
         )}
       >
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex shrink-0 items-center justify-between">
           <p className="text-base font-bold">{t("more")}</p>
           <button onClick={() => setOpen(false)} aria-label={t("more")} className="grid size-9 place-items-center rounded-xl text-[var(--muted)] hover:bg-[var(--glass-fill)]">
             <X className="size-5" />
           </button>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid min-h-0 grid-cols-3 gap-2 overflow-y-auto overscroll-contain">
           {ITEMS.map(({ href, icon: Icon, key }) => {
             const active = isActive(href);
             return (

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Card } from "@/components/ui/card";
 import { IconClipboardCheck as ClipboardCheck, IconCircleCheck as CheckCircle2, IconListCheck as ListTodo, IconChevronRight as ChevronRight } from "@tabler/icons-react";
-import { inboxAwaitingMyApproval, inboxMyActive, type InboxItem } from "@/server/queries/inbox";
+import { inboxAwaitingMyApproval, inboxDeadlineRequests, inboxMyActive, type DeadlineRequestInboxItem, type InboxItem } from "@/server/queries/inbox";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
+import { shortName } from "@/lib/names";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { StatusTag } from "@/components/ui/status-tag";
 
 function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
   return (
@@ -25,11 +27,32 @@ function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
   );
 }
 
+function DeadlineRequestRow({ item, text, chip }: { item: DeadlineRequestInboxItem; text: string; chip: string }) {
+  return (
+    <Link
+      href={`/tasks/${item.taskId}`}
+      className="group flex items-center gap-3 rounded-xl px-3 py-3 hover:bg-[var(--surface-3)] transition-colors"
+    >
+      <div className="flex-1 min-w-0">
+        <p className="text-[15px] font-semibold truncate">{item.title}</p>
+        <div className="flex min-w-0 items-center gap-2 mt-1 text-[13px] text-[var(--muted)]">
+          {item.registrationNumber && <span className="tabular shrink-0">№ {item.registrationNumber}</span>}
+          <UserAvatar name={item.requesterName} avatarUrl={item.avatarUrl} size="xs" clickable={false} />
+          <span className="min-w-0 truncate">{text}</span>
+        </div>
+      </div>
+      <StatusTag tone="amber" size="sm" className="shrink-0">{chip}</StatusTag>
+      <ChevronRight className="size-4 shrink-0 text-[var(--subtle)] group-hover:translate-x-0.5 transition-transform" />
+    </Link>
+  );
+}
+
 export async function InboxWidget({ userId }: { userId: string }) {
   const t = await getTranslations();
-  const [pendingApproval, myActive] = await Promise.all([
+  const [pendingApproval, myActive, deadlineRequests] = await Promise.all([
     inboxAwaitingMyApproval(userId),
     inboxMyActive(userId),
+    inboxDeadlineRequests(userId),
   ]);
 
   return (
@@ -45,10 +68,18 @@ export async function InboxWidget({ userId }: { userId: string }) {
               <p className="text-sm text-[var(--muted)]">{t("inbox.approvalDescription")}</p>
             </div>
           </div>
-          <span className="text-xl font-bold tabular">{pendingApproval.length}</span>
+          <span className="text-xl font-bold tabular">{pendingApproval.length + deadlineRequests.length}</span>
         </div>
         <div className="px-2 py-2 space-y-0.5">
-          {pendingApproval.length === 0 ? (
+          {deadlineRequests.slice(0, 5).map((item) => (
+            <DeadlineRequestRow
+              key={item.requestId}
+              item={item}
+              text={t("staffX.taskEdit.inboxRow", { name: shortName(item.requesterName), days: item.extraDays })}
+              chip={t("staffX.taskEdit.fieldDeadline")}
+            />
+          ))}
+          {pendingApproval.length === 0 && deadlineRequests.length === 0 ? (
             <div className="px-3 py-6 text-center">
               <CheckCircle2 className="size-8 text-[var(--success)] mx-auto mb-2" />
               <p className="text-sm text-[var(--muted)]">{t("inbox.noResponses")}</p>

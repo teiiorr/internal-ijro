@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown, IconArchive as Archive } from "@tabler/icons-react";
+import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown, IconArchive as Archive, IconChecklist as Checklist } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
@@ -10,6 +10,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CouncilAgenda } from "@/components/councils/council-agenda";
 import { CouncilMeetingForm } from "@/components/councils/council-meeting-form";
 import { formatDateMaybeTime } from "@/lib/dates";
+import { listAssignableUsers } from "@/server/queries/tasks";
+import { isResolutionEditor, listOpenResolutions, listResolutionsForMeetings } from "@/server/queries/council-resolutions";
+import { OpenResolutionsCarryover } from "@/components/staff/council-resolutions/open-resolutions-carryover";
+import { ResolutionsEditor } from "@/components/staff/council-resolutions/resolutions-editor";
+import { isStaffPosition } from "@/lib/councils/resolution-status";
+import { can } from "@/lib/permissions/capabilities";
 
 const KINDS = ["ekspert", "smeta"] as const;
 type Kind = (typeof KINDS)[number];
@@ -33,19 +39,49 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
   const heading = kind === "ekspert" ? t("kengash.ekspertHeading") : t("kengash.smetaHeading");
   const pastMeetings = meetings.filter((m) => !upcoming || m.id !== upcoming.id);
 
+  // Kengash qarorlari ijrosi — staff only; every read is guarded (empty before migration 0031).
+  const showResolutions = isStaffPosition(me.position);
+  const resolutionData = showResolutions
+    ? await Promise.all([
+        listResolutionsForMeetings([upcoming?.id, ...pastMeetings.map((m) => m.id)]),
+        upcoming ? listOpenResolutions(kind, upcoming.id) : Promise.resolve([]),
+        listAssignableUsers(me.id, me.position, me.departmentId),
+        isResolutionEditor({ id: me.id, email: me.email ?? "", position: me.position }),
+      ])
+    : null;
+  const resolutionsByMeeting = resolutionData?.[0] ?? {};
+  const openResolutions = resolutionData?.[1] ?? [];
+  // Responsible-person picker: staff only (hr cannot open /kengashlar/ijro).
+  const people = (resolutionData?.[2] ?? []).filter((p) => isStaffPosition(p.position));
+  // Same rule as canEditResolutions(me, meeting.createdByUserId), evaluated once for all meetings.
+  const canEditResolutionsOf = (creatorId: string | null) => !!resolutionData && (resolutionData[3] || creatorId === me.id);
+  const canAssign = can(me.position, "tasks.assign");
+  const meRef = { id: me.id, position: me.position };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{heading}</h1>
-        {kind === "smeta" && (
-          <Link
-            href={`/kengashlar/${kind}/arxiv`}
-            className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-95"
-          >
-            <Archive className="size-4 text-[var(--primary)]" />
-            {t("kengash.archiveButton")}
-          </Link>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {showResolutions && (
+            <Link
+              href={`/${locale}/kengashlar/ijro`}
+              className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-95"
+            >
+              <Checklist className="size-4 text-[var(--primary)]" />
+              {t("staffX.councilResolutions.open")}
+            </Link>
+          )}
+          {kind === "smeta" && (
+            <Link
+              href={`/kengashlar/${kind}/arxiv`}
+              className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-95"
+            >
+              <Archive className="size-4 text-[var(--primary)]" />
+              {t("kengash.archiveButton")}
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* yaqinlaşayotgan yiğiliş + uning kun tartibi */}
@@ -57,12 +93,27 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
               <span className="font-semibold">{upcoming.title || t("kengash.agenda")}</span>
               <span className="text-[var(--muted)]">· {formatDateMaybeTime(upcoming.scheduledAt, locale)}</span>
             </div>
+            {openResolutions.length > 0 && canEditResolutionsOf(upcoming.createdByUserId) && (
+              <OpenResolutionsCarryover meetingId={upcoming.id} rows={openResolutions} agendaTopics={agenda.map((a) => a.topic)} />
+            )}
             <CouncilAgenda
               meetingId={upcoming.id}
               items={agenda}
               projects={projectOpts}
               canManage={canManage}
             />
+            {showResolutions && (
+              <ResolutionsEditor
+                meetingId={upcoming.id}
+                kind={kind}
+                rows={resolutionsByMeeting[upcoming.id] ?? []}
+                agendaItems={agenda.map((a) => ({ id: a.id, topic: a.topic }))}
+                people={canEditResolutionsOf(upcoming.createdByUserId) ? people : []}
+                canEdit={canEditResolutionsOf(upcoming.createdByUserId)}
+                canAssign={canAssign}
+                me={meRef}
+              />
+            )}
           </CardContent>
         </Card>
       ) : (
@@ -122,6 +173,21 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
                               ))}
                             </tbody>
                           </table>
+                        </div>
+                      )}
+                      {showResolutions && (
+                        <div className="mt-4">
+                          <ResolutionsEditor
+                            compact
+                            meetingId={m.id}
+                            kind={kind}
+                            rows={resolutionsByMeeting[m.id] ?? []}
+                            agendaItems={items.map((it) => ({ id: it.id, topic: it.topic }))}
+                            people={canEditResolutionsOf(m.createdByUserId) ? people : []}
+                            canEdit={canEditResolutionsOf(m.createdByUserId)}
+                            canAssign={canAssign}
+                            me={meRef}
+                          />
                         </div>
                       )}
                     </div>

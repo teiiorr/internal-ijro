@@ -6,7 +6,7 @@ import { listTasks, countTasks } from "@/server/queries/tasks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TasksViewSwitcher } from "@/components/tasks/tasks-view-switcher";
-import { IconPlus as Plus, IconDownload as Download, IconInbox as Inbox, IconSend as Send } from "@tabler/icons-react";
+import { IconPlus as Plus, IconDownload as Download, IconInbox as Inbox, IconSend as Send, IconChecklist } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 type Scope = "mine" | "given";
@@ -107,9 +107,16 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <ScopeTab value="mine" label={t("tasks.scope.mine")} icon={Inbox} count={mineCount} />
         <ScopeTab value="given" label={t("tasks.scope.given")} icon={Send} count={givenCount} />
+        <Link
+          href="/tasks/control"
+          className="flex-1 sm:flex-initial px-4 py-2.5 rounded-[10px] text-[14px] font-semibold transition-all flex items-center justify-center gap-2 bg-[var(--surface-3)] text-[var(--muted)] hover:text-[var(--foreground)]"
+        >
+          <IconChecklist className="size-4 shrink-0" />
+          <span>{t("staffX.taskControl.tabLabel")}</span>
+        </Link>
       </div>
 
       <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto -mx-1 px-1 scrollbar-thin">
