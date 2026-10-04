@@ -104,7 +104,7 @@ export function ReadReceipts({
             <IconChevronDown className={cn("size-4 shrink-0 transition-transform", open && "rotate-180")} />
           </button>
           {open && (
-            <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+            <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {unread.map((u) => {
                 const name = localizeName(u.fullName, locale);
                 return (

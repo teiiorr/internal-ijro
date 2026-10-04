@@ -27,7 +27,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <SessionProvider>
       <RouteProgress />
-      <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative">
+      {/* overflow-x-clip: hujjat kengligi ekrandan oshmaydi (iOS'da body clip yetarli emas), sticky buzilmaydi. */}
+      <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative overflow-x-clip">
         <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <Sidebar position={session.user.position} userId={session.user.id} isOwner={owner} reviewCount={reviewCount} showContractors={showContractors} />

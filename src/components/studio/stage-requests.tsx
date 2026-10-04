@@ -63,7 +63,7 @@ export function StageRequestButtons({ stageId, currentDeadline }: { stageId: str
 
   return (
     <>
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Button variant="outline" onClick={() => setOpen("deadline")} className="justify-start">
           <CalendarPlus className="size-4 text-[var(--primary)]" /> {t("studio.requests.deadlineBtn")}
         </Button>
@@ -79,7 +79,7 @@ export function StageRequestButtons({ stageId, currentDeadline }: { stageId: str
           </DialogHeader>
           <div className="space-y-4">
             {open === "deadline" && (
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label>{t("studio.requests.currentDeadline")}</Label>
                   <p className="flex h-11 items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm font-semibold">

@@ -44,8 +44,9 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
   return (
     <header className="sticky top-0 z-30 glass-bar">
       <div className="h-[68px] sm:h-[84px] flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 max-w-[1500px] mx-auto">
-        <Link href="/dashboard" className="flex items-center mr-1 sm:mr-3 shrink-0">
-          <BrandLogo className="h-12 sm:h-16" />
+        {/* Tor ekranda logotip birinchi bo'lib kichrayadi — sarlavha hech qachon ekrandan chiqmaydi. */}
+        <Link href="/dashboard" className="flex min-w-0 items-center overflow-hidden mr-1 sm:mr-3">
+          <BrandLogo className="h-10 sm:h-16" />
         </Link>
 
         {onTasks && (
@@ -62,11 +63,12 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
           </form>
         )}
 
-        <div className="ml-auto flex items-center gap-0.5 sm:gap-1.5">
+        <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1.5">
           {!pathname.startsWith("/contractor") && <CommandPalette />}
           <NotificationBell />
           <LanguageSwitcher />
-          <ThemeToggle />
+          {/* Mobil ekranda mavzu almashtirgich profil menyusiga ko'chadi (joy tejaladi). */}
+          <ThemeToggle className="hidden sm:inline-flex" />
 
           <div ref={menuRef} className="relative ml-0.5 sm:ml-1">
             <button
@@ -96,6 +98,10 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
                     <ChevronRight className="size-4 text-[var(--subtle)]" />
                   </Link>
                 ))}
+                <div className="flex items-center justify-between gap-3 rounded-xl px-3 py-1.5 sm:hidden">
+                  <span className="text-sm font-semibold">{t("theme.darkOn")}</span>
+                  <ThemeToggle />
+                </div>
                 <Link
                   href={pathname.startsWith("/contractor") ? "/contractor/settings" : "/settings"}
                   onClick={() => setMenuOpen(false)}

@@ -246,7 +246,7 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
 
                 {mode === "departments" && (
                   <div className="max-h-52 overflow-y-auto overscroll-contain rounded-xl border border-[var(--border)] p-2">
-                    <div className="grid gap-1 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                       {options.departments.map((d) => (
                         <label
                           key={d.id}
@@ -266,7 +266,7 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
                 )}
 
                 {mode === "positions" && (
-                  <div className="grid gap-1 rounded-xl border border-[var(--border)] p-2 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-1 rounded-xl border border-[var(--border)] p-2 sm:grid-cols-2">
                     {options.positions.map((p) => (
                       <label
                         key={p}
@@ -332,7 +332,7 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
           </fieldset>
 
           {/* Sanalar */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="min-w-0 space-y-1.5">
               <Label htmlFor="ann-pinned">{t("pinnedUntil")}</Label>
               <Input
@@ -444,7 +444,7 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
                     </Button>
                   )}
                 </div>
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <label className="flex min-w-0 cursor-pointer items-center gap-2.5 text-sm">
                     <input type="checkbox" className={CHECK} checked={multi} onChange={(e) => setMulti(e.target.checked)} />
                     <span className="min-w-0 break-words">{t("multi")}</span>

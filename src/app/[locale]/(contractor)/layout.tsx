@@ -70,7 +70,9 @@ export default async function ContractorLayout({ children }: { children: React.R
   return (
     <SessionProvider>
       <RouteProgress />
-      <div className="min-h-screen flex flex-col pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0 relative">
+      {/* overflow-x-clip: body'dagi clip iOS'da viewport'ga o'tib, gorizontal surishni to'xtatmaydi;
+          bu yerda esa hujjat kengligi hech qachon ekrandan oshmaydi (sticky buzilmaydi). */}
+      <div className="min-h-screen flex flex-col pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0 relative overflow-x-clip">
         <Header userName={company.length > 0 ? company[0].name : session.user.fullName} avatarUrl={me?.avatarUrl} rawName menuLinks={menuLinks} />
         <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
           <aside className="hidden md:block w-[272px] shrink-0">

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
-import { Montserrat, JetBrains_Mono, Cinzel_Decorative, Unbounded } from "next/font/google";
+import { Montserrat, JetBrains_Mono, Cinzel_Decorative, Manrope } from "next/font/google";
 
 const montserrat = Montserrat({
   // weight 300 (font-light) ilovada işlatilmaydi; özbek kirillçasi (қ ғ ҳ …) uçun
@@ -14,11 +14,11 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-// Unbounded — sahifa sarlavhalari/başlovlari uçun yumaloq geometrik display şrift.
-// Kirill + Lotinni öz içiga oladi, şuning uçun uz-latn / uz-cyrl / ru ni qoplaydi. next/font
-// tomonidan self-hosted (runtime sörov yöq → CSP `font-src 'self'` amal qilaveradi).
-const unbounded = Unbounded({
-  subsets: ["latin", "latin-ext", "cyrillic"],
+// Manrope — sahifa sarlavhalari/başlovlari uçun ixçam geometrik şrift.
+// Kirill (özbek kirillçasi uçun cyrillic-ext bilan) + Lotinni qoplaydi: uz-latn / uz-cyrl / ru.
+// next/font tomonidan self-hosted (runtime sörov yöq → CSP `font-src 'self'` amal qilaveradi).
+const manrope = Manrope({
+  subsets: ["latin", "latin-ext", "cyrillic", "cyrillic-ext"],
   weight: ["600", "700", "800"],
   variable: "--font-display",
   display: "swap",
@@ -58,7 +58,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       data-locale={locale}
-      className={`${montserrat.variable} ${jbMono.variable} ${cinzel.variable} ${unbounded.variable}`}
+      className={`${montserrat.variable} ${jbMono.variable} ${cinzel.variable} ${manrope.variable}`}
       suppressHydrationWarning
     >
       <body>

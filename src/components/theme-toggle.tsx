@@ -4,7 +4,7 @@ import { IconMoon as Moon, IconSun as Sun } from "@tabler/icons-react";
 import { useTheme } from "./theme-provider";
 import { cn } from "@/lib/utils";
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const t = useTranslations();
   const { resolved, setTheme } = useTheme();
   const isDark = resolved === "dark";
@@ -16,8 +16,9 @@ export function ThemeToggle() {
       aria-label={t("theme.toggleLabel")}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
-        "relative inline-flex h-9 w-[68px] items-center rounded-full p-1 transition-colors",
-        isDark ? "bg-[var(--primary)]" : "bg-[var(--surface-3)] border border-[var(--border)]"
+        "relative inline-flex h-9 w-[68px] shrink-0 items-center rounded-full p-1 transition-colors",
+        isDark ? "bg-[var(--primary)]" : "bg-[var(--surface-3)] border border-[var(--border)]",
+        className
       )}
     >
       <span

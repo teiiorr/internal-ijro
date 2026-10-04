@@ -105,7 +105,7 @@ export function EditAnnouncementButton({ a, today }: { a: Editable; today: strin
             </div>
             <Textarea id="ann-edit-body" value={body} onChange={(e) => setBody(e.target.value)} rows={8} maxLength={20000} />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="min-w-0 space-y-1.5">
               <Label htmlFor="ann-edit-pinned">{t("pinnedUntil")}</Label>
               <Input
