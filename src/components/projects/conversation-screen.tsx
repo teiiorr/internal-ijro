@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -73,11 +73,15 @@ export function ConversationScreen({
   const t = useTranslations();
   const [mounted, setMounted] = useState(false);
   const [membersOpen, setMembersOpen] = useState(false);
-  const [chOpen, setChOpen] = useState(false);
   const [selKey, setSelKey] = useState<string>("general");
+  const activeChipRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => setMounted(true), []);
   useEffect(() => { markProjectRead(projectId).catch(() => {}); }, [projectId]);
+  // Tanlangan kanal chipini ko'rinadigan joyga suramiz (uzun bosqichlar ro'yxatida).
+  useEffect(() => {
+    activeChipRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [selKey, mounted]);
 
   const list = channels.length ? channels : [{ stageId: null, label: t("conversation.general"), messages: [] as Msg[] }];
   const keyOf = (c: Channel) => c.stageId ?? "general";
@@ -88,7 +92,7 @@ export function ConversationScreen({
       <header className="glass-bar relative z-10 shrink-0 pt-[max(0.5rem,env(safe-area-inset-top))]">
         <div className="flex items-center gap-2 px-2 pb-1 sm:px-3">
           <BackButton fallbackHref={backHref} className="shrink-0" />
-          <button type="button" onClick={() => { setMembersOpen((v) => !v); setChOpen(false); }} className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl py-1 pl-1 pr-2 text-left transition-colors active:bg-[var(--glass-fill)]">
+          <button type="button" onClick={() => setMembersOpen((v) => !v)} className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl py-1 pl-1 pr-2 text-left transition-colors active:bg-[var(--glass-fill)]">
             <div className="relative size-9 shrink-0 overflow-hidden rounded-full bg-[var(--surface-2)]">
               {avatarUrl ? (
                 <SmoothImage src={avatarUrl} alt={title} className="size-full object-cover object-[center_25%]" />
@@ -115,31 +119,41 @@ export function ConversationScreen({
           )}
         </div>
 
-        {/* Kanal tanlagich (bosqiç böyiça chat + Umumiy masalalar) */}
-        <div className="px-2 pb-2 sm:px-3">
-          <button type="button" onClick={() => { setChOpen((v) => !v); setMembersOpen(false); }} className="flex w-full items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 text-left text-sm font-semibold transition-colors hover:border-[var(--primary)]">
-            {selected.stageId ? <Hash className="size-4 shrink-0 text-[var(--muted)]" /> : <Messages className="size-4 shrink-0 text-[var(--primary)]" />}
-            <span className="min-w-0 flex-1 truncate">{selected.label}</span>
-            <Chevron className={cn("size-4 shrink-0 text-[var(--muted)] transition-transform", chOpen && "rotate-180")} />
-          </button>
-        </div>
-
-        {/* Kanal röyxati */}
-        {chOpen && (
-          <div className="absolute inset-x-0 top-full z-20 max-h-[62dvh] overflow-y-auto border-b border-[var(--border)] glass-strong p-2 shadow-[var(--shadow-2)]">
+        {/* Kanal tanlagich — rangli, katta va doim ko'rinadigan chiplar qatori (bosqichlar + Umumiy). */}
+        <div className="border-t border-[var(--primary)]/20 bg-[var(--primary-soft)] px-2 pb-2.5 pt-2 sm:px-3">
+          <p className="mb-2 flex items-center gap-1.5 px-1 text-[11px] font-bold uppercase tracking-wide text-[var(--primary)]">
+            <Hash className="size-3.5" /> {t("conversation.channels")} · {list.length}
+          </p>
+          <div className="-mx-2 flex snap-x gap-2 overflow-x-auto px-2 pb-0.5 [scrollbar-width:none] sm:-mx-3 sm:px-3 [&::-webkit-scrollbar]:hidden">
             {list.map((c) => {
               const k = keyOf(c);
               const active = k === keyOf(selected);
               return (
-                <button key={k} type="button" onClick={() => { setSelKey(k); setChOpen(false); }} className={cn("flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition-colors", active ? "bg-[var(--primary)] text-white" : "hover:bg-[var(--glass-fill)]")}>
+                <button
+                  key={k}
+                  ref={active ? activeChipRef : undefined}
+                  type="button"
+                  onClick={() => setSelKey(k)}
+                  aria-pressed={active}
+                  className={cn(
+                    "flex shrink-0 snap-start items-center gap-2 rounded-2xl border px-4 py-2.5 text-sm font-bold transition-all active:scale-[0.97]",
+                    active
+                      ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-[0_6px_18px_-6px_var(--primary-glow)]"
+                      : "border-[var(--primary)]/25 bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)]"
+                  )}
+                >
                   {c.stageId ? <Hash className="size-4 shrink-0" /> : <Messages className="size-4 shrink-0" />}
-                  <span className="min-w-0 flex-1 truncate">{c.label}</span>
-                  {c.messages.length > 0 && <span className={cn("shrink-0 text-xs tabular-nums", active ? "text-white/70" : "text-[var(--muted)]")}>{c.messages.length}</span>}
+                  <span className="max-w-[200px] truncate sm:max-w-[260px]">{c.label}</span>
+                  {c.messages.length > 0 && (
+                    <span className={cn("rounded-full px-1.5 py-0.5 text-[11px] leading-none tabular-nums", active ? "bg-white/25 text-white" : "bg-[var(--surface-2)] text-[var(--muted)]")}>
+                      {c.messages.length}
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
-        )}
+        </div>
 
         {/* Aʼzolar paneli */}
         {membersOpen && (
@@ -160,7 +174,7 @@ export function ConversationScreen({
         )}
       </header>
 
-      {(membersOpen || chOpen) && <div className="absolute inset-0 z-0" onClick={() => { setMembersOpen(false); setChOpen(false); }} aria-hidden />}
+      {membersOpen && <div className="absolute inset-0 z-0" onClick={() => setMembersOpen(false)} aria-hidden />}
 
       <div className="min-h-0 flex-1">
         <ProjectChat

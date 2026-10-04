@@ -20,6 +20,10 @@ import { formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CurrentStatusEditor } from "@/components/studio/current-status-editor";
+import { StageProgressReporter } from "@/components/studio/stage-progress";
+import { StageRequestButtons, StageRequestsList } from "@/components/studio/stage-requests";
+import { getLatestStageProgress, getLatestStatusUpdates, listStageRequests } from "@/server/queries/studio";
 import { desc, eq } from "drizzle-orm";
 
 export default async function ContractorProjectPage({ params }: { params: Promise<{ id: string }> }) {
@@ -68,6 +72,16 @@ export default async function ContractorProjectPage({ params }: { params: Promis
       .where(eq(projectStages.projectId, id))
       .orderBy(desc(stageDocuments.uploadedAt));
     const folderSuggestions = [...new Set(docs.map((d) => d.category).filter((c): c is string => !!c))];
+
+    // Studiya boshqaruvi: joriy holat, faol bosqich progressi va so'rovlar.
+    const activeStage = sp.stages.find((s) => s.status === "active") ?? null;
+    const [statusUpdates, progressMap, requests] = await Promise.all([
+      getLatestStatusUpdates([id]),
+      getLatestStageProgress(activeStage ? [activeStage.id] : []),
+      listStageRequests({ projectId: id }),
+    ]);
+    const lastStatus = statusUpdates.get(id) ?? null;
+    const latestProgress = activeStage ? progressMap.get(activeStage.id) ?? null : null;
 
     return (
       <div className="space-y-5 stagger-children">
@@ -119,6 +133,40 @@ export default async function ContractorProjectPage({ params }: { params: Promis
             )}
           </CardContent>
         </Card>
+
+        {/* Joriy holat — studiya yozadi, xodimlar panelida darhol ko'rinadi */}
+        <CurrentStatusEditor projectId={id} text={sp.project.currentStatus} lastUpdate={lastStatus} canEdit />
+
+        {/* Faol bosqich: bajarilish foizi + muddat/muammo so'rovlari */}
+        {activeStage && (
+          <Card>
+            <CardContent className="space-y-5 p-5 sm:p-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-[var(--primary)] px-2.5 py-0.5 text-xs font-bold text-white">{t("studio.deadlines.active")}</span>
+                <h3 className="min-w-0 flex-1 break-words text-base font-bold">{activeStage.name}</h3>
+                {activeStage.plannedDeadline && (
+                  <span className="text-xs font-semibold text-[var(--muted)]">
+                    {t("projects.details.dueDate")}: {formatDate(activeStage.plannedDeadline, locale)}
+                  </span>
+                )}
+              </div>
+              <StageProgressReporter stageId={activeStage.id} latest={latestProgress} />
+              <div className="space-y-3 border-t border-[var(--border)] pt-4">
+                <h4 className="text-sm font-bold">{t("studio.requests.title")}</h4>
+                <StageRequestButtons stageId={activeStage.id} currentDeadline={activeStage.plannedDeadline ?? null} />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {requests.length > 0 && (
+          <Card>
+            <CardContent className="p-5 sm:p-6">
+              <h3 className="mb-4 text-base font-semibold">{t("studio.requests.title")}</h3>
+              <StageRequestsList requests={requests} showProject linkBase="/contractor/projects" />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Qayerdaman — bosqichlar körsatkichi */}
         <Card>

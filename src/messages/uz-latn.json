@@ -129,7 +129,11 @@
     "owner": "Egasi paneli",
     "normativeDocs": "Meʼyoriy hujjatlar",
     "tanlov": "Tanlov",
-    "chats": "Chatlar"
+    "chats": "Chatlar",
+    "payments": "Toʻlovlar",
+    "documents": "Hujjatlar",
+    "deadlines": "Muddatlar",
+    "studioRequests": "Soʻrovlar"
   },
   "positions": {
     "direktor": "Direktor",
@@ -1311,6 +1315,132 @@
     "you": "Siz",
     "group": "Guruh",
     "readOnly": "Faqat oʻqish",
-    "general": "Umumiy masalalar"
+    "general": "Umumiy masalalar",
+    "channels": "Bosqichlar boʻyicha suhbat"
+  },
+  "studio": {
+    "currentStatus": {
+      "title": "Joriy holat",
+      "hint": "Loyiha qaysi bosqichda va nima qilinayotganini qisqacha yozing — xodimlar buni darhol koʻradi.",
+      "placeholder": "Masalan: 2-bosqich — ssenariy yakunlanmoqda, montaj 15-oktabrda boshlanadi.",
+      "edit": "Yangilash",
+      "save": "Saqlash",
+      "cancel": "Bekor qilish",
+      "empty": "Joriy holat hali yozilmagan.",
+      "updatedBy": "{name} · {time}",
+      "byStudio": "Studiya",
+      "saved": "Joriy holat saqlandi"
+    },
+    "progress": {
+      "title": "Bajarilish holati",
+      "hint": "Faol bosqich qanchalik bajarilganini belgilang — kurator real vaqtda koʻradi.",
+      "percent": "Bajarildi",
+      "note": "Izoh",
+      "notePlaceholder": "Nima tayyor, nima qoldi (ixtiyoriy)",
+      "submit": "Yuborish",
+      "saved": "Bajarilish holati yuborildi",
+      "reported": "Studiya maʼlumoti",
+      "none": "Studiya hali bajarilish holatini yubormagan."
+    },
+    "requests": {
+      "title": "Soʻrovlar",
+      "deadlineBtn": "Muddatni uzaytirish",
+      "blockerBtn": "Muammo bildirish",
+      "deadlineTitle": "Muddatni uzaytirishni soʻrash",
+      "blockerTitle": "Muammo yoki yordam soʻrash",
+      "currentDeadline": "Joriy muddat",
+      "newDeadline": "Yangi muddat",
+      "reason": "Sabab",
+      "reasonDeadline": "Nega qoʻshimcha vaqt kerakligini yozing",
+      "reasonBlocker": "Nima ishni toʻxtatayotganini batafsil yozing",
+      "send": "Yuborish",
+      "sent": "Soʻrov yuborildi",
+      "empty": "Soʻrovlar yoʻq.",
+      "approve": "Tasdiqlash",
+      "reject": "Rad etish",
+      "resolve": "Hal qilindi",
+      "decisionNote": "Izoh (ixtiyoriy)",
+      "decided": "Qaror saqlandi",
+      "requestedDeadline": "Soʻralgan muddat",
+      "types": {
+        "deadline": "Muddat",
+        "blocker": "Muammo"
+      },
+      "statuses": {
+        "pending": "Kutilmoqda",
+        "approved": "Tasdiqlandi",
+        "rejected": "Rad etildi",
+        "resolved": "Hal qilindi"
+      }
+    },
+    "errors": {
+      "forbidden": "Bu amal uchun ruxsat yoʻq.",
+      "stage_not_active": "Bosqich faol emas.",
+      "stage_completed": "Bosqich allaqachon yakunlangan.",
+      "already_pending": "Bu turdagi soʻrov allaqachon koʻrib chiqilmoqda.",
+      "deadline_in_past": "Yangi muddat oʻtgan sana boʻlishi mumkin emas.",
+      "deadline_not_later": "Yangi muddat joriy muddatdan keyin boʻlishi kerak.",
+      "already_decided": "Bu soʻrov boʻyicha qaror allaqachon qabul qilingan.",
+      "generic": "Xatolik yuz berdi. Qayta urinib koʻring."
+    },
+    "payments": {
+      "title": "Toʻlovlar",
+      "subtitle": "Loyihalaringiz bosqichlari boʻyicha barcha toʻlovlar",
+      "paid": "Toʻlangan",
+      "pending": "Kutilmoqda",
+      "total": "Jami",
+      "empty": "Hozircha toʻlovlar yoʻq.",
+      "project": "Loyiha",
+      "stage": "Bosqich",
+      "amount": "Summa",
+      "date": "Sana",
+      "status": "Holat"
+    },
+    "documents": {
+      "title": "Hujjatlar",
+      "subtitle": "Barcha loyihalaringizdagi fayllar bir joyda",
+      "empty": "Hozircha hujjatlar yoʻq."
+    },
+    "deadlines": {
+      "title": "Muddatlar",
+      "subtitle": "Yakunlanmagan bosqichlarning yaqinlashayotgan muddatlari",
+      "empty": "Yaqin muddatlar yoʻq.",
+      "overdue": "{n} kun kechikdi",
+      "today": "Bugun",
+      "tomorrow": "Ertaga",
+      "daysLeft": "{n} kun qoldi",
+      "active": "Faol",
+      "locked": "Navbatda",
+      "open": "Ochish"
+    },
+    "dashboard": {
+      "title": "Bosh sahifa",
+      "subtitle": "Loyihalaringiz boʻyicha qisqacha holat",
+      "kpi": {
+        "activeProjects": "Faol loyihalar",
+        "myTurn": "Sizdan kutilmoqda",
+        "awaitingReview": "Tekshiruvda",
+        "overdue": "Kechikkan",
+        "pendingRequests": "Ochiq soʻrovlar"
+      },
+      "needsAction": "Sizdan kutilmoqda",
+      "needsActionEmpty": "Hozir sizdan kutilayotgan ish yoʻq — ajoyib!",
+      "changesRequested": "Oʻzgartirish soʻraldi",
+      "inProgress": "Jarayonda",
+      "upcoming": "Yaqin muddatlar",
+      "paymentsSummary": "Toʻlovlar",
+      "recentPayments": "Oxirgi toʻlovlar",
+      "viewAll": "Barchasi",
+      "noDeadline": "Muddat belgilanmagan"
+    },
+    "staffQueue": {
+      "title": "Studiya soʻrovlari",
+      "subtitle": "Muddatni uzaytirish va muammolar boʻyicha studiyalardan kelgan soʻrovlar",
+      "empty": "Ochiq soʻrovlar yoʻq.",
+      "pendingOnly": "Faqat kutilayotganlar",
+      "all": "Barchasi",
+      "link": "Soʻrovlar",
+      "studio": "Studiya"
+    }
   }
 }

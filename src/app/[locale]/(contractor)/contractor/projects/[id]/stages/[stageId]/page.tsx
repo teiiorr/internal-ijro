@@ -18,6 +18,9 @@ import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
 import { eq } from "drizzle-orm";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
+import { StageProgressReporter } from "@/components/studio/stage-progress";
+import { StageRequestButtons, StageRequestsList } from "@/components/studio/stage-requests";
+import { getLatestStageProgress, listStageRequests } from "@/server/queries/studio";
 
 export default async function ContractorStageDetailPage({ params }: { params: Promise<{ id: string; stageId: string }> }) {
   const session = await auth();
@@ -57,7 +60,12 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
             ? { tone: "red", label: t("review.status.changes_requested") }
             : { tone: "amber", label: t("review.status.in_progress") };
 
-  const messages = await getStageMessages(id, stageId);
+  const [messages, progressMap, requests] = await Promise.all([
+    getStageMessages(id, stageId),
+    getLatestStageProgress([stageId]),
+    listStageRequests({ stageId }),
+  ]);
+  const latestProgress = progressMap.get(stageId) ?? null;
   const locked = s.status === "locked";
   const changesRequested = s.status === "active" && s.reviewStatus === "changes_requested";
 
@@ -141,6 +149,29 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
           <StageDocuments stageId={s.id} documents={data.documents} canManage={false} suggestions={data.categorySuggestions} maxBytes={MAX_UPLOAD_BYTES} />
         </CardContent>
       </Card>
+
+      {/* Studiya boshqaruvi: bajarilish foizi + muddat/muammo so'rovlari */}
+      {(s.status === "active" || requests.length > 0) && (
+        <Card>
+          <CardContent className="space-y-5 p-5 sm:p-6">
+            {s.status === "active" && (
+              <>
+                <StageProgressReporter stageId={s.id} latest={latestProgress} />
+                <div className="space-y-3 border-t border-[var(--border)] pt-4">
+                  <h4 className="text-sm font-bold">{t("studio.requests.title")}</h4>
+                  <StageRequestButtons stageId={s.id} currentDeadline={s.plannedDeadline ?? null} />
+                </div>
+              </>
+            )}
+            {requests.length > 0 && (
+              <div className={s.status === "active" ? "border-t border-[var(--border)] pt-4" : ""}>
+                {s.status !== "active" && <h3 className="mb-3 text-base font-semibold">{t("studio.requests.title")}</h3>}
+                <StageRequestsList requests={requests} />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Kurator bilan suhbat, faqat şu bosqich doirasida */}
       <Card>

@@ -16,7 +16,7 @@ import { canViewContractorChats, isContractorManager } from "@/lib/permissions/c
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (session.user.position === "kontragent") redirect("/contractor/projects");
+  if (session.user.position === "kontragent") redirect("/contractor/dashboard");
   const owner = isOwner(session.user.email);
   const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);
   // Studiyalar bölimini kim köradi (boşqaruvçilar + egasi ruxsat bergan xodimlar) va kim boşqaradi.

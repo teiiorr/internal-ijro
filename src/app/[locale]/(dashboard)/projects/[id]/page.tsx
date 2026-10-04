@@ -27,6 +27,11 @@ import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from 
 import { hasGrant } from "@/lib/permissions/grants";
 import { formatDate } from "@/lib/dates";
 import { CuratorList } from "@/components/ui/curator-list";
+import { CurrentStatusEditor } from "@/components/studio/current-status-editor";
+import { StageProgressBadge } from "@/components/studio/stage-progress";
+import { StageRequestsList } from "@/components/studio/stage-requests";
+import { getLatestStageProgress, getLatestStatusUpdates, listStageRequests } from "@/server/queries/studio";
+import { isOwner } from "@/lib/permissions/owner";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
@@ -78,6 +83,19 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   if (data.project.projectTypeId) {
     const sp = await getStageProject(id, locale);
     if (!sp) notFound();
+
+    // Studiya bilan hamkorlik: joriy holat muallifi, faol bosqich progressi, so'rovlar.
+    const activeStage = sp.stages.find((st) => st.status === "active") ?? null;
+    const hasStudio = !!sp.project.externalCompanyId;
+    const [statusUpdates, progressMap, studioRequests] = await Promise.all([
+      getLatestStatusUpdates([id]),
+      getLatestStageProgress(activeStage ? [activeStage.id] : []),
+      hasStudio ? listStageRequests({ projectId: id }) : Promise.resolve([]),
+    ]);
+    const lastStatus = statusUpdates.get(id) ?? null;
+    const activeProgress = activeStage ? progressMap.get(activeStage.id) ?? null : null;
+    // So'rovni hal qilish: muharrir, egasi yoki shu loyiha kuratori (server ham tekshiradi).
+    const canDecideRequests = canManage || isOwner(me.email) || sp.curators.some((c) => c.id === me.id);
     const contractors = await listContractors("approved");
     const canManageContractor = editor;
     const status = derivedStatus(sp.project.progressPercentage, sp.project.statusOverride);
@@ -86,7 +104,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       : status === "in_progress" ? "amber"
       : status === "on_hold" ? "red"
       : "muted";
-    const activeStage = sp.stages.find((s) => s.status === "active");
     const currency = sp.project.budgetCurrency ?? "UZS";
 
     return (
@@ -116,11 +133,29 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
         )}
 
-        {sp.project.currentStatus && (
+        {(sp.project.currentStatus || canManage || hasStudio) && (
+          <CurrentStatusEditor projectId={id} text={sp.project.currentStatus} lastUpdate={lastStatus} canEdit={canManage} />
+        )}
+
+        {/* Studiya faolligi: faol bosqich bo'yicha studiya progressi + so'rovlar navbati */}
+        {hasStudio && (activeStage || studioRequests.length > 0) && (
           <Card>
-            <CardContent className="p-5 sm:p-6">
-              <h3 className="mb-2 text-base font-semibold">{t("projects.fields.currentStatus")}</h3>
-              <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--foreground)]">{sp.project.currentStatus}</p>
+            <CardContent className="space-y-5 p-5 sm:p-6">
+              {activeStage && (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full bg-[var(--primary)] px-2.5 py-0.5 text-xs font-bold text-white">{t("studio.deadlines.active")}</span>
+                    <Link href={`/projects/${id}/stages/${activeStage.id}`} className="min-w-0 flex-1 break-words text-base font-bold hover:underline">{activeStage.name}</Link>
+                  </div>
+                  <StageProgressBadge data={activeProgress} />
+                </div>
+              )}
+              {studioRequests.length > 0 && (
+                <div className={activeStage ? "border-t border-[var(--border)] pt-4" : ""}>
+                  <h3 className="mb-3 text-base font-semibold">{t("studio.requests.title")}</h3>
+                  <StageRequestsList requests={studioRequests} canDecide={canDecideRequests} showProject linkBase="/projects" />
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

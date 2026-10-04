@@ -21,6 +21,10 @@ import { EditStageDialog } from "@/components/projects/edit-stage-dialog";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
+import { StageProgressBadge } from "@/components/studio/stage-progress";
+import { StageRequestsList } from "@/components/studio/stage-requests";
+import { getLatestStageProgress, listStageRequests } from "@/server/queries/studio";
+import { isOwner } from "@/lib/permissions/owner";
 
 export default async function StageDetailPage({ params }: { params: Promise<{ id: string; stageId: string }> }) {
   const session = await auth();
@@ -41,6 +45,13 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
   const assignable = canManage ? await listAssignableUsers(me.id, me.position, me.departmentId) : [];
 
   const s = data.stage;
+  // Studiya hamkorligi: shu bosqich bo'yicha studiya progressi va so'rovlari.
+  const [progressMap, stageReqs] = await Promise.all([
+    getLatestStageProgress([stageId]),
+    listStageRequests({ stageId }),
+  ]);
+  const studioProgress = progressMap.get(stageId) ?? null;
+  const canDecideRequests = canManage || isOwner(me.email);
   const total = data.siblings.length;
   // Faqat eng oxirgi yakunlangan bosqiçni qayta oçiş mumkin (reopenStage'dagi tekşiruvga mos keladi).
   const lastCompleted = [...data.siblings].reverse().find((x) => x.status === "completed");
@@ -125,6 +136,26 @@ export default async function StageDetailPage({ params }: { params: Promise<{ id
           <CardContent className="p-5 flex items-center gap-3 text-sm text-[var(--muted)]">
             <Lock className="size-4 shrink-0" />
             {t("projects.stagePath.lockedHint")}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Studiya: bajarilish foizi + so'rovlar (muddat / muammo) */}
+      {(studioProgress || stageReqs.length > 0) && (
+        <Card>
+          <CardContent className="space-y-5 p-5 sm:p-6">
+            {studioProgress && (
+              <div className="space-y-2">
+                <h3 className="text-base font-semibold">{t("studio.progress.title")}</h3>
+                <StageProgressBadge data={studioProgress} />
+              </div>
+            )}
+            {stageReqs.length > 0 && (
+              <div className={studioProgress ? "border-t border-[var(--border)] pt-4" : ""}>
+                <h3 className="mb-3 text-base font-semibold">{t("studio.requests.title")}</h3>
+                <StageRequestsList requests={stageReqs} canDecide={canDecideRequests} />
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

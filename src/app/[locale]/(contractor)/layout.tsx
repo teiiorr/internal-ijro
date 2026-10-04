@@ -11,7 +11,16 @@ import { Header } from "@/components/layout/header";
 import { ContractorMobileNav } from "@/components/layout/contractor-mobile-nav";
 import { AppFooter } from "@/components/layout/app-footer";
 import { RouteProgress } from "@/components/layout/route-progress";
-import { IconFolder as Folder, IconMessageCircle as MessageCircle, IconClipboardList as ClipboardList, IconSettings as Settings } from "@tabler/icons-react";
+import {
+  IconFolder as Folder,
+  IconMessageCircle as MessageCircle,
+  IconClipboardList as ClipboardList,
+  IconSettings as Settings,
+  IconLayoutDashboard as LayoutDashboard,
+  IconCalendarClock as CalendarClock,
+  IconCoins as Coins,
+  IconFiles as Files,
+} from "@tabler/icons-react";
 
 export default async function ContractorLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -43,13 +52,16 @@ export default async function ContractorLayout({ children }: { children: React.R
     redirect("/contractor-nda");
   }
 
-  // Faqat ikkita yönaliş: iş (Loyihalar) va muloqot (Suhbatlar).
-  // Bildirişnomalar + Sozlamalar Header'da (qönğiroq + avatar menyusi) joylaşgan; Profil esa
-  // menyu havolasi (quyida) + mobil pastki panelda.
+  // Studiya portali bo'limlari: bosh sahifa, ish (loyihalar/vazifalar), muloqot,
+  // muddatlar, to'lovlar va hujjatlar. Profil — avatar menyusida va mobil "Ko'proq" varag'ida.
   const NAV = [
+    { href: "/contractor/dashboard", icon: LayoutDashboard, label: t("nav.dashboard") },
     { href: "/contractor/projects", icon: Folder, label: t("nav.projects") },
     { href: "/contractor/tasks", icon: ClipboardList, label: t("nav.tasks") },
     { href: "/contractor/chats", icon: MessageCircle, label: t("nav.chats") },
+    { href: "/contractor/deadlines", icon: CalendarClock, label: t("nav.deadlines") },
+    { href: "/contractor/payments", icon: Coins, label: t("nav.payments") },
+    { href: "/contractor/documents", icon: Files, label: t("nav.documents") },
     { href: "/contractor/settings", icon: Settings, label: t("nav.settings") },
   ];
   const menuLinks = [{ href: "/contractor/profile", label: t("nav.profile") }];
