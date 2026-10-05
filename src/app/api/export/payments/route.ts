@@ -218,7 +218,7 @@ export async function GET(req: NextRequest) {
   return new NextResponse(new Uint8Array(buf), {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="tolovlar-reestri-${new Date(Date.now() + TASHKENT_OFFSET_MS).toISOString().slice(0, 10)}.xlsx"`,
+      "Content-Disposition": `attachment; filename="tolovlar-reyestri-${new Date(Date.now() + TASHKENT_OFFSET_MS).toISOString().slice(0, 10)}.xlsx"`,
       "Cache-Control": "no-store",
     },
   });
