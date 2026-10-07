@@ -1,5 +1,5 @@
 "use client";
-import { useId, useMemo, useState, useTransition } from "react";
+import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -30,8 +30,9 @@ function InProcess({ className }: { className: string }) {
 }
 
 /**
- * Smeta komissiyasiga oʻtgan loyihalar: nom kiritiladi (tizimdagi loyihalar taklif qilinadi),
- * roʻyxat topshirilgan tartibda raqamlanib, har biri "Jarayonda" holatida koʻrsatiladi.
+ * Smeta komissiyasiga yoʻnaltirilgan loyihalar: "+" tugmasi nom kiritish maydonini ochadi
+ * (tizimdagi loyihalar taklif qilinadi); roʻyxat topshirilgan tartibda raqamlanib,
+ * har biri "Jarayonda" holatida koʻrsatiladi.
  */
 export function SmetaProjects({
   items,
@@ -48,10 +49,25 @@ export function SmetaProjects({
   const locale = useLocale();
   const router = useRouter();
   const listId = useId();
+  const formId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [lastAdded, setLastAdded] = useState<string | null>(null);
+  const canAdd = canManage && ready;
+
+  // Maydon ochilishi bilan kursor unga tushadi.
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
+
+  function close() {
+    setOpen(false);
+    setName("");
+    setError(null);
+  }
 
   const taken = useMemo(() => new Set(items.map((i) => i.name.toLowerCase())), [items]);
   const suggestions = useMemo(() => projects.filter((p) => !taken.has(p.name.toLowerCase())), [projects, taken]);
@@ -66,10 +82,12 @@ export function SmetaProjects({
     start(async () => {
       const r = await addSmetaCommissionProject(v);
       if (!r.ok) return setError(errorText(r.error));
+      // Maydon ochiq qoladi — ketma-ket bir nechta loyiha qoʻshish qulay boʻlsin.
       setName("");
       setLastAdded(v.toLowerCase());
       toast.success(t("added"));
       router.refresh();
+      inputRef.current?.focus();
     });
   }
 
@@ -85,53 +103,92 @@ export function SmetaProjects({
 
   return (
     <Card>
-      <CardContent className="space-y-4 p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-lg font-bold tracking-tight sm:text-xl">{t("title")}</h2>
-            <p className="mt-0.5 text-sm text-[var(--muted)]">{t("subtitle")}</p>
-          </div>
-          <span className="grid h-9 min-w-9 shrink-0 place-items-center rounded-full bg-[var(--primary-soft)] px-3 text-sm font-bold tabular-nums text-[var(--primary)]">
-            {items.length}
-          </span>
+      <CardContent className="p-5 sm:p-6">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="min-w-0 text-lg font-bold tracking-tight sm:text-xl">
+            {t("title")}
+            <span className="ml-2 inline-grid h-7 min-w-7 place-items-center rounded-full bg-[var(--primary-soft)] px-2 align-middle text-sm font-bold tabular-nums text-[var(--primary)]">
+              {items.length}
+            </span>
+          </h2>
+          {canAdd && (
+            <button
+              type="button"
+              onClick={() => (open ? close() : setOpen(true))}
+              aria-expanded={open}
+              aria-controls={formId}
+              aria-label={open ? t("close") : t("addProject")}
+              title={open ? t("close") : t("addProject")}
+              className={cn(
+                "grid size-10 shrink-0 place-items-center rounded-full shadow-[var(--shadow-1)] transition-colors duration-200 active:scale-95",
+                open ? "bg-[var(--surface-2)] text-[var(--foreground)] hover:bg-[var(--surface-3)]" : "bg-[var(--primary)] text-white hover:brightness-110"
+              )}
+            >
+              <Plus className={cn("size-5 transition-transform duration-300", open && "rotate-45")} />
+            </button>
+          )}
         </div>
 
-        {canManage &&
-          (ready ? (
-            <form onSubmit={submit} className="space-y-1.5">
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <Input
-                  value={name}
-                  onChange={(e) => { setName(e.target.value); if (error) setError(null); }}
-                  list={listId}
-                  maxLength={300}
-                  placeholder={t("placeholder")}
-                  aria-label={t("placeholder")}
-                  className="sm:flex-1"
-                />
-                <datalist id={listId}>
-                  {suggestions.map((p) => (
-                    <option key={p.id} value={p.name} />
-                  ))}
-                </datalist>
-                <Button type="submit" disabled={pending || name.trim().length < 2} className="w-full sm:w-auto">
-                  <Plus className="size-4" />
-                  {t("add")}
-                </Button>
-              </div>
-              {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : <p className="text-xs text-[var(--subtle)]">{t("hint")}</p>}
-            </form>
-          ) : (
-            <p className="rounded-2xl bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--muted)]">{t("errors.unavailable")}</p>
-          ))}
+        {/* "+" bosilganda silliq ochiladigan maydon; yopiqligida joy egallamaydi va fokuslanmaydi. */}
+        {canAdd && (
+          <div
+            id={formId}
+            inert={!open}
+            className={cn(
+              "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
+              open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            )}
+          >
+            <div className="-mx-1 min-h-0 overflow-hidden px-1">
+              <form onSubmit={submit} className="space-y-1.5 pb-1 pt-4">
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Input
+                    ref={inputRef}
+                    value={name}
+                    onChange={(e) => { setName(e.target.value); if (error) setError(null); }}
+                    onKeyDown={(e) => { if (e.key === "Escape") close(); }}
+                    list={listId}
+                    maxLength={300}
+                    placeholder={t("placeholder")}
+                    aria-label={t("placeholder")}
+                    className="sm:flex-1"
+                  />
+                  <datalist id={listId}>
+                    {suggestions.map((p) => (
+                      <option key={p.id} value={p.name} />
+                    ))}
+                  </datalist>
+                  <Button type="submit" disabled={pending || name.trim().length < 2} className="w-full sm:w-auto">
+                    <Plus className="size-4" />
+                    {t("add")}
+                  </Button>
+                </div>
+                {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : <p className="text-xs text-[var(--subtle)]">{t("hint")}</p>}
+              </form>
+            </div>
+          </div>
+        )}
+        {canManage && !ready && (
+          <p className="mt-4 rounded-2xl bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--muted)]">{t("errors.unavailable")}</p>
+        )}
 
         {items.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-10 text-center">
+          <div className="mt-4 flex flex-col items-center gap-2 rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-10 text-center">
             <FileInvoice className="size-7 text-[var(--subtle)]" />
             <p className="text-sm font-semibold text-[var(--muted)]">{t("empty")}</p>
+            {canAdd && !open && (
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="mt-1 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary-soft)] active:scale-95"
+              >
+                <Plus className="size-4" />
+                {t("addProject")}
+              </button>
+            )}
           </div>
         ) : (
-          <ol className="space-y-2">
+          <ol className="mt-4 space-y-2">
             {items.map((it, i) => (
               <li
                 key={it.id}

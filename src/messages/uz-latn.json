@@ -1153,8 +1153,9 @@
     "newTopic": "Yangi mavzu",
     "emptyAgenda": "Kun tartibi boʻsh",
     "smetaProjects": {
-      "title": "Smeta komissiyasiga oʻtgan loyihalar:",
-      "subtitle": "Komissiyada koʻrib chiqilayotgan loyihalar",
+      "title": "Smeta komissiyasiga yoʻnaltirilgan loyihalar",
+      "addProject": "Loyiha qoʻshish",
+      "close": "Yopish",
       "placeholder": "Loyiha nomini kiriting",
       "add": "Qoʻshish",
       "hint": "Tizimdagi loyihani tanlang yoki nomini qoʻlda yozing",
