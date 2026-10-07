@@ -10,8 +10,8 @@ import * as schema from "../src/lib/db/schema";
  * Idempotent — safe to run repeatedly on a populated database (unlike
  * scripts/seed.ts, which aborts when users exist). Everything is keyed by a
  * stable `code`, so re-running upserts names/order without creating duplicates
- * and never touches users/projects. Types 1&2 share `tmpl_film6`; types 4&5
- * share `tmpl_anim4`.
+ * and never touches users/projects. Feature film, short film and serial share
+ * `tmpl_film6`; multserial and anime share `tmpl_anim4`.
  *
  *   pnpm db:seed:templates
  */
@@ -108,6 +108,7 @@ const TEMPLATES: Template[] = [
 
 const TYPES: TypeDef[] = [
   { code: "feature_film", uz: "To'liq metrajli badiiy film", cy: "Тўлиқ метражли бадиий фильм", ru: "Полнометражный художественный фильм", template: "tmpl_film6" },
+  { code: "short_film", uz: "Qisqa metrajli film", cy: "Қисқа метражли фильм", ru: "Короткометражный фильм", template: "tmpl_film6" },
   { code: "serial", uz: "Seriallar", cy: "Сериаллар", ru: "Сериалы", template: "tmpl_film6" },
   { code: "comedy_journal", uz: "Hajviy kinojurnallar", cy: "Ҳажвий киножурналлар", ru: "Сатирические киножурналы", template: "tmpl_comedy5" },
   { code: "multserial", uz: "Multseriallar", cy: "Мультсериаллар", ru: "Мультсериалы", template: "tmpl_anim4" },
