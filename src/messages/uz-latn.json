@@ -1151,7 +1151,25 @@
     "projectField": "Loyiha — tanlang yoki yozing",
     "presenterField": "Maʼruzachi — tanlang yoki yozing",
     "newTopic": "Yangi mavzu",
-    "emptyAgenda": "Kun tartibi boʻsh"
+    "emptyAgenda": "Kun tartibi boʻsh",
+    "smetaProjects": {
+      "title": "Smeta komissiyasiga oʻtgan loyihalar:",
+      "subtitle": "Komissiyada koʻrib chiqilayotgan loyihalar",
+      "placeholder": "Loyiha nomini kiriting",
+      "add": "Qoʻshish",
+      "hint": "Tizimdagi loyihani tanlang yoki nomini qoʻlda yozing",
+      "empty": "Hozircha loyiha qoʻshilmagan",
+      "inProcess": "Jarayonda",
+      "remove": "Roʻyxatdan olib tashlash",
+      "confirmRemove": "«{name}» roʻyxatdan olib tashlansinmi?",
+      "added": "Loyiha roʻyxatga qoʻshildi",
+      "removed": "Loyiha roʻyxatdan olib tashlandi",
+      "errors": {
+        "invalid": "Loyiha nomini kiriting (kamida 2 ta belgi)",
+        "duplicate": "Bu loyiha roʻyxatda allaqachon bor",
+        "unavailable": "Roʻyxat maʼlumotlar bazasi yangilangach ishga tushadi"
+      }
+    }
   },
   "owner": {
     "title": "Egasi paneli",

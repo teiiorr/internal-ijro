@@ -9,6 +9,8 @@ import { getCouncilPage } from "@/server/queries/councils";
 import { Card, CardContent } from "@/components/ui/card";
 import { CouncilAgenda } from "@/components/councils/council-agenda";
 import { CouncilMeetingForm } from "@/components/councils/council-meeting-form";
+import { SmetaProjects } from "@/components/councils/smeta-projects";
+import { listSmetaCommissionProjects } from "@/server/queries/smeta-commission";
 import { formatDateMaybeTime } from "@/lib/dates";
 import { listAssignableUsers } from "@/server/queries/tasks";
 import { isResolutionEditor, listOpenResolutions, listResolutionsForMeetings } from "@/server/queries/council-resolutions";
@@ -31,9 +33,12 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
   const me = session.user;
   const canManage = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"].includes(me.position);
 
-  const [{ upcoming, agenda, meetings, agendaByMeeting }, projectOpts] = await Promise.all([
+  // Smeta komissiyasida "Majlis qoʻshish" oʻrniga komissiyaga oʻtgan loyihalar roʻyxati yuritiladi.
+  const isSmeta = kind === "smeta";
+  const [{ upcoming, agenda, meetings, agendaByMeeting }, projectOpts, smetaList] = await Promise.all([
     getCouncilPage(kind),
     db.select({ id: projects.id, name: projects.name }).from(projects).orderBy(projects.name),
+    isSmeta ? listSmetaCommissionProjects() : Promise.resolve(null),
   ]);
 
   const heading = kind === "ekspert" ? t("kengash.ekspertHeading") : t("kengash.smetaHeading");
@@ -84,7 +89,11 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
         </div>
       </div>
 
-      {/* yaqinlaşayotgan yiğiliş + uning kun tartibi */}
+      {smetaList && (
+        <SmetaProjects items={smetaList.items} projects={projectOpts} canManage={canManage} ready={smetaList.ready} />
+      )}
+
+      {/* yaqinlaşayotgan yiğiliş + uning kun tartibi (Smeta'da faqat mavjud bölsa) */}
       {upcoming ? (
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-5">
@@ -117,13 +126,15 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="py-12 text-center text-sm text-[var(--muted)]">{t("kengash.noUpcoming")}</CardContent>
-        </Card>
+        !isSmeta && (
+          <Card>
+            <CardContent className="py-12 text-center text-sm text-[var(--muted)]">{t("kengash.noUpcoming")}</CardContent>
+          </Card>
+        )
       )}
 
-      {/* yangi yiğiliş belgilaş */}
-      {canManage && (
+      {/* yangi yiğiliş belgilaş (faqat Ekspertlar Kengashi) */}
+      {canManage && !isSmeta && (
         <Card>
           <CardContent className="p-5 sm:p-6 space-y-3">
             <h3 className="text-base font-semibold">{t("kengash.createMeeting")}</h3>
