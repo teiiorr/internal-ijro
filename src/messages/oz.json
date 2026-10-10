@@ -1170,6 +1170,25 @@
         "duplicate": "Bu loyiha röyxatda allaqaçon bor",
         "unavailable": "Röyxat maʼlumotlar bazasi yangilangaç işga tuşadi"
       }
+    },
+    "smetaDocs": {
+      "title": "Smeta komissiyasi sonlari arxivi",
+      "subtitle": "1-sondan {last}-songaça — har bir son hujjatlari",
+      "noFiles": "hujjat yöq",
+      "filesCount": "{n} ta hujjat",
+      "filesShort": "{n} hujjat",
+      "numberTitle": "{n}-son hujjatlari",
+      "close": "Yopiş",
+      "open": "Oçiş",
+      "openWord": "Word'da oçiş",
+      "download": "Yuklab oliş",
+      "sealed": "Muhrlangan",
+      "kind": {
+        "pdf": "PDF",
+        "word": "Word",
+        "image": "Rasm",
+        "other": "Fayl"
+      }
     }
   },
   "owner": {

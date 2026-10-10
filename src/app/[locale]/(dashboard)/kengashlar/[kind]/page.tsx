@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown, IconArchive as Archive, IconChecklist as Checklist } from "@tabler/icons-react";
+import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown, IconChecklist as Checklist } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CouncilAgenda } from "@/components/councils/council-agenda";
 import { CouncilMeetingForm } from "@/components/councils/council-meeting-form";
 import { SmetaProjects } from "@/components/councils/smeta-projects";
+import { SmetaDocs } from "@/components/councils/smeta-docs";
 import { listSmetaCommissionProjects } from "@/server/queries/smeta-commission";
 import { formatDateMaybeTime } from "@/lib/dates";
 import { listAssignableUsers } from "@/server/queries/tasks";
@@ -77,21 +78,15 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
               {t("staffX.councilResolutions.open")}
             </Link>
           )}
-          {kind === "smeta" && (
-            <Link
-              href={`/kengashlar/${kind}/arxiv`}
-              className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] shadow-[var(--shadow-1)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-2)] active:scale-95"
-            >
-              <Archive className="size-4 text-[var(--primary)]" />
-              {t("kengash.archiveButton")}
-            </Link>
-          )}
         </div>
       </div>
 
       {smetaList && (
         <SmetaProjects items={smetaList.items} projects={projectOpts} canManage={canManage} ready={smetaList.ready} />
       )}
+
+      {/* Smeta komissiyasi sonlari arxivi: qadab qoʻyilган sonlar, fayllari bosilganda ochiladi. */}
+      {isSmeta && <SmetaDocs />}
 
       {/* yaqinlaşayotgan yiğiliş + uning kun tartibi (Smeta'da faqat mavjud bölsa) */}
       {upcoming ? (

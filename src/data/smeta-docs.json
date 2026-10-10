@@ -1,0 +1,1189 @@
+{
+  "lastNumber": 30,
+  "totalFiles": 139,
+  "items": [
+    {
+      "n": 1,
+      "date": null,
+      "dateLabel": null,
+      "files": [
+        {
+          "id": "1/1-pdf-1-1.pdf",
+          "name": "Смета 1 Қирол Шокир.pdf",
+          "kind": "pdf",
+          "size": 353037,
+          "sealed": true
+        },
+        {
+          "id": "1/1-image-2-photo-2026-03-24-17-31-3.jpg",
+          "name": "photo_2026-03-24_17-31-39.jpg",
+          "kind": "image",
+          "size": 61132,
+          "sealed": false
+        },
+        {
+          "id": "1/1-image-3-photo-2026-03-24-17-32-0.jpg",
+          "name": "photo_2026-03-24_17-32-01.jpg",
+          "kind": "image",
+          "size": 186236,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "date": null,
+      "dateLabel": null,
+      "files": [
+        {
+          "id": "2/2-pdf-1-2.pdf",
+          "name": "смета 2 Болакай, Чемпион, Иккичи, Импульс, Ўғилой, Сирли код.pdf",
+          "kind": "pdf",
+          "size": 503765,
+          "sealed": true
+        },
+        {
+          "id": "2/2-image-2-photo-2026-03-24-17-30-2.jpg",
+          "name": "photo_2026-03-24_17-30-21.jpg",
+          "kind": "image",
+          "size": 218812,
+          "sealed": false
+        },
+        {
+          "id": "2/2-image-3-photo-2026-03-24-17-31-2.jpg",
+          "name": "photo_2026-03-24_17-31-21.jpg",
+          "kind": "image",
+          "size": 203713,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "date": "2026-02-13",
+      "dateLabel": "2026-yil 13-fevral",
+      "files": [
+        {
+          "id": "3/3-pdf-1-3.pdf",
+          "name": "Смета 3 Бурро.уз, Помидор дуппи, Йўлбарс-берар дарс, Темурбек.pdf",
+          "kind": "pdf",
+          "size": 763496,
+          "sealed": true
+        },
+        {
+          "id": "3/3-word-2-3-komissiya-yig-ilish-ba.docx",
+          "name": "3 Komissiya yig'ilish bayoni 13022026.docx",
+          "kind": "word",
+          "size": 20861,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "date": "2026-02-27",
+      "dateLabel": "2026-yil 27-fevral",
+      "files": [
+        {
+          "id": "4/4-pdf-1-4.pdf",
+          "name": "смета 4 Хусайн, Байрок кутарган киз, Миллий маданият энциклопед..pdf",
+          "kind": "pdf",
+          "size": 589067,
+          "sealed": true
+        },
+        {
+          "id": "4/4-word-2-komissiya-yig-ilish-bayo.docx",
+          "name": "Komissiya yig'ilish bayoni Қирол шокир (4).docx",
+          "kind": "word",
+          "size": 17735,
+          "sealed": false
+        },
+        {
+          "id": "4/4-word-3-4.docx",
+          "name": "Комиссия_хулосаси_№4_Байрқ_кўтарган_қиз.docx",
+          "kind": "word",
+          "size": 171983,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "date": "2026-03-12",
+      "dateLabel": "2026-yil 12-mart",
+      "files": [
+        {
+          "id": "5/5-pdf-1-5.pdf",
+          "name": "смета 5 Сехрландия. Кахрамонлик миссияси.pdf",
+          "kind": "pdf",
+          "size": 411060,
+          "sealed": true
+        },
+        {
+          "id": "5/5-word-2-5-komissiya-yig-ilish-ba.docx",
+          "name": "5 Komissiya yig'ilish bayoni dublyaj bo'yicha.docx",
+          "kind": "word",
+          "size": 17887,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "date": "2026-03-17",
+      "dateLabel": "2026-yil 17-mart",
+      "files": [
+        {
+          "id": "6/6-pdf-1-6.pdf",
+          "name": "смета 6 Бобурнинг болалиги.pdf",
+          "kind": "pdf",
+          "size": 581759,
+          "sealed": true
+        },
+        {
+          "id": "6/6-word-2-6-komissiya-yig-ilish-ba.docx",
+          "name": "6 Komissiya yig'ilish bayoni Bobur bo'yicha(1).docx",
+          "kind": "word",
+          "size": 19660,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "date": "2026-03-31",
+      "dateLabel": "2026-yil 31-mart",
+      "files": [
+        {
+          "id": "7/7-pdf-1-7.pdf",
+          "name": "Смета 7 Протокол, Бойота, Миллий маданият энцтклопедияси..pdf",
+          "kind": "pdf",
+          "size": 1909814,
+          "sealed": true
+        },
+        {
+          "id": "7/7-word-2-7-31-03-2026.docx",
+          "name": "7-Комиссия хулосаси 31.03.2026.docx",
+          "kind": "word",
+          "size": 20009,
+          "sealed": false
+        },
+        {
+          "id": "7/7-word-3-7.doc",
+          "name": "Протокол 7 Баёни.doc",
+          "kind": "word",
+          "size": 74240,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "date": "2026-04-14",
+      "dateLabel": "2026-yil 14-aprel",
+      "files": [
+        {
+          "id": "8/8-pdf-1-8.pdf",
+          "name": "смета 8 (Протокол).pdf",
+          "kind": "pdf",
+          "size": 2632845,
+          "sealed": true
+        },
+        {
+          "id": "8/8-pdf-2-8.pdf",
+          "name": "Смета 8 Импульс, Чемпион, Олдингдаги йул, Бойота.pdf",
+          "kind": "pdf",
+          "size": 2556619,
+          "sealed": true
+        },
+        {
+          "id": "8/8-word-3-8-14-04-2026.docx",
+          "name": "8_Олдингдаги_йул_лотин  Гулом Хулоса_14_04_2026.docx",
+          "kind": "word",
+          "size": 19508,
+          "sealed": false
+        },
+        {
+          "id": "8/8-word-4-8-10-04-2026.docx",
+          "name": "8-Бойота лотин  Комиссия хулосаси 10.04.2026.docx",
+          "kind": "word",
+          "size": 19454,
+          "sealed": false
+        },
+        {
+          "id": "8/8-word-5-8-10-04-2026.docx",
+          "name": "8-лотин Импульс Комиссия хулосаси 10.04.2026.docx",
+          "kind": "word",
+          "size": 20637,
+          "sealed": false
+        },
+        {
+          "id": "8/8-word-6-8.docx",
+          "name": "8-лотин пртокол.docx",
+          "kind": "word",
+          "size": 31627,
+          "sealed": false
+        },
+        {
+          "id": "8/8-word-7-8-10-04-2026.docx",
+          "name": "8-Чемпион  Комиссия хулосаси 10.04.2026.docx",
+          "kind": "word",
+          "size": 23715,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "date": "2026-04-21",
+      "dateLabel": "2026-yil 21-aprel",
+      "files": [
+        {
+          "id": "9/9-pdf-1-9.pdf",
+          "name": "смета 9 (Протокол).pdf",
+          "kind": "pdf",
+          "size": 1931587,
+          "sealed": true
+        },
+        {
+          "id": "9/9-pdf-2-9.pdf",
+          "name": "смета 9 Ўғилой, Помидор дуппи.pdf",
+          "kind": "pdf",
+          "size": 1559234,
+          "sealed": true
+        },
+        {
+          "id": "9/9-word-3-9-10-04-2026.docx",
+          "name": "9_лотин Помидор_дуппи_Комиссия_хулосаси_10_04_2026.docx",
+          "kind": "word",
+          "size": 19852,
+          "sealed": false
+        },
+        {
+          "id": "9/9-word-4-9-20-04-2026.docx",
+          "name": "9-лотин Ўғилой Комиссия хулосаси 20.04.2026.docx",
+          "kind": "word",
+          "size": 21186,
+          "sealed": false
+        },
+        {
+          "id": "9/9-word-5-9.docx",
+          "name": "9-пртокол лотин.docx",
+          "kind": "word",
+          "size": 28069,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 10,
+      "date": "2026-04-29",
+      "dateLabel": "2026-yil 29-aprel",
+      "files": [
+        {
+          "id": "10/10-pdf-1-10.pdf",
+          "name": "Смета 10.pdf",
+          "kind": "pdf",
+          "size": 1850050,
+          "sealed": true
+        },
+        {
+          "id": "10/10-word-2-10.docx",
+          "name": "10-пртокол (лотин).docx",
+          "kind": "word",
+          "size": 30943,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 11,
+      "date": "2026-05-12",
+      "dateLabel": "2026-yil 12-may",
+      "files": [
+        {
+          "id": "11/11-pdf-1-11.pdf",
+          "name": "смета 11.pdf",
+          "kind": "pdf",
+          "size": 10651586,
+          "sealed": true
+        },
+        {
+          "id": "11/11-word-2-11-lotin-08-05-2026.docx",
+          "name": "11-lotin Фарход ва Ширин Комиссия хулосаси 08.05.2026.docx",
+          "kind": "word",
+          "size": 21991,
+          "sealed": false
+        },
+        {
+          "id": "11/11-word-3-11-lotin-08-05-2026.docx",
+          "name": "11-lotin Широк ва Ойкиз Комиссия хулосаси 08.05.2026.docx",
+          "kind": "word",
+          "size": 21863,
+          "sealed": false
+        },
+        {
+          "id": "11/11-word-4-11.docx",
+          "name": "11-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 37110,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 12,
+      "date": "2026-06-02",
+      "dateLabel": "2026-yil 2-iyun",
+      "files": [
+        {
+          "id": "12/12-pdf-1-12.pdf",
+          "name": "Смета 12.pdf",
+          "kind": "pdf",
+          "size": 18018548,
+          "sealed": true
+        },
+        {
+          "id": "12/12-word-2-12.docx",
+          "name": "12-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 42707,
+          "sealed": false
+        },
+        {
+          "id": "12/12-word-3-file.docx",
+          "name": "Смета_қайтариш_прот лотин_Байроқ_кўтарган_қиз.docx",
+          "kind": "word",
+          "size": 18732,
+          "sealed": false
+        },
+        {
+          "id": "12/12-word-4-file.docx",
+          "name": "Смета_қайтариш_прот лотин_Бола подкаст.docx",
+          "kind": "word",
+          "size": 19090,
+          "sealed": false
+        },
+        {
+          "id": "12/12-word-5-file.docx",
+          "name": "Смета_қайтариш_прот лотин_Жавохир изловчилар.docx",
+          "kind": "word",
+          "size": 19226,
+          "sealed": false
+        },
+        {
+          "id": "12/12-word-6-file.docx",
+          "name": "Смета_қайтариш_прот лотин_Иккичи.docx",
+          "kind": "word",
+          "size": 20491,
+          "sealed": false
+        },
+        {
+          "id": "12/12-word-7-file.docx",
+          "name": "Смета_қайтариш_прот лотин_Устоз типрабек.docx",
+          "kind": "word",
+          "size": 18927,
+          "sealed": false
+        },
+        {
+          "id": "12/12-word-8-file.docx",
+          "name": "Смета_қайтариш_прот_лотин_Болакай.docx",
+          "kind": "word",
+          "size": 19211,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 13,
+      "date": "2026-06-12",
+      "dateLabel": "2026-yil 12-iyun",
+      "files": [
+        {
+          "id": "13/13-pdf-1-13.pdf",
+          "name": "Смета 13.pdf",
+          "kind": "pdf",
+          "size": 9615055,
+          "sealed": true
+        },
+        {
+          "id": "13/13-word-2-13.docx",
+          "name": "13-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 35224,
+          "sealed": false
+        },
+        {
+          "id": "13/13-word-3-merchlar-bo-yicha-komiss.docx",
+          "name": "Merchlar bo'yicha Komissiya xulosasi.docx",
+          "kind": "word",
+          "size": 19048,
+          "sealed": false
+        },
+        {
+          "id": "13/13-word-4-file.docx",
+          "name": "Смета_хулосаси_Байроқ_кўтарган_қиз.docx",
+          "kind": "word",
+          "size": 22290,
+          "sealed": false
+        },
+        {
+          "id": "13/13-word-5-file.docx",
+          "name": "Смета_хулосаси_Типрабек.docx",
+          "kind": "word",
+          "size": 21629,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 14,
+      "date": "2026-06-18",
+      "dateLabel": "2026-yil 18-iyun",
+      "files": [
+        {
+          "id": "14/14-pdf-1-14.pdf",
+          "name": "Смета 14.pdf",
+          "kind": "pdf",
+          "size": 20464627,
+          "sealed": true
+        },
+        {
+          "id": "14/14-word-2-14.docx",
+          "name": "14-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 28959,
+          "sealed": false
+        },
+        {
+          "id": "14/14-word-3-file.docx",
+          "name": "Хулоса_Смета_қайтариш_Би_Бип_прот_лотин.docx",
+          "kind": "word",
+          "size": 19655,
+          "sealed": false
+        },
+        {
+          "id": "14/14-word-4-file.docx",
+          "name": "Хулоса_Смета_қайтариш_Жоним_болам_прот_лотин.docx",
+          "kind": "word",
+          "size": 19145,
+          "sealed": false
+        },
+        {
+          "id": "14/14-word-5-file.docx",
+          "name": "Хулоса_Смета_қайтариш_Орзу_хавас_қурбонлври_лотин.docx",
+          "kind": "word",
+          "size": 19375,
+          "sealed": false
+        },
+        {
+          "id": "14/14-word-6-file.docx",
+          "name": "Хулоса_Смета_қайтариш_Сирли_код_лотин.docx",
+          "kind": "word",
+          "size": 19567,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 15,
+      "date": "2026-07-06",
+      "dateLabel": "2026-yil 6-iyul",
+      "files": [
+        {
+          "id": "15/15-pdf-1-15.pdf",
+          "name": "Смета-15.pdf",
+          "kind": "pdf",
+          "size": 20829053,
+          "sealed": true
+        },
+        {
+          "id": "15/15-word-2-15-merchlar-bo-yicha-kom.docx",
+          "name": "15 Merchlar bo'yicha Чемпион Komissiya xulosasi (4).docx",
+          "kind": "word",
+          "size": 19967,
+          "sealed": false
+        },
+        {
+          "id": "15/15-word-3-15.docx",
+          "name": "15 Смета_комиссия хулосаси_Би-Бип.docx",
+          "kind": "word",
+          "size": 19828,
+          "sealed": false
+        },
+        {
+          "id": "15/15-word-4-15.docx",
+          "name": "15_Смета_комиссия_хулосаси_Жоним_болам.docx",
+          "kind": "word",
+          "size": 20193,
+          "sealed": false
+        },
+        {
+          "id": "15/15-word-5-15.docx",
+          "name": "15_Смета_комиссия_хулосаси_Орзу_хавас.docx",
+          "kind": "word",
+          "size": 19871,
+          "sealed": false
+        },
+        {
+          "id": "15/15-word-6-15.docx",
+          "name": "15_Смета_комиссия_хулосаси_Сирли_код.docx",
+          "kind": "word",
+          "size": 20269,
+          "sealed": false
+        },
+        {
+          "id": "15/15-word-7-15.docx",
+          "name": "15_Смета_хулосаси_Жавохир_изловчилари.docx",
+          "kind": "word",
+          "size": 19610,
+          "sealed": false
+        },
+        {
+          "id": "15/15-word-8-15.docx",
+          "name": "15-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 41294,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 16,
+      "date": "2026-07-08",
+      "dateLabel": "2026-yil 8-iyul",
+      "files": [
+        {
+          "id": "16/16-pdf-1-16.pdf",
+          "name": "Смета 16.pdf",
+          "kind": "pdf",
+          "size": 10814139,
+          "sealed": true
+        },
+        {
+          "id": "16/16-word-2-16.docx",
+          "name": "16-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 28458,
+          "sealed": false
+        },
+        {
+          "id": "16/16-word-3-4.docx",
+          "name": "Хулоса_қайтариш_АЛЛА_Полапон_лотин (4).docx",
+          "kind": "word",
+          "size": 20871,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 17,
+      "date": "2026-07-11",
+      "dateLabel": "2026-yil 11-iyul",
+      "files": [
+        {
+          "id": "17/17-pdf-1-17.pdf",
+          "name": "Смета 17.pdf",
+          "kind": "pdf",
+          "size": 29207526,
+          "sealed": true
+        },
+        {
+          "id": "17/17-word-2-17-alla.docx",
+          "name": "17_Смета_комиссия_хулосаси_ALLA.docx",
+          "kind": "word",
+          "size": 20503,
+          "sealed": false
+        },
+        {
+          "id": "17/17-word-3-17-polapon.docx",
+          "name": "17_Смета_комиссия_хулосаси_Polapon.docx",
+          "kind": "word",
+          "size": 21148,
+          "sealed": false
+        },
+        {
+          "id": "17/17-word-4-17.docx",
+          "name": "17_Смета_комиссия_хулосаси_Иккичи_кайтариш.docx",
+          "kind": "word",
+          "size": 22548,
+          "sealed": false
+        },
+        {
+          "id": "17/17-word-5-17-4.docx",
+          "name": "17_Хулоса_қайтариш_Хусайн_лотин_4.docx",
+          "kind": "word",
+          "size": 22918,
+          "sealed": false
+        },
+        {
+          "id": "17/17-word-6-17-6.docx",
+          "name": "17-пртокол  лотин (6).docx",
+          "kind": "word",
+          "size": 48916,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 18,
+      "date": "2026-07-18",
+      "dateLabel": "2026-yil 18-iyul",
+      "files": [
+        {
+          "id": "18/18-pdf-1-18.pdf",
+          "name": "Смета 18 (Пртокол билан).pdf",
+          "kind": "pdf",
+          "size": 29913537,
+          "sealed": true
+        },
+        {
+          "id": "18/18-word-2-18-bolakay-2.docx",
+          "name": "18_Смета_комиссия_хулосаси_Bolakay (2).docx",
+          "kind": "word",
+          "size": 21625,
+          "sealed": false
+        },
+        {
+          "id": "18/18-word-3-18-ikkichi-2.docx",
+          "name": "18_Смета_комиссия_хулосаси_Ikkichi (2).docx",
+          "kind": "word",
+          "size": 21651,
+          "sealed": false
+        },
+        {
+          "id": "18/18-word-4-18-xusayn.docx",
+          "name": "18_Смета_комиссия_хулосаси_Xusayn.docx",
+          "kind": "word",
+          "size": 21767,
+          "sealed": false
+        },
+        {
+          "id": "18/18-word-5-18-4.docx",
+          "name": "18_Хулоса_қайтариш_Йўлбарс_берар_дарс_лотин (4).docx",
+          "kind": "word",
+          "size": 22354,
+          "sealed": false
+        },
+        {
+          "id": "18/18-word-6-18.docx",
+          "name": "18_Хулоса_қайтариш_Темурбек_лотин.docx",
+          "kind": "word",
+          "size": 28972,
+          "sealed": false
+        },
+        {
+          "id": "18/18-word-7-18.docx",
+          "name": "18-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 51511,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 19,
+      "date": "2026-07-28",
+      "dateLabel": "2026-yil 28-iyul",
+      "files": [
+        {
+          "id": "19/19-pdf-1-19.pdf",
+          "name": "смета 19 баён.pdf",
+          "kind": "pdf",
+          "size": 3174316,
+          "sealed": true
+        },
+        {
+          "id": "19/19-pdf-2-19.pdf",
+          "name": "Смета 19.pdf",
+          "kind": "pdf",
+          "size": 43843698,
+          "sealed": true
+        },
+        {
+          "id": "19/19-word-3-19-2.docx",
+          "name": "19_Смета_комиссия_хулосаси_Йўлбарс_берар_дарс_2.docx",
+          "kind": "word",
+          "size": 21753,
+          "sealed": false
+        },
+        {
+          "id": "19/19-word-4-19-2.docx",
+          "name": "19_Хулоса_қайтариш_Бурро_лотин (2).docx",
+          "kind": "word",
+          "size": 20966,
+          "sealed": false
+        },
+        {
+          "id": "19/19-word-5-19-2.docx",
+          "name": "19_Хулоса_қайтариш_Олдингдаги_йул_лотин_2.docx",
+          "kind": "word",
+          "size": 21202,
+          "sealed": false
+        },
+        {
+          "id": "19/19-word-6-19.docx",
+          "name": "19_Хулоса_қайтариш_Сехрли хуржун.docx",
+          "kind": "word",
+          "size": 21658,
+          "sealed": false
+        },
+        {
+          "id": "19/19-word-7-19.docx",
+          "name": "19_Хулоса_қайтариш_Темурбек.docx",
+          "kind": "word",
+          "size": 25777,
+          "sealed": false
+        },
+        {
+          "id": "19/19-word-8-19.docx",
+          "name": "19_Хулоса_қайтариш_Шум бола.docx",
+          "kind": "word",
+          "size": 22529,
+          "sealed": false
+        },
+        {
+          "id": "19/19-word-9-19.docx",
+          "name": "19-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 48470,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 20,
+      "date": "2026-08-05",
+      "dateLabel": "2026-yil 5-avgust",
+      "files": [
+        {
+          "id": "20/20-pdf-1-20.pdf",
+          "name": "20- баён.pdf",
+          "kind": "pdf",
+          "size": 1351277,
+          "sealed": true
+        },
+        {
+          "id": "20/20-pdf-2-20.pdf",
+          "name": "Смета 20.pdf",
+          "kind": "pdf",
+          "size": 4083396,
+          "sealed": true
+        },
+        {
+          "id": "20/20-word-3-20.docx",
+          "name": "20_Смета_комиссия_хулосаси_Олдингдаги_йул.docx",
+          "kind": "word",
+          "size": 22600,
+          "sealed": false
+        },
+        {
+          "id": "20/20-word-4-20.docx",
+          "name": "20_Смета_комиссия_хулосаси_Темурбек.docx",
+          "kind": "word",
+          "size": 23459,
+          "sealed": false
+        },
+        {
+          "id": "20/20-word-5-20-3.docx",
+          "name": "20-пртокол  лотин (3).docx",
+          "kind": "word",
+          "size": 35709,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 21,
+      "date": "2026-08-07",
+      "dateLabel": "2026-yil 7-avgust",
+      "files": [
+        {
+          "id": "21/21-pdf-1-21.pdf",
+          "name": "21-смета Протокол ва хулосалар баёни.pdf",
+          "kind": "pdf",
+          "size": 3820531,
+          "sealed": true
+        },
+        {
+          "id": "21/21-word-2-21.docx",
+          "name": "21_Смета_комиссия_Бурро кирилл.docx",
+          "kind": "word",
+          "size": 27330,
+          "sealed": false
+        },
+        {
+          "id": "21/21-word-3-21.docx",
+          "name": "21_Смета_комиссия_хулосаси_сехрли_хуржун.docx",
+          "kind": "word",
+          "size": 22688,
+          "sealed": false
+        },
+        {
+          "id": "21/21-word-4-21.docx",
+          "name": "21_Смета_комиссия_хулосаси_Шум_бола.docx",
+          "kind": "word",
+          "size": 23281,
+          "sealed": false
+        },
+        {
+          "id": "21/21-word-5-21.docx",
+          "name": "21_Хулоса_қайтариш_Байроқ кўтарган қиз.docx",
+          "kind": "word",
+          "size": 25628,
+          "sealed": false
+        },
+        {
+          "id": "21/21-word-6-21.docx",
+          "name": "21_Хулоса_қайтариш_Мева чева.docx",
+          "kind": "word",
+          "size": 24750,
+          "sealed": false
+        },
+        {
+          "id": "21/21-word-7-21-5.docx",
+          "name": "21_Хулоса_қайтариш_Миллат_хазинаси (5).docx",
+          "kind": "word",
+          "size": 25750,
+          "sealed": false
+        },
+        {
+          "id": "21/21-word-8-21-3.docx",
+          "name": "21-пртокол  лотин (3).docx",
+          "kind": "word",
+          "size": 57494,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 22,
+      "date": "2026-08-17",
+      "dateLabel": "2026-yil 17-avgust",
+      "files": [
+        {
+          "id": "22/22-pdf-1-22.pdf",
+          "name": "Смета-22.pdf",
+          "kind": "pdf",
+          "size": 18280899,
+          "sealed": true
+        },
+        {
+          "id": "22/22-word-2-22.docx",
+          "name": "22_Смета_комиссия_Мева чева лотин.docx",
+          "kind": "word",
+          "size": 24361,
+          "sealed": false
+        },
+        {
+          "id": "22/22-word-3-22.docx",
+          "name": "22_Хулоса_қайтариш_ДАЙИ.docx",
+          "kind": "word",
+          "size": 25380,
+          "sealed": false
+        },
+        {
+          "id": "22/22-word-4-22.docx",
+          "name": "22_Хулоса_қайтариш_Қитмир.docx",
+          "kind": "word",
+          "size": 25199,
+          "sealed": false
+        },
+        {
+          "id": "22/22-word-5-22-3.docx",
+          "name": "22-пртокол  лотин (3).docx",
+          "kind": "word",
+          "size": 44621,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 23,
+      "date": "2026-08-26",
+      "dateLabel": "2026-yil 26-avgust",
+      "files": [
+        {
+          "id": "23/23-pdf-1-23.pdf",
+          "name": "Смета 23.pdf",
+          "kind": "pdf",
+          "size": 34025356,
+          "sealed": true
+        },
+        {
+          "id": "23/23-word-2-23.docx",
+          "name": "23_Смета_комиссия_Байроқ_кўтарган_қиз_лотин.docx",
+          "kind": "word",
+          "size": 29795,
+          "sealed": false
+        },
+        {
+          "id": "23/23-word-3-23.docx",
+          "name": "23_Смета_комиссия_ДАЙИ лотин.docx",
+          "kind": "word",
+          "size": 22712,
+          "sealed": false
+        },
+        {
+          "id": "23/23-word-4-23.docx",
+          "name": "23_Смета_комиссия_Қитмир такрор қайтариш.docx",
+          "kind": "word",
+          "size": 25111,
+          "sealed": false
+        },
+        {
+          "id": "23/23-word-5-23-2.docx",
+          "name": "23_Смета_комиссия_Мева чева лотин (2).docx",
+          "kind": "word",
+          "size": 23421,
+          "sealed": false
+        },
+        {
+          "id": "23/23-word-6-23.docx",
+          "name": "23-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 50331,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 24,
+      "date": "2026-08-28",
+      "dateLabel": "2026-yil 28-avgust",
+      "files": [
+        {
+          "id": "24/24-pdf-1-24-5.pdf",
+          "name": "Смета-24 (5).pdf",
+          "kind": "pdf",
+          "size": 11189623,
+          "sealed": true
+        },
+        {
+          "id": "24/24-word-2-24-2.docx",
+          "name": "24_Смета_комиссия_Мева-чева лотин (2).docx",
+          "kind": "word",
+          "size": 23207,
+          "sealed": false
+        },
+        {
+          "id": "24/24-word-3-24-5.docx",
+          "name": "24_Хулоса_қайтариш_Миллат_хазинаси_5.docx",
+          "kind": "word",
+          "size": 24336,
+          "sealed": false
+        },
+        {
+          "id": "24/24-word-4-24.docx",
+          "name": "24-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 36148,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 25,
+      "date": "2026-09-02",
+      "dateLabel": "2026-yil 2-sentyabr",
+      "files": [
+        {
+          "id": "25/25-pdf-1-25.pdf",
+          "name": "Смета-25.pdf",
+          "kind": "pdf",
+          "size": 5838231,
+          "sealed": true
+        },
+        {
+          "id": "25/25-word-2-25.docx",
+          "name": "25_Смета_комиссия_Миллат_хаазинаси.docx",
+          "kind": "word",
+          "size": 23140,
+          "sealed": false
+        },
+        {
+          "id": "25/25-word-3-25.docx",
+          "name": "25-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 31118,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 26,
+      "date": null,
+      "dateLabel": null,
+      "files": [
+        {
+          "id": "26/26-pdf-1-26.pdf",
+          "name": "Смета-26.pdf",
+          "kind": "pdf",
+          "size": 13925562,
+          "sealed": true
+        },
+        {
+          "id": "26/26-word-2-26.docx",
+          "name": "26_Смета_комиссия_Қитмир_такрор_қайтариш.docx",
+          "kind": "word",
+          "size": 25773,
+          "sealed": false
+        },
+        {
+          "id": "26/26-word-3-26-2.docx",
+          "name": "26_Смета_комиссия_Мегавойлар (2).docx",
+          "kind": "word",
+          "size": 22942,
+          "sealed": false
+        },
+        {
+          "id": "26/26-word-4-26.docx",
+          "name": "26-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 37258,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 27,
+      "date": null,
+      "dateLabel": null,
+      "files": [
+        {
+          "id": "27/27-pdf-1-27.pdf",
+          "name": "Смета-27.pdf",
+          "kind": "pdf",
+          "size": 11316243,
+          "sealed": true
+        },
+        {
+          "id": "27/27-word-2-27.docx",
+          "name": "27_Смета_комиссия_Ўғилой.docx",
+          "kind": "word",
+          "size": 23105,
+          "sealed": false
+        },
+        {
+          "id": "27/27-word-3-27.docx",
+          "name": "27_Хулоса_қайтариш_Қитмир.docx",
+          "kind": "word",
+          "size": 22430,
+          "sealed": false
+        },
+        {
+          "id": "27/27-word-4-27.docx",
+          "name": "27-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 35471,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 28,
+      "date": null,
+      "dateLabel": null,
+      "files": [
+        {
+          "id": "28/28-pdf-1-28.pdf",
+          "name": "Комиссия хулосаси-28  Қитмир.pdf",
+          "kind": "pdf",
+          "size": 615406,
+          "sealed": true
+        },
+        {
+          "id": "28/28-pdf-2-28.pdf",
+          "name": "Комиссия_хулосаси_28_Олдиндаги_йўл.pdf",
+          "kind": "pdf",
+          "size": 947378,
+          "sealed": true
+        },
+        {
+          "id": "28/28-pdf-3-28.pdf",
+          "name": "Смета_Комиссия_хулосаси_28_Болакай.pdf",
+          "kind": "pdf",
+          "size": 555106,
+          "sealed": true
+        },
+        {
+          "id": "28/28-pdf-4-28.pdf",
+          "name": "Смета_Комиссия_хулосаси_28_Мегавойлар.pdf",
+          "kind": "pdf",
+          "size": 644109,
+          "sealed": true
+        },
+        {
+          "id": "28/28-pdf-5-28.pdf",
+          "name": "Смета-28.pdf",
+          "kind": "pdf",
+          "size": 33293280,
+          "sealed": true
+        },
+        {
+          "id": "28/28-word-6-28.docx",
+          "name": "28_Смета_комиссия_болакай.docx",
+          "kind": "word",
+          "size": 23354,
+          "sealed": false
+        },
+        {
+          "id": "28/28-word-7-28-1.docx",
+          "name": "28_Смета_комиссия_Мегавойлар 1.docx",
+          "kind": "word",
+          "size": 24047,
+          "sealed": false
+        },
+        {
+          "id": "28/28-word-8-28.docx",
+          "name": "28_Хулоса_қайтариш_Олдингдаги_йўл.docx",
+          "kind": "word",
+          "size": 23371,
+          "sealed": false
+        },
+        {
+          "id": "28/28-word-9-28-2.docx",
+          "name": "28_Хулоса_тасдилаш_Қитмир-2.docx",
+          "kind": "word",
+          "size": 24446,
+          "sealed": false
+        },
+        {
+          "id": "28/28-word-10-28.docx",
+          "name": "28-пртокол  лотин.docx",
+          "kind": "word",
+          "size": 46249,
+          "sealed": false
+        }
+      ]
+    },
+    {
+      "n": 29,
+      "date": null,
+      "dateLabel": null,
+      "files": [
+        {
+          "id": "29/29-pdf-1-29.pdf",
+          "name": "смета 29.pdf",
+          "kind": "pdf",
+          "size": 30116060,
+          "sealed": true
+        }
+      ]
+    },
+    {
+      "n": 30,
+      "date": null,
+      "dateLabel": null,
+      "files": [
+        {
+          "id": "30/30-pdf-1-30.pdf",
+          "name": "Смета 30.pdf",
+          "kind": "pdf",
+          "size": 17316708,
+          "sealed": true
+        }
+      ]
+    }
+  ]
+}

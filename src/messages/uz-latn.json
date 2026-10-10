@@ -1170,6 +1170,25 @@
         "duplicate": "Bu loyiha roʻyxatda allaqachon bor",
         "unavailable": "Roʻyxat maʼlumotlar bazasi yangilangach ishga tushadi"
       }
+    },
+    "smetaDocs": {
+      "title": "Smeta komissiyasi sonlari arxivi",
+      "subtitle": "1-sondan {last}-songacha — har bir son hujjatlari",
+      "noFiles": "hujjat yoʻq",
+      "filesCount": "{n} ta hujjat",
+      "filesShort": "{n} hujjat",
+      "numberTitle": "{n}-son hujjatlari",
+      "close": "Yopish",
+      "open": "Ochish",
+      "openWord": "Word'da ochish",
+      "download": "Yuklab olish",
+      "sealed": "Muhrlangan",
+      "kind": {
+        "pdf": "PDF",
+        "word": "Word",
+        "image": "Rasm",
+        "other": "Fayl"
+      }
     }
   },
   "owner": {
