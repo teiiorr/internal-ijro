@@ -55,7 +55,7 @@ export function Sidebar() {
   const { entries, activeKey, isOpen, toggle, badges } = useNav();
 
   return (
-    <aside className="hidden md:block w-[272px] shrink-0">
+    <aside className="hidden md:block w-[17rem] shrink-0">
       <div className="sticky top-[88px] m-4">
         <Surface
           as="nav"

@@ -66,8 +66,8 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
               </div>
 
               {/* mazmun */}
-              <div className="min-w-0 flex-1 py-2 pr-1">
-                <div className="flex items-center gap-2">
+              <div className="min-w-0 flex-1 pb-3 pr-1">
+                <div className="flex min-h-10 items-center gap-2">
                   <span className={`min-w-0 flex-1 font-semibold leading-6 truncate ${isLocked ? "text-[var(--ink-3)]" : "text-[var(--ink)]"}`}>
                     {i + 1}. {s.name}
                   </span>

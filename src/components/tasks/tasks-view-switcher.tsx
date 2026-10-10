@@ -4,7 +4,7 @@ import { useState } from "react";
 import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui-biib/Card";
-import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Link } from "@/i18n/navigation";
 import { Status } from "@/components/ui-biib/Status";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { CalendarView } from "./calendar-view";
@@ -70,10 +70,10 @@ export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; 
         tasks.length === 0 ? (
           <EmptyState icon={Inbox} title={t("tasks.emptyList")} description={t("tasks.empty.description")} />
         ) : (
-          <Card bare className="px-5 sm:px-6">
-            <Rows>
-              {tasks.map((row) => (
-                <Row key={row.id} href={`${hrefBase}/${row.id}`}>
+          <div className="flex flex-col gap-3">
+            {tasks.map((row) => (
+              <Link key={row.id} href={`${hrefBase}/${row.id}`} className="block">
+                <Card bare interactive className="flex items-center gap-3 p-4">
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{row.title}</p>
                     <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 t-small text-[var(--ink-3)]">
@@ -94,10 +94,10 @@ export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; 
                   <div className="shrink-0">
                     <RowSignal row={row} t={t} />
                   </div>
-                </Row>
-              ))}
-            </Rows>
-          </Card>
+                </Card>
+              </Link>
+            ))}
+          </div>
         )
       ) : (
         <CalendarView tasks={tasks} hrefBase={hrefBase} />

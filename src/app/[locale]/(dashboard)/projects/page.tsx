@@ -199,7 +199,7 @@ export default async function ProjectsPage({
               <Link
                 key={p.id}
                 href={`/projects/${p.id}`}
-                className="group block rounded-[var(--radius-media)] border border-transparent p-2 transition-[transform,border-color] duration-[var(--dur-ui)] ease-[var(--ease-ui)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-[var(--line-strong)]"
+                className="group block rounded-[var(--radius-media)] border border-[var(--line)] bg-[var(--surface)] p-2 shadow-[var(--shadow-1)] transition-[transform,border-color] duration-[var(--dur-ui)] ease-[var(--ease-ui)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-[var(--line-strong)]"
               >
                 <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
                   {p.posterUrl ? (
