@@ -16,6 +16,7 @@ import {
   IconCopy as Copy,
   IconCheck as Check,
   IconChecks as Checks,
+  IconMessages as Messages,
 } from "@tabler/icons-react";
 import { compressImage } from "@/lib/images/compress";
 import { toast } from "sonner";
@@ -130,7 +131,7 @@ function MessageRow({
     <div id={`m-${m.id}`} className={`relative ${sameUser ? "mt-0.5" : "mt-3"}`}>
       {/* surish paytida namoyon böladigan javob belgisi */}
       {dx < -8 && (
-        <span className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-[var(--primary-soft)] text-[var(--primary)]" style={{ opacity: Math.min(1, -dx / 56) }}>
+        <span className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-[var(--radius-control)] bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] text-[var(--tint)]" style={{ opacity: Math.min(1, -dx / 56) }}>
           <Reply className="size-4" />
         </span>
       )}
@@ -149,13 +150,13 @@ function MessageRow({
         )}
 
         <div className="min-w-[72px] max-w-[80%] sm:max-w-[70%]">
-          {!sameUser && !mine && <p className="mb-0.5 px-1 text-[11px] font-semibold text-[var(--primary)]">{m.userName}</p>}
+          {!sameUser && !mine && <p className="mb-0.5 px-1 text-[0.6875rem] font-semibold text-[var(--ink-2)]">{m.userName}</p>}
           <div
             className={
-              "rounded-2xl px-3 py-1.5 text-[13px] leading-relaxed break-words sm:py-2 sm:text-sm " +
+              "rounded-[var(--radius-card)] px-3 py-1.5 text-sm leading-relaxed break-words sm:py-2 " +
               (mine
-                ? "bg-[var(--primary)] text-white " + (sameUser ? "rounded-tr-md" : "rounded-br-md")
-                : "bg-[var(--card)] text-[var(--foreground)] shadow-[0_1px_2px_rgba(0,0,0,0.06)] " + (sameUser ? "rounded-tl-md" : "rounded-bl-md")) +
+                ? "bg-[var(--tint)] text-[var(--on-tint)] " + (sameUser ? "rounded-tr-[var(--radius-s)]" : "rounded-br-[var(--radius-s)]")
+                : "bg-[var(--surface-2)] text-[var(--ink)] shadow-[var(--shadow-1)] " + (sameUser ? "rounded-tl-[var(--radius-s)]" : "rounded-bl-[var(--radius-s)]")) +
               (isOptimistic ? " opacity-70" : "")
             }
           >
@@ -164,10 +165,10 @@ function MessageRow({
               <button
                 type="button"
                 onClick={() => document.getElementById(`m-${m.replyToId}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                className={"mb-1 block w-full rounded-lg border-l-2 py-0.5 pl-2 pr-1 text-left " + (mine ? "border-white/60 bg-white/10" : "border-[var(--primary)] bg-[var(--surface-2)]")}
+                className={"mb-1 block w-full rounded-[var(--radius-s)] border-l-2 py-0.5 pl-2 pr-1 text-left " + (mine ? "border-[var(--on-tint)]/60 bg-[var(--on-tint)]/10" : "border-[var(--tint)] bg-[var(--surface)]")}
               >
-                <p className={"truncate text-[11px] font-semibold " + (mine ? "text-white/90" : "text-[var(--primary)]")}>{m.replyToUserName ?? ""}</p>
-                <p className={"truncate text-[11px] " + (mine ? "text-white/75" : "text-[var(--muted)]")}>{m.replyToContent || "…"}</p>
+                <p className={"truncate text-[0.6875rem] font-semibold " + (mine ? "text-[var(--on-tint)]/90" : "text-[var(--ink-2)]")}>{m.replyToUserName ?? ""}</p>
+                <p className={"truncate text-[0.6875rem] " + (mine ? "text-[var(--on-tint)]/75" : "text-[var(--ink-3)]")}>{m.replyToContent || "…"}</p>
               </button>
             )}
 
@@ -176,14 +177,14 @@ function MessageRow({
                 {atts.map((a, j) =>
                   isImage(a.mimeType) ? (
                     <a key={j} href={a.url} target="_blank" rel="noopener noreferrer" className="block">
-                      <img src={a.url} alt={a.name} className="max-h-40 rounded-xl object-cover sm:max-h-52" loading="lazy" />
+                      <img src={a.url} alt={a.name} className="max-h-40 rounded-[var(--radius-control)] object-cover sm:max-h-52" loading="lazy" />
                     </a>
                   ) : (
-                    <a key={j} href={a.url} download className={"flex items-center gap-2 rounded-xl px-2.5 py-2 transition-colors " + (mine ? "bg-white/15 hover:bg-white/25" : "bg-[var(--surface-2)] hover:bg-[var(--surface-3)]")}>
+                    <a key={j} href={a.url} download className={"flex items-center gap-2 rounded-[var(--radius-control)] px-2.5 py-2 transition-colors " + (mine ? "bg-[var(--on-tint)]/15 hover:bg-[var(--on-tint)]/25" : "bg-[var(--surface)] hover:bg-[var(--surface-3)]")}>
                       <FileText className="size-5 shrink-0" />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-xs font-semibold">{a.name}</p>
-                        <p className={`text-[10px] ${mine ? "text-white/70" : "text-[var(--muted)]"}`}>{humanSize(a.size)}</p>
+                        <p className={`text-[0.625rem] ${mine ? "text-[var(--on-tint)]/70" : "text-[var(--ink-3)]"}`}>{humanSize(a.size)}</p>
                       </div>
                       <Download className="size-4 shrink-0 opacity-60" />
                     </a>
@@ -191,14 +192,14 @@ function MessageRow({
                 )}
               </div>
             )}
-            {m.content.trim() && <p className="whitespace-pre-wrap text-center">{m.content}</p>}
-            <p className={`mt-0.5 inline-flex items-center justify-center gap-1 text-[10px] leading-none ${mine ? "text-white/55" : "text-[var(--muted)]"}`}>
+            {m.content.trim() && <p className="whitespace-pre-wrap">{m.content}</p>}
+            <p className={`mt-0.5 flex items-center justify-end gap-1 text-[0.625rem] leading-none ${mine ? "text-[var(--on-tint)]/60" : "text-[var(--ink-3)]"}`}>
               <span>{m.editedAt ? "✎ " : ""}{isOptimistic ? "..." : timeOnly(m.createdAt, locale)}</span>
               {/* Telegram uslubidagi tasdiq — faqat öz xabarlarimda, manba öqiş ma'lumotini bergan bölsa */}
               {mine && !isOptimistic && (m.readByCuratorAt !== undefined || m.readByContractorAt !== undefined) && (
                 (viewerIsContractor ? !!m.readByCuratorAt : !!m.readByContractorAt)
-                  ? <Checks className="size-3.5 shrink-0 text-[#4fc3f7]" aria-label="koʻrildi" />
-                  : <Check className="size-3 shrink-0 text-white/55" aria-label="yuborildi" />
+                  ? <Checks className="size-3.5 shrink-0 text-[var(--info)]" aria-label="koʻrildi" />
+                  : <Check className="size-3 shrink-0 text-[var(--on-tint)]/55" aria-label="yuborildi" />
               )}
             </p>
           </div>
@@ -359,13 +360,16 @@ export function ProjectChat({
 
   return (
     <div
-      className={fill ? "flex h-full min-h-0 flex-col overflow-hidden bg-[var(--surface-1)]" : "flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden"}
+      className={fill ? "flex h-full min-h-0 flex-col overflow-hidden bg-[var(--surface)]" : "flex flex-col rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] overflow-hidden"}
       style={fill ? undefined : { height: "min(560px, 50dvh)", maxHeight: "560px" }}
     >
       <div className="flex-1 overflow-y-auto overscroll-contain px-2.5 py-3 sm:px-4">
         {allMessages.length === 0 && (
-          <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-[var(--muted)]">{t("projects.chat.noMessages")}</p>
+          <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+            <div className="grid size-14 place-items-center rounded-[var(--radius-card)] bg-[var(--surface-2)] text-[var(--ink-3)]">
+              <Messages className="size-7" />
+            </div>
+            <p className="text-sm text-[var(--ink-3)]">{t("projects.chat.noMessages")}</p>
           </div>
         )}
         {allMessages.map((m, i) => {
@@ -376,7 +380,7 @@ export function ProjectChat({
             <div key={m.id}>
               {showDate && (
                 <div className="flex justify-center py-2.5">
-                  <span className="glass-soft rounded-md px-3 py-1 text-[11px] font-semibold text-[var(--muted)]">
+                  <span className="inline-flex items-center rounded-[var(--radius-s)] bg-[var(--surface-2)] px-3 py-1 text-[0.6875rem] font-semibold text-[var(--ink-3)]">
                     {dateSeparator(m.createdAt, locale, locale === "ru" ? "Сегодня" : locale === "uz-cyrl" ? "Бугун" : "Bugun", locale === "ru" ? "Вчера" : locale === "uz-cyrl" ? "Кеча" : locale === "oz" ? "Keça" : "Kecha")}
                   </span>
                 </div>
@@ -400,44 +404,44 @@ export function ProjectChat({
 
       {/* Yuklaşga tayyorlangan faylni oldindan köriş */}
       {staged && (
-        <div className="mx-2 mb-1 flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 sm:mx-4">
+        <div className="mx-2 mb-1 flex items-center gap-2 rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] px-3 py-2 sm:mx-4">
           {staged.preview ? (
-            <img src={staged.preview} alt="" className="size-10 rounded-lg object-cover" />
+            <img src={staged.preview} alt="" className="size-10 rounded-[var(--radius-s)] object-cover" />
           ) : (
-            <div className="grid size-10 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]"><FileText className="size-5" /></div>
+            <div className="grid size-10 place-items-center rounded-[var(--radius-s)] bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] text-[var(--tint)]"><FileText className="size-5" /></div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{staged.file.name}</p>
-            <p className="text-xs text-[var(--muted)]">{humanSize(staged.file.size)}</p>
+            <p className="truncate text-sm font-medium text-[var(--ink)]">{staged.file.name}</p>
+            <p className="text-xs text-[var(--ink-3)]">{humanSize(staged.file.size)}</p>
           </div>
-          <button onClick={clearFile} className="grid size-8 shrink-0 place-items-center rounded-full transition-colors hover:bg-[var(--surface-3)] active:scale-95"><X className="size-4 text-[var(--muted)]" /></button>
+          <button onClick={clearFile} className="grid size-8 shrink-0 place-items-center rounded-[var(--radius-control)] transition-colors hover:bg-[var(--surface-3)] active:scale-95"><X className="size-4 text-[var(--ink-3)]" /></button>
         </div>
       )}
 
       {/* Javob / tahrirlash konteksti paneli */}
       {composing && (
-        <div className="mx-2 mb-1 flex items-center gap-2 rounded-xl border-l-2 border-[var(--primary)] bg-[var(--card)] px-3 py-2 sm:mx-4">
-          {editing ? <Pencil className="size-4 shrink-0 text-[var(--primary)]" /> : <Reply className="size-4 shrink-0 text-[var(--primary)]" />}
+        <div className="mx-2 mb-1 flex items-center gap-2 rounded-[var(--radius-control)] border-l-2 border-[var(--tint)] bg-[var(--surface-2)] px-3 py-2 sm:mx-4">
+          {editing ? <Pencil className="size-4 shrink-0 text-[var(--tint)]" /> : <Reply className="size-4 shrink-0 text-[var(--tint)]" />}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[11px] font-semibold text-[var(--primary)]">{editing ? t("projects.chat.editing") : (replyTo?.userName ?? t("projects.chat.reply"))}</p>
-            <p className="truncate text-xs text-[var(--muted)]">{(editing ?? replyTo)?.content || "…"}</p>
+            <p className="truncate text-[0.6875rem] font-semibold text-[var(--tint)]">{editing ? t("projects.chat.editing") : (replyTo?.userName ?? t("projects.chat.reply"))}</p>
+            <p className="truncate text-xs text-[var(--ink-3)]">{(editing ?? replyTo)?.content || "…"}</p>
           </div>
-          <button onClick={cancelCompose} className="grid size-8 shrink-0 place-items-center rounded-full transition-colors hover:bg-[var(--surface-3)] active:scale-95"><X className="size-4 text-[var(--muted)]" /></button>
+          <button onClick={cancelCompose} className="grid size-8 shrink-0 place-items-center rounded-[var(--radius-control)] transition-colors hover:bg-[var(--surface-3)] active:scale-95"><X className="size-4 text-[var(--ink-3)]" /></button>
         </div>
       )}
 
       {/* Kiritiş maydoni — faqat öqiş rejimida körsatilmaydi */}
       {readOnly ? (
-        <div className={`border-t border-[var(--border)] px-3 py-2.5 text-center text-xs font-medium text-[var(--muted)] ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--card)]"}`}>
+        <div className={`border-t border-[var(--line)] px-3 py-2.5 text-center text-xs font-medium text-[var(--ink-3)] ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--surface)]"}`}>
           {t("conversation.readOnly")}
         </div>
       ) : (
-        <div className={`border-t border-[var(--border)] px-2 py-2 sm:px-3 sm:py-2.5 ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--card)]"}`}>
-          <div className="flex items-end gap-1 sm:gap-2">
+        <div className={`border-t border-[var(--line)] px-2 py-2 sm:px-3 sm:py-2.5 ${fill ? "glass-strong pb-[max(0.5rem,env(safe-area-inset-bottom))]" : "bg-[var(--surface)]"}`}>
+          <div className="flex items-end gap-1.5 sm:gap-2">
             <input ref={fileRef} type="file" className="hidden" onChange={onFileSelect} />
             {!editing && (
-              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="grid size-11 shrink-0 place-items-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95 disabled:opacity-50 sm:size-10">
-                <Paperclip className="size-[18px] sm:size-5" />
+              <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="grid size-11 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] active:scale-95 disabled:opacity-50">
+                <Paperclip className="size-5" />
               </button>
             )}
             <textarea
@@ -447,11 +451,11 @@ export function ProjectChat({
               onKeyDown={onKeyDown}
               placeholder={t("projects.chat.placeholder")}
               rows={1}
-              className="max-h-28 min-h-[36px] flex-1 resize-none rounded-2xl border border-[var(--input)] bg-[var(--surface-1)] px-3 py-2 text-[13px] leading-snug text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus:border-[var(--primary)] focus:outline-none sm:min-h-[40px] sm:px-4 sm:text-sm"
+              className="max-h-28 min-h-[2.75rem] flex-1 resize-none rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] px-3.5 py-2.5 text-sm leading-snug text-[var(--ink)] placeholder:text-[var(--ink-3)] transition-colors focus:border-[var(--tint)] focus:outline-none"
               style={{ fieldSizing: "content" } as React.CSSProperties}
             />
-            <button type="button" onClick={send} disabled={uploading || (!text.trim() && !staged)} className="grid size-11 shrink-0 place-items-center rounded-full bg-[var(--primary)] text-white transition-all hover:brightness-110 active:scale-95 disabled:opacity-40 sm:size-10">
-              {uploading ? <Loader className="size-[18px] animate-spin sm:size-5" /> : <Send className="size-[18px] sm:size-5" />}
+            <button type="button" onClick={send} disabled={uploading || (!text.trim() && !staged)} aria-label="→" className="grid size-11 shrink-0 place-items-center rounded-[var(--radius-control)] bg-[var(--tint)] text-[var(--on-tint)] transition-all hover:bg-[var(--tint-hover)] active:scale-95 disabled:opacity-40">
+              {uploading ? <Loader className="size-5 animate-spin" /> : <Send className="size-5" />}
             </button>
           </div>
         </div>
@@ -461,7 +465,7 @@ export function ProjectChat({
       {menuFor && (
         <>
           <div className="fixed inset-0 z-[60] bg-black/40" onClick={() => setMenuFor(null)} aria-hidden />
-          <div className="fixed inset-x-0 bottom-0 z-[60] rounded-t-3xl glass-strong p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="fixed inset-x-0 bottom-0 z-[60] rounded-t-[var(--radius-panel)] glass-strong p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             <div className="mx-auto max-w-md space-y-1">
               {!readOnly && (
                 <MenuItem icon={<Reply className="size-5" />} label={t("projects.chat.reply")} onClick={() => startReply(menuFor)} />
@@ -486,7 +490,7 @@ function MenuItem({ icon, label, onClick, danger }: { icon: React.ReactNode; lab
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-[15px] font-semibold transition-colors active:scale-[0.99] ${danger ? "text-[var(--danger)] hover:bg-[var(--danger-soft)]" : "text-[var(--foreground)] hover:bg-[var(--glass-fill)]"}`}
+      className={`flex w-full items-center gap-3 rounded-[var(--radius-control)] px-4 py-3 text-[0.9375rem] font-semibold transition-colors active:scale-[0.99] ${danger ? "text-[var(--danger)] hover:bg-[var(--danger-soft)]" : "text-[var(--ink)] hover:bg-[var(--surface-2)]"}`}
     >
       {icon}
       {label}

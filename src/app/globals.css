@@ -30,8 +30,8 @@
   --background-2:     #ECEEF5;
 
   /* Glass yuza tokenlari — deyarli yaxlit, ammo xira köriniş uçun hamon yarim şaffof */
-  --glass-fill:        rgba(255, 255, 255, 0.70);
-  --glass-fill-strong: rgba(255, 255, 255, 0.90);
+  --glass-fill:        rgba(255, 255, 255, 0.60);
+  --glass-fill-strong: rgba(255, 255, 255, 0.82);
   --glass-fill-soft:   rgba(255, 255, 255, 0.55);
   --glass-border:      rgba(14, 19, 48, 0.08);
   --glass-border-soft: rgba(14, 19, 48, 0.05);
@@ -214,7 +214,7 @@
    ========================================================================= */
 html {
   /* A5: ildiz 16px — barcha rem/spacing qiymatlari aniq piksel panjarasiga tushadi. */
-  font-size: 20px;
+  font-size: 18.4px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -248,6 +248,25 @@ body {
      konteyner yaratib qöymaydi. */
   overflow-x: clip;
 }
+
+/* Liquid Glass ambiyenti: oynaning orqasida yumshoq rangli chuqurlik (ayniqsa yorugʻ mavzuda,
+   u yerda fon tekis edi). Fixed qatlam, kontent ustidan suriladi; tap/hoverga xalaqit bermaydi. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(75% 60% at 8% -8%, color-mix(in oklab, var(--tint) var(--amb, 0%), transparent), transparent 70%),
+    radial-gradient(65% 55% at 108% 2%, color-mix(in oklab, #f2a85f var(--amb, 0%), transparent), transparent 72%),
+    radial-gradient(80% 65% at 90% 112%, color-mix(in oklab, #9a7cf0 var(--amb, 0%), transparent), transparent 72%),
+    radial-gradient(90% 75% at 45% 50%, color-mix(in oklab, var(--tint) calc(var(--amb, 0%) * 0.55), transparent), transparent 75%);
+}
+:root[data-theme="light"] { --amb: 30%; }
+:root:not([data-theme="dark"]) { --amb: 30%; }
+:root[data-theme="dark"] { --amb: 12%; }
+
 
 ::selection { background: var(--primary); color: var(--primary-foreground); }
 

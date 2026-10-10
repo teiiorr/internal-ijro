@@ -5,16 +5,20 @@ import * as Popover from "@radix-ui/react-popover";
 import { useTranslations } from "next-intl";
 import { IconArrowRight } from "@tabler/icons-react";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { cn } from "@/lib/utils";
 import { offsetPx, shortDate, widthPx, type Bar, type Scale } from "@/lib/projects/timeline";
 
-/** 44px qator ichida: reja chizigʻi 10–26px, haqiqiy chiziq 30–33px. */
-export const PLANNED_TOP = 10;
-export const PLANNED_H = 16;
-export const ACTUAL_TOP = 30;
-export const ACTUAL_H = 3;
-export const BKRM_COLOR = "#8b5cf6";
+/**
+ * Qator ichidagi vertikal geometriya — REM da (ildiz 20px, 125% masshtab bilan
+ * oʻlchansin). Reja chizigʻi 0.65–1.8rem, haqiqiy chiziq 1.95rem.
+ */
+export const PLANNED_TOP = 0.65;
+export const PLANNED_H = 1.15;
+export const ACTUAL_TOP = 1.95;
+export const ACTUAL_H = 0.22;
+/** BKRM navbati belgisi — pushti/binafsha emas, token (info/koʻk). */
+export const BKRM_COLOR = "var(--info)";
 
 type BarKind = "completed" | "active" | "late" | "locked";
 
@@ -24,18 +28,20 @@ export function barKind(bar: Bar): BarKind {
   return "locked";
 }
 
+/** Chiziq ranglari — tokenlarga bogʻlangan: bajarilgan=success, ishda=warning,
+ *  kechikkan=danger, navbatda=punktir `--line-strong`. */
 export const KIND_COLOR: Record<BarKind, string> = {
   completed: "var(--success)",
   active: "var(--warning)",
   late: "var(--danger)",
-  locked: "var(--border-strong)",
+  locked: "var(--line-strong)",
 };
 
 const KIND_TONE: Record<BarKind, StatusTone> = {
-  completed: "green",
-  active: "amber",
-  late: "red",
-  locked: "muted",
+  completed: "success",
+  active: "warning",
+  late: "danger",
+  locked: "neutral",
 };
 
 const KIND_LABEL = {
@@ -123,29 +129,28 @@ export function TimelineBar({
               }
             }}
             className={cn(
-              "absolute z-[2] flex items-center overflow-visible rounded-[5px] outline-none",
-              "transition-[filter,box-shadow] duration-150 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--card)]",
-              locked && "border border-dashed border-[var(--border-strong)] hover:border-[var(--muted)]",
+              "absolute z-[2] flex items-center overflow-visible rounded-[var(--radius-s)] outline-none",
+              "transition-[filter,box-shadow] duration-150 hover:brightness-110 focus-visible:ring-2 focus-visible:ring-[var(--tint)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--surface)]",
+              locked && "border border-dashed border-[var(--line-strong)] hover:border-[var(--ink-3)]",
             )}
             style={{
               left,
               width,
-              top: PLANNED_TOP,
-              height: PLANNED_H,
+              top: `${PLANNED_TOP}rem`,
+              height: `${PLANNED_H}rem`,
               backgroundColor: locked ? "transparent" : color,
               backgroundImage: bar.estimated && !locked ? ESTIMATED_STRIPES : undefined,
-              opacity: bar.estimated && !locked ? 0.8 : undefined,
+              opacity: bar.estimated && !locked ? 0.85 : undefined,
             }}
           >
             {width >= LABEL_MIN_PX && (
               <span
                 className={cn(
-                  "pointer-events-none min-w-0 truncate px-1.5 text-[10px] font-semibold leading-none",
+                  "pointer-events-none min-w-0 truncate px-1.5 leading-none t-micro",
+                  // Oq yorliq + yengil soya: amber/yashil/qizil toʻldirishda ikkala mavzuda ham oʻqiladi.
                   locked
-                    ? "text-[var(--muted)]"
-                    : kind === "active"
-                      ? "text-[#3b2a05]" // sariq fonda toʻq matn — ikkala mavzuda ham oʻqiladi
-                      : "text-white dark:text-[#0b0e1a]",
+                    ? "text-[var(--ink-3)]"
+                    : "text-[var(--on-tint)] [text-shadow:0_1px_1.5px_rgba(0,0,0,0.45)]",
                 )}
               >
                 {bar.name}
@@ -154,7 +159,7 @@ export function TimelineBar({
             {bar.bkrmTurn && (
               <span
                 aria-hidden
-                className="absolute -right-1 top-1/2 size-2.5 -translate-y-1/2 rounded-full ring-2 ring-[var(--card)]"
+                className="absolute -right-1 top-1/2 size-2.5 -translate-y-1/2 rounded-full ring-2 ring-[var(--surface)]"
                 style={{ backgroundColor: BKRM_COLOR }}
               />
             )}
@@ -173,45 +178,43 @@ export function TimelineBar({
               if (anchorRef.current && e.target instanceof Node && anchorRef.current.contains(e.target)) e.preventDefault();
             }}
             className={cn(
-              "z-50 w-[min(18rem,calc(100vw-24px))] rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 text-[var(--card-foreground)] shadow-[var(--shadow-2)]",
+              "z-50 w-[min(18rem,calc(100vw-24px))] rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-3 text-[var(--ink)] shadow-[var(--shadow-2)]",
               "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
               !tap && "pointer-events-none",
             )}
           >
-            <p className="break-words text-sm font-semibold leading-snug">{bar.name}</p>
-            <dl className="mt-2 space-y-1 text-xs">
+            <p className="break-words t-small font-semibold leading-snug">{bar.name}</p>
+            <dl className="mt-2 space-y-1 t-micro font-medium">
               <div className="flex gap-2">
-                <dt className="shrink-0 text-[var(--muted)]">{t("planned")}:</dt>
-                <dd className="min-w-0 break-words font-medium tabular-nums">
+                <dt className="shrink-0 text-[var(--ink-3)]">{t("planned")}:</dt>
+                <dd className="min-w-0 break-words tabular-nums text-[var(--ink)]">
                   {planned}
-                  {bar.estimated && <span className="text-[var(--muted)]">, {t("legendEstimated")}</span>}
+                  {bar.estimated && <span className="text-[var(--ink-3)]">, {t("legendEstimated")}</span>}
                 </dd>
               </div>
               {actualStart && actualEnd && (
                 <div className="flex gap-2">
-                  <dt className="shrink-0 text-[var(--muted)]">{t("legendActual")}:</dt>
-                  <dd className="min-w-0 font-medium tabular-nums">
+                  <dt className="shrink-0 text-[var(--ink-3)]">{t("legendActual")}:</dt>
+                  <dd className="min-w-0 tabular-nums text-[var(--ink)]">
                     {shortDate(actualStart, today)} – {shortDate(actualEnd, today)}
                   </dd>
                 </div>
               )}
               {bar.responsibleName && (
                 <div className="flex gap-2">
-                  <dt className="shrink-0 text-[var(--muted)]">{t("responsible")}:</dt>
-                  <dd className="min-w-0 break-words font-medium">{bar.responsibleName}</dd>
+                  <dt className="shrink-0 text-[var(--ink-3)]">{t("responsible")}:</dt>
+                  <dd className="min-w-0 break-words text-[var(--ink)]">{bar.responsibleName}</dd>
                 </div>
               )}
             </dl>
             <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-              <StatusTag tone={KIND_TONE[kind]}>
-                {statusLabel}
-              </StatusTag>
+              <Status tone={KIND_TONE[kind]}>{statusLabel}</Status>
               {bar.status === "active" && !bar.estimated && (
                 <DeadlineCountdown deadline={`${bar.end}T23:59:59+05:00`} />
               )}
             </div>
             {bar.bkrmTurn && (
-              <p className="mt-2 flex items-center gap-1.5 text-xs font-medium" style={{ color: BKRM_COLOR }}>
+              <p className="mt-2 flex items-center gap-1.5 t-micro font-semibold" style={{ color: BKRM_COLOR }}>
                 <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: BKRM_COLOR }} />
                 {t("legendBkrm")}
               </p>
@@ -220,7 +223,7 @@ export function TimelineBar({
               <Link
                 href={href}
                 prefetch={false}
-                className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--primary)] hover:underline"
+                className="mt-3 inline-flex items-center gap-1 t-micro font-semibold text-[var(--tint)] hover:underline"
               >
                 {bar.stageId ? t("openStage") : t("openProject")}
                 <IconArrowRight className="size-3.5" />
@@ -233,14 +236,14 @@ export function TimelineBar({
       {actualStart && actualEnd && actualEnd >= actualStart && (
         <div
           aria-hidden
-          className="pointer-events-none absolute rounded-full"
+          className="pointer-events-none absolute rounded-[2px]"
           style={{
             left: offsetPx(actualStart, scale),
             width: Math.max(2, widthPx(actualStart, actualEnd, scale)),
-            top: ACTUAL_TOP,
-            height: ACTUAL_H,
-            backgroundColor: locked ? "var(--muted)" : color,
-            opacity: 0.6,
+            top: `${ACTUAL_TOP}rem`,
+            height: `${ACTUAL_H}rem`,
+            backgroundColor: locked ? "var(--ink-3)" : color,
+            opacity: 0.65,
           }}
         />
       )}

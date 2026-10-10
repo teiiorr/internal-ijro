@@ -31,7 +31,7 @@ function Sel({
       >
         {children}
       </select>
-      <IconChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
+      <IconChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--ink-3)]" />
     </div>
   );
 }
@@ -43,7 +43,7 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: 
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="shrink-0 accent-[var(--primary)]"
+        className="shrink-0 accent-[var(--tint)]"
       />
       <span className="min-w-0 truncate">{label}</span>
     </label>
@@ -63,11 +63,11 @@ function Segmented<T extends string>({
 }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
-      <span className="hidden shrink-0 text-xs font-semibold text-[var(--muted)] sm:inline">{label}</span>
+      <span className="hidden shrink-0 t-micro text-[var(--ink-3)] sm:inline">{label}</span>
       <div
         role="radiogroup"
         aria-label={label}
-        className="no-scrollbar flex min-w-0 gap-1 overflow-x-auto rounded-[10px] bg-[var(--surface-3)] p-1"
+        className="no-scrollbar flex min-w-0 gap-1 overflow-x-auto rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] p-1"
       >
         {options.map((o) => {
           const active = o.value === value;
@@ -79,10 +79,10 @@ function Segmented<T extends string>({
               aria-checked={active}
               onClick={() => onChange(o.value)}
               className={cn(
-                "shrink-0 whitespace-nowrap rounded-[8px] px-3 py-1.5 text-[13px] font-semibold transition-all",
+                "shrink-0 whitespace-nowrap rounded-[var(--radius-s)] px-3 py-1.5 t-label transition-all",
                 active
-                  ? "bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-1)]"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]",
+                  ? "bg-[var(--surface)] text-[var(--ink)] shadow-[var(--shadow-1)]"
+                  : "text-[var(--ink-2)] hover:text-[var(--ink)]",
               )}
             >
               {o.label}
@@ -164,14 +164,14 @@ export function TimelineFilters({
     <div className={cn("space-y-2 transition-opacity", pending && "opacity-70")} aria-busy={pending}>
       <div className="flex gap-2">
         <div className="relative min-w-0 flex-1">
-          <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
+          <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--ink-3)]" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("search")}
             aria-label={t("search")}
-            className={cn(FIELD, "pl-10 placeholder:text-[var(--muted)]")}
+            className={cn(FIELD, "pl-10 placeholder:text-[var(--ink-3)]")}
           />
         </div>
         {/* Mobil'da selektlar bitta tugma ostiga yigʻiladi */}
@@ -186,7 +186,7 @@ export function TimelineFilters({
           {activeCount > 0 && (
             <span className="t-micro tabular-nums text-[var(--tint)]">{activeCount}</span>
           )}
-          <IconChevronDown className={cn("size-4 text-[var(--muted)] transition-transform", open && "rotate-180")} />
+          <IconChevronDown className={cn("size-4 text-[var(--ink-3)] transition-transform", open && "rotate-180")} />
         </button>
       </div>
 

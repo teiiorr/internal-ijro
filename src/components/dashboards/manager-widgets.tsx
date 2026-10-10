@@ -1,6 +1,5 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import {
-  getProjectStageKpis,
   getProjectStatusBreakdown,
   getProjectTypeBreakdown,
   getProjectPaymentsSummary,
@@ -24,8 +23,7 @@ const STATUS_HEX: Record<DerivedStatus, string> = {
 export async function ManagerWidgets({ showPayments = false }: { showPayments?: boolean }) {
   const t = await getTranslations();
   const locale = await getLocale();
-  const [kpi, statusBreak, typeBreak, pay] = await Promise.all([
-    getProjectStageKpis(),
+  const [statusBreak, typeBreak, pay] = await Promise.all([
     getProjectStatusBreakdown(),
     getProjectTypeBreakdown(locale),
     getProjectPaymentsSummary(),
@@ -46,7 +44,7 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
   return (
     <>
       {/* Loyihalar tahlili: holat donut + tur bar */}
-      <Section title={t("dashboard.manager.projectsByStatus")} meta={`${t("dashboard.manager.kpiActiveProjects")}: ${kpi.activeProjects}`}>
+      <Section title={t("dashboard.manager.projectsByStatus")}>
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <Card>
             <h3 className="text-[0.9375rem] font-bold text-[var(--ink)]">{t("dashboard.manager.projectsByStatus")}</h3>

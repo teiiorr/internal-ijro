@@ -3,7 +3,8 @@ import { Fragment, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { IconAlertTriangle } from "@tabler/icons-react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
+import { Status } from "@/components/ui-biib/Status";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { cn } from "@/lib/utils";
@@ -29,10 +30,15 @@ import {
   TimelineBar,
 } from "./timeline-bar";
 
-const ROW_H = 44;
-const HEAD_H = 36;
-const LANE_H = 36;
-const DIAMOND = 10;
+// Vertikal geometriya — REM da (ildiz 20px, 125% masshtabda ham oʻlchansin).
+const ROW_H = 2.75;
+const HEAD_H = 2.4;
+const LANE_H = 2.1;
+// Muddat olmosi — belgi, piksel (masshtabdan mustaqil).
+const DIAMOND = 11;
+// Chap ustun kengligi va unga tutash sticky yorliqlar cheti (bir joyda sozlanadi).
+const LEFT_W = "w-[9.5rem] md:w-[16.5rem]";
+const STICKY_L = "left-[10rem] md:left-[17rem]";
 const NO_GROUP = "__none__";
 
 type Row = { p: TLProject; bars: Bar[]; miss: boolean; first: string | null };
@@ -70,8 +76,8 @@ function buildLanes(rows: Row[], group: TimelineGroup, noGroupLabel: string): La
 
 /**
  * Portfel Gant diagrammasi: chapda loyihalar ustuni (gorizontal skrollda joyida
- * qoladi), oʻngda skrollanadigan vaqt shkalasi. Har bir loyiha — 44px qator,
- * har bir bosqich — chiziq. Faqat oʻqish uchun.
+ * qoladi), oʻngda skrollanadigan vaqt shkalasi. Har bir loyiha — qator, har bir
+ * bosqich — chiziq. Faqat oʻqish uchun. Zich jadval — qattiq (solid) karta.
  */
 export function PortfolioTimeline({
   data,
@@ -129,17 +135,18 @@ export function PortfolioTimeline({
 
   if (rows.length === 0) {
     return (
-      <Card>
-        <div className="px-5 py-16 text-center text-sm text-[var(--muted)]">{t("empty")}</div>
+      <Card solid bare className="p-10 text-center t-small text-[var(--ink-2)]">
+        {t("empty")}
       </Card>
     );
   }
 
   const showLanes = group !== "none";
+  // Olmos (muddat) markazining REM dagi vertikal oʻrni — piksel oʻlchami bilan calc orqali.
+  const diamondTop = `calc(${PLANNED_TOP + PLANNED_H / 2}rem - ${DIAMOND / 2}px)`;
 
   return (
-    // glass-card hover'dagi "koʻtarilish" transform'i katta diagrammada keraksiz.
-    <Card className="isolate overflow-hidden" style={{ transform: "none" }}>
+    <Card solid bare className="isolate overflow-hidden">
       {/*
         Bitta skroll konteyneri (ikkala oʻq): chap ustun `sticky left-0`, sarlavha `sticky top-0`.
         Balandlik cheklangan — koʻp loyihada ham gorizontal skroll paneli doim koʻrinadi.
@@ -152,11 +159,11 @@ export function PortfolioTimeline({
           {/* ---------- Chap ustun: loyihalar ---------- */}
           <div
             ref={leftRef}
-            className="sticky left-0 z-[8] w-[150px] shrink-0 border-r border-[var(--border)] bg-[var(--card)] md:w-[260px]"
+            className={cn("sticky left-0 z-[8] shrink-0 border-r border-[var(--line)] bg-[var(--surface)]", LEFT_W)}
           >
             <div
-              className="sticky top-0 z-[1] flex items-center border-b border-[var(--border)] bg-[var(--card)] px-2 text-[11px] font-semibold uppercase tracking-wide text-[var(--muted)] md:px-3"
-              style={{ height: HEAD_H }}
+              className="sticky top-0 z-[1] flex items-center border-b border-[var(--line)] bg-[var(--surface)] px-2 t-micro font-bold uppercase text-[var(--ink-3)] md:px-3"
+              style={{ height: `${HEAD_H}rem` }}
             >
               <span className="truncate">{t("projectsCount", { count: rows.length })}</span>
             </div>
@@ -164,13 +171,13 @@ export function PortfolioTimeline({
               <Fragment key={lane.key}>
                 {showLanes && (
                   <div
-                    className="flex items-center gap-1.5 border-b border-[var(--border)] bg-[var(--surface-2)] px-2 md:px-3"
-                    style={{ height: LANE_H }}
+                    className="flex items-center gap-1.5 border-b border-[var(--line)] bg-[var(--surface-2)] px-2 md:px-3"
+                    style={{ height: `${LANE_H}rem` }}
                   >
-                    <span className="min-w-0 flex-1 truncate text-[13px] font-bold" title={lane.name}>
+                    <span className="min-w-0 flex-1 truncate t-small font-bold text-[var(--ink)]" title={lane.name}>
                       {lane.name}
                     </span>
-                    <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">
+                    <span className="shrink-0 rounded-[var(--radius-s)] border border-[var(--line)] bg-[var(--surface)] px-1.5 t-micro font-bold tabular-nums text-[var(--ink-2)]">
                       {lane.rows.length}
                     </span>
                   </div>
@@ -189,7 +196,7 @@ export function PortfolioTimeline({
               {scale.ticks.map((tk) => (
                 <div
                   key={tk.iso}
-                  className={cn("absolute bottom-0 top-0 w-px", tk.major ? "bg-[var(--border-strong)]" : "bg-[var(--border)]")}
+                  className={cn("absolute bottom-0 top-0 w-px", tk.major ? "bg-[var(--line-strong)]" : "bg-[var(--line)]")}
                   style={{ left: offsetPx(tk.iso, scale) }}
                 />
               ))}
@@ -197,17 +204,17 @@ export function PortfolioTimeline({
 
             {/* Sarlavha: oy / chorak / yil belgilari (vertikal skrollda tepada qoladi) */}
             <div
-              className="sticky top-0 z-[6] border-b border-[var(--border)] bg-[var(--card)]"
-              style={{ height: HEAD_H }}
+              className="sticky top-0 z-[6] border-b border-[var(--line)] bg-[var(--surface)]"
+              style={{ height: `${HEAD_H}rem` }}
             >
               {scale.ticks.map((tk) => (
                 <span
                   key={tk.iso}
                   className={cn(
-                    "absolute bottom-0 top-0 whitespace-nowrap border-l pl-1.5 pt-1 text-[11px] leading-4 tabular-nums",
+                    "absolute bottom-0 top-0 whitespace-nowrap border-l pl-1.5 pt-1 t-micro tabular-nums",
                     tk.major
-                      ? "border-[var(--border-strong)] font-bold text-[var(--foreground)]"
-                      : "border-[var(--border)] font-medium text-[var(--muted)]",
+                      ? "border-[var(--line-strong)] font-bold text-[var(--ink)]"
+                      : "border-[var(--line)] font-medium text-[var(--ink-3)]",
                   )}
                   style={{ left: offsetPx(tk.iso, scale) }}
                 >
@@ -215,8 +222,8 @@ export function PortfolioTimeline({
                 </span>
               ))}
               <span
-                className="absolute bottom-0.5 z-[1] -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
-                style={{ left: todayX, backgroundColor: "var(--danger)" }}
+                className="absolute bottom-0.5 z-[1] -translate-x-1/2 whitespace-nowrap rounded-[var(--radius-s)] px-1.5 py-0.5 t-micro font-bold leading-none text-[var(--on-tint)]"
+                style={{ left: todayX, backgroundColor: "var(--tint)" }}
               >
                 {t("today")}
               </span>
@@ -226,23 +233,26 @@ export function PortfolioTimeline({
               <Fragment key={lane.key}>
                 {showLanes && (
                   <div
-                    className="relative flex items-center border-b border-[var(--border)] bg-[var(--surface-2)]"
-                    style={{ height: LANE_H }}
+                    className="relative flex items-center border-b border-[var(--line)] bg-[var(--surface-2)]"
+                    style={{ height: `${LANE_H}rem` }}
                   >
                     {/* sticky — gorizontal skrollda chap ustun yonida koʻrinib turadi */}
                     <span
                       className={cn(
-                        "sticky left-[158px] z-[3] ml-2 inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-bold md:left-[268px]",
-                        lane.parallel >= 3 ? "text-[#3b2a05]" : "bg-[var(--surface-3)] text-[var(--muted)]",
+                        "z-[3] ml-2 inline-flex items-center gap-1 whitespace-nowrap rounded-[var(--radius-s)] border px-2 py-0.5 t-micro font-bold",
+                        STICKY_L,
+                        lane.parallel >= 3
+                          ? "sticky border-transparent bg-[var(--warning-soft)] text-[var(--warning)]"
+                          : "sticky border-[var(--line)] bg-[var(--surface)] text-[var(--ink-2)]",
                       )}
-                      style={lane.parallel >= 3 ? { backgroundColor: "var(--warning)" } : undefined}
                     >
+                      {lane.parallel >= 3 && <IconAlertTriangle className="size-3.5 shrink-0" aria-hidden />}
                       {t("parallel", { count: lane.parallel })}
                     </span>
                   </div>
                 )}
                 {lane.rows.map((r) => (
-                  <div key={r.p.id} className="relative border-b border-[var(--border)]" style={{ height: ROW_H }}>
+                  <div key={r.p.id} className="relative border-b border-[var(--line)]" style={{ height: `${ROW_H}rem` }}>
                     {r.bars.map((b, i) => (
                       <TimelineBar key={b.stageId ?? `legacy-${i}`} bar={b} projectId={r.p.id} scale={scale} today={today} />
                     ))}
@@ -251,17 +261,17 @@ export function PortfolioTimeline({
                         role="img"
                         aria-label={`${t("contractDeadline")}: ${shortDate(r.p.deadline, today)}`}
                         title={`${t("contractDeadline")}: ${shortDate(r.p.deadline, today)}`}
-                        className="absolute z-[5] rotate-45 rounded-[2px] bg-[var(--foreground)] ring-2 ring-[var(--card)]"
+                        className="absolute z-[5] rotate-45 rounded-[2px] bg-[var(--ink)] ring-2 ring-[var(--surface)]"
                         style={{
                           width: DIAMOND,
                           height: DIAMOND,
                           left: offsetPx(r.p.deadline, scale) + scale.dayPx - DIAMOND / 2,
-                          top: PLANNED_TOP + PLANNED_H / 2 - DIAMOND / 2,
+                          top: diamondTop,
                         }}
                       />
                     )}
                     {r.bars.length === 0 && (
-                      <span className="sticky left-[158px] inline-flex h-full items-center pl-2 text-[11px] font-medium text-[var(--subtle)] md:left-[268px]">
+                      <span className={cn("sticky inline-flex h-full items-center pl-2 t-micro font-medium text-[var(--ink-3)]", STICKY_L)}>
                         {t("noDates")}
                       </span>
                     )}
@@ -270,11 +280,11 @@ export function PortfolioTimeline({
               </Fragment>
             ))}
 
-            {/* Bugungi kun chizigʻi */}
+            {/* Bugungi kun chizigʻi — koʻk (--tint) */}
             <div
               aria-hidden
-              className="pointer-events-none absolute bottom-0 z-[4] w-0.5 opacity-80"
-              style={{ left: todayX - 1, top: HEAD_H, backgroundColor: "var(--danger)" }}
+              className="pointer-events-none absolute bottom-0 z-[4] w-0.5 opacity-90"
+              style={{ left: todayX - 1, top: `${HEAD_H}rem`, backgroundColor: "var(--tint)" }}
             />
           </div>
         </div>
@@ -289,12 +299,12 @@ function ProjectCell({ row, willMissLabel }: { row: Row; willMissLabel: string }
   const { p, miss } = row;
   const sub = p.studioName ?? p.typeName ?? "";
   return (
-    <div className="flex items-center gap-2 border-b border-[var(--border)] px-2 md:px-3" style={{ height: ROW_H }}>
-      <div className="relative hidden size-8 shrink-0 overflow-hidden rounded-md bg-[var(--surface-2)] sm:block">
+    <div className="flex items-center gap-2 border-b border-[var(--line)] px-2 md:px-3" style={{ height: `${ROW_H}rem` }}>
+      <div className="relative hidden size-8 shrink-0 overflow-hidden rounded-[var(--radius-s)] bg-[var(--surface-2)] sm:block">
         {p.posterUrl ? (
           <SmoothImage src={p.posterUrl} alt={p.name} className="size-full object-cover" />
         ) : (
-          <span className="grid size-full select-none place-items-center text-xs font-black text-[var(--subtle)]">
+          <span className="grid size-full select-none place-items-center text-sm font-bold text-[var(--ink-3)]">
             {p.name.trim().charAt(0).toUpperCase()}
           </span>
         )}
@@ -305,25 +315,24 @@ function ProjectCell({ row, willMissLabel }: { row: Row; willMissLabel: string }
             href={`/projects/${p.id}`}
             prefetch={false}
             title={p.name}
-            className="min-w-0 flex-1 truncate text-[13px] font-semibold leading-tight transition-colors hover:text-[var(--primary)]"
+            className="min-w-0 flex-1 truncate t-small font-semibold leading-tight text-[var(--ink)] transition-colors hover:text-[var(--tint)]"
           >
             {p.name}
           </Link>
-          <span className="shrink-0 text-[11px] font-bold tabular-nums text-[var(--muted)]">{p.progress}%</span>
+          <span className="shrink-0 t-micro font-bold tabular-nums text-[var(--ink-2)]">{p.progress}%</span>
         </div>
         <div className="mt-0.5 flex min-w-0 items-center gap-1.5">
           {miss && (
-            <span
-              title={willMissLabel}
-              className="inline-flex min-w-0 shrink items-center gap-1 rounded px-1 py-px text-[10px] font-bold leading-tight text-white"
-              style={{ backgroundColor: "var(--danger)" }}
-            >
-              <IconAlertTriangle className="size-3 shrink-0 md:hidden" aria-hidden />
-              <span className="sr-only md:hidden">{willMissLabel}</span>
-              <span className="hidden truncate md:inline">{willMissLabel}</span>
+            <span title={willMissLabel} className="inline-flex shrink-0">
+              <Status tone="danger" className="px-1.5">
+                <span className="inline-flex items-center">
+                  <IconAlertTriangle className="size-3.5" aria-hidden />
+                  <span className="sr-only">{willMissLabel}</span>
+                </span>
+              </Status>
             </span>
           )}
-          {sub && <span className="min-w-0 flex-1 truncate text-[11px] text-[var(--muted)]">{sub}</span>}
+          {sub && <span className="min-w-0 flex-1 truncate t-micro text-[var(--ink-2)]">{sub}</span>}
           {p.curators.length > 0 && (
             <div className="ml-auto hidden shrink-0 -space-x-2 md:flex">
               {p.curators.slice(0, 3).map((c) => (
@@ -333,7 +342,7 @@ function ProjectCell({ row, willMissLabel }: { row: Row; willMissLabel: string }
                     avatarUrl={c.avatarUrl}
                     size="xs"
                     clickable={false}
-                    className="size-5 text-[8px] ring-1 ring-[var(--card)]"
+                    className="size-5 text-[0.5rem] ring-1 ring-[var(--surface)]"
                   />
                 </span>
               ))}
@@ -347,7 +356,7 @@ function ProjectCell({ row, willMissLabel }: { row: Row; willMissLabel: string }
 
 function Legend() {
   const t = useTranslations("staffX.portfolioTimeline");
-  const swatch = "inline-block h-2.5 w-5 shrink-0 rounded-[3px]";
+  const swatch = "inline-block h-2.5 w-5 shrink-0 rounded-[var(--radius-s)]";
   const items: { key: string; label: string; icon: React.ReactNode }[] = [
     { key: "completed", label: t("legendCompleted"), icon: <span className={swatch} style={{ backgroundColor: KIND_COLOR.completed }} /> },
     { key: "active", label: t("legendActive"), icon: <span className={swatch} style={{ backgroundColor: KIND_COLOR.active }} /> },
@@ -355,7 +364,7 @@ function Legend() {
     {
       key: "locked",
       label: t("legendLocked"),
-      icon: <span className={cn(swatch, "border border-dashed border-[var(--border-strong)]")} />,
+      icon: <span className={cn(swatch, "border border-dashed border-[var(--line-strong)]")} />,
     },
     {
       key: "estimated",
@@ -363,14 +372,14 @@ function Legend() {
       icon: (
         <span
           className={swatch}
-          style={{ backgroundColor: KIND_COLOR.active, backgroundImage: ESTIMATED_STRIPES, opacity: 0.8 }}
+          style={{ backgroundColor: KIND_COLOR.active, backgroundImage: ESTIMATED_STRIPES, opacity: 0.85 }}
         />
       ),
     },
     {
       key: "actual",
       label: t("legendActual"),
-      icon: <span className="inline-block h-[3px] w-5 shrink-0 rounded-full opacity-60" style={{ backgroundColor: KIND_COLOR.active }} />,
+      icon: <span className="inline-block h-[3px] w-5 shrink-0 rounded-[2px] bg-[var(--ink-2)] opacity-70" />,
     },
     {
       key: "bkrm",
@@ -380,16 +389,16 @@ function Legend() {
     {
       key: "today",
       label: t("today"),
-      icon: <span className="inline-block h-3 w-0.5 shrink-0" style={{ backgroundColor: "var(--danger)" }} />,
+      icon: <span className="inline-block h-3 w-0.5 shrink-0" style={{ backgroundColor: "var(--tint)" }} />,
     },
     {
       key: "deadline",
       label: t("contractDeadline"),
-      icon: <span className="inline-block size-2 shrink-0 rotate-45 rounded-[1px] bg-[var(--foreground)]" />,
+      icon: <span className="inline-block size-2 shrink-0 rotate-45 rounded-[1px] bg-[var(--ink)]" />,
     },
   ];
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-[var(--border)] px-3 py-3 text-xs text-[var(--muted)] md:px-4">
+    <div className="flex flex-wrap gap-x-5 gap-y-2 border-t border-[var(--line)] px-3 py-3 t-small text-[var(--ink-2)] md:px-4">
       {items.map((it) => (
         <span key={it.key} className="inline-flex min-w-0 items-center gap-1.5">
           {it.icon}

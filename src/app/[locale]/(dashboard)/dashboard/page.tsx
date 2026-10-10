@@ -54,6 +54,11 @@ export default async function DashboardPage() {
         </h1>
       </header>
 
+      {/* Joriy holat — eng yuqorida (foydalanuvchi soʻrovi) */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <ProjectStatusBoard />
+      </Suspense>
+
       <Suspense fallback={null}>
         <PinnedAnnouncementsBanner userId={user.id} position={user.position} departmentId={user.departmentId} />
       </Suspense>
@@ -69,10 +74,6 @@ export default async function DashboardPage() {
 
       <Suspense fallback={<SectionSkeleton />}>
         <ManagerWidgets showPayments={showPayments} />
-      </Suspense>
-
-      <Suspense fallback={<SectionSkeleton />}>
-        <ProjectStatusBoard />
       </Suspense>
 
       {isHr && <Suspense fallback={<SectionSkeleton />}><HrWidgets /></Suspense>}

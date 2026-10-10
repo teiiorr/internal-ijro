@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { TapSound } from "@/components/tap-sound";
 
 // Shriftlar: Manrope UZ (matn/UI) va Unbounded UZ (gold sarlavhalar) — oʻzbek harflari
 // (ʻ ʼ Қ Ғ Ҳ) qoʻshilган patch-build'lar, self-hosted (src/styles/fonts.css, public/fonts).
@@ -41,6 +42,7 @@ export default async function LocaleLayout({
       <body>
         <ThemeProvider initial="system">
           <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <TapSound />
           <Toaster
             position="bottom-right"
             toastOptions={{

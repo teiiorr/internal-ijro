@@ -184,10 +184,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           }
         />
 
-        <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
-          {/* Umumiy — faktlar + tavsif + joriy holat (chap); poster + studiya + toʻlov (oʻng) */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-8">
-            <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
+        {/* Bitta tartibli ekran: ustki qism — 2 ustunli kompozitsiya, pastda — hujjatlar toʻliq kenglikda. */}
+        <div className="flex min-w-0 flex-col gap-8 lg:gap-10">
+          {/* Chap = faktlar + tavsif + joriy holat + bosqichlar; oʻng = poster + toʻlov + studiya + muddat tarixi. */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start lg:gap-8">
+            {/* CHAP USTUN — mazmun va bosqichlar (telefonda birinchi) */}
+            <div className="flex min-w-0 flex-col gap-6">
               <Card>
                 <FactList items={facts} />
                 {sp.project.description && (
@@ -200,10 +202,29 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               {(sp.project.currentStatus || canManage || hasStudio) && (
                 <CurrentStatusEditor projectId={id} text={sp.project.currentStatus} lastUpdate={lastStatus} canEdit={canManage} />
               )}
+
+              <Section title={t("projects.stagePath.title")}>
+                <Card bare className="px-5 py-3 sm:px-6">
+                  <StagePath projectId={sp.project.id} stages={sp.stages} />
+                </Card>
+              </Section>
             </div>
 
-            <div className="order-1 flex flex-col gap-6 lg:order-2">
+            {/* OʻNG USTUN — poster, toʻlov, studiya, muddat tarixi (telefonda bosqichlardan keyin) */}
+            <div className="flex min-w-0 flex-col gap-6">
               <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={canManage} />
+
+              <Card>
+                <h3 className="mb-3 t-h4 text-[var(--ink)]">{t("projects.stagePayments.projectTotal")}</h3>
+                <FactList
+                  items={[
+                    { term: t("projects.stagePayments.planned"), value: <span className="font-semibold tabular-nums">{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</span> },
+                    { term: t("projects.stagePayments.paid"), value: <span className="font-semibold tabular-nums text-[var(--success)]">{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</span> },
+                    { term: t("projects.stagePayments.remaining"), value: <span className="font-semibold tabular-nums text-[var(--warning)]">{showMoney ? money(remaining, currency) : MONEY_MASK}</span> },
+                  ]}
+                />
+              </Card>
+
               {hasStudio && (
                 <Card>
                   <ProjectContractor
@@ -214,53 +235,35 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                   />
                 </Card>
               )}
-              <Card>
-                <h3 className="mb-3 t-h3 text-[var(--ink)]">{t("projects.stagePayments.projectTotal")}</h3>
-                <FactList
-                  items={[
-                    { term: t("projects.stagePayments.planned"), value: <span className="font-semibold tabular-nums">{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</span> },
-                    { term: t("projects.stagePayments.paid"), value: <span className="font-semibold tabular-nums text-[var(--success)]">{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</span> },
-                    { term: t("projects.stagePayments.remaining"), value: <span className="font-semibold tabular-nums text-[var(--warning)]">{showMoney ? money(remaining, currency) : MONEY_MASK}</span> },
-                  ]}
-                />
-              </Card>
+
+              {/* Studiya faolligi: faol bosqich progressi + soʻrovlar navbati */}
+              {hasStudio && (activeStage || studioRequests.length > 0) && (
+                <Card className="flex flex-col gap-4">
+                  <h3 className="t-h4 text-[var(--ink)]">{t("conversation.studio")}</h3>
+                  {activeStage && (
+                    <div className="flex flex-col gap-2">
+                      <Link href={`/projects/${id}/stages/${activeStage.id}`} className="min-w-0 break-words text-[0.9375rem] font-semibold text-[var(--ink)] hover:underline">
+                        {activeStage.name}
+                      </Link>
+                      <StageProgressBadge data={activeProgress} />
+                    </div>
+                  )}
+                  {studioRequests.length > 0 && (
+                    <div className={activeStage ? "border-t border-[var(--line)] pt-4" : ""}>
+                      <StageRequestsList requests={studioRequests} canDecide={canDecideRequests} showProject linkBase="/projects" />
+                    </div>
+                  )}
+                </Card>
+              )}
+
+              {/* Bosqich muddatlari oʻzgarishlari tarixi (kim, qachon, nega) — oʻzining oyna kartasi bilan keladi */}
+              <Suspense fallback={null}>
+                <DeadlineHistoryCard projectId={id} locale={locale} />
+              </Suspense>
             </div>
           </div>
 
-          {/* Bosqichlar */}
-          <Section title={t("projects.stagePath.title")}>
-            <Card bare className="px-5 py-3 sm:px-6">
-              <StagePath projectId={sp.project.id} stages={sp.stages} />
-            </Card>
-          </Section>
-
-          {/* Bosqich muddatlari o'zgarishlari tarixi (kim, qachon, nega) */}
-          <Suspense fallback={null}>
-            <DeadlineHistoryCard projectId={id} locale={locale} />
-          </Suspense>
-
-          {/* Studiya faolligi: faol bosqich progressi + so'rovlar navbati */}
-          {hasStudio && (activeStage || studioRequests.length > 0) && (
-            <Section title={t("conversation.studio")}>
-              <Card className="flex flex-col gap-5">
-                {activeStage && (
-                  <div className="flex flex-col gap-2">
-                    <Link href={`/projects/${id}/stages/${activeStage.id}`} className="min-w-0 break-words text-[0.9375rem] font-semibold text-[var(--ink)] hover:underline">
-                      {activeStage.name}
-                    </Link>
-                    <StageProgressBadge data={activeProgress} />
-                  </div>
-                )}
-                {studioRequests.length > 0 && (
-                  <div className={activeStage ? "border-t border-[var(--line)] pt-5" : ""}>
-                    <StageRequestsList requests={studioRequests} canDecide={canDecideRequests} showProject linkBase="/projects" />
-                  </div>
-                )}
-              </Card>
-            </Section>
-          )}
-
-          {/* Loyiha darajasidagi hujjatlar */}
+          {/* Loyiha darajasidagi hujjatlar — toʻliq kenglikda, ikki panel uchun joy yetarli */}
           <Section title={t("projects.documents.title")}>
             <ProjectDocsPanels
               projectId={sp.project.id}
