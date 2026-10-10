@@ -4,6 +4,7 @@ import { stat } from "node:fs/promises";
 import { Readable } from "node:stream";
 import { join, resolve, basename, extname, sep } from "node:path";
 import { auth } from "@/lib/auth";
+import { verifyDocToken } from "@/lib/smeta-docs/token";
 
 export const runtime = "nodejs";
 
@@ -33,18 +34,23 @@ function disposition(kind: "inline" | "attachment", rawName: string): string {
 }
 
 export async function GET(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
-  const session = await auth();
-  if (!session?.user?.id) return new NextResponse("unauthorized", { status: 401 });
-  // Faqat ichki xodimlar: studiyalar (kontragent) smeta arxivini koʻrmaydi.
-  if (session.user.position === "kontragent") return new NextResponse("forbidden", { status: 403 });
-
   const { path } = await ctx.params;
   // Har bir segment nomga aylantiriladi (kodlangan "/" yoki ".." bilan chiqib boʻlmaydi).
   const segs = (path ?? []).map((s) => basename(s)).filter((s) => s && s !== "." && s !== "..");
   if (segs.length < 1) return new NextResponse("not_found", { status: 404 });
+  const reqId = segs.join("/");
   const target = resolve(BASE, ...segs);
-  // Yuklamalar papkasidan tashqariga chiqishni rad etamiz.
+  // Yuklamalar papkasidan tashqariga chiqishni rad etamiz (token boʻlsa ham).
   if (target !== BASE && !target.startsWith(BASE + sep)) return new NextResponse("not_found", { status: 404 });
+
+  // Ruxsat: yo shu faylga imzolangan qisqa muddatli token (Word ish stoli ilovasi uchun),
+  // yoki odatdagi session (ichki xodim, kontragent emas).
+  const token = req.nextUrl.searchParams.get("t");
+  if (!verifyDocToken(reqId, token)) {
+    const session = await auth();
+    if (!session?.user?.id) return new NextResponse("unauthorized", { status: 401 });
+    if (session.user.position === "kontragent") return new NextResponse("forbidden", { status: 403 });
+  }
 
   let size: number;
   try {

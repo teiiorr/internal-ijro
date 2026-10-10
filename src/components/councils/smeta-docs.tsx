@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { signSmetaDocForWord } from "@/server/actions/smeta-docs";
 import {
   IconPinned as Pinned,
   IconFileTypePdf as PdfIcon,
@@ -47,12 +48,21 @@ const KIND_TONE: Record<Kind, string> = {
 export function SmetaDocs() {
   const t = useTranslations("kengash.smetaDocs");
   const [active, setActive] = useState<number | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const items = DATA.items;
   const current = items.find((i) => i.n === active) ?? null;
 
-  function openInWord(f: DocFile) {
-    // Word ish stoli ilovasida ochish (protokol). Ishlamasa — yuklab olish doim bor.
-    window.location.assign(`ms-word:ofe|u|${window.location.origin}${fileUrl(f)}`);
+  // Son ochilganda fayllar paneli koʻrinishga keltiriladi (mobilda panel grid'dan keyin turadi).
+  useEffect(() => {
+    if (active !== null) panelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [active]);
+
+  async function openInWord(f: DocFile) {
+    // Word ish stoli ilovasi faylni oʻz jarayonida yuklaydi (cookie yoʻq) — shu faylga
+    // imzolangan qisqa muddatli token olamiz. "ofv" — koʻrish uchun ochish.
+    const token = await signSmetaDocForWord(f.id);
+    const q = token ? `?t=${encodeURIComponent(token)}` : "";
+    window.location.assign(`ms-word:ofv|u|${window.location.origin}${fileUrl(f)}${q}`);
   }
 
   return (
@@ -106,7 +116,7 @@ export function SmetaDocs() {
 
         {/* Bosilgan sonning fayllari */}
         {current && current.files.length > 0 && (
-          <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--surface-1)] p-4 sm:p-5">
+          <div ref={panelRef} className="scroll-mt-24 rounded-2xl border border-[var(--border-strong)] bg-[var(--surface-1)] p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Pinned className="size-5 -rotate-12 text-[var(--primary)]" />
