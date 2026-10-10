@@ -136,7 +136,23 @@
     "studioRequests": "Запросы",
     "myWork": "Мои дела",
     "announcements": "Объявления",
-    "directory": "Структура"
+    "directory": "Структура",
+    "group": {
+      "work": "Работа",
+      "councils": "Советы и комиссии",
+      "team": "Коллектив",
+      "info": "Информация",
+      "admin": "Управление"
+    },
+    "short": {
+      "dashboard": "Главная",
+      "myWork": "Мои дела"
+    },
+    "allProjects": "Все проекты",
+    "myProjects": "Мои проекты",
+    "taskControl": "Контроль исполнения",
+    "councilResolutions": "Исполнение решений",
+    "menu": "Меню"
   },
   "positions": {
     "direktor": "Директор",

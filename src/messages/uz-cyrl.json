@@ -117,18 +117,18 @@
     "contractors": "Студиялар",
     "reports": "Ҳисоботлар",
     "leaves": "Таътиллар",
-    "notifications": "Билдиришнома",
+    "notifications": "Билдиришномалар",
     "auditLog": "Фаолият журнали",
     "settings": "Созламалар",
     "profile": "Профил",
     "logout": "Чиқиш",
     "contractorPortal": "Студия портали",
-    "ekspertKengash": "Экспертлар Кенгаши",
-    "smetaKengash": "Смета Комиссияси",
+    "ekspertKengash": "Экспертлар кенгаши",
+    "smetaKengash": "Смета комиссияси",
     "more": "Кўпроқ",
     "owner": "Эгаси панели",
     "normativeDocs": "Меъёрий ҳужжатлар",
-    "tanlov": "Танлов",
+    "tanlov": "Танловлар",
     "chats": "Чатлар",
     "payments": "Тўловлар",
     "documents": "Ҳужжатлар",
@@ -136,7 +136,23 @@
     "studioRequests": "Сўровлар",
     "myWork": "Менинг ишларим",
     "announcements": "Эълонлар",
-    "directory": "Тузилма"
+    "directory": "Тузилма",
+    "group": {
+      "work": "Ишлар",
+      "councils": "Кенгашлар",
+      "team": "Жамоа",
+      "info": "Ахборот",
+      "admin": "Бошқарув"
+    },
+    "short": {
+      "dashboard": "Асосий",
+      "myWork": "Ишларим"
+    },
+    "allProjects": "Барча лойиҳалар",
+    "myProjects": "Лойиҳаларим",
+    "taskControl": "Ижро назорати",
+    "councilResolutions": "Қарорлар ижроси",
+    "menu": "Меню"
   },
   "positions": {
     "direktor": "Директор",

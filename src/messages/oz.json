@@ -117,18 +117,18 @@
     "contractors": "Studiyalar",
     "reports": "Hisobotlar",
     "leaves": "Tatillar",
-    "notifications": "Bildirişnoma",
+    "notifications": "Bildirişnomalar",
     "auditLog": "Faoliyat jurnali",
     "settings": "Sozlamalar",
     "profile": "Profil",
     "logout": "Çiqiş",
     "contractorPortal": "Studiya portali",
-    "ekspertKengash": "Ekspertlar Kengaşi",
-    "smetaKengash": "Smeta Komissiyasi",
+    "ekspertKengash": "Ekspertlar kengaşi",
+    "smetaKengash": "Smeta komissiyasi",
     "more": "Köproq",
     "owner": "Egasi paneli",
     "normativeDocs": "Meʼyoriy hujjatlar",
-    "tanlov": "Tanlov",
+    "tanlov": "Tanlovlar",
     "chats": "Çatlar",
     "payments": "Tölovlar",
     "documents": "Hujjatlar",
@@ -136,7 +136,23 @@
     "studioRequests": "Sörovlar",
     "myWork": "Mening işlarim",
     "announcements": "Eʼlonlar",
-    "directory": "Tuzilma"
+    "directory": "Tuzilma",
+    "group": {
+      "work": "Işlar",
+      "councils": "Kengaşlar",
+      "team": "Jamoa",
+      "info": "Axborot",
+      "admin": "Boşqaruv"
+    },
+    "short": {
+      "dashboard": "Asosiy",
+      "myWork": "Işlarim"
+    },
+    "allProjects": "Barça loyihalar",
+    "myProjects": "Loyihalarim",
+    "taskControl": "Ijro nazorati",
+    "councilResolutions": "Qarorlar ijrosi",
+    "menu": "Menyu"
   },
   "positions": {
     "direktor": "Direktor",
