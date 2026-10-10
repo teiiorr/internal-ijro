@@ -3,10 +3,11 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { listTasks, countTasks } from "@/server/queries/tasks";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui-biib/Button";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { TasksViewSwitcher } from "@/components/tasks/tasks-view-switcher";
-import { IconPlus as Plus, IconDownload as Download, IconInbox as Inbox, IconSend as Send, IconChecklist } from "@tabler/icons-react";
+import { IconPlus as Plus, IconDownload as Download, IconInbox as Inbox, IconSend as Send } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
 type Scope = "mine" | "given";
@@ -60,7 +61,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
     >
       <span>{label}</span>
       <span className={cn(
-        "text-[11px] rounded-full px-1.5 py-0 tabular font-bold",
+        "rounded-md px-1.5 py-0 text-[11px] font-bold tabular",
         "bg-[var(--surface-3)]",
         tab !== value && "text-[var(--muted)]"
       )}>
@@ -73,19 +74,17 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
     <Link
       href={`/tasks?scope=${value}`}
       replace
+      aria-current={scope === value ? "page" : undefined}
       className={cn(
-        "flex-1 sm:flex-initial px-4 py-2.5 rounded-[10px] text-[14px] font-semibold transition-all flex items-center justify-center gap-2",
+        "flex items-center justify-center gap-2 rounded-[9px] px-4 py-2 text-[14px] font-semibold transition-colors",
         scope === value
-          ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-1)]"
-          : "bg-[var(--surface-3)] text-[var(--muted)] hover:text-[var(--foreground)]"
+          ? "bg-[var(--surface)] text-ink shadow-[var(--shadow-1)]"
+          : "text-ink-2 hover:text-ink"
       )}
     >
       <Icon className="size-4" />
       <span>{label}</span>
-      <span className={cn(
-        "text-[11px] rounded-full px-1.5 py-0 tabular font-bold",
-        scope === value ? "bg-white/20 text-white" : "bg-[var(--surface)] text-[var(--muted)]"
-      )}>
+      <span className={cn("rounded-md px-1.5 py-0 text-[11px] font-bold tabular", scope === value ? "bg-[var(--surface-3)] text-ink-2" : "bg-[var(--surface-2)] text-[var(--muted)]")}>
         {count}
       </span>
     </Link>
@@ -93,31 +92,27 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
 
   return (
     <div className="space-y-5 sm:space-y-6 stagger-children">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("tasks.pageTitle")}</h1>
-        <div className="flex gap-2 shrink-0">
-          <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
-            <a href={`/api/export/tasks?scope=${scope}`}><Download className="size-4" /> Excel</a>
-          </Button>
-          {canCreate && (
-            <Button asChild size="default">
-              <Link href="/tasks/new"><Plus className="size-4" /> <span className="hidden sm:inline">{t("tasks.newTitle")}</span><span className="sm:hidden">{t("common.create")}</span></Link>
+      <PageHeader
+        title={t("tasks.pageTitle")}
+        actions={
+          <>
+            <Button asChild variant="glass" size="40" icon={Download} className="max-sm:hidden">
+              <a href={`/api/export/tasks?scope=${scope}`}>Excel</a>
             </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        <ScopeTab value="mine" label={t("tasks.scope.mine")} icon={Inbox} count={mineCount} />
-        <ScopeTab value="given" label={t("tasks.scope.given")} icon={Send} count={givenCount} />
-        <Link
-          href="/tasks/control"
-          className="flex-1 sm:flex-initial px-4 py-2.5 rounded-[10px] text-[14px] font-semibold transition-all flex items-center justify-center gap-2 bg-[var(--surface-3)] text-[var(--muted)] hover:text-[var(--foreground)]"
-        >
-          <IconChecklist className="size-4 shrink-0" />
-          <span>{t("staffX.taskControl.tabLabel")}</span>
-        </Link>
-      </div>
+            {canCreate && (
+              <Button asChild variant="primary" size="40" icon={Plus}>
+                <Link href="/tasks/new">{t("tasks.newTitle")}</Link>
+              </Button>
+            )}
+          </>
+        }
+        tools={
+          <div className="inline-flex items-center gap-1 rounded-[12px] border border-[var(--line)] bg-[var(--surface-2)] p-1">
+            <ScopeTab value="mine" label={t("tasks.scope.mine")} icon={Inbox} count={mineCount} />
+            <ScopeTab value="given" label={t("tasks.scope.given")} icon={Send} count={givenCount} />
+          </div>
+        }
+      />
 
       <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto -mx-1 px-1 scrollbar-thin">
         <StatusTabBtn value="all" label={t("common.all")} color="text-[var(--foreground)]" />
