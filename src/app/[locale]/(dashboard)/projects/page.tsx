@@ -5,14 +5,15 @@ import { auth } from "@/lib/auth";
 import { listProjects } from "@/server/queries/projects";
 import { listProjectTypes, listStageOptionsByType } from "@/server/queries/stages";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui-biib/Button";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Segmented } from "@/components/ui-biib/Segmented";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { ProjectsFilters } from "@/components/projects/projects-filters";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { ScrollMemory } from "@/components/scroll-memory";
 import { Marquee } from "@/components/ui/marquee";
-import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle, IconTimeline as Timeline, IconCash as Cash } from "@tabler/icons-react";
-import { canSeeMoney } from "@/lib/permissions/money";
+import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle, IconTimeline as Timeline, IconLayoutGrid } from "@tabler/icons-react";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors";
@@ -54,7 +55,6 @@ export default async function ProjectsPage({
   ]);
   const canCreate = canEditProjects(session.user.email);
   const canExport = canViewMoney(session.user.email); // hisobotda summalar bör → faqat allowlist uçun
-  const showPayments = await canSeeMoney({ id: session.user.id, email: session.user.email });
   // Xronologiya (Gant) — joriy qidiruv/tur filtrlari bilan ochiladi.
   const tl = new URLSearchParams();
   if (search) tl.set("search", search);
@@ -142,7 +142,7 @@ export default async function ProjectsPage({
       }
     >
       <span>{label}</span>
-      <span className="text-[11px] rounded-full px-1.5 py-0 tabular font-bold bg-[var(--surface-3)] text-[var(--muted)]">
+      <span className="rounded-md px-1.5 py-0 text-[11px] font-bold tabular bg-[var(--surface-3)] text-[var(--muted)]">
         {count}
       </span>
     </Link>
@@ -152,33 +152,31 @@ export default async function ProjectsPage({
     <div className="space-y-5 sm:space-y-6 stagger-children">
       {/* Loyihadan qaytganda röyxatning skroll holatini tiklaydi. */}
       <ScrollMemory />
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("projects.pageTitle")}</h1>
-        <div className="flex flex-wrap gap-2 shrink-0">
-          <Button asChild variant="outline" size="default">
-            <Link href={`/projects/timeline${tlQs}`} aria-label={t("staffX.portfolioTimeline.open")}>
-              <Timeline className="size-4" /> <span className="hidden sm:inline">{t("staffX.portfolioTimeline.open")}</span>
-            </Link>
-          </Button>
-          {showPayments && (
-            <Button asChild variant="outline" size="default">
-              <Link href="/projects/payments" aria-label={t("staffX.paymentsRegister.open")}>
-                <Cash className="size-4" /> <span className="hidden sm:inline">{t("staffX.paymentsRegister.open")}</span>
-              </Link>
-            </Button>
-          )}
-          {canExport && (
-            <Button asChild variant="outline" size="default" className="hidden sm:inline-flex">
-              <a href={exportHref}><Download className="size-4" /> Excel hisoboti</a>
-            </Button>
-          )}
-          {canCreate && (
-            <Button asChild size="default">
-              <Link href="/projects/new"><Plus className="size-4" /> <span className="hidden sm:inline">{t("projects.newTitle")}</span><span className="sm:hidden">{t("common.create")}</span></Link>
-            </Button>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        title={t("projects.pageTitle")}
+        actions={
+          <>
+            {canExport && (
+              <Button asChild variant="glass" size="40" icon={Download} className="max-sm:hidden">
+                <a href={exportHref}>Excel</a>
+              </Button>
+            )}
+            {canCreate && (
+              <Button asChild variant="primary" size="40" icon={Plus}>
+                <Link href="/projects/new">{t("projects.newTitle")}</Link>
+              </Button>
+            )}
+          </>
+        }
+        tools={
+          <Segmented
+            items={[
+              { href: "/projects", label: t("tasks.view.list"), active: true, icon: <IconLayoutGrid className="size-4" /> },
+              { href: `/projects/timeline${tlQs}`, label: t("staffX.portfolioTimeline.title"), active: false, icon: <Timeline className="size-4" /> },
+            ]}
+          />
+        }
+      />
 
       <div className="space-y-3">
         <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto no-scrollbar">
@@ -203,7 +201,7 @@ export default async function ProjectsPage({
             <Link
               key={p.id}
               href={`/projects/${p.id}`}
-              className="group block rounded-2xl border border-[var(--border)] bg-[var(--card)] p-2 shadow-[var(--shadow-1)] transition-[background-color,border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-[var(--primary)] hover:bg-[var(--primary)] hover:shadow-[var(--shadow-2)]"
+              className="group block rounded-2xl bg-[var(--card)] p-2 shadow-[var(--shadow-1)] transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-2)] hover:ring-1 hover:ring-[var(--line-strong)]"
             >
               {/* Kursor ustiga kelganda poster özgarmaydi — faqat uning ortidagi/atrofidagi plitka binafşa rangga ötadi. */}
               <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
@@ -230,18 +228,15 @@ export default async function ProjectsPage({
                   ötganda matn on-primary rangiga özgaradi. Sarlavha markazda; tur çapda, status
                   belgisi öngda; kursor kelganda belgi punktir ramka bölib qolmay, töliq böyaladi. */}
               <div className="space-y-2 px-1.5 pb-1 pt-2.5">
-                <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug transition-colors duration-300 group-hover:text-[var(--primary-foreground)]">{p.name}</p>
+                <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug">{p.name}</p>
                 <div className="flex items-center justify-between gap-2">
                   {/* Agar janr belgilangan bölsa öşani körsatamiz (masalan, eksklyuziv loyihalar); aks holda pipeline turini. Uzun nomlar suriladi. */}
-                  <Marquee className="min-w-0 flex-1 text-xs text-[var(--muted)] transition-colors duration-300 group-hover:text-[var(--primary-foreground)] group-hover:opacity-80">
+                  <Marquee className="min-w-0 flex-1 text-xs text-[var(--muted)]">
                     {isProjectGenre(p.genre)
                       ? t(`projects.genre.${p.genre}` as "projects.genre.film")
                       : (p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal"))}
                   </Marquee>
-                  <StatusTag
-                    tone={STATUS_TONE[p.derived]}
-                    className="shrink-0 transition-all duration-300 group-hover:border-transparent group-hover:bg-[var(--primary-foreground)] group-hover:text-[var(--primary)]"
-                  >
+                  <StatusTag tone={STATUS_TONE[p.derived]} className="shrink-0">
                     {t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}
                   </StatusTag>
                 </div>
