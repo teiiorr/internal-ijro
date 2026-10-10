@@ -907,14 +907,15 @@ html {
 
 /* --- Mavzudan mustaqil bazaviy tokenlar: tipografika, radius, easing, panjara, z, oyna, safe --- */
 :root {
-  --fs-display-xl: clamp(2.25rem, 1rem + 5.556vw, 6rem);
-  --lh-display-xl: 1.05; --ls-display-xl: -0.02em; --fw-display-xl: 700;
-  --fs-display-l: clamp(1.75rem, 1rem + 3.333vw, 4rem);
-  --lh-display-l: 1.12; --ls-display-l: -0.015em; --fw-display-l: 700;
+  /* Jiddiy, ixcham sarlavhalar (oltin emas): sahifa sarlavhasi 22→28px, bo'lim 17→20px. */
+  --fs-display-xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+  --lh-display-xl: 1.1; --ls-display-xl: -0.015em; --fw-display-xl: 700;
+  --fs-display-l: clamp(1.375rem, 1.15rem + 1.05vw, 1.75rem);
+  --lh-display-l: 1.18; --ls-display-l: -0.012em; --fw-display-l: 700;
   --fs-h1: var(--fs-display-l); --lh-h1: var(--lh-display-l); --ls-h1: var(--ls-display-l); --fw-h1: 700;
-  --fs-h2: clamp(1.125rem, 0.875rem + 1.111vw, 1.875rem); --lh-h2: 1.2; --ls-h2: -0.005em; --fw-h2: 700;
-  --fs-h3: clamp(1.25rem, 1.1667rem + 0.3704vw, 1.5rem); --lh-h3: 1.28; --ls-h3: -0.015em; --fw-h3: 700;
-  --fs-h4: clamp(1.125rem, 1.0833rem + 0.1852vw, 1.25rem); --lh-h4: 1.32; --ls-h4: -0.01em; --fw-h4: 700;
+  --fs-h2: clamp(1.0625rem, 0.99rem + 0.35vw, 1.25rem); --lh-h2: 1.25; --ls-h2: -0.006em; --fw-h2: 700;
+  --fs-h3: clamp(1.0625rem, 1.02rem + 0.18vw, 1.1875rem); --lh-h3: 1.3; --ls-h3: -0.01em; --fw-h3: 700;
+  --fs-h4: 1rem; --lh-h4: 1.35; --ls-h4: -0.006em; --fw-h4: 600;
   --fs-body-l: clamp(1.125rem, 1.0833rem + 0.1852vw, 1.25rem); --lh-body-l: 1.65; --ls-body-l: -0.005em; --fw-body-l: 400;
   --fs-body: 1rem; --lh-body: 1.65; --ls-body: 0; --fw-body: 400;
   --fs-small: 0.875rem; --lh-small: 1.55; --ls-small: 0; --fw-small: 500;
@@ -964,7 +965,8 @@ html {
   --bg: #0a1026; --surface: #111a38; --surface-2: #17214a;
   --ink: #f7f3ea; --ink-2: #a9b1cc; --ink-3: #8c95b4;
   --line: #2a3560; --line-strong: #6a76a2; --line-table: #4a5681;
-  --tint: #e8699f; --tint-hover: #f48ab5; --on-tint: #0a1026; --focus: #e8699f;
+  /* Amal rangi — ko'k (pushti o'rniga). Oq yorliq, AA kontrast. */
+  --tint: #2563eb; --tint-hover: #3b82f6; --on-tint: #ffffff; --focus: #3b82f6;
   --accent-text: #e3c46e;
   --gold-lo: #b8860b; --gold: #d4af37; --gold-flank: #f7e08a; --gold-shine: #fff1b8;
   --success: #3fbf8a; --info: #6f95f0; --danger: #ff7a8a; --warning: #f0b45a;
@@ -989,7 +991,8 @@ html {
   --bg: #f4f2ed; --surface: #fbfaf7; --surface-2: #ffffff;
   --ink: #0a1026; --ink-2: #38425f; --ink-3: #5a6380;
   --line: #dad7cf; --line-strong: #7f8499; --line-table: #a9a59b;
-  --tint: #ba2f6c; --tint-hover: #9f2759; --on-tint: #ffffff; --focus: #ba2f6c;
+  /* Amal rangi — ko'k (pushti o'rniga). Oq yorliq, AA kontrast. */
+  --tint: #2563eb; --tint-hover: #1d4ed8; --on-tint: #ffffff; --focus: #2563eb;
   --accent-text: #7c5810;
   --gold-lo: #6b4a0b; --gold: #8c6a1e; --gold-flank: #9a782a; --gold-shine: #a8853a;
   --success: #17714b; --info: #2a54b8; --danger: #b0213a; --warning: #8a5a00;
@@ -1122,3 +1125,30 @@ html {
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
+
+/* --- Tag plashkasi: ESKI "signal flag" shakli (burchaklari qiyilgan), endi Liquid Glass.
+   Shakl o'zgarmaydi; tus --tone, oq yorliq (to'yingan ranglar, ikkala mavzuda ham o'qiladi). --- */
+.tag-plate {
+  --ch: 6px;
+  position: relative;
+  color: #ffffff;
+  background: color-mix(in oklab, var(--tone, #64748b) 88%, transparent);
+  text-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  clip-path: polygon(
+    var(--ch) 0, 100% 0,
+    100% calc(100% - var(--ch)), calc(100% - var(--ch)) 100%,
+    0 100%, 0 var(--ch)
+  );
+  backdrop-filter: blur(4px) saturate(1.5);
+  -webkit-backdrop-filter: blur(4px) saturate(1.5);
+}
+/* Yuqoridan yaltirash — oynaga xos sirt (shakl ota clip-path bilan qirqiladi). */
+.tag-plate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(158deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 44%);
+  pointer-events: none;
+}
+.tag-plate > * { position: relative; }

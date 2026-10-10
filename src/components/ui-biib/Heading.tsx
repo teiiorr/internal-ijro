@@ -26,16 +26,15 @@ const SIZE_CLASS: Record<HeadingSize, string> = {
 };
 
 const DEFAULT_SIZE: Record<HeadingLevel, HeadingSize> = { 1: "display-l", 2: "h1", 3: "h3", 4: "h4" };
-const DEFAULT_ALIGN: Record<HeadingLevel, HeadingAlign> = { 1: "center", 2: "center", 3: "start", 4: "start" };
-/* Katta sarlavhalar doim oltin (ekranda shuningdek yaltiraydi — motion bosqichida). */
-const GOLD_SIZES: ReadonlySet<HeadingSize> = new Set(["display-xl", "display-l", "h1", "h2"]);
+// Jiddiyroq ko'rinish: sarlavhalar oltin emas, oddiy --ink rangda; markazlashtirish
+// faqat alohida so'ralganda (ekranlar o'z joylashuvini belgilaydi).
+const DEFAULT_ALIGN: Record<HeadingLevel, HeadingAlign> = { 1: "start", 2: "start", 3: "start", 4: "start" };
 
 export function headingClass(level: HeadingLevel, size?: HeadingSize, align?: HeadingAlign, trim = false): string {
   const resolved = size ?? DEFAULT_SIZE[level];
   return cx(
     SIZE_CLASS[resolved],
     "text-balance text-ink",
-    GOLD_SIZES.has(resolved) && "gold-text",
     trim && "text-trim",
     (align ?? DEFAULT_ALIGN[level]) === "center" && "heading-center",
   );
