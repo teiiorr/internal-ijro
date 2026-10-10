@@ -32,7 +32,7 @@ export async function TodayStrip({ userId, locale }: { userId: string; locale: s
         </Link>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[15px] font-semibold">
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-center text-[15px] font-semibold">
         {s.today > 0 && <span className="text-[var(--primary)]">{t("todayCount", { count: s.today })}</span>}
         {s.overdue > 0 && <span className="text-[var(--danger)]">{t("overdueCount", { count: s.overdue })}</span>}
         {s.approvals > 0 && <span className="text-[var(--warning)]">{t("approvalsCount", { count: s.approvals })}</span>}
