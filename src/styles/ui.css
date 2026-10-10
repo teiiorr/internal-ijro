@@ -557,3 +557,8 @@
     .fact-list dd { margin-bottom: 12px; }
   }
 }
+
+/* Dashboard (Bosh sahifa) seksiya sarlavhalari markazda (foydalanuvchi soʻrovi).
+   Qatlamsiz + !important: Tailwind utilities (justify-between) qatlamidan ustun. */
+.dash-centered .section-header { justify-content: center !important; text-align: center; }
+.dash-centered .section-header > div:first-child { justify-content: center !important; flex-wrap: wrap; }

@@ -44,7 +44,7 @@ export default async function DashboardPage() {
     /moliya/i.test(meRow?.deptName ?? "");
 
   return (
-    <div className="flex flex-col gap-8 lg:gap-12">
+    <div className="dash-centered flex flex-col gap-8 lg:gap-12">
       {/* Profil: dumaloq foto + ism + "boʻlim, lavozim" — bitta qatorda, Manrope */}
       <header className="flex min-w-0 items-center gap-3">
         <UserAvatar name={fullName} avatarUrl={meRow?.avatarUrl} size="md" />

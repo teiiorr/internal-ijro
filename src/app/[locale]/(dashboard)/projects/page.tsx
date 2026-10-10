@@ -25,7 +25,7 @@ type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_ho
 // yashil — yakunlangan, sariq — toʻxtatilgan, neytral — boshlanmagan.
 const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
   completed: "success",
-  in_progress: "info",
+  in_progress: "warning",
   on_hold: "warning",
   not_started: "neutral",
 };

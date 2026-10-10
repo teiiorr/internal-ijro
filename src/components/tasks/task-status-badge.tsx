@@ -4,7 +4,7 @@ import { Status, type StatusTone } from "@/components/ui-biib/Status";
 // Topshiriq holati → xotirjam BIIB holat belgisi (kapsula/signal-flag emas).
 const STATUS_TONE: Record<string, StatusTone> = {
   todo: "neutral",
-  in_progress: "info",
+  in_progress: "warning",
   under_review: "warning",
   completed: "success",
   rejected: "danger",

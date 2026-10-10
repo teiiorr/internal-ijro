@@ -35,15 +35,14 @@ function Row({ item, child }: { item: NavItem; child?: boolean }) {
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          // Yorliqlar: har doim koʻk, CAPS (foydalanuvchi so'rovi).
-          "group/row relative flex items-center gap-3 rounded-[12px] px-3 text-[var(--tint)] transition-colors",
+          "group/row relative flex items-center gap-3 rounded-[12px] px-3 transition-colors",
           child ? "h-11 text-[15px] font-medium" : "h-12 text-[16px] font-semibold",
           active
-            ? "bg-[var(--surface-2)] before:absolute before:left-0 before:top-1/2 before:h-5 before:w-0.5 before:-translate-y-1/2 before:rounded-[2px] before:bg-tint before:content-['']"
-            : "hover:bg-[var(--surface-2)]",
+            ? "bg-[var(--surface-2)] text-ink before:absolute before:left-0 before:top-1/2 before:h-5 before:w-0.5 before:-translate-y-1/2 before:rounded-[2px] before:bg-tint before:content-['']"
+            : "text-ink-2 hover:bg-[var(--surface-2)] hover:text-ink",
         )}
       >
-        <Icon className="size-5 shrink-0 text-[var(--tint)]" stroke={1.75} />
+        <Icon className={cn("size-5 shrink-0", active ? "text-tint" : "text-ink-3 group-hover/row:text-ink-2")} stroke={1.75} />
         <span className="flex-1 truncate">{t(item.labelKey as "nav.dashboard")}</span>
         <Badge n={n} />
       </Link>
@@ -80,16 +79,16 @@ export function Sidebar() {
                     aria-controls={`nav-g-${e.group.key}`}
                     onClick={() => toggle(e.group.key)}
                     className={cn(
-                      "flex h-12 w-full items-center gap-3 rounded-[12px] px-3 text-[16px] font-semibold text-[var(--tint)] transition-colors",
-                      !open && "hover:bg-[var(--surface-2)]",
+                      "flex h-12 w-full items-center gap-3 rounded-[12px] px-3 text-[16px] font-semibold transition-colors",
                       open && "bg-[var(--surface-2)]",
+                      hasActiveInside ? "text-ink" : "text-ink-2 hover:bg-[var(--surface-2)] hover:text-ink",
                     )}
                   >
-                    <GroupIcon className="size-5 shrink-0 text-[var(--tint)]" stroke={1.75} />
+                    <GroupIcon className={cn("size-5 shrink-0", hasActiveInside ? "text-tint" : "text-ink-3")} stroke={1.75} />
                     <span className="flex-1 truncate text-left">{t(e.group.labelKey as "nav.group.work")}</span>
                     {!open && groupBadge > 0 && <Badge n={groupBadge} />}
                     {!open && groupBadge === 0 && hasActiveInside && <span className="size-1.5 rounded-full bg-tint" aria-hidden />}
-                    <IconChevronRight className={cn("size-4 shrink-0 text-[var(--tint)] transition-transform duration-200", open && "rotate-90")} stroke={2} />
+                    <IconChevronRight className={cn("size-4 shrink-0 text-ink-3 transition-transform duration-200", open && "rotate-90")} stroke={2} />
                   </button>
                   <div
                     className="grid transition-[grid-template-rows] duration-200 ease-out"

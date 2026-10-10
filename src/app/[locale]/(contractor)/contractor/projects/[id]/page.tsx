@@ -33,7 +33,7 @@ import { desc, eq } from "drizzle-orm";
 
 const STATUS_TONE: Record<string, StatusTone> = {
   completed: "success",
-  in_progress: "info",
+  in_progress: "warning",
   on_hold: "warning",
   not_started: "neutral",
 };

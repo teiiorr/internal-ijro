@@ -3,25 +3,21 @@ import * as React from "react";
 export type StatusTone = "green" | "amber" | "red" | "muted";
 export type StatusSize = "sm" | "md" | "lg";
 
-// Xotirjam «Status» koʻrinishi (A4.4.4): tusning oʻz rangi matnda, 14% aralashma toʻldirishda.
-// Burchak qiymati 6px (radius-s), kapsula/clip-path yoki uppercase yoʻq.
+// Burchakli "signal flag" Liquid Glass plashka (.tag-plate): toʻyingan tus, oq yorliq.
 const TONE: Record<StatusTone, string> = {
-  green: "var(--success)",
-  amber: "var(--warning)",
-  red:   "var(--danger)",
-  muted: "var(--ink-2)",
+  green: "#16a34a",
+  amber: "#e08c10",
+  red: "#e02424",
+  muted: "#64748b",
 };
 
-const SIZE: Record<StatusSize, string> = {
-  sm: "min-h-5 px-1.5 text-[11px]",
-  md: "min-h-6 px-2 text-[0.75rem]",
-  lg: "min-h-7 px-2.5 text-[13px]",
+const SIZE: Record<StatusSize, { box: string; ch: string }> = {
+  sm: { box: "px-2 py-[3px] text-[10px] tracking-[0.04em]", ch: "4px" },
+  md: { box: "px-2.5 py-1 text-[11px] tracking-[0.05em]", ch: "6px" },
+  lg: { box: "px-3 py-1.5 text-[13px] tracking-[0.05em]", ch: "7px" },
 };
 
-/**
- * Xotirjam holat belgisi. Avval burchakli «signal yorligʻi» edi; endi BIIB `Status`
- * koʻrinishida. `live` API mosligi uchun qabul qilinadi, biroq eʼtiborsiz qoldiriladi.
- */
+/** Holat plashkasi — burchakli signal shakli (.tag-plate). `live` API mosligi uchun. */
 export function StatusTag({
   tone,
   size = "md",
@@ -35,13 +31,13 @@ export function StatusTag({
   children: React.ReactNode;
   className?: string;
 }) {
-  const c = TONE[tone];
+  const s = SIZE[size];
   return (
     <span
-      style={{ color: c, backgroundColor: `color-mix(in oklab, ${c} 14%, transparent)` }}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-[var(--radius-s)] font-semibold leading-none whitespace-nowrap ${SIZE[size]} ${className}`}
+      style={{ ["--tone"]: TONE[tone], ["--ch"]: s.ch } as React.CSSProperties}
+      className={`tag-plate inline-flex items-center justify-center font-bold uppercase leading-none whitespace-nowrap ${s.box} ${className}`}
     >
-      {children}
+      <span className="text-trim">{children}</span>
     </span>
   );
 }
