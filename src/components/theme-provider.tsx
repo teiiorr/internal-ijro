@@ -6,10 +6,19 @@ type Ctx = { theme: Theme; setTheme: (t: Theme) => void; resolved: "light" | "da
 
 const ThemeContext = React.createContext<Ctx | null>(null);
 
+// Night = BIIB tungi, Day = yangi kunduzgi. Ikkalasi bir vaqtda ham `.dark` klassi
+// (eski uslublar va `dark:` utilitalari), ham `data-theme` (BIIB tokenlari) orqali yoqiladi.
+const THEME_COLOR = { dark: "#0a1026", light: "#f4f2ed" } as const;
+
 function applyTheme(t: Theme) {
   const root = document.documentElement;
   const resolved = t === "system" ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : t;
   root.classList.toggle("dark", resolved === "dark");
+  root.dataset.theme = resolved;
+  root.style.colorScheme = resolved;
+  document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]').forEach((m) => {
+    m.content = THEME_COLOR[resolved];
+  });
   return resolved;
 }
 

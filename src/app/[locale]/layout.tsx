@@ -28,6 +28,16 @@ export default async function LocaleLayout({
       data-locale={locale}
       suppressHydrationWarning
     >
+      <head>
+        {/* Mavzuni birinchi bo'yoqdan oldin qo'yamiz — miltillash bo'lmaydi (A3).
+            `.dark` (eski uslublar) va `data-theme` (BIIB tokenlari) birga o'rnatiladi. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var s=localStorage.getItem('theme');var t=(s==='light'||s==='dark')?s:(s==='system'?null:s);if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}var r=document.documentElement;r.dataset.theme=t;r.classList.toggle('dark',t==='dark');r.style.colorScheme=t;}catch(e){}})();",
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider initial="system">
           <NextIntlClientProvider>{children}</NextIntlClientProvider>
