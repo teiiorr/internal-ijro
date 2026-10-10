@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { usePathname } from "@/i18n/navigation";
-import { IconSearch as Search, IconLogout as LogOut, IconSettings as SettingsIcon, IconChevronRight as ChevronRight } from "@tabler/icons-react";
+import { IconLogout as LogOut, IconSettings as SettingsIcon, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
@@ -20,11 +19,7 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
   const locale = useLocale();
   const displayName = rawName ? userName : localizeName(userName, locale);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [q, setQ] = useState("");
-  const router = useRouter();
   const pathname = usePathname();
-  // Vazifa qidiruvi faqat Vazifalar bölimiga tegişli — boşqa joylarda yaşiriladi.
-  const onTasks = pathname === "/tasks" || pathname.startsWith("/tasks/");
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,12 +30,6 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  function onSearch(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!q.trim()) return;
-    router.push(`/tasks?q=${encodeURIComponent(q.trim())}`);
-  }
-
   return (
     <header className="sticky top-0 z-30 glass-bar">
       <div className="h-[68px] sm:h-[84px] flex items-center gap-2 sm:gap-3 px-3 sm:px-4 md:px-8 max-w-[1500px] mx-auto">
@@ -48,20 +37,6 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
         <Link href="/dashboard" className="flex min-w-0 items-center overflow-hidden mr-1 sm:mr-3">
           <BrandLogo className="h-10 sm:h-16" />
         </Link>
-
-        {onTasks && (
-          <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-md ml-4">
-            <div className="relative w-full">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[var(--ink-3)]" />
-              <input
-                placeholder={t("header.searchPlaceholder")}
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                className="h-11 w-full rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] pl-10 pr-4 text-[14px] font-medium text-[var(--ink)] placeholder:text-[var(--ink-3)] transition-colors focus-visible:border-[var(--tint)] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_color-mix(in_oklab,var(--tint)_35%,transparent)]"
-              />
-            </div>
-          </form>
-        )}
 
         <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1.5">
           {!pathname.startsWith("/contractor") && <CommandPalette />}

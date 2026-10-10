@@ -76,7 +76,7 @@ export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; 
                 <Row key={row.id} href={`${hrefBase}/${row.id}`}>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{row.title}</p>
-                    <p className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 t-small text-[var(--ink-3)]">
+                    <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 t-small text-[var(--ink-3)]">
                       {row.assignedToName && (
                         <span className="inline-flex min-w-0 items-center gap-1.5">
                           <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />
@@ -89,7 +89,7 @@ export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; 
                           <span className="truncate">{row.projectName}</span>
                         </span>
                       )}
-                    </p>
+                    </div>
                   </div>
                   <div className="shrink-0">
                     <RowSignal row={row} t={t} />
