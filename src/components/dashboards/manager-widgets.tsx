@@ -3,17 +3,13 @@ import {
   getProjectStageKpis,
   getProjectStatusBreakdown,
   getProjectTypeBreakdown,
-  getStageDeadlineBoard,
   getProjectPaymentsSummary,
 } from "@/server/queries/dashboards";
-import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { ProjectStatusDonut, ProjectTypeBar } from "@/components/dashboards/lazy-charts";
 import type { DerivedStatus } from "@/lib/projects/progress";
 import { Section } from "@/components/ui-biib/Section";
 import { Card } from "@/components/ui-biib/Card";
-import { Rows, Row } from "@/components/ui-biib/Rows";
 import { FactList } from "@/components/ui-biib/FactList";
-import { IconLayoutKanban as FolderKanban } from "@tabler/icons-react";
 
 const money = (n: number) => `${Math.round(n).toLocaleString("ru-RU")} UZS`;
 
@@ -28,11 +24,10 @@ const STATUS_HEX: Record<DerivedStatus, string> = {
 export async function ManagerWidgets({ showPayments = false }: { showPayments?: boolean }) {
   const t = await getTranslations();
   const locale = await getLocale();
-  const [kpi, statusBreak, typeBreak, board, pay] = await Promise.all([
+  const [kpi, statusBreak, typeBreak, pay] = await Promise.all([
     getProjectStageKpis(),
     getProjectStatusBreakdown(),
     getProjectTypeBreakdown(locale),
-    getStageDeadlineBoard(locale, 8),
     getProjectPaymentsSummary(),
   ]);
 
@@ -48,47 +43,8 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
   const paidPct = (pay.paid / payBase) * 100;
   const pendingPct = (payRemaining / payBase) * 100;
 
-  // KPI raqamlari — plitka emas, seksiya meta sifatida rangli matn (A4.4.5).
-  const boardMeta = (
-    <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
-      {kpi.overdueStages > 0 && <span className="text-[var(--danger)]">{t("dashboard.manager.kpiOverdueStages")}: {kpi.overdueStages}</span>}
-      {kpi.dueSoonStages > 0 && <span className="text-[var(--warning)]">{t("dashboard.manager.kpiDueSoon")}: {kpi.dueSoonStages}</span>}
-      {kpi.overdueTasks > 0 && <span className="text-[var(--danger)]">{t("dashboard.manager.kpiOverdueTasks")}: {kpi.overdueTasks}</span>}
-    </span>
-  );
-
   return (
     <>
-      {/* Bosqich muddatlari — dashboardning amaliy markazi */}
-      <Section
-        title={t("dashboard.manager.stageBoard")}
-        meta={boardMeta}
-        seeAllHref="/projects?overdue=1"
-        seeAllLabel={t("common.all")}
-      >
-        <Card bare className="px-5 sm:px-6">
-          {board.length === 0 ? (
-            <p className="py-6 text-center t-small text-[var(--ink-3)]">{t("dashboard.manager.stageBoardEmpty")}</p>
-          ) : (
-            <Rows>
-              {board.map((s) => (
-                <Row key={s.stageId} href={`/projects/${s.projectId}/stages/${s.stageId}`}>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{s.stageName}</p>
-                    <p className="mt-0.5 flex items-center gap-1.5 truncate t-small text-[var(--ink-3)]">
-                      <FolderKanban className="size-3.5 shrink-0" aria-hidden />
-                      {s.projectName}
-                      {s.responsibleName ? `, ${s.responsibleName}` : ""}
-                    </p>
-                  </div>
-                  <DeadlineCountdown deadline={s.plannedDeadline} />
-                </Row>
-              ))}
-            </Rows>
-          )}
-        </Card>
-      </Section>
-
       {/* Loyihalar tahlili: holat donut + tur bar */}
       <Section title={t("dashboard.manager.projectsByStatus")} meta={`${t("dashboard.manager.kpiActiveProjects")}: ${kpi.activeProjects}`}>
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">

@@ -1,7 +1,7 @@
 // Sof formatlash yordamchilari (server va mijoz komponentlari uchun umumiy).
 
 /** Raqam guruhlari orasidagi ingichka boʻlinmas boʻshliq (U+202F) — "120 000 000". */
-const THIN_SPACE = " ";
+const THIN_SPACE = " ";
 /** Summa va valyuta orasidagi boʻlinmas boʻshliq — "UZS" alohida qatorga tushib qolmasin. */
 const NBSP = " ";
 

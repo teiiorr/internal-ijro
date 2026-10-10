@@ -88,15 +88,6 @@ export function KpiDeltaStrip({
   return (
     <section aria-label={t("title")}>
       <Card>
-        {isEstimate && (
-          <p className="mb-5 flex items-start gap-2 t-small text-[var(--ink-2)]">
-            <InfoCircle className="mt-0.5 size-4 shrink-0 text-[var(--warning)]" aria-hidden />
-            <span className="min-w-0 break-words">
-              <span className="font-semibold text-[var(--warning)]">{t("estimate")}.</span> {t("estimateHint")}
-            </span>
-          </p>
-        )}
-
         <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-7">
           {KPI_TILES.map((tile) => {
             const masked = tile.money && !canMoney;
@@ -127,11 +118,6 @@ export function KpiDeltaStrip({
                       </span>
                       <span className="min-w-0 truncate t-micro text-[var(--ink-3)]">{t("vsPrev")}</span>
                     </>
-                  )}
-                  {isEstimate && tile.pointInTime && (
-                    <Status tone="warning" className="ml-auto">
-                      {t("estimate")}
-                    </Status>
                   )}
                 </div>
                 {values.length >= 2 && (

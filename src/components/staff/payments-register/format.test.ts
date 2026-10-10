@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { formatMoney, groupThousands, splitMonth } from "./format";
 
-const THIN = " ";
+const THIN = " ";
 const NBSP = " ";
 
 describe("money formatting", () => {

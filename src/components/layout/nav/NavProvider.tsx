@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { STAFF_NAV } from "./staff-nav";
@@ -86,11 +86,24 @@ export function NavProvider({
     });
   }, []);
 
-  // Marshrut guruh ichiga kirsa, o'sha guruh ochiladi (foydalanuvchi keyin yiga oladi).
-  const isOpen = useCallback(
-    (groupKey: string) => open.has(groupKey) || groupKey === activeGroupKey,
-    [open, activeGroupKey],
-  );
+  // Marshrut YANGI guruh ichiga kirsa — o'sha guruh bir marta ochiladi. Keyin foydalanuvchi
+  // uni qo'lda yig'ib qo'ya oladi (faol guruhni ham): yig'ilgan holat saqlanadi, chunki effekt
+  // faqat activeGroupKey o'zgarganda ishlaydi (isOpen endi faol guruhni majburan ochmaydi).
+  const prevActiveGroup = useRef(activeGroupKey);
+  useEffect(() => {
+    if (activeGroupKey && activeGroupKey !== prevActiveGroup.current) {
+      setOpen((prev) => {
+        if (prev.has(activeGroupKey)) return prev;
+        const next = new Set(prev);
+        next.add(activeGroupKey);
+        writeCookie([...next]);
+        return next;
+      });
+    }
+    prevActiveGroup.current = activeGroupKey;
+  }, [activeGroupKey]);
+
+  const isOpen = useCallback((groupKey: string) => open.has(groupKey), [open]);
 
   const value = useMemo<NavContextValue>(
     () => ({ portal, entries, tabItems, badges, activeKey, activeGroupKey, isOpen, toggle }),

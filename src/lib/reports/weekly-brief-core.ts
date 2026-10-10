@@ -272,12 +272,12 @@ export function isoWeekLabel(weekStart: string): string {
 /** "28.09–04.10" — dushanbadan yakshanbagacha. */
 export function weekRangeLabel(weekStart: string): string {
   const dm = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}`;
-  return `${dm(weekStart)}–${dm(addDays(weekStart, 6))}`;
+  return `${dm(weekStart)} - ${dm(addDays(weekStart, 6))}`;
 }
 
 /** Hafta tanlagichidagi yorliq: "2026-W40 (28.09–04.10)". */
 export function weekOptionLabel(weekStart: string): string {
-  return `${isoWeekLabel(weekStart)} (${weekRangeLabel(weekStart)})`;
+  return weekRangeLabel(weekStart);
 }
 
 /**

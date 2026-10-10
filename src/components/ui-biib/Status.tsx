@@ -1,44 +1,42 @@
-import * as React from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export type StatusTone = "success" | "warning" | "danger" | "info" | "neutral";
 
+// Toʻyingan ranglar: oq yorliq ikkala mavzuda ham oʻqiladi (eski "signal flag" uslubi).
 const TONE: Record<StatusTone, string> = {
-  success: "var(--success)",
-  warning: "var(--warning)",
-  danger: "var(--danger)",
-  info: "var(--info)",
-  neutral: "var(--ink-2)",
+  success: "#16a34a",
+  warning: "#e08c10",
+  danger: "#e02424",
+  info: "#2563eb",
+  neutral: "#64748b",
 };
 
 /**
- * Bitta xotirjam holat belgisi. StatusTag/Badge/DeadlineChip/.process-dots oʻrnini bosadi.
- * Shakl: radius 6 (hech qachon kapsula yoki clip-path emas), ~24px balandlik, 12/600.
- * Toʻldirish: tone rangining 14% aralashmasi; matn — toneʼning oʻz rangi. Faqat qaror
- * talab qilganda koʻrsatiladi (kechikkan, koʻrik kutmoqda, bloklangan); oddiy metadata — matn.
+ * Holat plashkasi — ESKI "signal flag" shakli (burchaklari qiyilgan), Liquid Glass sirt
+ * (.tag-plate). Dumaloq "pilula + nuqta" emas. StatusTag/Badge/DeadlineChip oʻrnini bosadi.
+ * Faqat qaror talab qilganda koʻrsatiladi (kechikkan, koʻrik kutmoqda, bloklangan).
  */
 export function Status({
   tone = "neutral",
-  dot = false,
   className,
   children,
 }: {
   tone?: StatusTone;
+  /** @deprecated plashkaning oʻzi signal — alohida nuqta chizilmaydi. */
   dot?: boolean;
   className?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const c = TONE[tone];
   return (
     <span
+      style={{ ["--tone"]: TONE[tone], ["--ch"]: "6px" } as CSSProperties}
       className={cn(
-        "inline-flex min-h-6 items-center gap-1.5 rounded-[var(--radius-s)] px-2 t-micro whitespace-nowrap",
+        "tag-plate inline-flex items-center justify-center whitespace-nowrap px-2.5 py-1 text-[11px] font-bold uppercase leading-none tracking-[0.04em]",
         className,
       )}
-      style={{ color: c, backgroundColor: `color-mix(in oklab, ${c} 14%, transparent)` }}
     >
-      {dot && <span className="size-1.5 rounded-full" style={{ backgroundColor: c }} aria-hidden />}
-      {children}
+      <span className="text-trim">{children}</span>
     </span>
   );
 }
