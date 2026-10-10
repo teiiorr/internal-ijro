@@ -1,6 +1,10 @@
 @import "tailwindcss";
 /* Mahalliy shriftlar: Manrope UZ (matn/UI) + Unbounded UZ (gold sarlavhalar), oʻzbek glifli. */
 @import "../styles/fonts.css" layer(base);
+/* BIIB primitivlari: Liquid Glass material, tugma/maydon/tag uslublari, o'tishlar. */
+@import "../styles/materials.css";
+@import "../styles/ui.css";
+@import "../styles/transitions.css";
 /* `dark:` utilitalari OS media query'siga emas, .dark klassiga
    ergaşsin (uni ThemeProvider almaştiradi). */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -1063,3 +1067,39 @@ html {
   --font-ui: var(--font-ui);
   --font-display: var(--font-display);
 }
+
+/* =========================================================================
+   BIIB @utility helperlari (tipografika, matn-trim, panjara, z, safe) — Part B
+   ========================================================================= */
+@utility t-display-xl { font-family: var(--font-display); font-size: var(--fs-display-xl); line-height: var(--lh-display-xl); letter-spacing: var(--ls-display-xl); font-weight: var(--fw-display-xl); }
+@utility t-display-l { font-family: var(--font-display); font-size: var(--fs-display-l); line-height: var(--lh-display-l); letter-spacing: var(--ls-display-l); font-weight: var(--fw-display-l); }
+@utility t-h1 { font-family: var(--font-display); font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--ls-h1); font-weight: var(--fw-h1); }
+@utility t-h2 { font-family: var(--font-display); font-size: var(--fs-h2); line-height: var(--lh-h2); letter-spacing: var(--ls-h2); font-weight: var(--fw-h2); }
+@utility t-h3 { font-family: var(--font-ui); font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--ls-h3); font-weight: var(--fw-h3); }
+@utility t-h4 { font-family: var(--font-ui); font-size: var(--fs-h4); line-height: var(--lh-h4); letter-spacing: var(--ls-h4); font-weight: var(--fw-h4); }
+@utility t-body-l { font-family: var(--font-ui); font-size: var(--fs-body-l); line-height: var(--lh-body-l); letter-spacing: var(--ls-body-l); font-weight: var(--fw-body-l); }
+@utility t-body { font-family: var(--font-ui); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); font-weight: var(--fw-body); }
+@utility t-small { font-family: var(--font-ui); font-size: var(--fs-small); line-height: var(--lh-small); letter-spacing: var(--ls-small); font-weight: var(--fw-small); }
+@utility t-label { font-family: var(--font-ui); font-size: var(--fs-label); line-height: var(--lh-label); letter-spacing: var(--ls-label); font-weight: var(--fw-label); }
+@utility t-label-l { font-family: var(--font-ui); font-size: var(--fs-label-l); line-height: var(--lh-label); letter-spacing: var(--ls-label); font-weight: var(--fw-label); }
+@utility t-micro { font-family: var(--font-ui); font-size: var(--fs-micro); line-height: var(--lh-micro); letter-spacing: var(--ls-micro); font-weight: var(--fw-micro); }
+@utility text-trim { text-box: trim-both cap alphabetic; }
+@utility measure { max-width: var(--measure); }
+@utility container-site { width: 100%; max-width: calc(var(--content-max) + 2 * var(--margin)); margin-inline: auto; padding-inline: max(var(--margin), var(--safe-left)) max(var(--margin), var(--safe-right)); }
+@utility grid-site { display: grid; grid-template-columns: repeat(var(--columns), minmax(0, 1fr)); column-gap: var(--gutter); }
+@utility section-pad { padding-block: calc(var(--section-gap) / 2); }
+@utility section-band { padding-block: var(--band-pad); }
+@utility section-hero { padding-top: var(--hero-pad-top); padding-bottom: calc(var(--section-gap) / 2); }
+@utility section-gap { gap: var(--section-gap); }
+@utility block-gap { gap: var(--block-gap); }
+@utility z-base { z-index: var(--z-base); }
+@utility z-raised { z-index: var(--z-raised); }
+@utility z-sticky { z-index: var(--z-sticky); }
+@utility z-header { z-index: var(--z-header); }
+@utility z-tabbar { z-index: var(--z-tabbar); }
+@utility z-overlay { z-index: var(--z-overlay); }
+@utility z-modal { z-index: var(--z-modal); }
+@utility z-toast { z-index: var(--z-toast); }
+@utility inner-highlight { box-shadow: var(--inner-highlight); }
+@utility safe-bottom { padding-bottom: var(--safe-bottom); }
+@utility safe-top { padding-top: var(--safe-top); }

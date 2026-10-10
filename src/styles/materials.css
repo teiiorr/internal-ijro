@@ -1,0 +1,705 @@
+@layer components {
+  /* Boshqaruv qatlami materiali (oyna). backdrop-filter faqat shu faylda va src/components/glass/
+     ichida ishlatiladi. */
+
+  /* Oyna koʻzgu-muz kabi: markazda yengil xiralik, qirrada sinish (Chromium), tinch yaltiroq va pastki
+     soya. Yorqinlik oshirilmaydi, aks holda muz sut tumanga aylanardi. */
+  .material {
+    --m-tint: var(--g-tint);
+    --m-blur: var(--g-blur);
+    --m-bright: 1;
+    --m-spec: color-mix(in oklab, #ffffff 80%, var(--material-rim));
+    --m-caustic: calc(var(--g-rim) * 55%);
+    position: relative;
+    isolation: isolate;
+    color: var(--material-ink);
+    background: color-mix(in oklab, var(--material-base) calc(var(--m-tint) * 100%), transparent);
+    -webkit-backdrop-filter: blur(var(--m-blur)) saturate(var(--material-sat))
+      brightness(var(--m-bright));
+    backdrop-filter: blur(var(--m-blur)) saturate(var(--material-sat)) brightness(var(--m-bright));
+    /* Ramka chizigʻi yoʻq: shakl qirra sinishi, ichki kaustika va pastki soyadan bilinadi. */
+    box-shadow:
+      inset 0 0 24px -12px color-mix(in oklab, var(--m-spec) var(--m-caustic), transparent),
+      inset 0 -10px 14px -12px
+        color-mix(in oklab, var(--material-shadow) calc(40% + var(--g-d) * 60%), transparent),
+      var(--shadow-floating);
+  }
+  /* Tus butun oynani emas, faqat yorliqni tayanadi: glif atrofida uch qavatli yumshoq tayanch.
+     Oyna tiniq qoladi, yorliq esa ohang notoʻgʻri kelgan lahzada ham oʻqiladi. */
+  .material[data-text="true"] {
+    --m-tint: var(--g-tint-text);
+  }
+  /* Oyna yorugʻ surat va tungi zamin chegarasida turganda muz qalinlashadi: bitta ohang ikkala fonga
+     mos kelmaydi. */
+  .material[data-text="true"][data-tone-mixed]:not([data-variant="tinted"]):not(
+      [data-radius="panel"],
+      [data-radius="sheet"]
+    ) {
+    --m-tint: max(var(--g-tint-text), 0.72);
+  }
+  .material[data-text="true"]:not([data-variant="tinted"]) {
+    text-shadow:
+      0 0 1px color-mix(in oklab, var(--material-base) 80%, transparent),
+      0 0 3px color-mix(in oklab, var(--material-base) 55%, transparent);
+  }
+  .material[data-text="true"]:not([data-variant="tinted"]) svg:not(.surface-filter) {
+    filter: drop-shadow(0 0 1px color-mix(in oklab, var(--material-base) 85%, transparent))
+      drop-shadow(0 0 2px color-mix(in oklab, var(--material-base) 45%, transparent));
+  }
+  /* Menyu, varaq, dialog va panellarda matn koʻp va mayda, shu sabab muz qalin. Yorliqlar har fonda ≥ 4.5:1. */
+  .surface:is([data-radius="panel"], [data-radius="sheet"])[data-text="true"] {
+    --m-blur: calc(var(--g-blur) * 3 + 12px);
+    --m-tint: calc(0.95 - 0.17 * var(--g-t));
+    text-shadow: none;
+  }
+  .surface:is([data-radius="panel"], [data-radius="sheet"])[data-text="true"] svg {
+    filter: none;
+  }
+
+  /* ---------- Tugmalar ----------
+     Yaltiroq qatlami harakatsiz, faqat background-color silliq oʻtadi. Yorliqlar har holatda ≥ 4.5:1. */
+  .ui-button:is([data-variant="primary"], [data-variant="ghost"]) {
+    --btn-glare: linear-gradient(
+      158deg,
+      color-mix(in oklab, #ffffff 22%, transparent) 0%,
+      color-mix(in oklab, #ffffff 6%, transparent) 30%,
+      transparent 52%
+    );
+    transition:
+      background-color var(--dur-ui) var(--ease-ui),
+      box-shadow var(--dur-ui) var(--ease-ui),
+      color var(--dur-ui) var(--ease-ui),
+      scale 200ms var(--ease-ui),
+      translate 500ms var(--ease-out);
+  }
+  :root .ui-button[data-variant="primary"] {
+    background-color: color-mix(in oklab, var(--tint) 92%, transparent);
+    background-image: var(--btn-glare);
+    -webkit-backdrop-filter: blur(10px) saturate(1.6);
+    backdrop-filter: blur(10px) saturate(1.6);
+    box-shadow:
+      inset 0 0 18px -8px color-mix(in oklab, #ffffff 60%, transparent),
+      inset 0 -8px 12px -10px color-mix(in oklab, var(--material-shadow) 90%, transparent),
+      var(--shadow-raised);
+  }
+  @media (hover: hover) {
+    :root .ui-button[data-variant="primary"]:hover:not([aria-disabled="true"]) {
+      --on-tint: var(--tint);
+      background-color: color-mix(
+        in oklab,
+        var(--material-base) calc(max(var(--g-tint-text), 0.55) * 100%),
+        transparent
+      );
+      box-shadow:
+        inset 0 0 22px -8px color-mix(in oklab, var(--tint) 45%, transparent),
+        inset 0 -8px 12px -10px color-mix(in oklab, var(--material-shadow) 90%, transparent),
+        var(--shadow-floating);
+    }
+  }
+  :root .ui-button[data-variant="primary"]:focus-visible {
+    --on-tint: var(--tint);
+    background-color: color-mix(
+      in oklab,
+      var(--material-base) calc(max(var(--g-tint-text), 0.55) * 100%),
+      transparent
+    );
+  }
+  :root .ui-button[data-variant="ghost"] {
+    background-color: transparent;
+  }
+  @media (hover: hover) {
+    :root .ui-button[data-variant="ghost"]:hover:not([aria-disabled="true"]) {
+      background-color: color-mix(
+        in oklab,
+        var(--material-base) calc(max(var(--g-tint-text), 0.45) * 100%),
+        transparent
+      );
+      background-image: var(--btn-glare);
+      -webkit-backdrop-filter: blur(8px) saturate(1.6);
+      backdrop-filter: blur(8px) saturate(1.6);
+      box-shadow:
+        inset 0 0 16px -8px color-mix(in oklab, var(--m-spec, #ffffff) 55%, transparent),
+        var(--shadow-raised);
+    }
+  }
+  :root .ui-button[data-variant="ghost"]:focus-visible {
+    background-color: color-mix(
+      in oklab,
+      var(--material-base) calc(max(var(--g-tint-text), 0.45) * 100%),
+      transparent
+    );
+  }
+  @media (hover: hover) {
+    :root
+      .ui-button.material[data-variant="glass"]:not([data-icon="only"]):hover:not(
+        [aria-disabled="true"]
+      ) {
+      --m-tint: calc(var(--g-tint-text) * 0.6);
+      box-shadow:
+        inset 0 0 26px -8px color-mix(in oklab, var(--m-spec) 70%, transparent),
+        inset 0 -10px 14px -12px color-mix(in oklab, var(--material-shadow) 80%, transparent),
+        var(--shadow-floating);
+    }
+  }
+  .feature-icon {
+    background-color: color-mix(in oklab, var(--material-base) 42%, transparent);
+    background-image: linear-gradient(
+      158deg,
+      color-mix(in oklab, #ffffff 20%, transparent) 0%,
+      transparent 50%
+    );
+    -webkit-backdrop-filter: blur(6px) saturate(1.5);
+    backdrop-filter: blur(6px) saturate(1.5);
+    box-shadow:
+      inset 0 0 14px -6px color-mix(in oklab, var(--accent-text) 38%, transparent),
+      var(--shadow-raised);
+  }
+  @media (hover: hover) {
+    .feature:hover .feature-icon {
+      box-shadow:
+        inset 0 0 0 1.5px var(--accent-text),
+        inset 0 0 14px -6px color-mix(in oklab, var(--accent-text) 38%, transparent),
+        var(--shadow-raised);
+    }
+  }
+
+  /* Oyna ustida oyna boʻlmaydi: sarlavha guruhidagi oyna tugma oʻz muzi, soyasi va qirrasini chizmaydi,
+     guruhning bitta oynasi yetadi. */
+  .surface .ui-button.material[data-variant="glass"] {
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  @media (hover: hover) {
+    .surface .ui-button.material[data-variant="glass"]:hover {
+      background: color-mix(in oklab, var(--material-ink) 8%, transparent);
+    }
+  }
+  /* Oʻchiq oyna tugma faolidan aniq farq qilsin: tinch sirt, xira yorliq, chegara 3:1. Aks holda oyna
+     materiali ui.css faylidagi oʻchiq holatni bosib ketardi. */
+  :root .ui-button:not([data-variant="ghost"], [data-variant="link"])[aria-disabled="true"] {
+    /* Yorliq rangini text-on-tint utilitasi beradi, shu sabab oʻzgaruvchining oʻzi almashtiriladi. */
+    --on-tint: var(--ink-3);
+    color: var(--ink-3);
+    background: var(--surface-2);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: var(--ring-boundary);
+  }
+  /* Sirt: radius konsentrik, padding ichki radiusni belgilaydi. */
+  .surface {
+    border-radius: var(--surface-radius);
+    corner-shape: squircle;
+  }
+  /* Qirra sinishini hozircha faqat Chromium backdrop-filter orqali bera oladi. */
+  .surface[data-refract="on"] {
+    -webkit-backdrop-filter: var(--surface-refract) blur(var(--m-blur))
+      saturate(var(--material-sat)) brightness(var(--m-bright));
+    backdrop-filter: var(--surface-refract) blur(var(--m-blur)) saturate(var(--material-sat))
+      brightness(var(--m-bright));
+  }
+  .surface-filter {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  /* Yaltiroq butun sirt boʻylab soʻnadi, shu sabab chegara chizigʻi hosil qilmaydi. */
+  .surface::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    corner-shape: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        158deg,
+        color-mix(in oklab, var(--m-spec) calc(var(--g-rim) * 16%), transparent) 0%,
+        color-mix(in oklab, var(--m-spec) calc(var(--g-rim) * 5%), transparent) 26%,
+        transparent 46%
+      ),
+      linear-gradient(
+        to top,
+        color-mix(in oklab, var(--m-spec) calc(var(--g-rim) * 6%), transparent) 0%,
+        transparent 22%
+      );
+    z-index: -1;
+  }
+
+  /* Varaq va dialog oʻzi skroll qilinadi: absolute qatlamlar kontent bilan birga ketib qolardi.
+     Ikkalasida transform bor, shu sabab fixed qatlam sirtning oʻziga bogʻlanadi va joyida turadi. */
+  .surface:is(.glass-sheet, .glass-dialog)::after {
+    position: fixed;
+  }
+
+  .surface[data-variant="clear"] {
+    --m-tint: calc(var(--g-tint) * 0.45);
+    background:
+      linear-gradient(
+        color-mix(in oklab, var(--ink) 18%, transparent),
+        color-mix(in oklab, var(--ink) 18%, transparent)
+      ),
+      color-mix(in oklab, var(--material-base) calc(var(--m-tint) * 100%), transparent);
+  }
+  .surface[data-variant="tinted"] {
+    background: color-mix(in oklab, var(--tint) calc(var(--m-tint) * 100%), transparent);
+    color: var(--on-tint);
+  }
+
+  /* Oq fonli rasm ustida oyna yorugʻ muzga oʻtadi va yorliq toʻq siyohda oʻqiladi. */
+  .surface[data-tone="dark"] {
+    --material-ink: #f7f3ea;
+    --material-ink-2: #c3cadb;
+    --material-base: #111a38;
+    --material-rim: #8c95b4;
+    --m-bright: 0.94;
+    --tint: #e8699f;
+    --on-tint: #0a1026;
+    --focus: #e8699f;
+  }
+
+  .surface[data-tone="light"] {
+    --material-ink: var(--glass-light-ink);
+    --material-ink-2: var(--glass-light-ink-2);
+    --material-base: var(--glass-light-base);
+    --material-rim: var(--glass-light-rim);
+    --material-shadow: rgba(14, 23, 51, 0.1);
+    --tint: var(--glass-light-tint);
+    --on-tint: var(--glass-light-on-tint);
+    --focus: var(--glass-light-tint);
+  }
+
+  /* Videodagi kadr oq ham boʻlishi mumkin: tus 0.5 dan pastga tushmaydi, oq belgi tiniq sozlamada ham
+     ≥ 3:1 (WCAG 1.4.11). */
+  .media-video > .surface[data-tone="dark"] {
+    --m-tint: max(var(--g-tint-text), 0.5);
+  }
+
+  /* Morf: Flip transformni boshqaradi, CSS faqat kamaytirilgan harakatda ishlaydi. */
+  .surface-morph {
+    transform-origin: top right;
+  }
+  :root[data-motion="off"] .surface-morph {
+    animation: material-fade 150ms var(--ease-ui);
+  }
+  @keyframes material-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .glass-popover {
+    min-width: 280px;
+    max-width: min(360px, calc(100vw - 32px));
+  }
+
+  /* Sozlagich */
+  .glass-slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 44px;
+    touch-action: none;
+    user-select: none;
+  }
+  .glass-slider[data-disabled] {
+    opacity: 0.5;
+  }
+  .glass-slider-track {
+    position: relative;
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--material-ink) 22%, transparent);
+  }
+  .glass-slider-range {
+    position: absolute;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--tint);
+  }
+  .glass-slider-thumb {
+    position: relative;
+    display: block;
+    width: 28px;
+    height: 20px;
+    border-radius: var(--radius-control);
+    background: var(--surface-2);
+    box-shadow:
+      inset 0 0 0 1px var(--line-strong),
+      var(--shadow-raised);
+    transition: transform var(--dur-ui) var(--ease-ui);
+  }
+  .glass-slider-thumb::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+  }
+  .glass-slider-cap {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--material-rim) 70%, transparent),
+      transparent 60%
+    );
+  }
+  .glass-slider-lens {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    transform: translate(-50%, 8px) scale(0.6);
+    opacity: 0;
+    pointer-events: none;
+    background: color-mix(in oklab, var(--material-base) 55%, transparent);
+    -webkit-backdrop-filter: blur(1px) saturate(1.6) brightness(1.06);
+    backdrop-filter: blur(1px) saturate(1.6) brightness(1.06);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, var(--m-spec) 70%, transparent),
+      inset 0 1px 0 color-mix(in oklab, var(--m-spec) 95%, transparent),
+      inset 0 0 10px -4px color-mix(in oklab, var(--m-spec) 60%, transparent),
+      var(--shadow-floating);
+    transition:
+      transform var(--dur-ui) var(--ease-ui),
+      opacity var(--dur-ui) var(--ease-ui);
+  }
+  .glass-slider[data-dragging="true"] .glass-slider-lens {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  .glass-slider-lens-track {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 50%;
+    height: 6px;
+    margin-top: -3px;
+    border-radius: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--tint) 50%,
+      color-mix(in oklab, var(--material-ink) 22%, transparent) 50%
+    );
+  }
+
+  /* Kalit */
+  .glass-switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 44px;
+  }
+  .glass-switch-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .glass-switch-hint {
+    color: var(--material-ink-2);
+  }
+  .glass-switch {
+    position: relative;
+    flex: none;
+    width: 48px;
+    height: 28px;
+    border-radius: var(--radius-control);
+    /* Oʻchiq holat ham koʻrinsin (WCAG 1.4.11): yoʻlak panelga ≥ 4:1, oq tugmacha yoʻlakka ≥ 3.4:1. */
+    background: color-mix(in oklab, var(--material-ink) 55%, var(--material-base));
+    transition: background var(--dur-ui) var(--ease-ui);
+  }
+  .glass-switch::after {
+    content: "";
+    position: absolute;
+    inset: -8px;
+  }
+  .glass-switch[aria-checked="true"] {
+    background: var(--tint);
+  }
+  .glass-switch:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .glass-switch-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: var(--shadow-raised);
+    transition:
+      transform var(--dur-ui) var(--ease-ui),
+      background var(--dur-ui) var(--ease-ui);
+  }
+  /* Tungi pushti ustida oq tugmacha 2.7:1 berardi, shu sabab u pushti ustidagi yorliq rangida. */
+  .glass-switch[aria-checked="true"] .glass-switch-knob {
+    transform: translateX(20px);
+    background: var(--on-tint);
+  }
+
+  /* Oyna ortida parda yoʻq: skrollda nima oʻtayotgani muz orqali koʻrinib turadi. */
+  .scroll-edge {
+    --edge-tint: var(--bg);
+    --edge-strength: 56%;
+    --edge-top: calc(8px + var(--safe-top));
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: calc(var(--edge-top) + 12px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  @media (min-width: 1024px) {
+    .scroll-edge {
+      --edge-top: calc(12px + var(--safe-top));
+    }
+  }
+  .site-header > .scroll-edge {
+    pointer-events: none;
+  }
+  .site-header:has(.surface[data-tone="dark"]) .scroll-edge {
+    --edge-tint: var(--hero-scrim);
+  }
+  .scroll-edge-layer {
+    position: absolute;
+    inset: 0;
+  }
+  .scroll-edge-layer[data-layer="0"] {
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 50%, transparent 100%);
+  }
+  .scroll-edge-layer[data-layer="1"] {
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
+    mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
+  }
+  .scroll-edge::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--edge-tint) var(--edge-strength), transparent) 0%,
+      color-mix(in oklab, var(--edge-tint) calc(var(--edge-strength) * 0.5), transparent) 50%,
+      transparent 100%
+    );
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .scroll-edge-layer {
+      display: none;
+    }
+    .scroll-edge {
+      --edge-strength: 96%;
+    }
+  }
+
+  /* Shaffoflik kamaytirilganda, kontrast oshirilganda yoki backdrop-filter yoʻq boʻlsa sirt qattiq.
+     :root bilan kuchaytirilgan, aks holda variant va panel qoidalari tiniq fonni qaytarardi. */
+  @supports not (backdrop-filter: blur(1px)) {
+    :root .material:not([data-variant="tinted"]) {
+      background: var(--material-base);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    :root .material:not([data-variant="tinted"]) {
+      background: var(--material-base);
+    }
+    :root .material,
+    :root .surface[data-refract="on"] {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+  @media (prefers-contrast: more) {
+    :root .material:not([data-variant="tinted"]) {
+      background: var(--material-base);
+    }
+    :root .material,
+    :root .surface[data-refract="on"] {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      box-shadow:
+        inset 0 0 0 1px var(--ink),
+        var(--shadow-floating);
+    }
+    .surface::after {
+      display: none;
+    }
+  }
+
+  /* Dialog, varaq va menyu */
+  .glass-overlay {
+    position: fixed;
+    inset: 0;
+    background: color-mix(in oklab, var(--ink) 32%, transparent);
+    animation: material-fade var(--dur-ui) var(--ease-ui);
+  }
+  .glass-dialog {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: min(480px, calc(100vw - 32px));
+    max-height: calc(100svh - 48px);
+    overflow: auto;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+  }
+  .glass-sheet {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    width: min(100vw, 560px);
+    max-height: calc(100svh - 48px - var(--safe-top));
+    overflow: auto;
+    transform: translateX(-50%);
+    transform-origin: bottom center;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-bottom: calc(24px + var(--safe-bottom));
+  }
+  .glass-sheet-grip {
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 0 auto 12px;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--material-ink) 30%, transparent);
+  }
+  .glass-dialog-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .glass-dialog-description {
+    color: var(--material-ink-2);
+    margin-bottom: 16px;
+  }
+  .glass-close {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-control);
+    color: var(--material-ink);
+    transition: scale 200ms var(--ease-ui);
+  }
+  .glass-close::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+  }
+  .glass-close:active {
+    scale: 0.97;
+  }
+  .glass-menu {
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .glass-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: var(--surface-radius);
+    color: var(--material-ink);
+    text-align: left;
+    outline: none;
+    transition: background var(--dur-ui) var(--ease-ui);
+  }
+  .glass-menu-item[data-highlighted] {
+    background: color-mix(in oklab, var(--material-ink) 8%, transparent);
+  }
+  .glass-menu-item:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
+  }
+  .glass-menu-item.is-current {
+    color: var(--tint);
+  }
+  .glass-menu-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .glass-menu-hint {
+    color: var(--material-ink-2);
+  }
+
+  /* Koʻrinish paneli */
+  .appearance-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .appearance-title {
+    margin-bottom: 16px;
+  }
+  .appearance-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  .slider-ends {
+    display: flex;
+    justify-content: space-between;
+    color: var(--material-ink-2);
+  }
+  .appearance-note {
+    color: var(--material-ink-2);
+  }
+  /* Pushti havola kulrang oynada 3:1 ga tushardi, shu sabab qaytarish tugmasi material siyohida,
+     ostchiziq bilan. */
+  .appearance-reset {
+    align-self: flex-start;
+    min-height: 44px;
+    padding-inline: 4px;
+    color: var(--material-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  /* UPOP galereyasidagi oyna ramka: kadr atrofida muz paspartu (pages.css, .upop-shot). */
+  .upop-shot[data-frame="glass"] {
+    background:
+      linear-gradient(158deg, color-mix(in oklab, #ffffff 16%, transparent) 0%, transparent 46%),
+      color-mix(in oklab, var(--material-base) 46%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, #ffffff 34%, transparent),
+      inset 0 0 0 1px color-mix(in oklab, var(--material-rim) 40%, transparent),
+      var(--shadow-floating);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .upop-shot[data-frame="glass"] {
+      background: var(--surface-2);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+}
