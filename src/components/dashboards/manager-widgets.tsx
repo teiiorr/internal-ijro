@@ -22,10 +22,10 @@ const money = (n: number) => `${Math.round(n).toLocaleString("ru-RU")} UZS`;
 
 // Svetofor hex ranglari (recharts fill CSS özgaruvçilarini qabul qilmaydi) — mavzu bilan sinxron saqlanadi.
 const STATUS_HEX: Record<DerivedStatus, string> = {
-  in_progress: "#6366F1",
-  completed: "#10B981",
-  on_hold: "#F59E0B",
-  not_started: "#94A3B8",
+  in_progress: "#2563eb",
+  completed: "#16a34a",
+  on_hold: "#e08c10",
+  not_started: "#94a3b8",
 };
 
 const KPI_TONE = {

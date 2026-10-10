@@ -9,7 +9,6 @@ import { isOwner, OWNER_TITLE } from "@/lib/permissions/owner";
 import { HrWidgets } from "@/components/dashboards/hr-widgets";
 import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
-import { InboxWidget } from "@/components/dashboards/inbox-widget";
 import { ProjectStatusBoard } from "@/components/dashboards/project-status-board";
 import { PinnedAnnouncementsBanner } from "@/components/staff/announcements/pinned-banner";
 import { TodayStrip } from "@/components/staff/my-work/today-strip";
@@ -69,10 +68,6 @@ export default async function DashboardPage() {
       {/* Bugungi ishlar qisqa lentasi → /my-work */}
       <Suspense fallback={<WidgetSkeleton />}>
         <TodayStrip userId={user.id} locale={locale} />
-      </Suspense>
-
-      <Suspense fallback={<WidgetSkeleton />}>
-        <InboxWidget userId={user.id} />
       </Suspense>
 
       {/* Meʼyoriy hujjatlar bilan tanishib chiqish kutilmoqda */}
