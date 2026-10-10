@@ -58,7 +58,7 @@ export function ChangePositionDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{t("employees.changePosition.btn")}</Button>
+        <Button>{t("employees.changePosition.btn")}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader><DialogTitle>{t("employees.changePosition.title")}</DialogTitle></DialogHeader>
@@ -68,7 +68,7 @@ export function ChangePositionDialog({
             <Select value={pos} onValueChange={setPos}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {POSITIONS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                {POSITIONS.map((p) => <SelectItem key={p} value={p}>{t(`positions.${p}`)}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

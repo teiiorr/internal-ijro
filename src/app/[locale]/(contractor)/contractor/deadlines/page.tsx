@@ -1,12 +1,10 @@
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { IconChevronRight as Chevron } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
-import { Card, CardContent } from "@/components/ui/card";
-import { DeadlineChip } from "@/components/studio/deadline-chip";
-import { daysFromToday, formatDate } from "@/lib/dates";
-import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { getStudioCompany, getStudioDeadlines } from "@/server/queries/studio";
 
 export const dynamic = "force-dynamic";
@@ -20,45 +18,38 @@ export default async function StudioDeadlinesPage() {
   const company = await getStudioCompany(session.user.email);
   if (!company) notFound();
 
-  const rows = (await getStudioDeadlines(company.id)).map((r) => ({ ...r, days: daysFromToday(r.deadline) }));
+  const rows = await getStudioDeadlines(company.id);
 
   return (
-    <div className="space-y-5">
-      <header>
-        <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("studio.deadlines.title")}</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">{t("studio.deadlines.subtitle")}</p>
-      </header>
-
-      <Card>
-        <CardContent className="p-0">
-          {rows.length === 0 ? (
-            <p className="py-14 text-center text-sm text-[var(--muted)]">{t("studio.deadlines.empty")}</p>
-          ) : (
-            <ul className="divide-y divide-[var(--border)]">
-              {rows.map((r) => (
-                <li key={r.stageId}>
-                  <Link
-                    href={`/contractor/projects/${r.projectId}/stages/${r.stageId}`}
-                    className={cn("flex items-center gap-3 px-4 py-4 transition-colors hover:bg-[var(--glass-fill)] sm:px-5", r.days < 0 && "bg-[#E02424]/[0.04]")}
-                  >
-                    <div className="grid w-14 shrink-0 place-items-center rounded-2xl border border-[var(--border)] py-1.5 text-center">
-                      <span className="text-lg font-extrabold leading-none tabular-nums">{r.deadline.slice(8, 10)}</span>
-                      <span className="mt-0.5 text-[10px] font-semibold uppercase text-[var(--muted)]">{formatDate(r.deadline, locale).replace(/^\d+\s*/, "").slice(0, 6)}</span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="break-words font-semibold">{r.stageOrder + 1}. {r.stageName}</p>
-                      <p className="break-words text-xs text-[var(--muted)]">
-                        {r.projectName} · {r.status === "active" ? t("studio.deadlines.active") : t("studio.deadlines.locked")}
-                      </p>
-                    </div>
-                    <DeadlineChip days={r.days} />
-                    <Chevron className="size-4 shrink-0 text-[var(--subtle)]" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
+    <div>
+      <PageHeader title={t("studio.deadlines.title")} />
+      <Card bare className="px-5 sm:px-6">
+        {rows.length === 0 ? (
+          <p className="py-10 text-center t-small text-[var(--ink-3)]">{t("studio.deadlines.empty")}</p>
+        ) : (
+          <Rows>
+            {rows.map((r) => {
+              // Oyning qisqa nomi — vaqt mintaqasidan mustaqil (UTC).
+              const d = new Date(`${r.deadline.slice(0, 10)}T00:00:00Z`);
+              const month = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(d);
+              return (
+                <Row key={r.stageId} href={`/contractor/projects/${r.projectId}/stages/${r.stageId}`}>
+                  <div className="w-10 shrink-0 text-center">
+                    <div className="text-lg font-bold leading-none tabular-nums text-[var(--ink)]">{r.deadline.slice(8, 10)}</div>
+                    <div className="mt-0.5 t-micro uppercase text-[var(--ink-3)]">{month}</div>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{r.stageOrder + 1}. {r.stageName}</p>
+                    <p className="mt-0.5 truncate t-small text-[var(--ink-3)]">
+                      {r.projectName}, {r.status === "active" ? t("studio.deadlines.active") : t("studio.deadlines.locked")}
+                    </p>
+                  </div>
+                  <DeadlineCountdown deadline={r.deadline} />
+                </Row>
+              );
+            })}
+          </Rows>
+        )}
       </Card>
     </div>
   );

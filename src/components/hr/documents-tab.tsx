@@ -49,15 +49,15 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {canEdit && (
-        <form onSubmit={onUpload} className="grid grid-cols-1 gap-3 md:grid-cols-4 items-end border rounded-lg p-4">
+        <form onSubmit={onUpload} className="grid grid-cols-1 items-end gap-3 md:grid-cols-4">
           <div className="space-y-1.5">
             <Label>{t("employees.docs.type")}</Label>
             <Select value={docType} onValueChange={setDocType} name="documentType">
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                {TYPES.map((ty) => <SelectItem key={ty} value={ty}>{t(`employees.docs.types.${ty}` as "employees.docs.types.other")}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -84,10 +84,10 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
         <TableBody>
           {documents.map((d) => (
             <TableRow key={d.id}>
-              <TableCell>{d.title}</TableCell>
-              <TableCell>{d.documentType}</TableCell>
-              <TableCell>{d.fileSize ? `${Math.round(d.fileSize / 1024)} KB` : "—"}</TableCell>
-              <TableCell>{formatDate(d.uploadedAt, locale)}</TableCell>
+              <TableCell className="text-[var(--ink)]">{d.title}</TableCell>
+              <TableCell className="text-[var(--ink-2)]">{t(`employees.docs.types.${d.documentType}` as "employees.docs.types.other")}</TableCell>
+              <TableCell className="tabular-nums text-[var(--ink-2)]">{d.fileSize ? `${Math.round(d.fileSize / 1024)} KB` : "—"}</TableCell>
+              <TableCell className="tabular-nums text-[var(--ink-2)]">{formatDate(d.uploadedAt, locale)}</TableCell>
               <TableCell className="text-right">
                 <Button asChild variant="ghost" size="icon">
                   <a href={d.fileUrl}><Download className="size-4" /></a>
@@ -101,7 +101,7 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
             </TableRow>
           ))}
           {documents.length === 0 && (
-            <TableRow><TableCell colSpan={5} className="text-center text-[var(--muted)] py-6">{t("employees.docs.noDocs")}</TableCell></TableRow>
+            <TableRow><TableCell colSpan={5} className="py-6 text-center text-[var(--ink-3)]">{t("employees.docs.noDocs")}</TableCell></TableRow>
           )}
         </TableBody>
       </Table>

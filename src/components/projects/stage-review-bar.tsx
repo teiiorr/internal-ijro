@@ -51,7 +51,7 @@ export function StageReviewBar({ stageId, reviewStatus }: { stageId: string; rev
   return (
     <div className="space-y-3">
       {submitted && (
-        <div className="rounded-md border-l-4 border-[var(--warning)] bg-[var(--warning)]/10 px-3 py-2 text-sm font-semibold text-[var(--warning)]">
+        <div className="rounded-[var(--radius-s)] border-l-2 border-[var(--warning)] bg-[var(--warning-soft)] px-3 py-2 text-sm font-semibold text-[var(--warning)]">
           {t("review.awaitingReview")}
         </div>
       )}
@@ -70,14 +70,14 @@ export function StageReviewBar({ stageId, reviewStatus }: { stageId: string; rev
       </div>
 
       {noteOpen && (
-        <div className="space-y-2 rounded-2xl border border-[var(--border)] p-3">
+        <div className="space-y-2">
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder={t("review.notePlaceholder")}
             rows={3}
             autoFocus
-            className="w-full resize-y rounded-xl border border-[var(--input)] bg-[var(--surface-1)] p-3 text-sm text-[var(--foreground)] placeholder:text-[var(--subtle)] focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
+            className="w-full resize-y rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--surface)] p-3 text-sm text-[var(--ink)] placeholder:text-[var(--ink-3)] focus-visible:border-[var(--tint)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
           />
           <div className="flex items-center justify-end gap-2">
             <Button onClick={() => { setNoteOpen(false); setNote(""); }} disabled={pending} variant="ghost" size="sm">

@@ -74,7 +74,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
         <div className="flex items-baseline justify-between gap-2">
           <Label>{t("tasks.fields.assignees")}</Label>
           {selectedIds.length > 0 && (
-            <span className="text-xs font-medium text-[var(--muted)]">
+            <span className="t-micro font-medium text-[var(--ink-3)]">
               {t("tasks.new.selectedCount", { n: selectedIds.length })}
             </span>
           )}
@@ -87,7 +87,7 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
           formatName={shortName}
           positionLabel={(pos) => t(`positions.${pos}` as "positions.direktor")}
         />
-        <p className="text-xs text-[var(--muted)]">{t("tasks.new.primaryAssigneeHint")}</p>
+        <p className="t-micro text-[var(--ink-3)]">{t("tasks.new.primaryAssigneeHint")}</p>
       </div>
 
       <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
@@ -115,10 +115,10 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
         </div>
       </div>
 
-      {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
+      {error && <p className="t-small text-[var(--danger)]">{error}</p>}
 
       {/* Submit — butun formadan keyin; mobil qurilmada pastda yopişib turadi (safe-area hisobga olingan) */}
-      <div className="sticky bottom-0 -mx-5 border-t border-[var(--border)] bg-[var(--card)]/85 px-5 py-3 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:pb-0 sm:backdrop-blur-none">
+      <div className="sticky bottom-0 -mx-5 border-t border-[var(--line)] bg-[var(--surface)] px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:pb-0">
         <div className="flex justify-end">
           <Button type="submit" disabled={pending} size="lg" className="w-full sm:w-auto">
             {t("tasks.newTitle")}

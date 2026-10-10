@@ -25,7 +25,7 @@ interface EmployeeIdentityProps {
   avatarUrl?: string | null;
   position?: string | null;
   department?: string | null;
-  /** Avtomatik yiğilgan "position · department" subtitrini almaştiradi. */
+  /** Avtomatik yiğilgan "position, department" subtitrini almaştiradi. */
   subtitle?: string | null;
   size?: Size;
   /** Butun identity'ni Link içiga öraydi (bu holda avatar lightbox öçiriladi). */
@@ -51,7 +51,7 @@ export function EmployeeIdentity({
   className,
   stacked = false,
 }: EmployeeIdentityProps) {
-  const sub = subtitle ?? ([position, department].filter(Boolean).join(" · ") || null);
+  const sub = subtitle ?? ([position, department].filter(Boolean).join(", ") || null);
 
   if (stacked) {
     const inner = (
@@ -65,7 +65,7 @@ export function EmployeeIdentity({
           clickable={!href}
         />
         <p className={cn("mt-2 max-w-full truncate leading-tight", NAME_CLS[size])}>{name}</p>
-        {sub && <p className={cn("mt-0.5 max-w-full truncate text-[var(--muted)] leading-tight", SUB_CLS[size])}>{sub}</p>}
+        {sub && <p className={cn("mt-0.5 max-w-full truncate text-[var(--ink-2)] leading-tight", SUB_CLS[size])}>{sub}</p>}
       </div>
     );
     return href ? (
@@ -85,7 +85,7 @@ export function EmployeeIdentity({
       />
       <div className="min-w-0">
         <p className={cn("truncate leading-tight", NAME_CLS[size])}>{name}</p>
-        {sub && <p className={cn("mt-0.5 truncate text-[var(--muted)] leading-tight", SUB_CLS[size])}>{sub}</p>}
+        {sub && <p className={cn("mt-0.5 truncate text-[var(--ink-2)] leading-tight", SUB_CLS[size])}>{sub}</p>}
       </div>
     </div>
   );

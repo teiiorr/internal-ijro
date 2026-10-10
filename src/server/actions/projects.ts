@@ -472,7 +472,7 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
       await notify({
         userIds: recipients,
         type: "project.message",
-        title: `${me.fullName} · ${prj.name}`,
+        title: `${me.fullName}, ${prj.name}`,
         message: preview,
         // Studiya yozdi → xodim haqiqiy chat sahifasiga ötadi (/projects/[id] da chat yöq).
         // Xodim yozdi → studiya öz chatiga ötadi.

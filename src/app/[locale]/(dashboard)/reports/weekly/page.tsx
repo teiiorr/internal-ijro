@@ -14,6 +14,7 @@ import {
 } from "@/lib/reports/weekly-brief-core";
 import { getWeeklyBrief } from "@/server/queries/weekly-brief";
 import { WeekPicker } from "@/components/staff/weekly-brief/week-picker";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { KpiDeltaStrip } from "@/components/staff/weekly-brief/kpi-delta-strip";
 import { WeekEvents } from "@/components/staff/weekly-brief/week-events";
 import { AttentionList } from "@/components/staff/weekly-brief/attention-list";
@@ -52,41 +53,39 @@ export default async function WeeklyBriefPage({ searchParams }: { searchParams: 
   const prevWeek = addWeeks(week, -1);
 
   return (
-    <div className="space-y-5 sm:space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="break-words text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("title")}</h1>
-          <p className="mt-0.5 break-words text-sm text-[var(--muted)]">
-            {t("week")}: <span className="font-semibold tabular-nums text-[var(--foreground)]">{weekOptionLabel(week)}</span>
-          </p>
+    <div>
+      <PageHeader
+        title={t("title")}
+        subtitle={<>{t("week")}: <span className="font-semibold tabular-nums text-[var(--ink)]">{weekOptionLabel(week)}</span></>}
+        actions={<WeekPicker week={week} options={options} prevWeek={prevWeek} nextWeek={nextWeek} />}
+      />
+
+      <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
+        <KpiDeltaStrip
+          metrics={brief.metrics}
+          prev={brief.prev}
+          series={brief.series}
+          isEstimate={brief.isEstimate}
+          canMoney={brief.canMoney}
+        />
+
+        <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start lg:gap-12">
+          <WeekEvents events={brief.events} locale={locale} />
+          <AttentionList attention={brief.attention} locale={locale} />
         </div>
-        <WeekPicker week={week} options={options} prevWeek={prevWeek} nextWeek={nextWeek} />
+
+        <ThroughputChart days={brief.throughput.days} byDepartment={brief.throughput.byDepartment} />
+
+        <WeeklySummaryEditor
+          key={week}
+          weekStart={week}
+          note={brief.summary?.note ?? null}
+          byName={brief.summary?.byName ?? null}
+          at={brief.summary?.at ? brief.summary.at.toISOString() : null}
+          canEdit={canEditWeeklySummary(me.position, owner)}
+          locale={locale}
+        />
       </div>
-
-      <KpiDeltaStrip
-        metrics={brief.metrics}
-        prev={brief.prev}
-        series={brief.series}
-        isEstimate={brief.isEstimate}
-        canMoney={brief.canMoney}
-      />
-
-      <div className="grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-2 lg:items-start">
-        <WeekEvents events={brief.events} locale={locale} />
-        <AttentionList attention={brief.attention} locale={locale} />
-      </div>
-
-      <ThroughputChart days={brief.throughput.days} byDepartment={brief.throughput.byDepartment} />
-
-      <WeeklySummaryEditor
-        key={week}
-        weekStart={week}
-        note={brief.summary?.note ?? null}
-        byName={brief.summary?.byName ?? null}
-        at={brief.summary?.at ? brief.summary.at.toISOString() : null}
-        canEdit={canEditWeeklySummary(me.position, owner)}
-        locale={locale}
-      />
     </div>
   );
 }

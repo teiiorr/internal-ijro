@@ -52,12 +52,12 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
         {onTasks && (
           <form onSubmit={onSearch} className="hidden md:flex flex-1 max-w-md ml-4">
             <div className="relative w-full">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-[var(--subtle)]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[var(--ink-3)]" />
               <input
                 placeholder={t("header.searchPlaceholder")}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                className="h-11 w-full rounded-full border border-[var(--input)] bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 pl-11 pr-4 text-[14px] font-medium placeholder:text-[var(--subtle)] focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] transition-all duration-200"
+                className="h-11 w-full rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] pl-10 pr-4 text-[14px] font-medium text-[var(--ink)] placeholder:text-[var(--ink-3)] transition-colors focus-visible:border-[var(--tint)] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_color-mix(in_oklab,var(--tint)_35%,transparent)]"
               />
             </div>
           </form>
@@ -74,44 +74,44 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
             <button
               onClick={() => setMenuOpen((v) => !v)}
               className={cn(
-                "flex items-center gap-2.5 rounded-2xl pl-1 pr-1 sm:pr-3 py-1 transition-colors",
-                menuOpen ? "bg-[var(--glass-fill-strong)]" : "hover:bg-[var(--glass-fill)]"
+                "flex items-center gap-2.5 rounded-[var(--radius-control)] pl-1 pr-1 sm:pr-3 py-1 transition-colors",
+                menuOpen ? "bg-[var(--surface-2)]" : "hover:bg-[var(--surface-2)]"
               )}
             >
               <UserAvatar name={displayName} avatarUrl={avatarUrl} size="sm" clickable={false} />
-              <span className="hidden md:inline text-sm font-bold">{displayName}</span>
+              <span className="hidden md:inline text-sm font-bold text-[var(--ink)]">{displayName}</span>
             </button>
             {menuOpen && (
-              <div className="absolute right-0 mt-2 w-64 rounded-2xl glass-strong p-1.5 z-50">
-                <div className="px-3 py-3 border-b border-[var(--border)] mb-1.5">
-                  <p className="text-xs font-medium text-[var(--muted)]">{t("header.signedInAs")}</p>
-                  <p className="text-sm font-bold mt-1">{displayName}</p>
+              <div className="absolute right-0 mt-2 w-64 rounded-[var(--radius-card)] glass-strong p-1.5 z-50">
+                <div className="px-3 py-3 border-b border-[var(--line)] mb-1.5">
+                  <p className="text-xs font-medium text-[var(--ink-3)]">{t("header.signedInAs")}</p>
+                  <p className="text-sm font-bold mt-1 text-[var(--ink)]">{displayName}</p>
                 </div>
                 {menuLinks?.map((m) => (
                   <Link
                     key={m.href}
                     href={m.href}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
+                    className="flex items-center justify-between gap-3 rounded-[var(--radius-control)] px-3 py-2.5 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
                   >
                     {m.label}
-                    <ChevronRight className="size-4 text-[var(--subtle)]" />
+                    <ChevronRight className="size-4 text-[var(--ink-3)]" />
                   </Link>
                 ))}
-                <div className="flex items-center justify-between gap-3 rounded-xl px-3 py-1.5 sm:hidden">
-                  <span className="text-sm font-semibold">{t("theme.darkOn")}</span>
+                <div className="flex items-center justify-between gap-3 rounded-[var(--radius-control)] px-3 py-1.5 sm:hidden">
+                  <span className="text-sm font-semibold text-[var(--ink)]">{t("theme.darkOn")}</span>
                   <ThemeToggle />
                 </div>
                 <Link
                   href={pathname.startsWith("/contractor") ? "/contractor/settings" : "/settings"}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
+                  className="flex items-center gap-3 rounded-[var(--radius-control)] px-3 py-2.5 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--surface-2)] transition-colors"
                 >
-                  <SettingsIcon className="size-4 text-[var(--muted)]" /> {t("header.accountSettings")}
+                  <SettingsIcon className="size-4 text-[var(--ink-2)]" /> {t("header.accountSettings")}
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--danger)] hover:bg-[var(--danger-soft)] transition-colors"
+                  className="flex w-full items-center gap-3 rounded-[var(--radius-control)] px-3 py-2.5 text-sm font-semibold text-[var(--danger)] hover:bg-[var(--danger-soft)] transition-colors"
                 >
                   <LogOut className="size-4" /> {t("header.signOut")}
                 </button>

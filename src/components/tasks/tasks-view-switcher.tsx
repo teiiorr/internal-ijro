@@ -1,14 +1,13 @@
 "use client";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TaskPriorityBadge, TaskStatusBadge } from "./task-status-badge";
-import { CalendarView } from "./calendar-view";
-import Link from "next/link";
-import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconChevronRight as ChevronRight } from "@tabler/icons-react";
+import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { deadlineRelative } from "@/lib/dates";
+import { Card } from "@/components/ui-biib/Card";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Status } from "@/components/ui-biib/Status";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
+import { CalendarView } from "./calendar-view";
 import { EmptyState } from "@/components/empty-state";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
@@ -23,117 +22,86 @@ type T = {
   projectName: string | null;
 };
 
-function DeadlinePill({ deadline, completed }: { deadline: Date | string | null; completed: boolean }) {
-  if (!deadline) return <span className="text-[var(--subtle)] text-sm">—</span>;
-  return <DeadlineCountdown deadline={deadline} completed={completed} />;
+/** Qatorning oʻng tomonidagi yagona belgi: faqat qaror talab qiladigan holat koʻrsatiladi. */
+function RowSignal({ row, t }: { row: T; t: ReturnType<typeof useTranslations> }) {
+  if (row.status === "under_review")
+    return <Status tone="warning" dot>{t("tasks.status.under_review")}</Status>;
+  if (row.status === "completed")
+    return <Status tone="success" dot>{t("tasks.status.completed")}</Status>;
+  if (row.status === "rejected")
+    return <Status tone="danger" dot>{t("tasks.status.rejected")}</Status>;
+  // todo / in_progress — muddat belgisi (muddati oʻtgan boʻlsa qizil, aks holda xotirjam).
+  return <DeadlineCountdown deadline={row.deadline} completed={false} />;
 }
 
 export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; hrefBase?: string }) {
   const t = useTranslations();
-  const locale = useLocale();
   const [view, setView] = useState<"list" | "calendar">("list");
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 w-fit">
-        {([
-          ["list", List, t("tasks.view.list")],
-          ["calendar", CalendarIcon, t("tasks.view.calendar")],
-        ] as const).map(([v, Icon, label]) => (
-          <button
-            key={v}
-            onClick={() => setView(v as typeof view)}
-            className={cn(
-              "px-3.5 py-1.5 rounded-[8px] text-sm font-semibold transition-all flex items-center gap-2",
-              view === v
-                ? "bg-[var(--surface)] shadow-[var(--shadow-1)] text-[var(--foreground)]"
-                : "text-[var(--muted)] hover:text-[var(--foreground)]"
-            )}
-          >
-            <Icon className="size-4" /> {label}
-          </button>
-        ))}
+      <div className="flex justify-end">
+        <div className="inline-flex items-center gap-1 rounded-[12px] border border-[var(--line)] bg-[var(--surface-2)] p-1">
+          {(
+            [
+              ["list", List, t("tasks.view.list")],
+              ["calendar", CalendarIcon, t("tasks.view.calendar")],
+            ] as const
+          ).map(([v, Icon, label]) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setView(v as typeof view)}
+              aria-current={view === v ? "page" : undefined}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-[9px] px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                view === v
+                  ? "bg-[var(--surface)] text-[var(--ink)] shadow-[var(--shadow-1)]"
+                  : "text-[var(--ink-2)] hover:text-[var(--ink)]",
+              )}
+            >
+              <Icon className="size-4" aria-hidden /> {label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {view === "list" && (
-        <>
-          {/* Mobil karta körinişi */}
-          <div className="md:hidden space-y-2">
-            {tasks.map((row) => {
-              const completed = ["completed", "rejected"].includes(row.status);
-              return (
-                <Link
-                  key={row.id}
-                  href={`${hrefBase}/${row.id}`}
-                  className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:bg-[var(--surface-2)] transition-colors active:scale-[0.99]"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="font-semibold text-[15px] leading-snug flex-1">{row.title}</p>
-                    <ChevronRight className="size-4 text-[var(--subtle)] shrink-0 mt-0.5" />
-                  </div>
-                  <div className="flex items-center gap-2 mt-3 flex-wrap">
-                    <TaskStatusBadge status={row.status} />
-                    <TaskPriorityBadge priority={row.priority} />
-                    <DeadlinePill deadline={row.deadline} completed={completed} />
-                  </div>
-                  <div className="flex items-center justify-between mt-3 text-xs text-[var(--muted)]">
-                    <span className="flex items-center gap-1.5">
-                      {row.assignedToName && <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />}
-                      {row.assignedToName ?? "—"}
-                    </span>
-                    {row.projectName && <span className="truncate ml-2">{row.projectName}</span>}
-                  </div>
-                </Link>
-              );
-            })}
-            {tasks.length === 0 && (
-              <EmptyState icon={Inbox} title={t("tasks.emptyList")} description={t("tasks.empty.description")} />
-            )}
-          </div>
-
-          {/* Desktop jadval körinişi */}
-          <div className="hidden md:block">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("tasks.fields.title")}</TableHead>
-                  <TableHead>{t("common.status")}</TableHead>
-                  <TableHead>{t("tasks.fields.priority")}</TableHead>
-                  <TableHead>{t("tasks.fields.assignee")}</TableHead>
-                  <TableHead>{t("tasks.fields.project")}</TableHead>
-                  <TableHead>{t("tasks.fields.deadline")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {tasks.map((row) => {
-                  const completed = ["completed", "rejected"].includes(row.status);
-                  const rel = deadlineRelative(row.deadline, { completed }, locale);
-                  return (
-                    <TableRow key={row.id} className={cn(rel.tone === "overdue" && "bg-[var(--danger-soft)]/40")}>
-                      <TableCell><Link href={`${hrefBase}/${row.id}`} className="font-medium hover:underline">{row.title}</Link></TableCell>
-                      <TableCell><TaskStatusBadge status={row.status} /></TableCell>
-                      <TableCell><TaskPriorityBadge priority={row.priority} /></TableCell>
-                      <TableCell>
-                        <span className="flex items-center gap-1.5">
-                          {row.assignedToName && <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />}
-                          {row.assignedToName ?? "—"}
+      {view === "list" ? (
+        tasks.length === 0 ? (
+          <EmptyState icon={Inbox} title={t("tasks.emptyList")} description={t("tasks.empty.description")} />
+        ) : (
+          <Card bare className="px-5 sm:px-6">
+            <Rows>
+              {tasks.map((row) => (
+                <Row key={row.id} href={`${hrefBase}/${row.id}`}>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{row.title}</p>
+                    <p className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 t-small text-[var(--ink-3)]">
+                      {row.assignedToName && (
+                        <span className="inline-flex min-w-0 items-center gap-1.5">
+                          <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />
+                          <span className="truncate">{row.assignedToName}</span>
                         </span>
-                      </TableCell>
-                      <TableCell>{row.projectName ?? "—"}</TableCell>
-                      <TableCell><DeadlinePill deadline={row.deadline} completed={completed} /></TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-            {tasks.length === 0 && (
-              <EmptyState icon={Inbox} title={t("tasks.emptyList")} description="Hozircha topshiriqlar yoʻq." />
-            )}
-          </div>
-        </>
+                      )}
+                      {row.projectName && (
+                        <span className="inline-flex min-w-0 items-center gap-1">
+                          <Folder className="size-3.5 shrink-0" aria-hidden />
+                          <span className="truncate">{row.projectName}</span>
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <RowSignal row={row} t={t} />
+                  </div>
+                </Row>
+              ))}
+            </Rows>
+          </Card>
+        )
+      ) : (
+        <CalendarView tasks={tasks} hrefBase={hrefBase} />
       )}
-
-      {view === "calendar" && <CalendarView tasks={tasks} hrefBase={hrefBase} />}
     </div>
   );
 }

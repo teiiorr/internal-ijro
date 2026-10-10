@@ -8,6 +8,11 @@ export const Select = SelectPrimitive.Root;
 export const SelectValue = SelectPrimitive.Value;
 export const SelectGroup = SelectPrimitive.Group;
 
+/**
+ * Trigger input kabi: qattiq `--surface-2`, 1px `--line-strong`, radius 12, 48px, oynasiz.
+ * Ochiladigan kontent — chrome (overlay), shuning uchun oyna ruxsat etilgan: BIIB oyna
+ * tokenlari, radius 12, ichki yoritish + floating soya (qoʻlbola rgba emas).
+ */
 export const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
@@ -16,22 +21,19 @@ export const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       // min-w-0 va quyidagi truncate örami uzun, bir qatorli qiymatlarning
-      // (bölim nomlari, til yorliqlari) tor ekranlarda pill'ni ikki qatorga
-      // tuşirib yuborişining oldini oladi.
-      "flex h-11 w-full min-w-0 items-center justify-between gap-2 rounded-2xl border border-[var(--input)] " +
-      "bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 " +
-      "pl-4 pr-5 text-[15px] text-[var(--foreground)] font-medium whitespace-nowrap " +
-      "transition-[border-color,box-shadow] duration-200 " +
-      "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] " +
-      "data-[placeholder]:text-[var(--subtle)] " +
-      "disabled:cursor-not-allowed disabled:opacity-50",
+      // tor ekranlarda boshqaruvni ikki qatorga tushirib yuborishining oldini oladi.
+      "flex h-12 w-full min-w-0 items-center justify-between gap-2 rounded-[var(--radius-control)] border border-[var(--line-strong)] " +
+      "bg-[var(--surface-2)] pl-4 pr-4 text-[16px] font-medium text-[var(--ink)] whitespace-nowrap " +
+      "transition-[border-color] duration-[var(--dur-ui)] ease-[var(--ease-ui)] " +
+      "data-[placeholder]:text-[var(--ink-3)] " +
+      "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[var(--surface-3)]",
       className
     )}
     {...props}
   >
     <span className="min-w-0 flex-1 truncate text-left">{children}</span>
     <SelectPrimitive.Icon asChild>
-      <ChevronsUpDown className="size-[18px] text-[var(--muted)] shrink-0" strokeWidth={2.25} />
+      <ChevronsUpDown className="size-[18px] text-[var(--ink-3)] shrink-0" strokeWidth={2} />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -46,11 +48,10 @@ export const SelectContent = React.forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        "relative z-50 min-w-[10rem] overflow-hidden rounded-2xl " +
-        "bg-[var(--glass-fill-strong)] backdrop-blur-2xl backdrop-saturate-180 " +
-        "border border-[var(--glass-border)] " +
-        "text-[var(--popover-foreground)] " +
-        "shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_24px_56px_-12px_rgba(20,25,60,0.22)]",
+        "relative z-50 min-w-[10rem] overflow-hidden rounded-[var(--radius-control)] " +
+        "border border-[var(--glass-border)] bg-[var(--glass-fill)] " +
+        "[-webkit-backdrop-filter:blur(var(--glass-blur))_saturate(var(--glass-saturate))] [backdrop-filter:blur(var(--glass-blur))_saturate(var(--glass-saturate))] " +
+        "text-[var(--ink)] [box-shadow:var(--inner-highlight),var(--shadow-2)]",
         position === "popper" && "data-[side=bottom]:translate-y-1",
         className
       )}
@@ -60,10 +61,7 @@ export const SelectContent = React.forwardRef<
       <SelectPrimitive.Viewport
         className={cn(
           "p-1.5",
-          // Uzun röyxatlar (masalan, 30+ xodim) ekrandan çiqib ketmasligi uçun
-          // suriladigan bölişi kerak. Balandlikni ~20rem bilan Radix mavjud deb
-          // bildirgan joyning kiçigi bilan çeklaymiz, şunda hiç bir qurilmada
-          // viewportdan taşib ketmaydi.
+          // Uzun ro'yxatlar ekrandan chiqib ketmasligi uchun suriladigan bo'lishi kerak.
           "max-h-[min(20rem,var(--radix-select-content-available-height))] overflow-y-auto overscroll-contain",
           position === "popper" &&
             "w-full min-w-[var(--radix-select-trigger-width)]"
@@ -78,7 +76,7 @@ export const SelectContent = React.forwardRef<
 SelectContent.displayName = "SelectContent";
 
 const scrollBtn =
-  "flex cursor-default items-center justify-center py-1 text-[var(--muted)]";
+  "flex cursor-default items-center justify-center py-1 text-[var(--ink-3)]";
 
 export const SelectScrollUpButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
@@ -107,8 +105,8 @@ export const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-xl py-2 pl-9 pr-3 text-sm font-medium outline-none " +
-      "focus:bg-[var(--primary-soft)] focus:text-[var(--foreground)] " +
+      "relative flex w-full cursor-pointer select-none items-center rounded-[var(--radius-m)] py-2 pl-9 pr-3 text-sm font-medium outline-none " +
+      "focus:bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] focus:text-[var(--ink)] " +
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
@@ -116,7 +114,7 @@ export const SelectItem = React.forwardRef<
   >
     <span className="absolute left-2.5 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="size-4 text-[var(--primary)]" />
+        <Check className="size-4 text-[var(--tint)]" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

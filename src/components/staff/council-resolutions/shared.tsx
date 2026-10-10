@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { IconCalendarDue as CalendarDue } from "@tabler/icons-react";
-import { StatusTag } from "@/components/ui/status-tag";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
@@ -12,56 +12,38 @@ export const NS = "staffX.councilResolutions";
 
 /** Native <select> / date field style shared by the resolution forms and filters. */
 export const FIELD =
-  "h-10 w-full min-w-0 rounded-xl border border-[var(--border-strong)] bg-[var(--surface-2)] px-3 text-sm font-medium text-[var(--foreground)] " +
-  "transition-[border-color,box-shadow] focus:border-[var(--primary)] focus:outline-none focus:shadow-[0_0_0_2px_var(--primary-soft)] disabled:opacity-60";
+  "h-11 w-full min-w-0 rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--surface)] px-3 text-sm font-medium text-[var(--ink)] " +
+  "transition-[border-color] focus:border-[var(--tint)] focus:outline-none disabled:opacity-60";
 
 /** A Tashkent calendar date (YYYY-MM-DD) or an ISO instant, formatted for the UI locale. */
 export function fmtDay(iso: string, locale: string): string {
   return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? formatDate(`${iso}T12:00:00+05:00`, locale) : formatDate(iso, locale);
 }
 
-const TONE: Record<EffectiveStatus, "green" | "amber" | "red" | "muted" | null> = {
-  open: null,
-  due_soon: "amber",
-  overdue: "red",
-  done: "green",
-  cancelled: "muted",
+const TONE: Record<EffectiveStatus, StatusTone> = {
+  open: "info",
+  due_soon: "warning",
+  overdue: "danger",
+  done: "success",
+  cancelled: "neutral",
 };
 
+/** One calm status chip (BIIB Status) — no capsule, no uppercase signal tag. */
 export function ResolutionStatusChip({ status, className }: { status: EffectiveStatus; className?: string }) {
   const t = useTranslations(NS);
-  const tone = TONE[status];
-  if (!tone) {
-    // "Open" is neutral-but-alive: a soft primary chip instead of the filled signal tag.
-    return (
-      <span
-        className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md bg-[var(--primary-soft)] px-2.5 py-1 text-[11px] font-extrabold uppercase leading-none tracking-[0.06em] text-[var(--primary)]",
-          className
-        )}
-      >
-        {t("status.open")}
-      </span>
-    );
-  }
   return (
-    <StatusTag tone={tone} className={className}>
+    <Status tone={TONE[status]} className={className}>
       {t(`status.${status}`)}
-    </StatusTag>
+    </Status>
   );
 }
 
+/** Council kind — plain metadata text, not a pill (wrapped in a Link by the caller). */
 export function KindChip({ kind, className }: { kind: string; className?: string }) {
   const t = useTranslations(NS);
   const known = kind === "ekspert" || kind === "smeta";
   return (
-    <span
-      className={cn(
-        "inline-flex max-w-full items-center truncate rounded-md px-2 py-0.5 text-[11px] font-bold",
-        kind === "smeta" ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "bg-[var(--primary-soft)] text-[var(--primary)]",
-        className
-      )}
-    >
+    <span className={cn("truncate text-sm font-semibold text-[var(--ink)]", className)}>
       {known ? t(kind) : kind}
     </span>
   );
@@ -71,16 +53,16 @@ export function KindChip({ kind, className }: { kind: string; className?: string
 export function DueCell({ dueDate, effective, className }: { dueDate: string | null; effective: EffectiveStatus; className?: string }) {
   const t = useTranslations(NS);
   const locale = useLocale();
-  if (!dueDate) return <span className={cn("text-sm text-[var(--subtle)]", className)}>{t("noDue")}</span>;
+  if (!dueDate) return <span className={cn("text-sm text-[var(--ink-3)]", className)}>{t("noDue")}</span>;
   return (
     <span className={cn("inline-flex flex-wrap items-center gap-1.5", className)}>
       <span
         className={cn(
           "inline-flex items-center gap-1 whitespace-nowrap text-sm font-medium tabular-nums",
-          effective === "overdue" ? "text-[var(--danger)]" : "text-[var(--foreground)]"
+          effective === "overdue" ? "text-[var(--danger)]" : "text-[var(--ink)]"
         )}
       >
-        <CalendarDue className="size-3.5 shrink-0 text-[var(--subtle)]" />
+        <CalendarDue className="size-3.5 shrink-0 text-[var(--ink-3)]" />
         {fmtDay(dueDate, locale)}
       </span>
       {isActiveStatus(effective) && (
@@ -102,7 +84,7 @@ export function ExpandableText({ text, className }: { text: string; className?: 
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="mt-1 text-xs font-semibold text-[var(--primary)] hover:underline"
+          className="mt-1 text-xs font-semibold text-[var(--tint)] hover:underline"
         >
           {open ? t("showLess") : t("showMore")}
         </button>

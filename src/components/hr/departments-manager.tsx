@@ -1,7 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,95 +53,91 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
   }
 
   const Form = ({ id, initial }: { id: string | "new"; initial?: Partial<Dept> }) => (
-    <Card>
-      <CardContent className="p-6">
-        <form onSubmit={(e) => onSubmit(e, id)} className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div className="space-y-1.5 md:col-span-2">
-            <Label>{t("departments.fields.name")}</Label>
-            <Input name="name" required defaultValue={initial?.name ?? ""} />
-          </div>
-          <div className="space-y-1.5">
-            <Label>{t("departments.fields.head")}</Label>
-            <Select name="headUserId" defaultValue={initial?.headUserId ?? undefined}>
-              <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
-              <SelectContent>
-                {managers.map((m) => <SelectItem key={m.id} value={m.id}>{shortName(m.fullName)}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label>{t("departments.fields.parent")}</Label>
-            <Select name="parentDepartmentId" defaultValue={initial?.parentDepartmentId ?? undefined}>
-              <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
-              <SelectContent>
-                {departments
-                  .filter((d) => d.id !== initial?.id)
-                  .map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1.5">
-            <Label>{t("departments.fields.nameRu")}</Label>
-            <Input name="nameRu" />
-          </div>
-          <div className="space-y-1.5">
-            <Label>{t("departments.fields.nameEn")}</Label>
-            <Input name="nameEn" />
-          </div>
-          <div className="space-y-1.5">
-            <Label>{t("departments.fields.nameUzLatn")}</Label>
-            <Input name="nameUzLatn" />
-          </div>
-          <div className="space-y-1.5">
-            <Label>{t("departments.fields.nameUzCyrl")}</Label>
-            <Input name="nameUzCyrl" />
-          </div>
-          <div className="space-y-1.5 md:col-span-2">
-            <Label>{t("departments.fields.description")}</Label>
-            <Textarea name="description" rows={2} />
-          </div>
-          <div className="md:col-span-2 flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => setEditing(null)}><X className="size-4" /> {t("common.cancel")}</Button>
-            <Button type="submit" disabled={pending}>{t("common.save")}</Button>
-          </div>
-        </form>
-      </CardContent>
+    <Card solid>
+      <form onSubmit={(e) => onSubmit(e, id)} className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="space-y-1.5 md:col-span-2">
+          <Label>{t("departments.fields.name")}</Label>
+          <Input name="name" required defaultValue={initial?.name ?? ""} />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("departments.fields.head")}</Label>
+          <Select name="headUserId" defaultValue={initial?.headUserId ?? undefined}>
+            <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
+            <SelectContent>
+              {managers.map((m) => <SelectItem key={m.id} value={m.id}>{shortName(m.fullName)}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("departments.fields.parent")}</Label>
+          <Select name="parentDepartmentId" defaultValue={initial?.parentDepartmentId ?? undefined}>
+            <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
+            <SelectContent>
+              {departments
+                .filter((d) => d.id !== initial?.id)
+                .map((d) => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("departments.fields.nameRu")}</Label>
+          <Input name="nameRu" />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("departments.fields.nameEn")}</Label>
+          <Input name="nameEn" />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("departments.fields.nameUzLatn")}</Label>
+          <Input name="nameUzLatn" />
+        </div>
+        <div className="space-y-1.5">
+          <Label>{t("departments.fields.nameUzCyrl")}</Label>
+          <Input name="nameUzCyrl" />
+        </div>
+        <div className="space-y-1.5 md:col-span-2">
+          <Label>{t("departments.fields.description")}</Label>
+          <Textarea name="description" rows={2} />
+        </div>
+        <div className="flex justify-end gap-2 md:col-span-2">
+          <Button type="button" variant="ghost" onClick={() => setEditing(null)}><X className="size-4" /> {t("common.cancel")}</Button>
+          <Button type="submit" disabled={pending}>{t("common.save")}</Button>
+        </div>
+      </form>
     </Card>
   );
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
-        {editing === "new" ? null : (
+    <div className="flex flex-col gap-4">
+      {editing !== "new" && (
+        <div className="flex justify-end">
           <Button onClick={() => setEditing("new")}><Plus className="size-4" /> {t("departments.addBtn")}</Button>
-        )}
-      </div>
+        </div>
+      )}
       {editing === "new" && <Form id="new" />}
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow><TableHead>{t("departments.table.name")}</TableHead><TableHead>{t("departments.table.head")}</TableHead><TableHead>{t("departments.table.members")}</TableHead><TableHead></TableHead></TableRow>
-            </TableHeader>
-            <TableBody>
-              {departments.map((d) => (
-                <TableRow key={d.id}>
-                  <TableCell className="font-medium">{d.name}</TableCell>
-                  <TableCell>{d.headFullName ?? "—"}</TableCell>
-                  <TableCell>{d.memberCount}</TableCell>
-                  <TableCell className="text-right space-x-1">
-                    <Button variant="ghost" size="icon" onClick={() => setEditing(d.id)}><Pencil className="size-4" /></Button>
-                    <Button variant="ghost" size="icon" onClick={() => onDelete(d.id)}><Trash2 className="size-4" /></Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {departments.length === 0 && (
-                <TableRow><TableCell colSpan={4} className="text-center text-[var(--muted)] py-6">{t("departments.empty")}</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
+      <Card solid bare className="overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow><TableHead>{t("departments.table.name")}</TableHead><TableHead>{t("departments.table.head")}</TableHead><TableHead>{t("departments.table.members")}</TableHead><TableHead></TableHead></TableRow>
+          </TableHeader>
+          <TableBody>
+            {departments.map((d) => (
+              <TableRow key={d.id}>
+                <TableCell className="font-medium text-[var(--ink)]">{d.name}</TableCell>
+                <TableCell className="text-[var(--ink-2)]">{d.headFullName ?? "—"}</TableCell>
+                <TableCell className="tabular-nums text-[var(--ink-2)]">{d.memberCount}</TableCell>
+                <TableCell className="space-x-1 text-right">
+                  <Button variant="ghost" size="icon" aria-label={t("common.edit")} onClick={() => setEditing(d.id)}><Pencil className="size-4" /></Button>
+                  <Button variant="ghost" size="icon" aria-label={t("common.delete")} onClick={() => onDelete(d.id)}><Trash2 className="size-4" /></Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            {departments.length === 0 && (
+              <TableRow><TableCell colSpan={4} className="py-6 text-center text-[var(--ink-3)]">{t("departments.empty")}</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
       </Card>
 
       {editing && editing !== "new" && (

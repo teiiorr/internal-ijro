@@ -148,7 +148,7 @@ export function CashflowChart({
       <Card>
         <CardContent className="space-y-3 p-4 sm:p-6">
           <h2 className="text-lg font-bold tracking-tight">
-            {t("byStudio")} <span className="text-sm font-semibold text-[var(--muted)]">· {currency}</span>
+            {t("byStudio")}<span className="text-sm font-semibold text-[var(--muted)]">, {currency}</span>
           </h2>
           {studios.length === 0 ? (
             <p className="py-6 text-center text-sm text-[var(--muted)]">{t("empty")}</p>

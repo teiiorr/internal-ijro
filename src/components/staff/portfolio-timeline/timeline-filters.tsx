@@ -6,9 +6,9 @@ import { IconChevronDown, IconFilter, IconSearch } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { DEFAULT_ZOOM, parseGroup, parseZoom, type TimelineGroup, type Zoom } from "@/lib/projects/timeline";
 
-// /projects filtrlari bilan bir xil "havodor punktir" uslubi.
+// /projects filtrlari bilan bir xil BIIB maydon uslubi.
 const FIELD =
-  "h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3.5 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none";
+  "h-11 w-full rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] px-3.5 text-sm font-medium text-[var(--ink)] transition-colors focus:border-[var(--line-strong)] focus:outline-none";
 
 function Sel({
   value,
@@ -182,11 +182,9 @@ export function TimelineFilters({
           aria-label={t("filters")}
           className={cn(FIELD, "inline-flex w-auto shrink-0 items-center gap-1.5 sm:hidden")}
         >
-          <IconFilter className="size-4 text-[var(--muted)]" />
+          <IconFilter className="size-4 text-[var(--ink-3)]" />
           {activeCount > 0 && (
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--primary)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--primary-foreground)]">
-              {activeCount}
-            </span>
+            <span className="t-micro tabular-nums text-[var(--tint)]">{activeCount}</span>
           )}
           <IconChevronDown className={cn("size-4 text-[var(--muted)] transition-transform", open && "rotate-180")} />
         </button>

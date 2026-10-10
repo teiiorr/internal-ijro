@@ -15,24 +15,24 @@ export function ThroughputChartInner({
     <div style={{ width: "100%", height: 240 }}>
       <ResponsiveContainer>
         <LineChart data={rows} margin={{ top: 8, right: 12, bottom: 0, left: -12 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-          <XAxis dataKey="label" stroke="var(--muted)" tick={{ fontSize: 11 }} tickLine={false} />
-          <YAxis stroke="var(--muted)" tick={{ fontSize: 11 }} allowDecimals={false} tickLine={false} width={40} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
+          <XAxis dataKey="label" stroke="var(--ink-3)" tick={{ fontSize: 11 }} tickLine={false} />
+          <YAxis stroke="var(--ink-3)" tick={{ fontSize: 11 }} allowDecimals={false} tickLine={false} width={40} />
           <Tooltip
             contentStyle={{
               background: "var(--surface)",
-              border: "1px solid var(--border)",
+              border: "1px solid var(--line)",
               borderRadius: 12,
-              color: "var(--foreground)",
+              color: "var(--ink)",
             }}
-            labelStyle={{ color: "var(--muted)" }}
+            labelStyle={{ color: "var(--ink-3)" }}
           />
           <Legend wrapperStyle={{ fontSize: 12 }} />
           <Line
             type="monotone"
             dataKey="created"
             name={labels.created}
-            stroke="var(--primary)"
+            stroke="var(--tint)"
             strokeWidth={2}
             dot={{ r: 3 }}
             isAnimationActive={false}

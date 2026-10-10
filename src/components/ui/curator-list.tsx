@@ -40,7 +40,7 @@ export function CuratorList({
           key={c.id}
           name={localizeName(c.fullName, locale)}
           avatarUrl={c.avatarUrl}
-          subtitle={[c.position, c.departmentName].filter(Boolean).join(" · ") || null}
+          subtitle={[c.position, c.departmentName].filter(Boolean).join(", ") || null}
           size={size}
         />
       ))}
@@ -48,7 +48,7 @@ export function CuratorList({
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="self-start rounded-md bg-[var(--surface-3)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:bg-[var(--primary-soft)] hover:text-[var(--primary)] active:scale-95"
+          className="self-start rounded-[var(--radius-s)] bg-[var(--surface-2)] px-2.5 py-1 text-xs font-semibold text-[var(--ink-2)] transition-colors hover:bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] hover:text-[var(--tint)] active:scale-95"
         >
           +{hidden}
         </button>

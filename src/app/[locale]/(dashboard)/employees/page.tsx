@@ -4,16 +4,26 @@ import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { listEmployees } from "@/server/queries/employees";
 import { listDepartments } from "@/server/queries/departments";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Button } from "@/components/ui-biib/Button";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { EmployeesFilterBar } from "@/components/hr/employees-filter-bar";
-import { IconPlus as Plus } from "@tabler/icons-react";
+import { EmptyState } from "@/components/empty-state";
+import { IconPlus as Plus, IconUsers } from "@tabler/icons-react";
 import { shortName } from "@/lib/names";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
 type SP = Record<string, string | string[] | undefined>;
+
+const STATUS_TONE: Record<string, StatusTone> = {
+  active: "success",
+  pending: "warning",
+  archived: "neutral",
+  blocked: "danger",
+};
 
 export default async function EmployeesPage({ searchParams }: { searchParams: Promise<SP> }) {
   const session = await auth();
@@ -39,101 +49,87 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
   ]);
 
   const canAdd = ["direktor", "orinbosar", "hr"].includes(session.user.position);
+  const statusLabel = (s: string) => t(`status.${s}` as "status.active");
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-3xl font-bold">{t("nav.employees")}</h1>
-          <p className="text-sm text-[var(--muted)]">{total} {t("common.of")}</p>
-        </div>
-        {canAdd && (
-          <Button asChild>
-            <Link href="/employees/new"><Plus className="size-4" /> {t("common.submit")}</Link>
-          </Button>
-        )}
-      </div>
-      <EmployeesFilterBar departments={departments.map((d) => ({ id: d.id, name: d.name }))} />
-      {/* Mobil kartalar */}
-      <div className="md:hidden space-y-2">
-        {rows.map((r) => (
-          <Link
-            key={r.id}
-            href={`/employees/${r.id}`}
-            className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 hover:bg-[var(--surface-2)] transition-colors"
-          >
-            <div className="flex items-start gap-3">
-              <UserAvatar name={shortName(r.fullName)} avatarUrl={r.avatarUrl} size="md" department={r.departmentName} position={r.positionTitle ?? r.position} />
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold text-[15px]">{shortName(r.fullName)}</p>
-                <p className="text-xs text-[var(--muted)] truncate mt-0.5">{r.email}</p>
-              </div>
-              <Badge
-                variant={r.status === "active" ? "success" : r.status === "pending" ? "warning" : r.status === "archived" ? "secondary" : "danger"}
-              >
-                {r.status}
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between mt-2 text-xs text-[var(--muted)]">
-              <span>{r.positionTitle ?? t(`positions.${r.position}`)}</span>
-              <span className="truncate ml-2">{r.departmentName ?? "—"}</span>
-            </div>
-          </Link>
-        ))}
-        {rows.length === 0 && (
-          <p className="text-center py-10 text-[var(--muted)]">{t("employees.empty")}</p>
-        )}
-      </div>
+    <div>
+      <PageHeader
+        title={t("nav.employees")}
+        subtitle={t("staffX.staffDirectory.members", { count: total })}
+        actions={
+          canAdd && (
+            <Button asChild variant="primary" size="40" icon={Plus}>
+              <Link href="/employees/new">{t("employees.addBtn")}</Link>
+            </Button>
+          )
+        }
+      />
 
-      {/* Desktop jadvali */}
-      <Card className="hidden md:block">
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t("employees.table.name")}</TableHead>
-                <TableHead>{t("employees.table.email")}</TableHead>
-                <TableHead>{t("employees.table.position")}</TableHead>
-                <TableHead>{t("employees.table.department")}</TableHead>
-                <TableHead>{t("employees.table.status")}</TableHead>
-                <TableHead>{t("employees.table.hireDate")}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((r) => (
-                <TableRow key={r.id} className="cursor-pointer">
-                  <TableCell>
-                    <Link href={`/employees/${r.id}`} className="font-medium hover:underline flex items-center gap-2">
-                      <UserAvatar name={shortName(r.fullName)} avatarUrl={r.avatarUrl} size="xs" department={r.departmentName} position={r.positionTitle ?? r.position} />
-                      {shortName(r.fullName)}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-[var(--muted)]">{r.email}</TableCell>
-                  <TableCell>{r.positionTitle ?? t(`positions.${r.position}`)}</TableCell>
-                  <TableCell>{r.departmentName ?? "—"}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        r.status === "active" ? "success" : r.status === "pending" ? "warning" : r.status === "archived" ? "secondary" : "danger"
-                      }
-                    >
-                      {r.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{r.hireDate ?? "—"}</TableCell>
-                </TableRow>
-              ))}
-              {rows.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-10 text-[var(--muted)]">
-                    {t("employees.empty")}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col gap-6">
+        <EmployeesFilterBar departments={departments.map((d) => ({ id: d.id, name: d.name }))} />
+
+        {rows.length === 0 ? (
+          <Card>
+            <EmptyState icon={IconUsers} title={t("employees.empty")} />
+          </Card>
+        ) : (
+          <>
+            {/* Mobil: ajratuvchi-qatorli roʻyxat */}
+            <Card bare className="px-5 sm:px-6 md:hidden">
+              <Rows>
+                {rows.map((r) => (
+                  <Row key={r.id} href={`/employees/${r.id}`}>
+                    <UserAvatar name={shortName(r.fullName)} avatarUrl={r.avatarUrl} size="sm" clickable={false} department={r.departmentName} position={r.positionTitle ?? r.position} />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{shortName(r.fullName)}</p>
+                      <p className="mt-0.5 truncate t-small text-[var(--ink-3)]">
+                        {r.positionTitle ?? t(`positions.${r.position}`)}
+                        {r.departmentName ? `, ${r.departmentName}` : ""}
+                      </p>
+                    </div>
+                    <Status tone={STATUS_TONE[r.status] ?? "neutral"}>{statusLabel(r.status)}</Status>
+                  </Row>
+                ))}
+              </Rows>
+            </Card>
+
+            {/* Desktop: jadval (zich — qattiq sirt) */}
+            <Card solid bare className="hidden overflow-hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("employees.table.name")}</TableHead>
+                    <TableHead>{t("employees.table.email")}</TableHead>
+                    <TableHead>{t("employees.table.position")}</TableHead>
+                    <TableHead>{t("employees.table.department")}</TableHead>
+                    <TableHead>{t("employees.table.status")}</TableHead>
+                    <TableHead>{t("employees.table.hireDate")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rows.map((r) => (
+                    <TableRow key={r.id}>
+                      <TableCell>
+                        <Link href={`/employees/${r.id}`} className="flex items-center gap-2.5 font-medium text-[var(--ink)] transition-colors hover:text-[var(--tint)]">
+                          <UserAvatar name={shortName(r.fullName)} avatarUrl={r.avatarUrl} size="xs" clickable={false} department={r.departmentName} position={r.positionTitle ?? r.position} />
+                          {shortName(r.fullName)}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-[var(--ink-3)]">{r.email}</TableCell>
+                      <TableCell className="text-[var(--ink-2)]">{r.positionTitle ?? t(`positions.${r.position}`)}</TableCell>
+                      <TableCell className="text-[var(--ink-2)]">{r.departmentName ?? "—"}</TableCell>
+                      <TableCell>
+                        <Status tone={STATUS_TONE[r.status] ?? "neutral"}>{statusLabel(r.status)}</Status>
+                      </TableCell>
+                      <TableCell className="tabular-nums text-[var(--ink-2)]">{r.hireDate ?? "—"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          </>
+        )}
+      </div>
     </div>
   );
 }

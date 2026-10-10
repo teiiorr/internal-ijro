@@ -2,16 +2,20 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { signIn } from "next-auth/react";
+import { IconShieldLock } from "@tabler/icons-react";
 import { useRouter, Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui-biib/Button";
+import { Field } from "@/components/ui-biib/Field";
+import { Input } from "@/components/ui-biib/Input";
+import { FormMessage } from "@/components/ui-biib/FormMessage";
+import { AuthShell, AUTH_LINK } from "../_components/auth-shell";
 
 export default function LoginPage() {
   const t = useTranslations();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [showTotp, setShowTotp] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,52 +34,62 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-7 relative">
-      <div className="text-center space-y-2.5">
-        <h1 className="font-extrabold tracking-[-0.03em] text-[2.25rem] leading-tight">
-          <span className="gradient-text">{t("auth.login.title")}</span>
-        </h1>
-        <p className="text-[var(--muted)] font-medium">{t("app.tagline")}</p>
-      </div>
-
-      <form onSubmit={onSubmit} className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="email">{t("auth.login.email")}</Label>
-          {/* type=text — studiyalar Instagram uslubidagi handle bilan, xodimlar email bilan kiradi */}
-          <Input id="email" name="email" type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">{t("auth.login.password")}</Label>
-          <Input id="password" name="password" type="password" autoComplete="current-password" required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="totp">{t("auth.login.totp")}</Label>
-          <Input
-            id="totp"
-            name="totp"
-            inputMode="numeric"
-            maxLength={6}
-            placeholder="000 000"
-            className="tabular text-center text-lg tracking-[0.4em] font-bold"
-          />
-        </div>
-        {error && (
-          <div className="rounded-2xl bg-[var(--danger-soft)] border border-[var(--danger)]/20 backdrop-blur px-4 py-3">
-            <p className="text-sm font-semibold text-[var(--danger)]">{error}</p>
-          </div>
-        )}
-        <Button type="submit" className="w-full" size="lg" disabled={pending}>
-          {t("auth.login.submit")}
-        </Button>
-        <div className="flex flex-col sm:flex-row sm:justify-between gap-2 text-sm pt-2">
-          <Link href="/forgot-password" className="text-[var(--primary)] font-bold hover:underline">
+    <AuthShell
+      title={t("auth.login.title")}
+      subtitle={t("app.tagline")}
+      footer={
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-between">
+          <Link href="/forgot-password" className={AUTH_LINK}>
             {t("auth.login.forgot")}
           </Link>
-          <Link href="/register-contractor" className="text-[var(--primary)] font-bold hover:underline">
+          <Link href="/register-contractor" className={AUTH_LINK}>
             {t("auth.login.registerContractor")}
           </Link>
         </div>
+      }
+    >
+      <form onSubmit={onSubmit} className="flex flex-col gap-5">
+        <Field id="email" label={t("auth.login.email")} required>
+          {(c) => (
+            /* type=text — studiyalar handle, xodimlar email bilan kiradi */
+            <Input {...c} name="email" type="text" autoComplete="username" autoCapitalize="none" spellCheck={false} />
+          )}
+        </Field>
+
+        <Field id="password" label={t("auth.login.password")} required>
+          {(c) => <Input {...c} name="password" type="password" autoComplete="current-password" />}
+        </Field>
+
+        {showTotp ? (
+          <Field id="totp" label={t("auth.login.totp")}>
+            {(c) => (
+              <Input
+                {...c}
+                name="totp"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="000000"
+                className="text-center text-lg font-bold tracking-[0.4em] tabular-nums"
+              />
+            )}
+          </Field>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowTotp(true)}
+            className="inline-flex items-center gap-1.5 self-start t-label text-[var(--ink-2)] transition-colors hover:text-[var(--ink)]"
+          >
+            <IconShieldLock className="size-4" aria-hidden />
+            {t("auth.login.totp")}
+          </button>
+        )}
+
+        <FormMessage tone="error">{error}</FormMessage>
+
+        <Button type="submit" variant="primary" size="56" loading={pending} className="w-full">
+          {t("auth.login.submit")}
+        </Button>
       </form>
-    </div>
+    </AuthShell>
   );
 }

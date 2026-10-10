@@ -3,8 +3,8 @@ import { useId, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { IconAddressBook, IconDeviceFloppy, IconX } from "@tabler/icons-react";
-import { Card } from "@/components/ui/card";
+import { IconDeviceFloppy, IconX } from "@tabler/icons-react";
+import { Card } from "@/components/ui-biib/Card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -129,18 +129,15 @@ export function MyContactCardForm({ init }: { init: MyContactCardInit }) {
     });
   }
 
-  const errorCls = "text-xs font-medium text-[var(--danger)]";
+  const errorCls = "t-small font-medium text-[var(--danger)]";
 
   return (
-    <Card className="max-w-3xl p-5 sm:p-7">
-      <div className="mb-5 flex items-start gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--primary-soft)] text-[var(--primary)]">
-          <IconAddressBook className="size-5" aria-hidden />
-        </span>
-        <div className="min-w-0">
-          <h2 className="text-lg font-bold tracking-tight">{t("myCardTitle")}</h2>
-          <p className="mt-0.5 text-sm text-[var(--muted)]">{t("myCardHint")}</p>
-        </div>
+    <Card solid className="max-w-3xl">
+      <div className="mb-5">
+        <h2 className="font-[family-name:var(--font-ui)] text-[1.1875rem] font-bold tracking-tight text-[var(--ink)]">
+          {t("myCardTitle")}
+        </h2>
+        <p className="mt-1 t-small text-[var(--ink-3)]">{t("myCardHint")}</p>
       </div>
 
       <form onSubmit={onSubmit} className="space-y-5" noValidate>
@@ -179,7 +176,7 @@ export function MyContactCardForm({ init }: { init: MyContactCardInit }) {
           <div className="space-y-1.5">
             <Label htmlFor={id("tg")}>{t("telegram")}</Label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] font-medium text-[var(--subtle)]">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[0.9375rem] font-medium text-[var(--ink-3)]">
                 @
               </span>
               <Input
@@ -217,25 +214,25 @@ export function MyContactCardForm({ init }: { init: MyContactCardInit }) {
 
         <label
           htmlFor={id("show")}
-          className="flex cursor-pointer items-start gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-3.5"
+          className="flex cursor-pointer items-start gap-3 rounded-[var(--radius-m)] bg-[var(--surface-2)] p-3.5"
         >
           <input
             id={id("show")}
             type="checkbox"
             checked={showMobile}
             onChange={(e) => setShowMobile(e.target.checked)}
-            className="mt-0.5 size-5 shrink-0 accent-[var(--primary)]"
+            className="mt-0.5 size-5 shrink-0 accent-[var(--tint)]"
           />
           <span className="min-w-0">
-            <span className="block text-[15px] font-semibold">{t("showMobile")}</span>
-            <span className="mt-0.5 block text-xs text-[var(--muted)]">{t("showMobileHint")}</span>
+            <span className="block text-[0.9375rem] font-semibold text-[var(--ink)]">{t("showMobile")}</span>
+            <span className="mt-0.5 block t-small text-[var(--ink-3)]">{t("showMobileHint")}</span>
           </span>
         </label>
 
         <div className="space-y-1.5">
           <div className="flex items-baseline justify-between gap-3">
             <Label htmlFor={id("bio")}>{t("bio")}</Label>
-            <span className="text-xs text-[var(--subtle)] tabular">{bio.length}/500</span>
+            <span className="t-micro tabular-nums text-[var(--ink-3)]">{bio.length}/500</span>
           </div>
           <Textarea
             id={id("bio")}
@@ -249,7 +246,7 @@ export function MyContactCardForm({ init }: { init: MyContactCardInit }) {
         <div className="space-y-1.5">
           <div className="flex items-baseline justify-between gap-3">
             <Label htmlFor={id("skill")}>{t("skills")}</Label>
-            <span className="text-xs text-[var(--subtle)] tabular">
+            <span className="t-micro tabular-nums text-[var(--ink-3)]">
               {skills.length}/{MAX_SKILLS}
             </span>
           </div>
@@ -258,7 +255,7 @@ export function MyContactCardForm({ init }: { init: MyContactCardInit }) {
               {skills.map((s) => (
                 <li
                   key={s}
-                  className="inline-flex max-w-full items-center gap-1 rounded-full bg-[var(--primary-soft)] py-1 pl-3 pr-1 text-[13px] font-semibold text-[var(--primary)]"
+                  className="inline-flex max-w-full items-center gap-1 rounded-[var(--radius-s)] bg-[var(--surface-2)] py-1 pl-3 pr-1 text-[0.8125rem] font-semibold text-[var(--ink-2)]"
                 >
                   <span className="min-w-0 truncate">{s}</span>
                   <button
@@ -266,7 +263,7 @@ export function MyContactCardForm({ init }: { init: MyContactCardInit }) {
                     onClick={() => setSkills(skills.filter((x) => x !== s))}
                     aria-label={t("removeSkill", { skill: s })}
                     title={t("removeSkill", { skill: s })}
-                    className="grid size-5 shrink-0 place-items-center rounded-full transition-colors hover:bg-[var(--primary-soft-strong)]"
+                    className="grid size-5 shrink-0 place-items-center rounded-[var(--radius-s)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--ink)]"
                   >
                     <IconX className="size-3.5" />
                   </button>
@@ -285,7 +282,7 @@ export function MyContactCardForm({ init }: { init: MyContactCardInit }) {
             enterKeyHint="done"
           />
           {skills.length >= MAX_SKILLS && (
-            <p className="text-xs text-[var(--muted)]">{t("skillsLimit", { max: MAX_SKILLS })}</p>
+            <p className="t-small text-[var(--ink-3)]">{t("skillsLimit", { max: MAX_SKILLS })}</p>
           )}
         </div>
 

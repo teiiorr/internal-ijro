@@ -71,8 +71,8 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
         onKeyDown={(e) => { if (e.key === "Enter") handleClick(); }}
         className={cn(
           "rounded-full shrink-0 flex items-center justify-center font-semibold overflow-hidden relative",
-          hasPhoto ? "ring-2 ring-[var(--border)]" : "bg-[var(--primary-soft)] text-[var(--primary)]",
-          clickable && hasPhoto && "cursor-pointer hover:ring-[var(--primary)] transition-all",
+          hasPhoto ? "" : "bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] text-[var(--tint)]",
+          clickable && hasPhoto && "cursor-pointer transition-[box-shadow] duration-[var(--dur-ui)] ease-[var(--ease-ui)] [@media(hover:hover)]:hover:ring-2 [@media(hover:hover)]:hover:ring-[var(--tint)]",
           container,
           text,
           className,
@@ -114,14 +114,14 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
           <img
             src={avatarUrl!}
             alt={name}
-            className="max-w-[85vw] max-h-[70vh] rounded-2xl object-contain shadow-2xl animate-in zoom-in-95 duration-200"
+            className="max-w-[85vw] max-h-[70vh] rounded-[var(--radius-media)] object-contain shadow-2xl animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           />
           <div className="mt-4 text-center text-white animate-in fade-in slide-in-from-bottom-2 duration-300">
             <p className="text-lg font-bold">{name}</p>
             {(department || position) && (
               <p className="text-sm text-white/70 mt-1">
-                {[position, department].filter(Boolean).join(" · ")}
+                {[position, department].filter(Boolean).join(", ")}
               </p>
             )}
           </div>

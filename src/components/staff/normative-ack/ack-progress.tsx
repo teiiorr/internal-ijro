@@ -26,13 +26,13 @@ function Ring({ done, total, size = 22 }: { done: number; total: number; size?: 
   const complete = total > 0 && done >= total;
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0 -rotate-90" aria-hidden>
-      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="var(--border-strong)" strokeWidth={stroke} />
+      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="var(--line-strong)" strokeWidth={stroke} />
       <circle
         cx={size / 2}
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke={complete ? "var(--success)" : "var(--primary)"}
+        stroke={complete ? "var(--success)" : "var(--tint)"}
         strokeWidth={stroke}
         strokeLinecap="round"
         strokeDasharray={c}
@@ -48,30 +48,30 @@ function RecipientRow({ p }: { p: AckRecipientItem }) {
   const tr = useTranslations();
   const label = p.positionTitle?.trim() || tr(`positions.${p.position}`);
   return (
-    <li className="flex min-w-0 items-center gap-2.5 rounded-xl px-2 py-2 hover:bg-[var(--surface-2)]">
+    <li className="flex min-w-0 items-center gap-2.5 rounded-[var(--radius-s)] px-2 py-2 hover:bg-[var(--surface-2)]">
       <UserAvatar name={p.fullName} avatarUrl={p.avatarUrl} size="xs" clickable={false} />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold">{p.fullName}</p>
-        <p className="truncate text-xs text-[var(--muted)]">
+        <p className="truncate text-sm font-semibold text-[var(--ink)]">{p.fullName}</p>
+        <p className="truncate t-small text-[var(--ink-3)]">
           {label}
-          {p.departmentName ? ` · ${p.departmentName}` : ""}
+          {p.departmentName ? `, ${p.departmentName}` : ""}
         </p>
       </div>
       {p.acknowledgedAt ? (
-        <span className="inline-flex shrink-0 items-center gap-1 text-right text-[11px] font-semibold text-[var(--success)]">
+        <span className="inline-flex shrink-0 items-center gap-1 text-right t-micro font-semibold text-[var(--success)]">
           <IconCircleCheckFilled className="size-4" />
           <span className="tabular-nums">{formatTashkentDateTime(p.acknowledgedAt)}</span>
         </span>
       ) : p.openedAt ? (
         <span
-          className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-[var(--muted)]"
+          className="inline-flex shrink-0 items-center gap-1 t-micro font-medium text-[var(--ink-3)]"
           title={t("openedAt", { time: formatTashkentDateTime(p.openedAt) })}
         >
           <IconEye className="size-3.5" />
           <span className="hidden tabular-nums sm:inline">{formatTashkentDateTime(p.openedAt)}</span>
         </span>
       ) : (
-        <span className="shrink-0 text-[11px] text-[var(--subtle)]">{t("notOpened")}</span>
+        <span className="shrink-0 t-micro text-[var(--ink-3)]">{t("notOpened")}</span>
       )}
     </li>
   );
@@ -155,8 +155,8 @@ export function AckProgress({
       <button
         type="button"
         onClick={() => onOpenChange(true)}
-        title={`${label} · ${t("deadlineOn", { date: ymdToDots(deadline) })}`}
-        className="inline-flex h-8 max-w-full items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] pl-1.5 pr-2.5 text-xs font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--primary)]"
+        title={`${label}, ${t("deadlineOn", { date: ymdToDots(deadline) })}`}
+        className="inline-flex h-9 max-w-full items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--line)] pl-1.5 pr-2.5 t-label text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
       >
         <Ring done={acknowledged} total={total} />
         <span className="truncate tabular-nums">{label}</span>
@@ -172,9 +172,9 @@ export function AckProgress({
             <DialogDescription className="tabular-nums">{t("deadlineOn", { date: ymdToDots(view?.deadline ?? deadline) })}</DialogDescription>
           </DialogHeader>
 
-          <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-3)]">
+          <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-2)]">
             <div
-              className={cn("h-full rounded-full transition-[width] duration-500", done >= all && all > 0 ? "bg-[var(--success)]" : "bg-[var(--primary)]")}
+              className={cn("h-full rounded-full transition-[width] duration-500", done >= all && all > 0 ? "bg-[var(--success)]" : "bg-[var(--tint)]")}
               style={{ width: `${ackPercent(done, all)}%` }}
             />
           </div>
@@ -200,11 +200,11 @@ export function AckProgress({
           </div>
 
           {view?.message && (
-            <p className="whitespace-pre-line break-words rounded-xl bg-[var(--surface-2)] p-3 text-sm [overflow-wrap:anywhere]">{view.message}</p>
+            <p className="whitespace-pre-line break-words rounded-[var(--radius-control)] bg-[var(--surface-2)] p-3 t-body [overflow-wrap:anywhere]">{view.message}</p>
           )}
 
           {!view ? (
-            <div className="flex items-center justify-center gap-2 py-8 text-sm text-[var(--muted)]">
+            <div className="flex items-center justify-center gap-2 py-8 t-body text-[var(--ink-3)]">
               {loading ? <IconLoader2 className="size-4 animate-spin" /> : <IconUsers className="size-4" />}
               {tr("common.loading")}
             </div>
@@ -212,10 +212,10 @@ export function AckProgress({
             <div className="space-y-4">
               {pendingList.length > 0 && (
                 <section className="space-y-1">
-                  <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
+                  <h4 className="flex items-center gap-2 t-micro font-semibold text-[var(--ink-3)]">
                     {t("notYet")}
-                    <span className="tabular-nums text-[var(--subtle)]">{pendingList.length}</span>
-                    <span className="h-px flex-1 bg-[var(--border)]" />
+                    <span className="tabular-nums text-[var(--ink-3)]">{pendingList.length}</span>
+                    <span className="h-px flex-1 bg-[var(--line)]" />
                   </h4>
                   <ul>
                     {pendingList.map((p) => (
@@ -226,10 +226,10 @@ export function AckProgress({
               )}
               {doneList.length > 0 && (
                 <section className="space-y-1">
-                  <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[var(--muted)]">
+                  <h4 className="flex items-center gap-2 t-micro font-semibold text-[var(--ink-3)]">
                     {t("acknowledgedList")}
-                    <span className="tabular-nums text-[var(--subtle)]">{doneList.length}</span>
-                    <span className="h-px flex-1 bg-[var(--border)]" />
+                    <span className="tabular-nums text-[var(--ink-3)]">{doneList.length}</span>
+                    <span className="h-px flex-1 bg-[var(--line)]" />
                   </h4>
                   <ul>
                     {doneList.map((p) => (

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { IconChevronLeft as ChevronLeft, IconChevronRight as ChevronRight, IconPhotoPlus as ImagePlus, IconLoader2 as Loader2, IconTrash as Trash2, IconPhoto as Images } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestPhoto } from "@/server/actions/contests";
 import type { ContestPhoto } from "@/server/queries/contests";
@@ -23,8 +24,6 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
   const go = useCallback((dir: number) => setActive((i) => (count ? (i + dir + count) % count : 0)), [count]);
 
   // Har 5 soniyada avtomatik almaşadi (hover'da yoki faqat bitta rasm bölsa töxtaydi).
-  // `active`'ga boğliq — taymer har slaydan keyin qayta işga tuşadi, şuning uçun qöl bilan
-  // prev/next/nuqta bosişlari ham 5 soniyalik oynani nolga qaytaradi (touch'da muhim, hover-pauza yöq).
   useEffect(() => {
     if (paused || count <= 1) return;
     const id = window.setTimeout(() => setActive((i) => (i + 1) % count), AUTOPLAY_MS);
@@ -60,31 +59,26 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
   const current = photos[Math.min(active, count - 1)];
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="text-base font-semibold">{t("tanlov.gallery")}</h3>
+    <section className="min-w-0">
+      <div className="section-header flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h2 className="font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)] sm:text-[1.1875rem]">{t("tanlov.gallery")}</h2>
         {canManage && (
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-[var(--border-strong)] px-3 py-1.5 text-xs font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
-          >
-            {uploading ? <Loader2 className="size-3.5 animate-spin" /> : <ImagePlus className="size-3.5" />}
+          <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileRef.current?.click()}>
+            {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
             {t("tanlov.addPhoto")}
-          </button>
+          </Button>
         )}
         <input ref={fileRef} type="file" accept="image/*" className="sr-only" onChange={onPick} />
       </div>
 
       {count === 0 ? (
-        <div className="grid aspect-video place-items-center rounded-xl border border-dashed border-[var(--border-strong)] text-[var(--subtle)]">
-          <Images className="size-9" />
+        <div className="grid aspect-video place-items-center rounded-[var(--radius-media)] border border-[var(--line)] bg-[var(--surface-2)] text-[var(--ink-3)]">
+          <Images className="size-9" aria-hidden />
         </div>
       ) : (
-        <>
+        <div className="space-y-3">
           <div
-            className="group relative aspect-video w-full overflow-hidden rounded-xl bg-[var(--surface-2)]"
+            className="group relative aspect-video w-full overflow-hidden rounded-[var(--radius-media)] border border-[var(--line)] bg-[var(--surface-2)]"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
           >
@@ -109,7 +103,7 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
                   type="button"
                   aria-label={t("tanlov.prev")}
                   onClick={() => go(-1)}
-                  className="absolute left-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)]/85 text-[var(--foreground)] backdrop-blur-sm transition-colors hover:bg-[var(--surface)] sm:opacity-0 sm:group-hover:opacity-100"
+                  className="absolute left-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-[var(--radius-control)] bg-black/45 text-white backdrop-blur-sm transition-colors hover:bg-black/60 sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   <ChevronLeft className="size-5" />
                 </button>
@@ -117,11 +111,11 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
                   type="button"
                   aria-label={t("tanlov.next")}
                   onClick={() => go(1)}
-                  className="absolute right-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)]/85 text-[var(--foreground)] backdrop-blur-sm transition-colors hover:bg-[var(--surface)] sm:opacity-0 sm:group-hover:opacity-100"
+                  className="absolute right-2 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-[var(--radius-control)] bg-black/45 text-white backdrop-blur-sm transition-colors hover:bg-black/60 sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   <ChevronRight className="size-5" />
                 </button>
-                <span className="absolute right-2 top-2 rounded-md bg-black/40 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
+                <span className="absolute right-2 top-2 rounded-[var(--radius-s)] bg-black/45 px-1.5 py-0.5 t-micro tabular-nums text-white backdrop-blur-sm">
                   {active + 1} / {count}
                 </span>
               </>
@@ -133,7 +127,7 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
                 aria-label={t("common.delete")}
                 disabled={pending}
                 onClick={() => start(async () => { await removeContestPhoto(current.id); router.refresh(); })}
-                className="absolute bottom-2 right-2 grid size-8 place-items-center rounded-lg bg-black/45 text-white backdrop-blur-sm transition-colors hover:bg-[var(--danger)]"
+                className="absolute bottom-2 right-2 grid size-9 place-items-center rounded-[var(--radius-s)] bg-black/45 text-white backdrop-blur-sm transition-colors hover:bg-[var(--danger)]"
               >
                 <Trash2 className="size-4" />
               </button>
@@ -148,13 +142,13 @@ export function ContestGallery({ contestId, photos, canManage }: { contestId: st
                   type="button"
                   aria-label={`${i + 1}`}
                   onClick={() => setActive(i)}
-                  className={`h-1.5 rounded-full transition-all ${i === active ? "w-5 bg-[var(--primary)]" : "w-1.5 bg-[var(--border-strong)] hover:bg-[var(--muted)]"}`}
+                  className={`h-1.5 rounded-full transition-[width,background-color] duration-[var(--dur-ui)] ${i === active ? "w-5 bg-[var(--tint)]" : "w-1.5 bg-[var(--line-strong)] hover:bg-[var(--ink-3)]"}`}
                 />
               ))}
             </div>
           )}
-        </>
+        </div>
       )}
-    </div>
+    </section>
   );
 }

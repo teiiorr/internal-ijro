@@ -108,15 +108,15 @@ export function DocMetaDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button type="button" variant="outline" size="sm" className="h-8 rounded-xl px-2.5 text-xs">
-          <IconListDetails className="size-3.5" />
+        <Button type="button" variant="outline" size="sm">
+          <IconListDetails className="size-4" />
           {t("details")}
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[calc(100%-1.5rem)] max-h-[85vh] gap-4 overflow-y-auto p-5 sm:max-w-xl sm:p-7">
         <DialogHeader className="pr-8">
           <DialogTitle className="flex items-center gap-2">
-            <IconListDetails className="size-5 shrink-0 text-[var(--primary)]" />
+            <IconListDetails className="size-5 shrink-0 text-[var(--tint)]" />
             <span className="min-w-0 break-words">{t("details")}</span>
           </DialogTitle>
           <DialogDescription className="break-words [overflow-wrap:anywhere]">{doc.fileName}</DialogDescription>
@@ -171,7 +171,7 @@ export function DocMetaDialog({
 
           <div className="space-y-1.5">
             <Label>{t("status")}</Label>
-            <div role="radiogroup" aria-label={t("status")} className="grid grid-cols-2 gap-1 rounded-2xl bg-[var(--surface-2)] p-1">
+            <div role="radiogroup" aria-label={t("status")} className="grid grid-cols-2 gap-1 rounded-[var(--radius-control)] bg-[var(--surface-2)] p-1">
               {(["active", "repealed"] as const).map((st) => (
                 <button
                   key={st}
@@ -180,12 +180,12 @@ export function DocMetaDialog({
                   aria-checked={form.status === st}
                   onClick={() => set({ status: st })}
                   className={cn(
-                    "min-h-9 rounded-xl px-2 py-1.5 text-sm font-semibold transition-colors",
+                    "min-h-10 rounded-[calc(var(--radius-control)-4px)] px-2 py-1.5 text-sm font-semibold transition-colors",
                     form.status === st
                       ? st === "active"
-                        ? "bg-[var(--success)] text-white shadow-[var(--shadow-1)]"
-                        : "bg-[var(--danger)] text-white shadow-[var(--shadow-1)]"
-                      : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                        ? "bg-[var(--success)] text-[var(--on-tint)] shadow-[var(--shadow-1)]"
+                        : "bg-[var(--danger)] text-[var(--on-tint)] shadow-[var(--shadow-1)]"
+                      : "text-[var(--ink-2)] hover:text-[var(--ink)]"
                   )}
                 >
                   {st === "active" ? t("statusActive") : t("statusRepealed")}

@@ -1,10 +1,11 @@
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { IconCoins as Coins } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
-import { Card, CardContent } from "@/components/ui/card";
-import { StatusTag } from "@/components/ui/status-tag";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Status } from "@/components/ui-biib/Status";
+import { FactList } from "@/components/ui-biib/FactList";
 import { formatDate } from "@/lib/dates";
 import { getStudioCompany, getStudioPayments } from "@/server/queries/studio";
 
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
 
-// Studiya: o'z loyihalari bosqichlari bo'yicha barcha to'lovlar (faqat o'qish).
+// Studiya: oʻz loyihalari bosqichlari boʻyicha barcha toʻlovlar (faqat oʻqish).
 export default async function StudioPaymentsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
@@ -24,73 +25,53 @@ export default async function StudioPaymentsPage() {
   const { items, totals } = await getStudioPayments(company.id);
 
   return (
-    <div className="space-y-5">
-      <header>
-        <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("studio.payments.title")}</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">{t("studio.payments.subtitle")}</p>
-      </header>
-
+    <div>
+      <PageHeader title={t("studio.payments.title")} />
+      <div className="flex flex-col gap-8 lg:gap-12">
+      {/* Sarhisob — toʻlangan / kutilmoqda, valyuta boʻyicha (foiz chiziqsiz) */}
       {totals.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {totals.map((tt) => {
-            const all = tt.paid + tt.pending;
-            const pct = all > 0 ? Math.round((tt.paid / all) * 100) : 0;
-            return (
-              <Card key={tt.currency}>
-                <CardContent className="space-y-3 p-5">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-[var(--muted)]">
-                    <Coins className="size-4" /> {t("studio.payments.total")} · {tt.currency}
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="min-w-0">
-                      <p className="text-xs text-[var(--muted)]">{t("studio.payments.paid")}</p>
-                      <p className="truncate text-lg font-extrabold tabular-nums text-[#16A34A]">{money(tt.paid, tt.currency)}</p>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-[var(--muted)]">{t("studio.payments.pending")}</p>
-                      <p className="truncate text-lg font-extrabold tabular-nums text-[#E08C10]">{money(tt.pending, tt.currency)}</p>
-                    </div>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-2)]">
-                    <div className="h-full rounded-full bg-[#16A34A]" style={{ width: `${pct}%` }} />
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        <Card>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {totals.map((tt) => (
+              <FactList
+                key={tt.currency}
+                items={[
+                  { term: `${t("studio.payments.paid")}, ${tt.currency}`, value: <span className="font-bold tabular-nums text-[var(--success)]">{money(tt.paid, tt.currency)}</span> },
+                  { term: `${t("studio.payments.pending")}, ${tt.currency}`, value: <span className="font-bold tabular-nums text-[var(--warning)]">{money(tt.pending, tt.currency)}</span> },
+                ]}
+              />
+            ))}
+          </div>
+        </Card>
       )}
 
-      <Card>
-        <CardContent className="p-0">
-          {items.length === 0 ? (
-            <p className="py-14 text-center text-sm text-[var(--muted)]">{t("studio.payments.empty")}</p>
-          ) : (
-            <ul className="divide-y divide-[var(--border)]">
-              {items.map((p) => (
-                <li key={p.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-4 sm:px-5">
-                  <div className="min-w-0 flex-1 basis-56">
-                    <Link href={`/contractor/projects/${p.projectId}`} className="break-words font-semibold hover:underline">
-                      {p.projectName}
-                    </Link>
-                    <p className="mt-0.5 break-words text-xs text-[var(--muted)]">
-                      {p.stageOrder + 1}. {p.stageName}
-                      {p.note ? ` · ${p.note}` : ""}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold tabular-nums">{money(p.amount, p.currency)}</p>
-                    <p className="text-xs text-[var(--muted)]">{formatDate(p.paidAt ?? p.createdAt, locale)}</p>
-                  </div>
-                  <StatusTag tone={p.status === "paid" ? "green" : "amber"} size="sm">
-                    {p.status === "paid" ? t("studio.payments.paid") : t("studio.payments.pending")}
-                  </StatusTag>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
+      <Card bare className="px-5 sm:px-6">
+        {items.length === 0 ? (
+          <p className="py-10 text-center t-small text-[var(--ink-3)]">{t("studio.payments.empty")}</p>
+        ) : (
+          <Rows>
+            {items.map((p) => (
+              <Row key={p.id} href={`/contractor/projects/${p.projectId}`}>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{p.projectName}</p>
+                  <p className="mt-0.5 truncate t-small text-[var(--ink-3)]">
+                    {p.stageOrder + 1}. {p.stageName}
+                    {p.note ? `, ${p.note}` : ""}
+                  </p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="font-bold tabular-nums text-[var(--ink)]">{money(p.amount, p.currency)}</p>
+                  <p className="mt-0.5 t-micro text-[var(--ink-3)]">{formatDate(p.paidAt ?? p.createdAt, locale)}</p>
+                </div>
+                <Status tone={p.status === "paid" ? "success" : "warning"} className="shrink-0">
+                  {p.status === "paid" ? t("studio.payments.paid") : t("studio.payments.pending")}
+                </Status>
+              </Row>
+            ))}
+          </Rows>
+        )}
       </Card>
+      </div>
     </div>
   );
 }

@@ -109,8 +109,8 @@ export function AckButton({
           {t("acknowledge")}
         </Button>
       </div>
-      <p className="flex items-start gap-1 text-[11px] leading-snug text-[var(--muted)]">
-        <IconInfoCircle className="mt-px size-3.5 shrink-0" />
+      <p className="flex items-start gap-1 t-micro leading-snug text-[var(--ink-3)]">
+        <IconInfoCircle className="mt-px size-3.5 shrink-0" aria-hidden />
         <span className="min-w-0 break-words">{opened ? t("ackNote") : t("openFirst")}</span>
       </p>
     </div>

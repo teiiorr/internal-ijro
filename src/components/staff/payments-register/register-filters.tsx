@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils";
 
 type Opt = { id: string; name: string };
 
-// Loyihalar sahifasidagi filtr paneli bilan bir xil punktir uslub.
+// Loyihalar sahifasidagi filtr paneli bilan bir xil BIIB maydon uslubi.
 const FIELD =
-  "h-11 w-full min-w-0 rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3.5 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none";
+  "h-11 w-full min-w-0 rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] px-3.5 text-sm font-medium text-[var(--ink)] transition-colors focus:border-[var(--line-strong)] focus:outline-none";
 
 const MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
 const FILTER_KEYS = ["status", "studioId", "projectId", "typeId", "from", "to", "contract", "sort"] as const;
@@ -162,12 +162,10 @@ export function RegisterFiltersBar({
         className={`${FIELD} flex items-center justify-between sm:hidden`}
       >
         <span className="inline-flex items-center gap-2">
-          <Filter className="size-4 text-[var(--muted)]" />
+          <Filter className="size-4 text-[var(--ink-3)]" />
           {t("filters")}
           {activeCount > 0 && (
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--primary)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--primary-foreground)]">
-              {activeCount}
-            </span>
+            <span className="t-micro tabular-nums text-[var(--tint)]">{activeCount}</span>
           )}
         </span>
         <ChevronDown className={cn("size-4 text-[var(--muted)] transition-transform", open && "rotate-180")} />

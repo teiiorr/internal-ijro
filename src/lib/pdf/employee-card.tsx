@@ -95,7 +95,7 @@ export async function buildEmployeeCardPdf(userId: string): Promise<Buffer | nul
       <Page size="A4" style={s.page}>
         <Text style={s.h1}>{shortName(user.fullName)}</Text>
         <Text style={s.subtitle}>
-          {user.email} · {department?.name ?? "—"} · {user.position}
+          {user.email}, {department?.name ?? "—"}, {user.position}
         </Text>
         <View style={s.divider} />
 
@@ -127,7 +127,7 @@ export async function buildEmployeeCardPdf(userId: string): Promise<Buffer | nul
         ) : (
           history.map((h) => (
             <Text key={h.id} style={{ fontSize: 13, marginBottom: 2 }}>
-              {new Date(h.changeDate).toISOString().slice(0, 10)} · {h.oldPosition ?? "—"} → {h.newPosition}{h.reason ? ` (${h.reason})` : ""}
+              {new Date(h.changeDate).toISOString().slice(0, 10)}, {h.oldPosition ?? "—"} → {h.newPosition}{h.reason ? ` (${h.reason})` : ""}
             </Text>
           ))
         )}

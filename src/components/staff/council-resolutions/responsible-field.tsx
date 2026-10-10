@@ -45,10 +45,10 @@ export function ResponsibleField({
         disabled={disabled}
         onClick={() => setOpen(true)}
         className={cn(
-          "flex h-10 min-w-0 flex-1 items-center gap-2 rounded-xl border px-2.5 text-left text-sm font-medium transition-colors disabled:opacity-60",
+          "flex h-11 min-w-0 flex-1 items-center gap-2 rounded-[var(--radius-control)] border px-2.5 text-left text-sm font-medium transition-colors disabled:opacity-60",
           name
-            ? "border-[var(--border-strong)] bg-[var(--surface-2)] text-[var(--foreground)]"
-            : "border-dashed border-[var(--border-strong)] bg-transparent text-[var(--muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]"
+            ? "border-[var(--line-strong)] bg-[var(--surface)] text-[var(--ink)]"
+            : "border-dashed border-[var(--line-strong)] bg-transparent text-[var(--ink-2)] hover:border-[var(--tint)] hover:text-[var(--tint)]"
         )}
       >
         {name ? (
@@ -71,7 +71,7 @@ export function ResponsibleField({
           aria-label={t("clearResponsible")}
           title={t("clearResponsible")}
           onClick={() => onChange(null)}
-          className="shrink-0 text-[var(--muted)]"
+          className="shrink-0 text-[var(--ink-3)]"
         >
           <X className="size-4" />
         </Button>

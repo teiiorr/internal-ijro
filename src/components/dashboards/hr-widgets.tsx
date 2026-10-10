@@ -1,105 +1,78 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getEmployeeCounts, getBirthdaysThisWeek } from "@/server/queries/employees";
 import { listDepartments } from "@/server/queries/departments";
 import { shortName } from "@/lib/names";
 import { UserAvatar } from "@/components/ui/user-avatar";
-import {
-  IconUsers as Users,
-  IconUserPlus as UserPlus,
-  IconUserExclamation as UserPending,
-  IconCake as Cake,
-  IconBuilding as Building,
-  IconChevronRight as ChevronRight,
-  type Icon as TablerIcon,
-} from "@tabler/icons-react";
-
-function Kpi({ label, value, href, icon: Icon }: { label: string; value: number; href: string; icon: TablerIcon }) {
-  return (
-    <Link
-      href={href}
-      className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3.5 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]"
-    >
-      <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--primary-soft)]">
-        <Icon className="size-5 text-[var(--primary)]" stroke={1.75} />
-      </div>
-      <div className="min-w-0">
-        <div className="text-2xl font-extrabold leading-none tabular-nums">{value}</div>
-        <div className="mt-1 truncate text-xs font-medium text-[var(--muted)]">{label}</div>
-      </div>
-      <ChevronRight className="ml-auto size-4 shrink-0 text-[var(--subtle)] transition-colors group-hover:text-[var(--foreground)]" />
-    </Link>
-  );
-}
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
+import { Rows, Row } from "@/components/ui-biib/Rows";
 
 export async function HrWidgets() {
   const t = await getTranslations();
-  // Ta'tillar ishlatilmaydi ("мы не отдыхаем") — "hozir dam olishda" ko'rsatkichi olib tashlandi.
+  // Taʼtillar ishlatilmaydi ("мы не отдыхаем") — "hozir dam olishda" olib tashlangan.
   const [counts, birthdays, depts] = await Promise.all([
     getEmployeeCounts(),
     getBirthdaysThisWeek(),
     listDepartments(),
   ]);
 
+  const stats = [
+    { label: t("dashboard.hr.activeEmployees"), value: counts.total },
+    { label: t("dashboard.hr.newThisMonth"), value: counts.newThisMonth },
+    { label: t("dashboard.hr.pendingInvites"), value: counts.pending },
+  ];
+
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Kpi label={t("dashboard.hr.activeEmployees")} value={counts.total} href="/employees" icon={Users} />
-        <Kpi label={t("dashboard.hr.newThisMonth")} value={counts.newThisMonth} href="/employees" icon={UserPlus} />
-        <Kpi label={t("dashboard.hr.pendingInvites")} value={counts.pending} href="/employees?status=pending" icon={UserPending} />
-      </div>
-
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+    <>
+      <Section title={t("nav.employees")} seeAllHref="/employees" seeAllLabel={t("common.all")}>
         <Card>
-          <CardHeader className="flex-row items-center gap-3 pb-4">
-            <div className="grid size-10 place-items-center rounded-xl bg-[var(--primary-soft)]">
-              <Cake className="size-5 text-[var(--primary)]" />
-            </div>
-            <CardTitle className="text-lg">{t("dashboard.hr.birthdays")}</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <div className="grid grid-cols-3 gap-x-6">
+            {stats.map((s) => (
+              <div key={s.label}>
+                <div className="text-2xl font-bold leading-none tabular-nums text-[var(--ink)]">{s.value}</div>
+                <div className="mt-1.5 t-small text-[var(--ink-3)]">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </Section>
+
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
+        <Section title={t("dashboard.hr.birthdays")}>
+          <Card bare className="px-5 sm:px-6">
             {birthdays.length === 0 ? (
-              <p className="py-4 text-center text-sm text-[var(--muted)]">{t("dashboard.hr.noBirthdays")}</p>
+              <p className="py-6 text-center t-small text-[var(--ink-3)]">{t("dashboard.hr.noBirthdays")}</p>
             ) : (
-              <ul className="space-y-2 text-sm">
+              <Rows>
                 {birthdays.map((b) => (
-                  <li key={b.id} className="flex items-center justify-between gap-3">
-                    <Link href={`/employees/${b.id}`} className="inline-flex min-w-0 items-center gap-2 font-semibold hover:text-[var(--primary)]">
-                      <UserAvatar name={b.fullName} avatarUrl={b.avatarUrl} size="xs" clickable={false} />
-                      <span className="truncate">{shortName(b.fullName)}</span>
-                    </Link>
-                    <span className="shrink-0 tabular-nums text-[var(--muted)]">{b.birthDate}</span>
-                  </li>
+                  <Row key={b.id} href={`/employees/${b.id}`}>
+                    <UserAvatar name={b.fullName} avatarUrl={b.avatarUrl} size="xs" clickable={false} />
+                    <span className="min-w-0 flex-1 truncate text-[0.9375rem] font-medium text-[var(--ink)]">{shortName(b.fullName)}</span>
+                    <span className="shrink-0 t-small tabular-nums text-[var(--ink-3)]">{b.birthDate}</span>
+                  </Row>
                 ))}
-              </ul>
+              </Rows>
             )}
-          </CardContent>
-        </Card>
+          </Card>
+        </Section>
 
-        <Card>
-          <CardHeader className="flex-row items-center gap-3 pb-4">
-            <div className="grid size-10 place-items-center rounded-xl bg-[var(--primary-soft)]">
-              <Building className="size-5 text-[var(--primary)]" />
-            </div>
-            <CardTitle className="text-lg">{t("dashboard.hr.departments")}</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Section title={t("dashboard.hr.departments")}>
+          <Card bare className="px-5 sm:px-6">
             {depts.length === 0 ? (
-              <p className="py-4 text-center text-sm text-[var(--muted)]">{t("dashboard.hr.noDepartments")}</p>
+              <p className="py-6 text-center t-small text-[var(--ink-3)]">{t("dashboard.hr.noDepartments")}</p>
             ) : (
-              <ul className="space-y-2 text-sm">
+              <Rows>
                 {depts.slice(0, 8).map((d) => (
-                  <li key={d.id} className="flex justify-between gap-3">
-                    <span className="min-w-0 truncate">{d.name}</span>
-                    <span className="shrink-0 font-bold tabular-nums text-[var(--muted)]">{d.memberCount}</span>
-                  </li>
+                  <Row key={d.id}>
+                    <span className="min-w-0 flex-1 truncate text-[0.9375rem] text-[var(--ink)]">{d.name}</span>
+                    <span className="shrink-0 font-bold tabular-nums text-[var(--ink-3)]">{d.memberCount}</span>
+                  </Row>
                 ))}
-              </ul>
+              </Rows>
             )}
-          </CardContent>
-        </Card>
+          </Card>
+        </Section>
       </div>
-    </div>
+    </>
   );
 }

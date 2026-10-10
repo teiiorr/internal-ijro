@@ -867,7 +867,7 @@ export const councilMeetings = pgTable(
   "council_meetings",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    /** 'ekspert' = Ekspertlar Kengashi · 'smeta' = Smeta Kengashi */
+    /** 'ekspert' = Ekspertlar Kengashi, 'smeta' = Smeta Kengashi */
     kind: varchar("kind", { length: 10 }).notNull(),
     scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
     title: varchar("title", { length: 255 }),

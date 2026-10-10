@@ -2,12 +2,15 @@
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { IconPinFilled, IconAlertTriangle, IconX, IconChevronRight } from "@tabler/icons-react";
+import { IconPinFilled, IconAlertTriangle, IconX } from "@tabler/icons-react";
 import { Link, useRouter } from "@/i18n/navigation";
-import { cn } from "@/lib/utils";
 import { markAnnouncementRead } from "@/server/actions/announcements";
 
-/** Dashboard'dagi bitta qadalgan eʼlon banneri. "×" — oʻqildi deb belgilaydi va yashiradi. */
+/**
+ * Dashboard'dagi bitta qadalgan eʼlon qatori (ajratuvchi roʻyxat ichida, quti emas).
+ * Yetakchi belgi holatni bildiradi (muhim → ogohlantirish), sarlavha — havola,
+ * "×" — oʻqildi deb belgilaydi va yashiradi.
+ */
 export function PinnedBannerItem({ id, title, important }: { id: string; title: string; important: boolean }) {
   const t = useTranslations("staffX.announcements");
   const router = useRouter();
@@ -30,51 +33,31 @@ export function PinnedBannerItem({ id, title, important }: { id: string; title: 
     });
   }
 
+  const Icon = important ? IconAlertTriangle : IconPinFilled;
+
   return (
-    <div
-      className={cn(
-        "flex min-w-0 items-center gap-2.5 rounded-2xl border px-2.5 py-2 sm:gap-3 sm:px-3.5",
-        important
-          ? "border-[var(--danger)]/30 bg-[var(--danger-soft)]"
-          : "border-[var(--primary)]/25 bg-[var(--primary-soft)]"
-      )}
-    >
-      <span
+    <li className="-mx-5 flex min-w-0 items-center gap-3 px-5 sm:-mx-6 sm:px-6">
+      <Icon
+        className={important ? "size-4 shrink-0 text-[var(--danger)]" : "size-4 shrink-0 text-[var(--tint)]"}
         aria-hidden
-        className={cn(
-          "grid size-8 shrink-0 place-items-center rounded-xl text-white",
-          important ? "bg-[var(--danger)]" : "bg-[var(--primary)]"
-        )}
-      >
-        {important ? <IconAlertTriangle className="size-4" /> : <IconPinFilled className="size-4" />}
-      </span>
+      />
       <Link
         href={`/elonlar/${id}`}
-        className="min-w-0 flex-1 truncate text-sm font-semibold text-[var(--foreground)] hover:underline"
+        className="min-w-0 flex-1 truncate py-3 text-[0.9375rem] font-medium text-[var(--ink)] transition-colors hover:text-[var(--tint)]"
         title={title}
       >
         {important && <span className="sr-only">{t("important")}: </span>}
         {title}
-      </Link>
-      <Link
-        href={`/elonlar/${id}`}
-        className={cn(
-          "inline-flex shrink-0 items-center gap-0.5 text-sm font-bold hover:underline",
-          important ? "text-[var(--danger)]" : "text-[var(--primary)]"
-        )}
-      >
-        {t("read")}
-        <IconChevronRight className="hidden size-4 sm:block" aria-hidden />
       </Link>
       <button
         type="button"
         onClick={dismiss}
         aria-label={t("dismiss")}
         title={t("dismiss")}
-        className="grid size-8 shrink-0 place-items-center rounded-xl text-[var(--muted)] transition-colors hover:bg-[var(--glass-fill-strong)] hover:text-[var(--foreground)]"
+        className="grid size-10 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
       >
-        <IconX className="size-4" />
+        <IconX className="size-4" aria-hidden />
       </button>
-    </div>
+    </li>
   );
 }

@@ -138,13 +138,11 @@ export function MentionTextarea({
         rows={rows}
         disabled={disabled}
         className={cn(
-          "flex min-h-[112px] w-full rounded-2xl border border-[var(--input)] " +
-          "bg-[var(--glass-fill-strong)] backdrop-blur-xl backdrop-saturate-180 " +
-          "px-4 py-3 text-[15px] leading-relaxed text-[var(--foreground)] placeholder:text-[var(--subtle)] font-medium " +
-          "resize-y " +
-          "transition-[border-color,box-shadow] duration-200 " +
-          "focus-visible:outline-none focus-visible:border-[var(--primary)] focus-visible:shadow-[0_0_0_2px_var(--primary-glow)] " +
-          "disabled:cursor-not-allowed disabled:opacity-50",
+          "flex min-h-28 w-full resize-y rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--surface-2)] " +
+          "px-4 py-3 text-[16px] font-medium leading-relaxed text-[var(--ink)] placeholder:text-[var(--ink-3)] " +
+          "transition-[border-color] duration-[var(--dur-ui)] ease-[var(--ease-ui)] " +
+          "focus:shadow-none " +
+          "disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-[var(--surface-3)]",
           className,
         )}
       />
@@ -152,7 +150,7 @@ export function MentionTextarea({
       {open && popupPos && (
         <div
           ref={popupRef}
-          className="absolute z-50 w-64 max-h-56 overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-150"
+          className="absolute z-50 w-64 max-h-56 overflow-y-auto rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shadow-2)] animate-in fade-in slide-in-from-bottom-2 duration-150"
           style={{ top: popupPos.top, left: popupPos.left }}
         >
           {filtered.map((user, i) => (
@@ -164,7 +162,7 @@ export function MentionTextarea({
               className={cn(
                 "flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition-colors",
                 i === selectedIdx
-                  ? "bg-[var(--primary-soft)] text-[var(--primary)]"
+                  ? "bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] text-[var(--tint)]"
                   : "hover:bg-[var(--surface-2)]",
               )}
             >

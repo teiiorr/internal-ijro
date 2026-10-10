@@ -5,9 +5,9 @@ import { useState, useEffect, useTransition } from "react";
 import { IconChevronDown as ChevronDown, IconSearch as Search, IconFilter as Filter } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
-// Havodor punktir uslubidagi element — fayl taşlash maydoni bilan bir xil uslubda.
+// BIIB maydon: yumshoq sirt, ingichka chiziq (punktir emas), token ranglar.
 const FIELD =
-  "h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3.5 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none";
+  "h-11 w-full rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] px-3.5 text-sm font-medium text-[var(--ink)] transition-colors focus:border-[var(--line-strong)] focus:outline-none";
 
 function Sel({
   value,
@@ -96,7 +96,7 @@ export function ProjectsFilters({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("projects.searchPlaceholder")}
-          className="h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent pl-10 pr-3.5 text-sm font-medium text-[var(--foreground)] transition-colors placeholder:text-[var(--muted)] focus:border-[var(--primary)] focus:outline-none"
+          className="h-11 w-full rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] pl-10 pr-3.5 text-sm font-medium text-[var(--ink)] transition-colors placeholder:text-[var(--ink-3)] focus:border-[var(--line-strong)] focus:outline-none"
         />
       </div>
 
@@ -107,13 +107,13 @@ export function ProjectsFilters({
         className={`${FIELD} flex items-center justify-between sm:hidden`}
       >
         <span className="inline-flex items-center gap-2">
-          <Filter className="size-4 text-[var(--muted)]" />
+          <Filter className="size-4 text-[var(--ink-3)]" />
           {t("projects.filters.title")}
           {activeCount > 0 && (
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--primary)] px-1.5 text-[11px] font-bold text-white tabular-nums">{activeCount}</span>
+            <span className="t-micro tabular-nums text-[var(--tint)]">{activeCount}</span>
           )}
         </span>
-        <ChevronDown className={cn("size-4 text-[var(--muted)] transition-transform", open && "rotate-180")} />
+        <ChevronDown className={cn("size-4 text-[var(--ink-3)] transition-transform", open && "rotate-180")} />
       </button>
 
       {/* Selektlar: mobil'da yopiq bo'lsa yashiringan; sm+ da doim ko'rinadi (tör) */}

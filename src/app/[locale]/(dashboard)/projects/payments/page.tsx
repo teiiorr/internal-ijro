@@ -8,10 +8,10 @@ import {
   IconDownload as Download,
   IconListDetails as ListDetails,
 } from "@tabler/icons-react";
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui-biib/Button";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Segmented } from "@/components/ui-biib/Segmented";
 import { BackButton } from "@/components/ui/back-button";
-import { cn } from "@/lib/utils";
 import { requireUser, type SessionUser } from "@/lib/session";
 import { canEditMoney, canSeeMoney } from "@/lib/permissions/money";
 import { bucketForecast } from "@/lib/finance/forecast";
@@ -78,48 +78,33 @@ export default async function PaymentsRegisterPage({
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex min-w-0 items-center gap-3">
-          <BackButton fallbackHref="/projects" />
-          <div className="min-w-0">
-            <h1 className="break-words text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("title")}</h1>
-            <p className="break-words text-sm text-[var(--muted)]">{t("subtitle")}</p>
+      <PageHeader
+        back={<BackButton fallbackHref="/projects" />}
+        title={t("title")}
+        actions={
+          <Button asChild variant="glass" size="40" icon={Download}>
+            {/* API marshruti — locale prefiksisiz, oddiy <a> */}
+            <a href={exportHref}>{t("export")}</a>
+          </Button>
+        }
+        tools={
+          <div className="-mx-1 overflow-x-auto px-1 no-scrollbar">
+            <Segmented
+              className="min-w-max"
+              items={TABS.map((key) => {
+                const { icon: Icon, key: labelKey } = TAB_META[key];
+                return {
+                  href: key === "register" ? "/projects/payments" : `/projects/payments?tab=${key}`,
+                  label: t(labelKey),
+                  active: key === tab,
+                  icon: <Icon className="size-4" aria-hidden />,
+                };
+              })}
+            />
           </div>
-        </div>
-        <Button asChild variant="outline" className="self-start sm:self-auto">
-          {/* API marshruti — locale prefiksisiz, oddiy <a> */}
-          <a href={exportHref}>
-            <Download className="size-4" />
-            {t("export")}
-          </a>
-        </Button>
-      </div>
+        }
+      />
 
-      <nav
-        aria-label={t("title")}
-        className="no-scrollbar flex gap-1 overflow-x-auto rounded-[10px] bg-[var(--surface-3)] p-1"
-      >
-        {TABS.map((key) => {
-          const { icon: Icon, key: labelKey } = TAB_META[key];
-          const active = key === tab;
-          return (
-            <Link
-              key={key}
-              href={key === "register" ? "/projects/payments" : `/projects/payments?tab=${key}`}
-              aria-current={active ? "page" : undefined}
-              className={cn(
-                "flex shrink-0 items-center gap-2 rounded-[8px] px-3 py-2 text-[13px] font-semibold transition-all sm:px-4 sm:text-[14px]",
-                active
-                  ? "bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-1)]"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]",
-              )}
-            >
-              <Icon className="size-4" aria-hidden />
-              {t(labelKey)}
-            </Link>
-          );
-        })}
-      </nav>
 
       {/* Faqat tab boʻyicha kalitlanadi: filtr oʻzgarganda filtr paneli qayta oʻrnatilmaydi (fokus saqlanadi). */}
       <Suspense key={tab} fallback={<TabSkeleton />}>

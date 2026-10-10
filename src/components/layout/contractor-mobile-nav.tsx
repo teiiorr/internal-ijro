@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -17,7 +17,7 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
-type NavItem = { href: string; icon: React.ComponentType<{ className?: string }>; key: string };
+type NavItem = { href: string; icon: React.ComponentType<{ className?: string; stroke?: number }>; key: string };
 
 // Studiya portalining to'liq menyusi (desktop sidebar bilan bir xil + Profil).
 const ITEMS: NavItem[] = [
@@ -41,6 +41,9 @@ export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
   const [open, setOpen] = useState(false);
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
+  // Marshrut o'zgarsa varaq yopiladi.
+  useEffect(() => { setOpen(false); }, [pathname]);
+
   // To'liq ekranli suhbat ochilganda pastki panelni berkitamiz — u yozuv maydoniga xalaqit bermasin.
   if (/^\/contractor\/chats\/[^/]+/.test(pathname)) return null;
 
@@ -49,13 +52,21 @@ export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
 
   const cell = (active: boolean) =>
     cn(
-      "flex min-w-0 flex-col items-center justify-center gap-1 py-3 transition-all active:scale-95",
-      active ? "text-[var(--primary)]" : "text-[var(--muted)]"
+      "relative flex min-w-0 flex-col items-center justify-center gap-1 py-2.5 transition-colors active:scale-95",
+      active ? "text-tint" : "text-ink-3"
     );
 
-  const badge = (key: string) =>
+  // Suhbatdagi o'qilmaganlar — xotirjam hisob (kapsula emas, radius 5/6).
+  const tabBadge = (key: string) =>
     key === "chats" && unread > 0 ? (
-      <span className="absolute -right-2 -top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-[var(--primary)] px-1 text-[10px] font-bold text-white tabular-nums ring-2 ring-[var(--glass-fill-strong)]">
+      <span className="absolute -right-2 -top-1.5 grid h-[17px] min-w-[17px] place-items-center rounded-[5px] bg-tint px-1 text-[10px] font-bold tabular-nums text-on-tint">
+        {unread > 99 ? "99+" : unread}
+      </span>
+    ) : null;
+
+  const rowBadge = (key: string) =>
+    key === "chats" && unread > 0 ? (
+      <span className="grid h-5 min-w-5 place-items-center rounded-[6px] bg-tint px-1.5 text-[11px] font-bold tabular-nums text-on-tint">
         {unread > 99 ? "99+" : unread}
       </span>
     ) : null;
@@ -64,66 +75,74 @@ export function ContractorMobileNav({ unread = 0 }: { unread?: number }) {
     <>
       {/* xira fon qoplamasi */}
       <div
-        className={cn("md:hidden fixed inset-0 z-40 bg-black/40 transition-opacity duration-200", open ? "opacity-100" : "pointer-events-none opacity-0")}
+        className={cn(
+          "md:hidden fixed inset-0 z-overlay bg-black/40 backdrop-blur-sm transition-opacity duration-200",
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
         onClick={() => setOpen(false)}
         aria-hidden
       />
 
-      {/* to'liq menyuli, pastdan ko'tariladigan varaq */}
+      {/* to'liq menyuli, pastdan ko'tariladigan varaq — kuchli oyna, ichida tekis qatorlar */}
       <div
         className={cn(
-          "md:hidden fixed inset-x-0 bottom-0 z-40 flex max-h-[85dvh] flex-col rounded-t-3xl glass-strong p-4 pb-[max(2rem,env(safe-area-inset-bottom))] transition-transform duration-300 ease-out",
+          "md:hidden fixed inset-x-0 bottom-0 z-modal flex max-h-[85dvh] flex-col rounded-t-[24px] border-t border-[var(--line)] bg-[var(--glass-fill-strong)] shadow-[var(--shadow-overlay)] backdrop-blur-2xl backdrop-saturate-150 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] transition-transform duration-300 ease-out",
           open ? "translate-y-0" : "pointer-events-none translate-y-full"
         )}
       >
         <div className="mb-3 flex shrink-0 items-center justify-between">
-          <p className="text-base font-bold">{t("more")}</p>
-          <button onClick={() => setOpen(false)} aria-label={t("more")} className="grid size-9 place-items-center rounded-xl text-[var(--muted)] hover:bg-[var(--glass-fill)]">
+          <p className="t-h3 text-ink">{t("more")}</p>
+          <button onClick={() => setOpen(false)} aria-label={t("more")} className="grid size-9 place-items-center rounded-[12px] text-ink-3 hover:bg-[var(--surface-2)] hover:text-ink transition-colors">
             <X className="size-5" />
           </button>
         </div>
-        <div className="grid min-h-0 grid-cols-3 gap-2 overflow-y-auto overscroll-contain">
+        <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain">
           {ITEMS.map(({ href, icon: Icon, key }) => {
             const active = isActive(href);
             return (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "relative flex min-h-[86px] flex-col items-center justify-center gap-1.5 rounded-2xl px-1 py-3 text-center transition-colors",
-                  active ? "bg-[var(--primary)] text-white" : "text-[var(--foreground)] hover:bg-[var(--glass-fill)]"
-                )}
-              >
-                <span className="relative">
-                  <Icon className="size-6 shrink-0" />
-                  {badge(key)}
-                </span>
-                <span className="line-clamp-2 text-[11px] font-semibold leading-tight">{t(key)}</span>
-              </Link>
+              <li key={href} className="list-none">
+                <Link
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative flex h-[52px] items-center gap-3 rounded-[16px] px-3 text-[16px] font-semibold transition-colors",
+                    active
+                      ? "bg-[var(--surface-2)] text-ink before:absolute before:left-0 before:top-1/2 before:h-6 before:w-0.5 before:-translate-y-1/2 before:rounded-[2px] before:bg-tint before:content-['']"
+                      : "text-ink-2 hover:bg-[var(--surface-2)] hover:text-ink"
+                  )}
+                >
+                  <Icon className={cn("size-5 shrink-0", active ? "text-tint" : "text-ink-3")} stroke={1.75} />
+                  <span className="flex-1 truncate">{t(key)}</span>
+                  {rowBadge(key)}
+                </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
 
       {/* pastki panel: qadab qo'yilgan bo'limlar + Ko'proq */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
-        <ul className="grid grid-cols-4 overflow-hidden rounded-3xl glass-strong">
-          {pinned.map(({ href, icon: Icon, key }) => (
-            <li key={href} className="min-w-0">
-              <Link href={href} className={cell(isActive(href))}>
-                <span className="relative">
-                  <Icon className="size-6 shrink-0" />
-                  {badge(key)}
-                </span>
-                <span className="max-w-full truncate px-1 text-[11px] font-bold leading-none">{t(key)}</span>
-              </Link>
-            </li>
-          ))}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-tabbar px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1">
+        <ul className="grid grid-cols-4 overflow-hidden rounded-[24px] border border-[var(--line)] bg-[var(--glass-fill-strong)] shadow-[var(--shadow-floating)] backdrop-blur-xl backdrop-saturate-150">
+          {pinned.map(({ href, icon: Icon, key }) => {
+            const active = isActive(href);
+            return (
+              <li key={href} className="min-w-0">
+                <Link href={href} className={cell(active)} aria-current={active ? "page" : undefined}>
+                  <span className="relative">
+                    <Icon className="size-6 shrink-0" stroke={1.75} />
+                    {tabBadge(key)}
+                  </span>
+                  <span className="max-w-full truncate px-0.5 text-[11px] font-semibold leading-none">{t(key)}</span>
+                </Link>
+              </li>
+            );
+          })}
           <li className="min-w-0">
-            <button onClick={() => setOpen(true)} className={cn(cell(moreActive || open), "w-full")}>
-              <Menu className="size-6 shrink-0" />
-              <span className="max-w-full truncate px-1 text-[11px] font-bold leading-none">{t("more")}</span>
+            <button onClick={() => setOpen(true)} className={cn(cell(moreActive || open), "w-full")} aria-haspopup="dialog">
+              <Menu className="size-6 shrink-0" stroke={1.75} />
+              <span className="max-w-full truncate px-0.5 text-[11px] font-semibold leading-none">{t("more")}</span>
             </button>
           </li>
         </ul>

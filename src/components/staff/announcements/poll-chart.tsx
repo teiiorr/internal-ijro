@@ -3,8 +3,10 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, LabelList, Cell } fro
 
 export type PollChartDatum = { id: string; label: string; votes: number; pct: number; mine: boolean };
 
-const BAR = "#6366F1";
-const MINE = "#10B981";
+// BIIB: amal rangi — koʻk (A4.5 bo'yicha token-mos hex, recharts SVG fill uchun);
+// koʻruvchining oʻz tanlovi — yashil. manager-widgets bilan bir xil qiymatlar.
+const BAR = "#2563eb";
+const MINE = "#16a34a";
 const MAX_LABEL = 42;
 
 const shorten = (s: string) => (s.length > MAX_LABEL ? `${s.slice(0, MAX_LABEL - 1)}…` : s);
@@ -19,7 +21,7 @@ type Box = { x: number; y: number; width: number; height: number };
  */
 export function PollChart({ data }: { data: PollChartDatum[] }) {
   const max = Math.max(1, ...data.map((d) => d.votes));
-  const rows = data.map((d) => ({ ...d, short: shorten(d.label), display: `${d.pct}% · ${d.votes}` }));
+  const rows = data.map((d) => ({ ...d, short: shorten(d.label), display: `${d.pct}%, ${d.votes}` }));
   const height = rows.length * 52 + 12;
 
   return (

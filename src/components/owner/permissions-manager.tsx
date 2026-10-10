@@ -65,18 +65,19 @@ export function PermissionsManager({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-4">
       <div className="relative max-w-sm">
-        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--ink-3)]" aria-hidden />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("common.search")}
-          className="h-10 w-full rounded-xl border border-[var(--input)] bg-[var(--surface-1)] pl-10 pr-3 text-sm focus-visible:border-[var(--primary)] focus-visible:outline-none"
+          className="h-11 w-full rounded-[var(--radius-m)] border border-[var(--line-strong)] bg-[var(--surface-2)] pl-10 pr-3 t-body text-[var(--ink)] placeholder:text-[var(--ink-3)] focus-visible:border-[var(--tint)] focus-visible:outline-none"
         />
       </div>
 
-      {/* "Barcha loglar" bilan bir xil jadval körinişi — mobil qurilmada gorizontal skrol qilinadi. */}
+      {/* Huquqlar matritsasi: xodimlar × imkoniyatlar — mobil qurilmada gorizontal skroll. */}
+      <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6">
       <Table>
         <TableHeader>
           <TableRow>
@@ -94,8 +95,8 @@ export function PermissionsManager({
                   <UserAvatar name={e.fullName} avatarUrl={e.avatarUrl} size="xs" clickable={false} />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{e.fullName}</p>
-                    <p className="truncate text-xs text-[var(--muted)]">
-                      {[e.positionLabel, e.departmentName].filter(Boolean).join(" · ")}
+                    <p className="truncate text-xs text-[var(--ink-3)]">
+                      {[e.positionLabel, e.departmentName].filter(Boolean).join(", ")}
                     </p>
                   </div>
                 </div>
@@ -112,10 +113,10 @@ export function PermissionsManager({
                       aria-pressed={on}
                       aria-label={c.label}
                       className={cn(
-                        "inline-grid size-7 place-items-center rounded-full transition-all active:scale-90 disabled:opacity-50",
+                        "inline-grid size-7 place-items-center rounded-[var(--radius-s)] transition-[background-color,border-color] duration-[var(--dur-ui)] ease-[var(--ease-ui)] disabled:opacity-50",
                         on
-                          ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-1)]"
-                          : "bg-[var(--surface-3)] text-transparent hover:bg-[var(--surface-2)]",
+                          ? "bg-[var(--tint)] text-[var(--on-tint)]"
+                          : "border border-[var(--line)] bg-[var(--surface-2)] text-transparent hover:border-[var(--line-strong)]",
                       )}
                     >
                       <Check className="size-4" strokeWidth={3} />
@@ -127,13 +128,14 @@ export function PermissionsManager({
           ))}
           {filtered.length === 0 && (
             <TableRow>
-              <TableCell colSpan={capabilities.length + 1} className="py-8 text-center text-sm text-[var(--muted)]">
+              <TableCell colSpan={capabilities.length + 1} className="py-8 text-center text-sm text-[var(--ink-3)]">
                 {t("common.noResults")}
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+      </div>
     </div>
   );
 }

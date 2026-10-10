@@ -948,7 +948,7 @@ html {
 
   --content-max: 1312px; --measure: 65ch;
   --columns: 4; --margin: 16px; --gutter: 16px;
-  --section-gap: 48px; --band-pad: 48px; --hero-pad-top: 24px; --block-gap: 16px;
+  --section-gap: 48px; --band-pad: 48px; --hero-pad-top: 24px; --block-gap: 16px; --section-header-mb: 32px;
   --header-h: 56px; --tabbar-h: 64px;
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px); --safe-right: env(safe-area-inset-right, 0px);
@@ -956,7 +956,7 @@ html {
 @media (max-width: 599px) { :root { --radius-media: 20px; } }
 @media (min-width: 390px) { :root { --margin: 20px; } }
 @media (min-width: 600px) { :root { --columns: 8; --margin: 32px; --gutter: 24px; --section-gap: 64px; --band-pad: 64px; --hero-pad-top: 32px; --block-gap: 24px; } }
-@media (min-width: 1024px) { :root { --columns: 12; --margin: 48px; --gutter: 24px; --section-gap: 96px; --block-gap: 32px; --header-h: 64px; } }
+@media (min-width: 1024px) { :root { --columns: 12; --margin: 48px; --gutter: 24px; --section-gap: 96px; --block-gap: 32px; --section-header-mb: 48px; --header-h: 64px; } }
 @media (min-width: 1440px) { :root { --margin: 64px; --gutter: 32px; } }
 
 /* --- Night (BIIB tungi) --- */
@@ -1095,6 +1095,7 @@ html {
 @utility section-hero { padding-top: var(--hero-pad-top); padding-bottom: calc(var(--section-gap) / 2); }
 @utility section-gap { gap: var(--section-gap); }
 @utility block-gap { gap: var(--block-gap); }
+@utility section-header { margin-bottom: var(--section-header-mb); }
 @utility z-base { z-index: var(--z-base); }
 @utility z-raised { z-index: var(--z-raised); }
 @utility z-sticky { z-index: var(--z-sticky); }

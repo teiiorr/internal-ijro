@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
-import { endOfTashkentDay } from "@/lib/my-work/buckets";
 import { cn } from "@/lib/utils";
 import { deleteTodo, toggleTodo, updateTodo } from "@/server/actions/personal-todos";
 import { KindChip, shortDate } from "./kind-meta";
@@ -26,7 +24,7 @@ export type TodoRowItem = {
   note: string | null;
 };
 
-/** Shaxsiy eslatma qatori: belgilash, sanani tahrirlash, izoh va oʻchirish. */
+/** Shaxsiy eslatma qatori: belgilash, sanani tahrirlash, izoh va oʻchirish. Ajratuvchi qator (quti emas). */
 export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
   const t = useTranslations("staffX.myWork");
   const tc = useTranslations("common");
@@ -79,7 +77,7 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
   }
 
   return (
-    <li className="group flex items-start gap-3 rounded-xl px-2 py-2.5 transition-colors hover:bg-[var(--surface-2)] sm:px-3">
+    <li className="-mx-5 flex items-start gap-3 px-5 py-3 transition-colors hover:bg-[var(--surface-2)] sm:-mx-6 sm:px-6">
       <button
         type="button"
         role="checkbox"
@@ -88,10 +86,10 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
         onClick={onToggle}
         disabled={pending}
         className={cn(
-          "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-lg border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]",
+          "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-[var(--radius-s)] border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tint)]",
           done
-            ? "border-[var(--success)] bg-[var(--success)] text-white"
-            : "border-[var(--border-strong)] bg-[var(--card)] hover:border-[var(--primary)]",
+            ? "border-[var(--success)] bg-[var(--success)] text-[var(--on-tint)]"
+            : "border-[var(--line-strong)] bg-[var(--surface)] hover:border-[var(--tint)]",
         )}
       >
         {done && <IconCheck className="size-4" stroke={3} aria-hidden />}
@@ -100,21 +98,21 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
       <div className="min-w-0 flex-1">
         <p
           className={cn(
-            "break-words text-[15px] font-semibold leading-snug transition-colors",
-            done && "text-[var(--muted)] line-through decoration-2",
+            "break-words text-[0.9375rem] font-medium leading-snug",
+            done ? "text-[var(--ink-3)] line-through decoration-1" : "text-[var(--ink)]",
           )}
         >
           {item.title}
         </p>
 
-        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[var(--muted)]">
+        <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 t-micro text-[var(--ink-3)]">
           <KindChip kind="todo" label={t("kind.todo")} />
           <button
             type="button"
             onClick={openDate}
             className={cn(
-              "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)]",
-              overdue && "text-[var(--danger)]",
+              "inline-flex items-center gap-1 transition-colors hover:text-[var(--ink)]",
+              overdue ? "text-[var(--danger)]" : "text-[var(--ink-3)]",
             )}
             aria-expanded={dateOpen}
           >
@@ -123,14 +121,18 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
           </button>
           {item.sub &&
             (item.href ? (
-              <Link href={item.href} className="min-w-0 max-w-full truncate font-medium hover:text-[var(--primary)] hover:underline">
+              <Link href={item.href} className="min-w-0 max-w-full truncate transition-colors hover:text-[var(--tint)]">
                 {item.sub}
               </Link>
             ) : (
               <span className="min-w-0 max-w-full truncate">{item.sub}</span>
             ))}
           {!noteOpen && item.note && (
-            <button type="button" onClick={openNote} className="min-w-0 max-w-full truncate text-left italic hover:text-[var(--foreground)]">
+            <button
+              type="button"
+              onClick={openNote}
+              className="min-w-0 max-w-full truncate text-left italic transition-colors hover:text-[var(--ink)]"
+            >
               {item.note}
             </button>
           )}
@@ -202,17 +204,14 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
       </div>
 
       <div className="flex shrink-0 items-center gap-0.5">
-        {!done && item.date && (
-          <DeadlineCountdown deadline={endOfTashkentDay(item.date)} className="mr-1 hidden sm:inline-flex" />
-        )}
         <button
           type="button"
           onClick={openNote}
           aria-label={t("note")}
           aria-expanded={noteOpen}
           className={cn(
-            "flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)]",
-            item.note ? "text-[var(--primary)]" : "text-[var(--subtle)]",
+            "flex size-9 items-center justify-center rounded-[var(--radius-s)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]",
+            item.note ? "text-[var(--tint)]" : "text-[var(--ink-3)]",
           )}
         >
           <IconNote className="size-4" aria-hidden />
@@ -221,7 +220,7 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
           type="button"
           onClick={() => setConfirmOpen(true)}
           aria-label={t("delete")}
-          className="flex size-8 items-center justify-center rounded-lg text-[var(--subtle)] transition-colors hover:bg-[var(--danger-soft)] hover:text-[var(--danger)]"
+          className="flex size-9 items-center justify-center rounded-[var(--radius-s)] text-[var(--ink-3)] transition-colors hover:bg-[color-mix(in_oklab,var(--danger)_14%,transparent)] hover:text-[var(--danger)]"
         >
           <IconTrash className="size-4" aria-hidden />
         </button>
@@ -234,7 +233,7 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
             <DialogDescription className="break-words">{item.title}</DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
-            <Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={pending}>
+            <Button variant="ghost" onClick={() => setConfirmOpen(false)} disabled={pending}>
               {tc("cancel")}
             </Button>
             <Button

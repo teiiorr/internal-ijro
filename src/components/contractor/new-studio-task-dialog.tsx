@@ -96,7 +96,7 @@ export function NewStudioTaskDialog({
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-[var(--muted)]">{t("tasks.studioTask.stageHint")}</p>
+              <p className="t-micro text-[var(--ink-3)]">{t("tasks.studioTask.stageHint")}</p>
             </div>
           )}
           <div className="grid grid-cols-2 gap-3">

@@ -3,6 +3,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { IconBellRinging as BellRinging, IconListCheck as ListCheck, IconFolder as Folder } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui-biib/Card";
+import { Status } from "@/components/ui-biib/Status";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate, timeAgo } from "@/lib/dates";
@@ -17,15 +19,16 @@ const KNOWN_STATUS = new Set(["todo", "in_progress", "under_review", "completed"
 const PRIORITY_DOT: Record<string, string> = {
   urgent: "bg-[var(--danger)]",
   high: "bg-[var(--warning)]",
-  medium: "bg-[var(--primary)]",
-  low: "bg-[var(--subtle)]",
+  medium: "bg-[var(--tint)]",
+  low: "bg-[var(--ink-3)]",
 };
 
 type T = ReturnType<typeof useTranslations>;
 
 /**
- * Task-control board. md+ → table; below md → stacked glass cards (no horizontal page scroll).
- * Each assignee is an avatar chip ringed by status colour; overdue assignees get an extra red ring.
+ * Nazorat taxtasi. md+ → jadval (qattiq karta); md ostida — bitta qattiq kartadagi
+ * ajratuvchi bloklar (quti emas, sahifa boʻylab gorizontal skroll yoʻq).
+ * Har bir ijrochi — holat rangi bilan halqalangan avatar; muddati oʻtganiga qoʻshimcha qizil halqa.
  */
 export function ControlTable({
   rows,
@@ -43,34 +46,34 @@ export function ControlTable({
 
   if (rows.length === 0) {
     return (
-      <div className="glass-card flex flex-col items-center justify-center gap-2 px-6 py-14 text-center">
-        <ListCheck className="size-8 text-[var(--subtle)]" />
-        <p className="text-sm font-medium text-[var(--muted)]">{tc("empty")}</p>
-      </div>
+      <Card solid className="flex flex-col items-center justify-center gap-2 py-14 text-center">
+        <ListCheck className="size-8 text-[var(--ink-3)]" aria-hidden />
+        <p className="t-small font-medium text-[var(--ink-2)]">{tc("empty")}</p>
+      </Card>
     );
   }
 
   return (
     <>
       {/* md+ : table */}
-      <div className="glass-card hidden overflow-hidden md:block">
+      <Card solid bare className="hidden overflow-hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px] text-sm">
             <thead>
-              <tr className="border-b border-[var(--border)] text-left text-[11px] font-bold uppercase tracking-wide text-[var(--muted)]">
-                <th className="px-4 py-3">{tc("colTask")}</th>
-                <th className="px-3 py-3">{tc("colDeadline")}</th>
-                <th className="px-3 py-3">{tc("colAssignees")}</th>
-                <th className="px-3 py-3">{tc("colProgress")}</th>
-                <th className="px-3 py-3">{tc("lastResponse")}</th>
-                <th className="px-4 py-3 text-right">{t("common.actions")}</th>
+              <tr className="border-b border-[var(--line)] bg-[var(--surface-2)] text-left t-micro text-[var(--ink-3)]">
+                <th className="px-4 py-3 font-semibold">{tc("colTask")}</th>
+                <th className="px-3 py-3 font-semibold">{tc("colDeadline")}</th>
+                <th className="px-3 py-3 font-semibold">{tc("colAssignees")}</th>
+                <th className="px-3 py-3 font-semibold">{tc("colProgress")}</th>
+                <th className="px-3 py-3 font-semibold">{tc("lastResponse")}</th>
+                <th className="px-4 py-3 text-right font-semibold">{t("common.actions")}</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => {
                 const canManage = isLeadership || r.createdByUserId === currentUserId;
                 return (
-                  <tr key={r.id} className="border-b border-[var(--border)] align-top last:border-b-0">
+                  <tr key={r.id} className="border-b border-[var(--line)] align-top transition-colors last:border-b-0 hover:bg-[var(--surface-2)]">
                     <td className="max-w-[340px] px-4 py-3.5">
                       <TaskCell row={r} currentUserId={currentUserId} t={t} tc={tc} />
                     </td>
@@ -83,7 +86,7 @@ export function ControlTable({
                     <td className="whitespace-nowrap px-3 py-3.5">
                       <Progress row={r} tc={tc} />
                     </td>
-                    <td className="whitespace-nowrap px-3 py-3.5 text-[13px] text-[var(--muted)]">
+                    <td className="whitespace-nowrap px-3 py-3.5 t-small text-[var(--ink-3)]">
                       <span suppressHydrationWarning>{r.lastResponseAt ? timeAgo(r.lastResponseAt, locale) : "—"}</span>
                     </td>
                     <td className="px-4 py-3.5">
@@ -97,14 +100,14 @@ export function ControlTable({
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
 
-      {/* < md : cards */}
-      <ul className="space-y-3 md:hidden">
+      {/* < md : bitta kartadagi ajratuvchi bloklar */}
+      <Card solid bare className="divide-y divide-[var(--line)] md:hidden">
         {rows.map((r) => {
           const canManage = isLeadership || r.createdByUserId === currentUserId;
           return (
-            <li key={r.id} className="glass-card min-w-0 space-y-3 p-4">
+            <div key={r.id} className="min-w-0 space-y-3 p-4">
               <div className="flex min-w-0 items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <TaskCell row={r} currentUserId={currentUserId} t={t} tc={tc} />
@@ -116,20 +119,20 @@ export function ControlTable({
               <Chips assignees={r.assignees} t={t} tc={tc} />
               <div className="flex min-w-0 flex-wrap items-center justify-between gap-x-4 gap-y-1">
                 <Progress row={r} tc={tc} />
-                <span className="text-xs text-[var(--muted)]">
+                <span className="t-small text-[var(--ink-3)]">
                   {tc("lastResponse")}:{" "}
                   <span suppressHydrationWarning>{r.lastResponseAt ? timeAgo(r.lastResponseAt, locale) : "—"}</span>
                 </span>
               </div>
               {canManage && hasActions(r) && (
-                <div className="flex flex-wrap gap-2 border-t border-[var(--border)] pt-3 [&>*]:flex-1 sm:[&>*]:flex-initial">
+                <div className="flex flex-wrap gap-2 border-t border-[var(--line)] pt-3 [&>*]:flex-1 sm:[&>*]:flex-initial">
                   <RowActions row={r} canManage={canManage} tc={tc} />
                 </div>
               )}
-            </li>
+            </div>
           );
         })}
-      </ul>
+      </Card>
     </>
   );
 }
@@ -143,19 +146,19 @@ function TaskCell({ row, currentUserId, t, tc }: { row: ControlRow; currentUserI
           title={`${tc("priority")}: ${t(`tasks.priority.${row.priority in PRIORITY_DOT ? row.priority : "medium"}`)}`}
         />
         {row.registrationNumber && (
-          <span className="truncate font-mono text-[11px] font-semibold text-[var(--muted)]">{row.registrationNumber}</span>
+          <span className="truncate font-mono text-[11px] font-semibold text-[var(--ink-3)]">{row.registrationNumber}</span>
         )}
       </div>
       <Link
         href={`/tasks/${row.id}`}
-        className="line-clamp-2 break-words font-semibold leading-snug text-[var(--foreground)] hover:text-[var(--primary)] hover:underline"
+        className="line-clamp-2 break-words font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)]"
       >
         {row.title}
       </Link>
-      <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[var(--muted)]">
+      <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 t-small text-[var(--ink-3)]">
         {row.projectName && (
           <span className="inline-flex min-w-0 max-w-full items-center gap-1">
-            <Folder className="size-3.5 shrink-0" />
+            <Folder className="size-3.5 shrink-0" aria-hidden />
             <span className="truncate">{row.projectName}</span>
           </span>
         )}
@@ -166,30 +169,20 @@ function TaskCell({ row, currentUserId, t, tc }: { row: ControlRow; currentUserI
 }
 
 function DeadlineCell({ row, locale }: { row: ControlRow; locale: string }) {
-  if (!row.deadline) return <span className="text-xs text-[var(--muted)]">—</span>;
+  if (!row.deadline) return <span className="t-small text-[var(--ink-3)]">—</span>;
   return (
     <div className="flex flex-col items-end gap-1 md:items-start">
       <DeadlineCountdown deadline={row.deadline} />
-      <span className="text-[11px] tabular-nums text-[var(--muted)]">{formatDate(row.deadline, locale)}</span>
+      <span className="t-micro tabular-nums text-[var(--ink-3)]">{formatDate(row.deadline, locale)}</span>
     </div>
   );
 }
 
 function Progress({ row, tc }: { row: ControlRow; tc: T }) {
-  const pct = row.total > 0 ? Math.round((row.answered / row.total) * 100) : 0;
   return (
-    <div className="min-w-[120px] space-y-1.5">
-      <div className="flex items-center gap-2 text-[13px] font-semibold tabular-nums">
-        <span>{tc("answered", { answered: row.answered, total: row.total })}</span>
-        {row.underReview > 0 && (
-          <span className="rounded-md bg-[var(--warning)]/15 px-1.5 py-0.5 text-[11px] font-bold text-[var(--warning)]">
-            {tc("underReviewCount", { count: row.underReview })}
-          </span>
-        )}
-      </div>
-      <div className="h-1.5 w-full max-w-[160px] overflow-hidden rounded-full bg-[var(--surface-3)]">
-        <div className="h-full rounded-full bg-[var(--success)] transition-[width]" style={{ width: `${pct}%` }} />
-      </div>
+    <div className="flex min-w-0 flex-wrap items-center gap-2 t-small font-semibold tabular-nums text-[var(--ink)]">
+      <span>{tc("answered", { answered: row.answered, total: row.total })}</span>
+      {row.underReview > 0 && <Status tone="warning">{tc("underReviewCount", { count: row.underReview })}</Status>}
     </div>
   );
 }
@@ -204,11 +197,11 @@ function Chips({ assignees, t, tc }: { assignees: ControlAssignee[]; t: T; tc: T
         const tip = [
           a.fullName,
           a.departmentName,
-          a.overdue ? `${statusLabel} · ${tc("overdue")}` : statusLabel,
+          a.overdue ? `${statusLabel}, ${tc("overdue")}` : statusLabel,
           a.nudgeCount > 0 ? tc("nudgedTimes", { count: a.nudgeCount }) : null,
         ]
           .filter(Boolean)
-          .join(" · ");
+          .join(", ");
         const ring = chipRingColor(a.status);
         return (
           <li
@@ -218,13 +211,13 @@ function Chips({ assignees, t, tc }: { assignees: ControlAssignee[]; t: T; tc: T
             className="relative inline-flex rounded-full"
             style={{
               boxShadow: a.overdue
-                ? `0 0 0 2px ${ring}, 0 0 0 4px var(--card), 0 0 0 6px var(--danger)`
+                ? `0 0 0 2px ${ring}, 0 0 0 4px var(--surface), 0 0 0 6px var(--danger)`
                 : `0 0 0 2px ${ring}`,
             }}
           >
             <UserAvatar name={shortName(a.fullName)} avatarUrl={a.avatarUrl} size="xs" clickable={false} className="ring-0" />
             {a.nudgeCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--surface-3)] px-1 text-[9px] font-bold tabular-nums text-[var(--muted)] ring-2 ring-[var(--card)]">
+              <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--surface-3)] px-1 text-[9px] font-bold tabular-nums text-[var(--ink-3)] ring-2 ring-[var(--surface)]">
                 {a.nudgeCount}
               </span>
             )}
@@ -234,7 +227,7 @@ function Chips({ assignees, t, tc }: { assignees: ControlAssignee[]; t: T; tc: T
       {rest.length > 0 && (
         <li
           title={rest.map((a) => a.fullName).join(", ")}
-          className="grid size-8 place-items-center rounded-full bg-[var(--surface-3)] text-[11px] font-bold text-[var(--muted)]"
+          className="grid size-8 place-items-center rounded-full bg-[var(--surface-3)] text-[11px] font-bold text-[var(--ink-3)]"
         >
           +{rest.length}
         </li>
@@ -286,7 +279,7 @@ function RowActions({ row, canManage, tc }: { row: ControlRow; canManage: boolea
             responseSubmittedAt: a.responseSubmittedAt,
           }))}
           trigger={
-            <Button type="button" variant="soft" size="sm">
+            <Button type="button" variant="default" size="sm">
               <ListCheck className="size-4" />
               {tc("review")}
             </Button>

@@ -35,11 +35,11 @@ function Row({ item, child }: { item: NavItem; child?: boolean }) {
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "group/row flex items-center gap-3 rounded-[12px] px-3 transition-colors",
+          "group/row relative flex items-center gap-3 rounded-[12px] px-3 transition-colors",
           child ? "h-11 text-[15px] font-medium" : "h-12 text-[16px] font-semibold",
           active
-            ? "bg-[var(--glass-fill-strong)] text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]"
-            : "text-ink-2 hover:bg-[var(--glass-fill)] hover:text-ink",
+            ? "bg-[var(--surface-2)] text-ink before:absolute before:left-0 before:top-1/2 before:h-5 before:w-0.5 before:-translate-y-1/2 before:rounded-[2px] before:bg-tint before:content-['']"
+            : "text-ink-2 hover:bg-[var(--surface-2)] hover:text-ink",
         )}
       >
         <Icon className={cn("size-5 shrink-0", active ? "text-tint" : "text-ink-3 group-hover/row:text-ink-2")} stroke={1.75} />
@@ -80,7 +80,7 @@ export function Sidebar() {
                     onClick={() => toggle(e.group.key)}
                     className={cn(
                       "flex h-12 w-full items-center gap-3 rounded-[12px] px-3 text-[16px] font-semibold transition-colors",
-                      hasActiveInside && !open ? "text-ink" : "text-ink-2 hover:bg-[var(--glass-fill)] hover:text-ink",
+                      hasActiveInside && !open ? "text-ink" : "text-ink-2 hover:bg-[var(--surface-2)] hover:text-ink",
                     )}
                   >
                     <GroupIcon className={cn("size-5 shrink-0", hasActiveInside ? "text-tint" : "text-ink-3")} stroke={1.75} />

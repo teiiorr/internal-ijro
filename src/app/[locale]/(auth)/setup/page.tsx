@@ -1,9 +1,10 @@
 import { useTranslations } from "next-intl";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui-biib/Button";
+import { Field } from "@/components/ui-biib/Field";
+import { Input } from "@/components/ui-biib/Input";
 import { isSystemSetup, setupDirektor } from "@/server/actions/setup";
+import { AuthShell } from "../_components/auth-shell";
 
 export default async function SetupPage() {
   if (await isSystemSetup()) redirect("/login");
@@ -13,30 +14,24 @@ export default async function SetupPage() {
 function SetupForm() {
   const t = useTranslations();
   return (
-    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-extrabold tracking-tight gradient-text">{t("auth.setup.title")}</h1>
-        <p className="text-[var(--muted)] font-medium">{t("auth.setup.subtitle")}</p>
-      </div>
-      <form action={setupDirektor} className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="fullName">{t("auth.setup.fullName")}</Label>
-          <Input id="fullName" name="fullName" required minLength={2} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">{t("auth.setup.email")}</Label>
-          <Input id="email" name="email" type="email" required />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">{t("auth.setup.password")}</Label>
-          <Input id="password" name="password" type="password" required minLength={8} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="confirm">{t("auth.setup.confirm")}</Label>
-          <Input id="confirm" name="confirm" type="password" required minLength={8} />
-        </div>
-        <Button type="submit" className="w-full" size="lg">{t("auth.setup.submit")}</Button>
+    <AuthShell title={t("auth.setup.title")} subtitle={t("auth.setup.subtitle")}>
+      <form action={setupDirektor} className="flex flex-col gap-5">
+        <Field id="fullName" label={t("auth.setup.fullName")} required>
+          {(c) => <Input {...c} name="fullName" minLength={2} autoComplete="name" />}
+        </Field>
+        <Field id="email" label={t("auth.setup.email")} required>
+          {(c) => <Input {...c} name="email" type="email" autoComplete="email" />}
+        </Field>
+        <Field id="password" label={t("auth.setup.password")} required>
+          {(c) => <Input {...c} name="password" type="password" autoComplete="new-password" minLength={8} />}
+        </Field>
+        <Field id="confirm" label={t("auth.setup.confirm")} required>
+          {(c) => <Input {...c} name="confirm" type="password" autoComplete="new-password" minLength={8} />}
+        </Field>
+        <Button type="submit" variant="primary" size="56" className="w-full">
+          {t("auth.setup.submit")}
+        </Button>
       </form>
-    </div>
+    </AuthShell>
   );
 }

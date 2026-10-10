@@ -3,25 +3,24 @@ import * as React from "react";
 export type StatusTone = "green" | "amber" | "red" | "muted";
 export type StatusSize = "sm" | "md" | "lg";
 
-// `tone` töliq töldirish rangini belgilaydi; chip'da oq matn böladi (globals.css'dagi
-// .status-tag'ga qarang) — animatsiyasiz. Har birida oq rang öqişli qolişi uçun qat'iy,
-// yorqin va bir-biridan aniq farqlanadigan ranglar tanlangan (yaşil / amber-oltin / qizil / slate).
+// Xotirjam «Status» koʻrinishi (A4.4.4): tusning oʻz rangi matnda, 14% aralashma toʻldirishda.
+// Burchak qiymati 6px (radius-s), kapsula/clip-path yoki uppercase yoʻq.
 const TONE: Record<StatusTone, string> = {
-  green: "#16A34A",
-  amber: "#E08C10",
-  red:   "#E02424",
-  muted: "#64748B",
+  green: "var(--success)",
+  amber: "var(--warning)",
+  red:   "var(--danger)",
+  muted: "var(--ink-2)",
 };
 
-const SIZE: Record<StatusSize, { box: string; ch: string }> = {
-  sm: { box: "px-2 py-[3px] text-[10px] tracking-[0.05em]", ch: "4px" },
-  md: { box: "px-2.5 py-1 text-[11px] tracking-[0.06em]", ch: "5px" },
-  lg: { box: "px-3.5 py-1.5 text-[13px] tracking-[0.06em]", ch: "7px" },
+const SIZE: Record<StatusSize, string> = {
+  sm: "min-h-5 px-1.5 text-[11px]",
+  md: "min-h-6 px-2 text-[0.75rem]",
+  lg: "min-h-7 px-2.5 text-[13px]",
 };
 
 /**
- * Burçakli status "signal yorliği": qirqilgan burçaklar, bosh harflar, töliq rang bilan
- * töldirilgan. Statik (animatsiyasiz). `live` API mosligi uçun qabul qilinadi, biroq e'tiborsiz qoldiriladi.
+ * Xotirjam holat belgisi. Avval burchakli «signal yorligʻi» edi; endi BIIB `Status`
+ * koʻrinishida. `live` API mosligi uchun qabul qilinadi, biroq eʼtiborsiz qoldiriladi.
  */
 export function StatusTag({
   tone,
@@ -36,11 +35,11 @@ export function StatusTag({
   children: React.ReactNode;
   className?: string;
 }) {
-  const s = SIZE[size];
+  const c = TONE[tone];
   return (
     <span
-      style={{ ["--tone" as string]: TONE[tone], ["--ch" as string]: s.ch }}
-      className={`status-tag ${s.box} inline-flex items-center justify-center font-extrabold uppercase leading-none whitespace-nowrap ${className}`}
+      style={{ color: c, backgroundColor: `color-mix(in oklab, ${c} 14%, transparent)` }}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-[var(--radius-s)] font-semibold leading-none whitespace-nowrap ${SIZE[size]} ${className}`}
     >
       {children}
     </span>

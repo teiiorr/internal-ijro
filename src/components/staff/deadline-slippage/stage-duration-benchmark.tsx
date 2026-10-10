@@ -8,16 +8,16 @@ const pct = (v: number, max: number) => `${Math.min(100, Math.max(0, (v / max) *
 /** Meʼyor / mediana / P80 ni bitta shkalada koʻrsatadigan ixcham chiziq. */
 function DurationBar({ row, max, label }: { row: BenchmarkRow; max: number; label: string }) {
   return (
-    <div className="relative h-3 w-full min-w-[140px] overflow-hidden rounded-full bg-[var(--surface-3)]" role="img" aria-label={label}>
+    <div className="relative h-3 w-full min-w-[140px] overflow-hidden rounded-[var(--radius-s)] bg-[var(--surface-3)]" role="img" aria-label={label}>
       {row.p80 != null && (
-        <span className="absolute inset-y-0 left-0 rounded-full bg-[var(--primary-soft-strong)]" style={{ width: pct(row.p80, max) }} />
+        <span className="absolute inset-y-0 left-0 rounded-[var(--radius-s)] bg-[color-mix(in_oklab,var(--tint)_26%,transparent)]" style={{ width: pct(row.p80, max) }} />
       )}
       {row.median != null && (
-        <span className="absolute inset-y-0 left-0 rounded-full bg-[var(--primary)]" style={{ width: pct(row.median, max) }} />
+        <span className="absolute inset-y-0 left-0 rounded-[var(--radius-s)] bg-[var(--tint)]" style={{ width: pct(row.median, max) }} />
       )}
       {row.defaultDays != null && row.defaultDays > 0 && (
         <span
-          className="absolute inset-y-0 w-0.5 -translate-x-1/2 rounded-full bg-[var(--foreground)]"
+          className="absolute inset-y-0 w-0.5 -translate-x-1/2 rounded-full bg-[var(--ink)]"
           style={{ left: pct(row.defaultDays, max) }}
         />
       )}
@@ -33,24 +33,24 @@ export function StageDurationBenchmark({ rows }: { rows: BenchmarkRow[] }) {
   const t = useTranslations("staffX.deadlineSlippage");
 
   if (rows.length === 0) {
-    return <p className="py-8 text-center text-sm text-[var(--muted)]">{t("benchmarkEmpty")}</p>;
+    return <p className="py-8 text-center t-small text-[var(--ink-3)]">{t("benchmarkEmpty")}</p>;
   }
 
   const max = Math.max(1, ...rows.map((r) => Math.max(r.p80 ?? 0, r.median ?? 0, r.defaultDays ?? 0)));
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-[var(--muted)]">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 t-micro text-[var(--ink-3)]">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-0.5 rounded-full bg-[var(--foreground)]" aria-hidden />
+          <span className="h-2.5 w-0.5 rounded-full bg-[var(--ink)]" aria-hidden />
           {t("legendNorm")}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-[var(--primary)]" aria-hidden />
+          <span className="size-2.5 rounded-full bg-[var(--tint)]" aria-hidden />
           {t("legendMedian")}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-[var(--primary-soft-strong)]" aria-hidden />
+          <span className="size-2.5 rounded-full bg-[color-mix(in_oklab,var(--tint)_26%,transparent)]" aria-hidden />
           {t("legendP80")}
         </span>
       </div>
@@ -58,7 +58,7 @@ export function StageDurationBenchmark({ rows }: { rows: BenchmarkRow[] }) {
       <div className="-mx-1 overflow-x-auto px-1">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
-            <tr className="border-b border-[var(--border)] text-left text-xs font-semibold text-[var(--muted)]">
+            <tr className="border-b border-[var(--line)] text-left t-micro font-semibold text-[var(--ink-3)]">
               <th className="py-2.5 pr-3 font-semibold">{t("stage")}</th>
               <th className="px-3 py-2.5 font-semibold">{t("type")}</th>
               <th className="px-3 py-2.5 text-right font-semibold">{t("norm")}</th>
@@ -72,16 +72,16 @@ export function StageDurationBenchmark({ rows }: { rows: BenchmarkRow[] }) {
             {rows.map((r) => {
               const bad = isUnrealisticNorm(r.median, r.defaultDays);
               return (
-                <tr key={r.templateItemId} className="border-b border-[var(--border)]/60 last:border-0 hover:bg-[var(--surface-2)]">
+                <tr key={r.templateItemId} className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface-2)]">
                   <td className="max-w-[240px] py-3 pr-3">
                     <span className="block truncate font-semibold" title={r.stageName}>
                       {r.stageName}
                     </span>
                   </td>
-                  <td className="max-w-[200px] truncate px-3 py-3 text-[var(--muted)]" title={r.typeName}>
+                  <td className="max-w-[200px] truncate px-3 py-3 text-[var(--ink-3)]" title={r.typeName}>
                     {r.typeName || "—"}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-right tabular">
+                  <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">
                     <span
                       className={cn(
                         "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-semibold",
@@ -93,14 +93,14 @@ export function StageDurationBenchmark({ rows }: { rows: BenchmarkRow[] }) {
                       {r.defaultDays ?? "—"}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-right font-bold tabular">{r.median ?? "—"}</td>
-                  <td className="whitespace-nowrap px-3 py-3 text-right tabular text-[var(--muted)]">{r.p80 ?? "—"}</td>
-                  <td className="whitespace-nowrap px-3 py-3 text-right tabular text-[var(--muted)]">{r.n}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right font-bold tabular-nums">{r.median ?? "—"}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums text-[var(--ink-3)]">{r.p80 ?? "—"}</td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums text-[var(--ink-3)]">{r.n}</td>
                   <td className="py-3 pl-3">
                     <DurationBar
                       row={r}
                       max={max}
-                      label={`${t("legendNorm")}: ${r.defaultDays ?? "—"} · ${t("legendMedian")}: ${r.median ?? "—"} · ${t("legendP80")}: ${r.p80 ?? "—"}`}
+                      label={`${t("legendNorm")}: ${r.defaultDays ?? "—"}, ${t("legendMedian")}: ${r.median ?? "—"}, ${t("legendP80")}: ${r.p80 ?? "—"}`}
                     />
                   </td>
                 </tr>

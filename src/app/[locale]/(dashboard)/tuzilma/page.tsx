@@ -51,10 +51,9 @@ export default async function TuzilmaPage({ searchParams }: { searchParams: SP }
   const canExportStaffing = STAFFING_EXPORT_ROLES.includes(me.position);
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div>
       <PageHeader
         title={t("title")}
-        subtitle={t("subtitle")}
         actions={
           canExportStaffing && (
             <Button asChild variant="glass" size="40" icon={IconFileSpreadsheet} className="print:hidden">

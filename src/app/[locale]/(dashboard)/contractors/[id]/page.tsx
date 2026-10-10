@@ -1,10 +1,10 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { IconStarFilled as Star, IconMail as Mail, IconPhone as Phone, IconClockHour4 as Clock } from "@tabler/icons-react";
+import { IconStarFilled as Star, IconMail as Mail, IconPhone as Phone } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { BackButton } from "@/components/ui/back-button";
-import { Card, CardContent } from "@/components/ui/card";
-import { StatusTag } from "@/components/ui/status-tag";
+import { Card } from "@/components/ui-biib/Card";
+import { Heading } from "@/components/ui-biib/Heading";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { timeAgo } from "@/lib/dates";
 import {
@@ -45,7 +45,7 @@ export default async function ContractorDetailPage({
   const detail = await getContractorDetail(id);
   if (!detail) notFound();
 
-  const { company, projects: prjs, lastActivity, lastLoginAt } = detail;
+  const { company, projects: prjs, lastLoginAt } = detail;
   // Körib chiqiş huquqi = körib chiqiş server action'lari qöllaydigan aynan şu tekşiruv.
   const isEditor = canEditProjects(session.user.email) || (await hasGrant(session.user.id, "projects.edit"));
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
@@ -60,47 +60,44 @@ export default async function ContractorDetailPage({
   let chatTotal = 0;
   for (const r of msgCounts) chatTotal += Number(r.cnt);
   return (
-    <div className="space-y-5 stagger-children">
+    <div className="space-y-6">
       <BackButton fallbackHref="/contractors" />
 
-      {/* Hero sarlavha — ular kim, ahvoli qanday, bir qaraşda */}
+      {/* Hero — ular kim, ahvoli qanday, bir qarashda. Bitta meta qator. */}
       <Card>
-        <CardContent className="p-5 sm:p-7">
-          <div className="flex flex-wrap items-start gap-4">
-            <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-2)] ring-1 ring-[var(--border)] sm:size-20">
-              {company.logoUrl ? (
-                <SmoothImage src={company.logoUrl} alt={company.name} className="size-full object-contain p-1.5" />
-              ) : (
-                <span className="text-3xl font-black text-[var(--subtle)]">{company.name.trim().charAt(0).toUpperCase()}</span>
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">{company.name}</h1>
-                {company.rating && (
-                  <StatusTag tone="amber" size="lg"><Star className="size-4" />{Number(company.rating).toFixed(1)}</StatusTag>
-                )}
-              </div>
-              {company.contactPerson && <p className="mt-1 text-sm font-medium text-[var(--muted)]">{company.contactPerson}</p>}
-              <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--subtle)]">
-                {company.contactEmail && <a href={`mailto:${company.contactEmail}`} className="inline-flex items-center gap-1 hover:text-[var(--primary)]"><Mail className="size-3.5" />{company.contactEmail}</a>}
-                {company.contactPhone && <a href={`tel:${company.contactPhone}`} className="inline-flex items-center gap-1 hover:text-[var(--primary)]"><Phone className="size-3.5" />{company.contactPhone}</a>}
-              </div>
-            </div>
-            {canManage && (
-              <div className="flex items-center gap-1">
-                <RenameStudioButton companyId={company.id} currentName={company.name} />
-                <DeleteStudioButton companyId={company.id} studioName={company.name} hasProjects={prjs.length > 0} />
-              </div>
+        <div className="flex flex-wrap items-start gap-4">
+          <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-[var(--radius-media)] bg-[var(--surface-2)] sm:size-20">
+            {company.logoUrl ? (
+              <SmoothImage src={company.logoUrl} alt={company.name} className="size-full object-contain p-1.5" />
+            ) : (
+              <span className="text-3xl font-black text-[var(--ink-3)]">{company.name.trim().charAt(0).toUpperCase()}</span>
             )}
           </div>
-
-          <div className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[var(--surface-2)] px-3 py-2 text-sm">
-            <Clock className="size-4 text-[var(--muted)]" />
-            <span className="text-[var(--muted)]">{t("contractors.lastOnline")}:</span>
-            <span className="font-semibold">{lastLoginAt ? timeAgo(lastLoginAt as Date, locale) : t("contractors.neverOnline")}</span>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Heading level={1} trim className="min-w-0 break-words">{company.name}</Heading>
+              {company.rating && (
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--warning)]">
+                  <Star className="size-4" aria-hidden />{Number(company.rating).toFixed(1)}
+                </span>
+              )}
+            </div>
+            {company.contactPerson && <p className="mt-1 t-small font-medium text-[var(--ink-2)]">{company.contactPerson}</p>}
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 t-micro text-[var(--ink-3)]">
+              {company.contactEmail && <a href={`mailto:${company.contactEmail}`} className="inline-flex items-center gap-1 hover:text-[var(--ink)]"><Mail className="size-3.5" aria-hidden />{company.contactEmail}</a>}
+              {company.contactPhone && <a href={`tel:${company.contactPhone}`} className="inline-flex items-center gap-1 hover:text-[var(--ink)]"><Phone className="size-3.5" aria-hidden />{company.contactPhone}</a>}
+              <span>
+                {t("contractors.lastOnline")}: <span className="font-semibold text-[var(--ink-2)]">{lastLoginAt ? timeAgo(lastLoginAt as Date, locale) : t("contractors.neverOnline")}</span>
+              </span>
+            </div>
           </div>
-        </CardContent>
+          {canManage && (
+            <div className="flex items-center gap-1">
+              <RenameStudioButton companyId={company.id} currentName={company.name} />
+              <DeleteStudioButton companyId={company.id} studioName={company.name} hasProjects={prjs.length > 0} />
+            </div>
+          )}
+        </div>
       </Card>
 
       <StudioDetailTabs
@@ -111,11 +108,6 @@ export default async function ContractorDetailPage({
               ...company,
               rating: company.rating as string | null,
               ndaAcceptedAt: company.ndaAcceptedAt as Date | null,
-            }}
-            stats={{
-              projectCount: prjs.length,
-              docCount: docs.length,
-              lastActivity,
             }}
             canManage={canManage}
           />

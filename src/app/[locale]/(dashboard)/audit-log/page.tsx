@@ -1,13 +1,14 @@
 import { redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
+import Link from "next/link";
+import { IconDownload } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { listAudit } from "@/server/queries/audit";
-import { Card, CardContent } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { IconDownload as Download } from "@tabler/icons-react";
-import Link from "next/link";
 import { formatDateTime } from "@/lib/dates";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Card } from "@/components/ui-biib/Card";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Button } from "@/components/ui-biib/Button";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
 export default async function AuditLogPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -31,39 +32,50 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
     scope: me.position === "hr" ? "hr" : "all",
   });
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("audit.pageTitle")}</h1>
-        <Button asChild variant="outline" size="default" className="shrink-0">
-          <Link href={`/api/export/audit?${new URLSearchParams(sp as Record<string, string>).toString()}`}>
-            <Download className="size-4" /> Excel
-          </Link>
-        </Button>
-      </div>
+  const exportQuery = new URLSearchParams(
+    Object.fromEntries(Object.entries(sp).filter(([, v]) => typeof v === "string") as [string, string][]),
+  ).toString();
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow><TableHead>{t("audit.table.time")}</TableHead><TableHead>{t("audit.table.user")}</TableHead><TableHead>{t("audit.table.action")}</TableHead><TableHead>{t("audit.table.entity")}</TableHead><TableHead>{t("audit.table.ip")}</TableHead></TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((r) => (
-                <TableRow key={r.id}>
-                  <TableCell className="text-xs tabular">{formatDateTime(r.createdAt, locale)}</TableCell>
-                  <TableCell><span className="inline-flex items-center gap-1.5">{r.userName && <UserAvatar name={r.userName} avatarUrl={r.userAvatarUrl} size="xs" clickable={false} />}{r.userName ?? "—"}</span></TableCell>
-                  <TableCell><code className="text-xs">{r.action}</code></TableCell>
-                  <TableCell className="text-xs text-[var(--muted)]">{r.entityType ?? "—"} {r.entityId ? r.entityId.slice(0, 8) : ""}</TableCell>
-                  <TableCell className="text-xs">{r.ipAddress ?? "—"}</TableCell>
-                </TableRow>
-              ))}
-              {rows.length === 0 && (
-                <TableRow><TableCell colSpan={5} className="text-center py-10 text-[var(--muted)]">{t("audit.empty")}</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
+  return (
+    <div>
+      <PageHeader
+        title={t("audit.pageTitle")}
+        subtitle={rows.length > 0 ? <span className="tabular-nums">{rows.length}</span> : undefined}
+        actions={
+          <Button asChild variant="glass" icon={IconDownload}>
+            <Link href={`/api/export/audit${exportQuery ? `?${exportQuery}` : ""}`}>Excel</Link>
+          </Button>
+        }
+      />
+
+      <Card bare className="px-5 sm:px-6">
+        {rows.length === 0 ? (
+          <p className="py-10 text-center t-small text-[var(--ink-3)]">{t("audit.empty")}</p>
+        ) : (
+          <Rows>
+            {rows.map((r) => (
+              <Row key={r.id}>
+                <div className="min-w-0 flex-1">
+                  <div className="flex min-w-0 items-center gap-1.5">
+                    {r.userName && <UserAvatar name={r.userName} avatarUrl={r.userAvatarUrl} size="xs" clickable={false} />}
+                    <span className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">
+                      {r.userName ?? t("common.emptyValue")}
+                    </span>
+                    <code className="shrink-0 t-micro text-[var(--ink-3)]">{r.action}</code>
+                  </div>
+                  <p className="mt-0.5 truncate t-small text-[var(--ink-3)]">
+                    {r.entityType ?? t("common.emptyValue")}
+                    {r.entityId ? ` ${r.entityId.slice(0, 8)}` : ""}
+                    {r.ipAddress ? `  ${r.ipAddress}` : ""}
+                  </p>
+                </div>
+                <span className="shrink-0 tabular-nums t-micro text-[var(--ink-3)]">
+                  {formatDateTime(r.createdAt, locale)}
+                </span>
+              </Row>
+            ))}
+          </Rows>
+        )}
       </Card>
     </div>
   );

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { IconPhotoPlus as ImagePlus, IconLoader2 as Loader2, IconTrash as Trash2 } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestLogo } from "@/server/actions/contests";
 
@@ -53,43 +54,39 @@ export function ContestReveal({
   return (
     <div>
       {hasWinner ? (
-        <div className="flex flex-col items-center gap-4 py-4 text-center sm:py-6">
+        <div className="flex flex-col items-center gap-4 py-2 text-center sm:py-4">
           {logoUrl && (
-            <div className="grid size-24 place-items-center overflow-hidden rounded-2xl bg-[var(--surface-2)] ring-1 ring-[var(--border)] sm:size-28">
+            <div className="grid size-24 place-items-center overflow-hidden rounded-[var(--radius-media)] border border-[var(--line)] bg-[var(--surface-2)] sm:size-28">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={logoUrl} alt={winnerName} className="size-full object-contain p-1.5" />
             </div>
           )}
-          <p className="font-display break-words text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+          <p className="break-words font-[family-name:var(--font-ui)] text-2xl font-bold leading-tight tracking-tight text-[var(--ink)] sm:text-3xl">
             {winnerName}
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-8 text-center text-sm text-[var(--muted)]">
-          {t("tanlov.noWinner")}
-        </div>
+        <p className="py-6 text-center t-body text-[var(--ink-3)]">{t("tanlov.noWinner")}</p>
       )}
 
       {canManage && (
         <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-[var(--border-strong)] px-3 py-1.5 text-xs font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
-          >
-            {uploading ? <Loader2 className="size-3.5 animate-spin" /> : <ImagePlus className="size-3.5" />}
+          <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileRef.current?.click()}>
+            {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
             {logoUrl ? t("tanlov.changeLogo") : t("tanlov.setLogo")}
-          </button>
+          </Button>
           {logoUrl && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
+              className="text-[var(--danger)]"
               disabled={pending}
               onClick={() => start(async () => { await removeContestLogo(contestId); router.refresh(); })}
-              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[var(--danger)] transition-colors hover:bg-[var(--danger-soft)]"
             >
-              <Trash2 className="size-3.5" /> {t("tanlov.removeLogo")}
-            </button>
+              <Trash2 className="size-4" />
+              {t("tanlov.removeLogo")}
+            </Button>
           )}
           <input ref={fileRef} type="file" accept="image/*" className="sr-only" onChange={onPickLogo} />
         </div>

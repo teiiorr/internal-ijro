@@ -17,7 +17,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
         "relative inline-flex h-9 w-[68px] shrink-0 items-center rounded-full p-1 transition-colors",
-        isDark ? "bg-[var(--primary)]" : "bg-[var(--surface-3)] border border-[var(--border)]",
+        isDark ? "bg-[var(--tint)]" : "bg-[var(--surface-3)] border border-[var(--line)]",
         className
       )}
     >
@@ -28,7 +28,7 @@ export function ThemeToggle({ className }: { className?: string }) {
         )}
       >
         {isDark ? (
-          <Moon className="size-4 text-[var(--primary)]" />
+          <Moon className="size-4 text-[var(--tint)]" />
         ) : (
           <Sun className="size-4 text-[var(--warning)]" />
         )}

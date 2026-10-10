@@ -2,24 +2,23 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /**
- * Belgilangan 24px ölçamli çip, min-width bilan — şunda bir ustundagi çiplar bir
- * tekisda turadi. Matn markazlaştirilgan, "border"lar esa inset box-shadow, şu
- * bois outline variantlar qutini kengaytirmaydi — har bir variant bir xil taşqi
- * ölçamga ega.
+ * Xotirjam «Status» koʻrinishidagi belgi (A4.4.4): radius 6 (kapsula emas), tusli yengil
+ * toʻldirish (`color-mix 14%`), tusning oʻz matni; uppercase va qattiq toʻldirish yoʻq,
+ * `min-w-[7.5rem]` olib tashlangan — belgi matniga qarab oʻlchanadi. Variantlar API saqlangan.
  */
 const badgeVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 h-6 min-w-[7.5rem] rounded-[6px] px-2.5 text-[11.5px] font-bold leading-none whitespace-nowrap select-none",
+  "inline-flex min-h-6 items-center justify-center gap-1.5 rounded-[var(--radius-s)] px-2 text-[0.75rem] font-semibold leading-none whitespace-nowrap select-none",
   {
     variants: {
       variant: {
-        default:   "bg-[var(--primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]",
-        secondary: "bg-[var(--surface-3)] text-[var(--foreground)] shadow-[inset_0_0_0_1px_var(--border-strong)]",
-        outline:   "text-[var(--foreground)] shadow-[inset_0_0_0_1.5px_var(--foreground)]",
-        accent:    "bg-[var(--accent)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]",
-        success:   "bg-[var(--success)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]",
-        warning:   "bg-[var(--warning)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]",
-        danger:    "bg-[var(--danger)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]",
-        solid:     "bg-[var(--foreground)] text-[var(--background)]",
+        default:   "bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] text-[var(--tint)]",
+        secondary: "bg-[var(--surface-2)] text-[var(--ink-2)]",
+        outline:   "bg-[var(--surface-2)] text-[var(--ink-2)]",
+        accent:    "bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] text-[var(--tint)]",
+        success:   "bg-[color-mix(in_oklab,var(--success)_14%,transparent)] text-[var(--success)]",
+        warning:   "bg-[color-mix(in_oklab,var(--warning)_16%,transparent)] text-[var(--warning)]",
+        danger:    "bg-[color-mix(in_oklab,var(--danger)_14%,transparent)] text-[var(--danger)]",
+        solid:     "bg-[var(--ink-2)] text-[var(--surface)]",
       },
     },
     defaultVariants: { variant: "default" },

@@ -304,7 +304,7 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
             <View style={s.nameCol}>
               <Text style={{ fontSize: 14, fontWeight: 700 }}>{shortName(a.fullName)}</Text>
               <Text style={{ fontSize: 12, color: MUTED, marginTop: 2 }}>
-                {(POSITION_LABEL[a.position] ?? a.position) + (a.deptName ? ` · ${a.deptName}` : "")}
+                {(POSITION_LABEL[a.position] ?? a.position) + (a.deptName ? `, ${a.deptName}` : "")}
               </Text>
               {a.responseText && (
                 <Text style={{ fontSize: 12, marginTop: 4, fontStyle: "italic" }}>

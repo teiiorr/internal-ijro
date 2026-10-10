@@ -1,7 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Segmented, type SegmentedItem } from "@/components/ui-biib/Segmented";
 import { StudioDocumentsFull } from "@/components/contractor/studio-documents-full";
 import { StudioGallery } from "@/components/contractor/studio-gallery";
 import { getContractorDocuments, getContractorGallery } from "@/server/queries/projects";
@@ -9,8 +11,12 @@ import { getStudioCompany } from "@/server/queries/studio";
 
 export const dynamic = "force-dynamic";
 
-// Studiya: barcha loyihalardagi fayllar bir joyda (hujjatlar + rasmlar galereyasi).
-export default async function StudioDocumentsPage() {
+// Studiya: barcha loyihalardagi fayllar bir joyda — Hujjatlar | Galereya.
+export default async function StudioDocumentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations();
@@ -20,23 +26,34 @@ export default async function StudioDocumentsPage() {
   const [documents, images] = await Promise.all([getContractorDocuments(company.id), getContractorGallery(company.id)]);
   const projects = [...new Map(documents.map((d) => [d.projectId, { id: d.projectId, name: d.projectName }])).values()];
 
-  return (
-    <div className="space-y-5">
-      <header>
-        <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("studio.documents.title")}</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">{t("studio.documents.subtitle")}</p>
-      </header>
+  const sp = await searchParams;
+  const view = sp.view === "images" && images.length > 0 ? "images" : "docs";
 
-      {documents.length === 0 ? (
-        <Card><CardContent className="py-14 text-center text-sm text-[var(--muted)]">{t("studio.documents.empty")}</CardContent></Card>
-      ) : (
-        <>
-          <Card><CardContent className="p-5 sm:p-6"><StudioDocumentsFull documents={documents} /></CardContent></Card>
-          {images.length > 0 && (
-            <Card><CardContent className="p-5 sm:p-6"><StudioGallery images={images} projects={projects} /></CardContent></Card>
-          )}
-        </>
-      )}
+  if (documents.length === 0) {
+    return (
+      <div>
+        <PageHeader title={t("studio.documents.title")} />
+        <Card>
+          <p className="py-10 text-center t-small text-[var(--ink-3)]">{t("studio.documents.empty")}</p>
+        </Card>
+      </div>
+    );
+  }
+
+  const tabs: SegmentedItem[] = [{ href: "/contractor/documents?view=docs", label: t("studio.documents.title"), active: view === "docs" }];
+  if (images.length > 0) {
+    tabs.push({ href: "/contractor/documents?view=images", label: t("contractors.detail.tabs.gallery"), active: view === "images" });
+  }
+
+  return (
+    <div>
+      <PageHeader
+        title={t("studio.documents.title")}
+        tools={images.length > 0 ? <Segmented items={tabs} /> : undefined}
+      />
+      <Card>
+        {view === "images" ? <StudioGallery images={images} projects={projects} /> : <StudioDocumentsFull documents={documents} />}
+      </Card>
     </div>
   );
 }

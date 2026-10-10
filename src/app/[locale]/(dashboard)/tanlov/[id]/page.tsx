@@ -5,7 +5,9 @@ import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { getContest } from "@/server/queries/contests";
-import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
 import { formatDate } from "@/lib/dates";
 import { ContestReveal } from "@/components/contests/contest-reveal";
 import { ContestGallery } from "@/components/contests/contest-gallery";
@@ -27,50 +29,60 @@ export default async function ContestDetailPage({ params }: { params: Promise<{ 
   const canManage = canEditProjects(session.user.email);
   const winner = c.winnerName || c.winnerProjectName || "";
 
-  return (
-    <div className="mx-auto max-w-5xl stagger-children">
-      {/* Asboblar paneli: navigatsiya + owner amallari alohida qatorda. */}
-      <div className="flex items-center justify-between gap-2">
-        <BackButton fallbackHref="/tanlov" />
-        {canManage && (
-          <div className="flex items-center gap-2">
-            <ContestForm contest={c} />
-            <ContestDeleteButton contestId={c.id} />
-          </div>
-        )}
-      </div>
-
-      {/* Sarlavha qismi — tanlov nomi asosiy örinda. */}
-      <header className="mt-5">
-        <h1 className="text-2xl font-bold leading-tight tracking-tight break-words sm:text-3xl md:text-4xl">{c.name}</h1>
-        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-[var(--muted)]">
-          <span className="inline-flex items-center gap-1.5"><Users className="size-4" />{c.participantsCount} {t("tanlov.participantsShort")}</span>
-          {c.heldAt && <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-4" />{formatDate(c.heldAt, locale)}</span>}
-        </div>
-      </header>
-
-      {/* Bosh galereya — vizual markaz. */}
-      <div className="mt-6">
-        <ContestGallery contestId={c.id} photos={c.photos} canManage={canManage} />
-      </div>
-
-      {/* Rasmiy natija. */}
-      <div className="mt-6">
-        <ContestReveal contestId={c.id} winnerName={winner} logoUrl={c.winnerLogoUrl} canManage={canManage} />
-      </div>
-
-      {/* Tavsif — öqişga qulay matn körinişida. */}
-      {c.description && (
-        <section className="mt-8">
-          <h2 className="text-base font-semibold">{t("tanlov.about")}</h2>
-          <p className="mt-2 max-w-2xl whitespace-pre-wrap break-words text-[15px] leading-relaxed text-[var(--foreground)]">{c.description}</p>
-        </section>
+  const meta = (
+    <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+      <span className="inline-flex items-center gap-1.5">
+        <Users className="size-4" aria-hidden />
+        {c.participantsCount} {t("tanlov.participantsShort")}
+      </span>
+      {c.heldAt && (
+        <span className="inline-flex items-center gap-1.5">
+          <CalendarDays className="size-4" aria-hidden />
+          {formatDate(c.heldAt, locale)}
+        </span>
       )}
+    </span>
+  );
 
-      {/* Muhokama + hujjatlar. */}
-      <div className="mt-8 grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-        <Card><CardContent className="p-5 sm:p-6"><ContestComments contestId={c.id} comments={c.comments} canModerate={canManage} /></CardContent></Card>
-        <Card><CardContent className="p-5 sm:p-6"><ContestFiles contestId={c.id} files={c.files} canManage={canManage} /></CardContent></Card>
+  return (
+    <div className="mx-auto max-w-5xl">
+      <PageHeader
+        back={<BackButton fallbackHref="/tanlov" />}
+        title={c.name}
+        subtitle={meta}
+        actions={
+          canManage ? (
+            <>
+              <ContestForm contest={c} />
+              <ContestDeleteButton contestId={c.id} contestName={c.name} />
+            </>
+          ) : undefined
+        }
+      />
+
+      <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
+        {/* Bosh galereya — vizual markaz. */}
+        <ContestGallery contestId={c.id} photos={c.photos} canManage={canManage} />
+
+        {/* Rasmiy natija. */}
+        <Section title={t("tanlov.winner")} headingLevel={2}>
+          <Card>
+            <ContestReveal contestId={c.id} winnerName={winner} logoUrl={c.winnerLogoUrl} canManage={canManage} />
+          </Card>
+        </Section>
+
+        {/* Tavsif — oʻqishga qulay matn koʻrinishida. */}
+        {c.description && (
+          <Section title={t("tanlov.about")} headingLevel={2}>
+            <p className="max-w-2xl whitespace-pre-wrap break-words t-body leading-relaxed text-[var(--ink)]">{c.description}</p>
+          </Section>
+        )}
+
+        {/* Muhokama + hujjatlar. */}
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12">
+          <Card><ContestComments contestId={c.id} comments={c.comments} canModerate={canManage} /></Card>
+          <Card><ContestFiles contestId={c.id} files={c.files} canManage={canManage} /></Card>
+        </div>
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { getContractorChatProjects } from "@/server/queries/projects";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Card } from "@/components/ui-biib/Card";
 import { ChatsList } from "./chats-list";
 
 export default async function ContractorChatsPage() {
@@ -11,12 +13,12 @@ export default async function ContractorChatsPage() {
   const { chats } = await getContractorChatProjects(session.user.id);
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{t("contractor.chats.title")}</h1>
+    <div>
+      <PageHeader title={t("contractor.chats.title")} />
       {chats.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[var(--border-strong)] py-16 text-center text-sm text-[var(--muted)]">
-          {t("contractor.chats.empty")}
-        </div>
+        <Card>
+          <p className="py-10 text-center t-small text-[var(--ink-3)]">{t("contractor.chats.empty")}</p>
+        </Card>
       ) : (
         <ChatsList chats={chats.map((c) => ({ ...c, lastMessage: c.lastMessage ? { ...c.lastMessage, createdAt: c.lastMessage.createdAt as Date } : null }))} />
       )}

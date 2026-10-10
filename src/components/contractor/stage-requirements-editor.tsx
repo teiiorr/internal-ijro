@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { IconPencil as Pencil, IconDeviceFloppy as Save } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui-biib/Textarea";
 import { setStageRequirements } from "@/server/actions/stages";
 
 /** Xodim studiya bu bosqiçda nima topşirişi kerakligini yozadi (studiya uçun faqat öqiş). */
@@ -32,26 +33,26 @@ export function StageRequirementsEditor({ stageId, initial }: { stageId: string;
     return (
       <div className="space-y-1">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="text-sm font-semibold">{t("review.requirements")}</h4>
-          <button onClick={() => setEditing(true)} className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--primary)] hover:underline">
-            <Pencil className="size-3.5" />{t("common.edit")}
+          <h4 className="t-label text-[var(--ink)]">{t("review.requirements")}</h4>
+          <button onClick={() => setEditing(true)} className="inline-flex items-center gap-1 t-micro font-semibold text-[var(--tint)] hover:underline">
+            <Pencil className="size-3.5" aria-hidden />{t("common.edit")}
           </button>
         </div>
-        <p className="whitespace-pre-wrap text-sm text-[var(--muted)]">{initial || t("review.noRequirements")}</p>
+        <p className="whitespace-pre-wrap t-small text-[var(--ink-2)]">{initial || t("review.noRequirements")}</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-2">
-      <h4 className="text-sm font-semibold">{t("review.requirements")}</h4>
-      <textarea
+      <h4 className="t-label text-[var(--ink)]">{t("review.requirements")}</h4>
+      <Textarea
         value={val}
         onChange={(e) => setVal(e.target.value)}
         rows={3}
         autoFocus
         placeholder={t("review.requirements")}
-        className="w-full resize-y rounded-xl border border-[var(--input)] bg-[var(--surface-1)] p-3 text-sm text-[var(--foreground)] placeholder:text-[var(--subtle)] focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)]"
+        className="min-h-24"
       />
       <div className="flex items-center justify-end gap-2">
         <Button onClick={() => { setEditing(false); setVal(initial ?? ""); }} disabled={pending} variant="ghost" size="sm">{t("common.cancel")}</Button>

@@ -15,15 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { formatDate, timeAgo } from "@/lib/dates";
-import { cn } from "@/lib/utils";
 import { createStageRequest, decideStageRequest } from "@/server/actions/studio";
 import { studioErrorKey } from "./errors";
 
 type ReqType = "deadline" | "blocker";
 
-/** Studiya: bosqich bo'yicha muddatni uzaytirish yoki muammo bildirish. */
+/** Studiya: bosqich boʻyicha muddatni uzaytirish yoki muammo bildirish. */
 export function StageRequestButtons({ stageId, currentDeadline }: { stageId: string; currentDeadline: string | null }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -65,10 +64,10 @@ export function StageRequestButtons({ stageId, currentDeadline }: { stageId: str
     <>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Button variant="outline" onClick={() => setOpen("deadline")} className="justify-start">
-          <CalendarPlus className="size-4 text-[var(--primary)]" /> {t("studio.requests.deadlineBtn")}
+          <CalendarPlus className="size-4 text-[var(--tint)]" /> {t("studio.requests.deadlineBtn")}
         </Button>
         <Button variant="outline" onClick={() => setOpen("blocker")} className="justify-start">
-          <Alert className="size-4 text-[#E08C10]" /> {t("studio.requests.blockerBtn")}
+          <Alert className="size-4 text-[var(--warning)]" /> {t("studio.requests.blockerBtn")}
         </Button>
       </div>
 
@@ -82,7 +81,7 @@ export function StageRequestButtons({ stageId, currentDeadline }: { stageId: str
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label>{t("studio.requests.currentDeadline")}</Label>
-                  <p className="flex h-11 items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm font-semibold">
+                  <p className="flex h-11 items-center rounded-[var(--radius-m)] bg-[var(--surface-2)] px-3 text-sm font-semibold text-[var(--ink)]">
                     {currentDeadline ? formatDate(currentDeadline, locale) : "—"}
                   </p>
                 </div>
@@ -133,13 +132,13 @@ export type RequestItem = {
 };
 
 const STATUS_TONE: Record<RequestItem["status"], StatusTone> = {
-  pending: "amber",
-  approved: "green",
-  resolved: "green",
-  rejected: "red",
+  pending: "warning",
+  approved: "success",
+  resolved: "success",
+  rejected: "danger",
 };
 
-/** So'rovlar ro'yxati. `canDecide` bo'lsa (xodim) — tasdiqlash / rad etish / hal qilindi tugmalari. */
+/** Soʻrovlar — ajratuvchi qatorlar (quti emas). `canDecide` boʻlsa (xodim) — qaror tugmalari. */
 export function StageRequestsList({
   requests,
   canDecide = false,
@@ -156,53 +155,51 @@ export function StageRequestsList({
   const locale = useLocale();
 
   if (requests.length === 0) {
-    return <p className="py-6 text-center text-sm text-[var(--muted)]">{t("studio.requests.empty")}</p>;
+    return <p className="py-6 text-center t-small text-[var(--ink-3)]">{t("studio.requests.empty")}</p>;
   }
   return (
-    <ul className="space-y-3">
+    <ul className="divide-y divide-[var(--line)]">
       {requests.map((r) => (
-        <li
-          key={r.id}
-          className={cn(
-            "rounded-2xl border p-4",
-            r.status === "pending"
-              ? r.type === "blocker" ? "border-[#E08C10]/40 bg-[#E08C10]/[0.06]" : "border-[var(--primary)]/30 bg-[var(--primary-soft)]"
-              : "border-[var(--border)]"
-          )}
-        >
+        <li key={r.id} className="py-4 first:pt-0 last:pb-0">
           <div className="flex flex-wrap items-center gap-2">
-            {r.type === "deadline" ? <Calendar className="size-4 text-[var(--primary)]" /> : <Alert className="size-4 text-[#E08C10]" />}
-            <span className="text-sm font-bold">{t(`studio.requests.types.${r.type}`)}</span>
-            <StatusTag tone={STATUS_TONE[r.status]} size="sm">{t(`studio.requests.statuses.${r.status}`)}</StatusTag>
-            <span className="ml-auto text-xs text-[var(--subtle)]">{timeAgo(r.createdAt, locale)}</span>
+            {r.type === "deadline"
+              ? <Calendar className="size-4 shrink-0 text-[var(--tint)]" aria-hidden />
+              : <Alert className="size-4 shrink-0 text-[var(--warning)]" aria-hidden />}
+            <span className="text-sm font-bold text-[var(--ink)]">{t(`studio.requests.types.${r.type}`)}</span>
+            {r.status === "pending" ? (
+              <Status tone={STATUS_TONE[r.status]} dot>{t(`studio.requests.statuses.${r.status}`)}</Status>
+            ) : (
+              <Status tone={STATUS_TONE[r.status]}>{t(`studio.requests.statuses.${r.status}`)}</Status>
+            )}
+            <span className="ml-auto t-micro text-[var(--ink-3)]">{timeAgo(r.createdAt, locale)}</span>
           </div>
 
           {(showProject || r.studioName) && (
-            <p className="mt-1.5 text-xs text-[var(--muted)]">
-              {r.studioName && <span className="font-semibold text-[var(--foreground)]">{r.studioName}</span>}
-              {r.studioName && showProject && " · "}
+            <p className="mt-1.5 t-small text-[var(--ink-3)]">
+              {r.studioName && <span className="font-semibold text-[var(--ink)]">{r.studioName}</span>}
+              {r.studioName && showProject && ", "}
               {showProject && (linkBase ? (
-                <Link href={`${linkBase}/${r.projectId}/stages/${r.stageId}`} className="hover:underline">
-                  {r.projectName} · {r.stageName}
+                <Link href={`${linkBase}/${r.projectId}/stages/${r.stageId}`} className="hover:text-[var(--ink)] hover:underline">
+                  {r.projectName}, {r.stageName}
                 </Link>
-              ) : `${r.projectName} · ${r.stageName}`)}
+              ) : `${r.projectName}, ${r.stageName}`)}
             </p>
           )}
 
-          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed">{r.message}</p>
+          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink)]">{r.message}</p>
 
           {r.type === "deadline" && r.requestedDeadline && (
-            <p className="mt-2 inline-flex flex-wrap items-center gap-1.5 rounded-xl bg-[var(--surface-2)] px-3 py-1.5 text-xs font-semibold">
+            <p className="mt-2 inline-flex flex-wrap items-center gap-1.5 text-sm font-semibold text-[var(--ink-2)]">
               {r.currentDeadline ? formatDate(r.currentDeadline, locale) : "—"}
-              <Arrow className="size-3.5 text-[var(--muted)]" />
-              <span className="text-[var(--primary)]">{formatDate(r.requestedDeadline, locale)}</span>
+              <Arrow className="size-3.5 text-[var(--ink-3)]" aria-hidden />
+              <span className="text-[var(--tint)]">{formatDate(r.requestedDeadline, locale)}</span>
             </p>
           )}
 
-          {r.requestedByName && <p className="mt-1.5 text-[11px] text-[var(--subtle)]">{r.requestedByName}</p>}
+          {r.requestedByName && <p className="mt-1.5 t-micro text-[var(--ink-3)]">{r.requestedByName}</p>}
 
           {r.status !== "pending" && r.decisionNote && (
-            <p className="mt-2 border-l-2 border-[var(--border)] pl-3 text-xs italic text-[var(--muted)]">{r.decisionNote}</p>
+            <p className="mt-2 border-l-2 border-[var(--line)] pl-3 t-small italic text-[var(--ink-3)]">{r.decisionNote}</p>
           )}
 
           {canDecide && r.status === "pending" && <DecisionControls request={r} />}
@@ -231,7 +228,7 @@ function DecisionControls({ request }: { request: RequestItem }) {
   }
 
   return (
-    <div className="mt-3 space-y-2 border-t border-[var(--border)] pt-3">
+    <div className="mt-3 space-y-2">
       <Input value={note} onChange={(e) => setNote(e.target.value)} maxLength={1000} placeholder={t("studio.requests.decisionNote")} />
       <div className="flex flex-wrap justify-end gap-2">
         <Button size="sm" variant="outline" onClick={() => decide("rejected")} disabled={pending}>

@@ -8,6 +8,7 @@ import {
   IconDownload as Download,
   IconFile as FileIcon,
 } from "@tabler/icons-react";
+import { Card } from "@/components/ui-biib/Card";
 import { Button } from "@/components/ui/button";
 
 type Doc = {
@@ -52,52 +53,50 @@ export function StudioDocumentsFull({ documents }: { documents: Doc[] }) {
 
   if (documents.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-[var(--muted)]">
-        <FileIcon className="size-10 mb-2 opacity-40" />
-        <p className="text-sm font-medium">{t("contractors.detail.docsEmpty")}</p>
+      <div className="flex flex-col items-center justify-center py-12 text-[var(--ink-3)]">
+        <FileIcon className="mb-2 size-10 opacity-40" aria-hidden />
+        <p className="t-small font-medium">{t("contractors.detail.docsEmpty")}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {byProject.map((p) => (
-        <section key={p.projectId} className="space-y-3">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold">{p.projectName}</h3>
-            <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--muted)]">
-              {p.totalDocs}
-            </span>
-          </div>
-          {p.folders.map((f) => (
-            <div key={f.name} className="space-y-1.5 sm:pl-2">
-              <div className="flex items-center gap-2">
-                <Folder className="size-4 shrink-0 text-[var(--primary)]" />
-                <span className="truncate text-xs font-semibold text-[var(--muted)]">{f.name}</span>
-                <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-[var(--muted)]">
-                  {f.docs.length}
-                </span>
-              </div>
-              <ul className="space-y-1.5 sm:pl-6">
-                {f.docs.map((d) => (
-                  <li key={d.id} className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2 sm:gap-3">
-                    <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]">
-                      {isImage(d.fileMimeType) ? <Photo className="size-4" /> : <FileText className="size-4" />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold" title={d.fileName}>{d.fileName}</p>
-                      <p className="text-xs text-[var(--muted)]">{humanSize(d.fileSize)}</p>
-                    </div>
-                    <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
-                      <a href={d.fileUrl} download><Download className="size-4" /></a>
-                    </Button>
-                  </li>
-                ))}
-              </ul>
+    <Card bare className="px-5 py-2 sm:px-6">
+      <div className="divide-y divide-[var(--line)]">
+        {byProject.map((p) => (
+          <section key={p.projectId} className="py-5 first:pt-3 last:pb-3">
+            <div className="flex items-baseline gap-2">
+              <h3 className="t-label text-[var(--ink)]">{p.projectName}</h3>
+              <span className="t-micro tabular-nums text-[var(--ink-3)]">{p.totalDocs}</span>
             </div>
-          ))}
-        </section>
-      ))}
-    </div>
+            {p.folders.map((f) => (
+              <div key={f.name} className="mt-3">
+                <p className="flex items-center gap-1.5 t-micro font-semibold text-[var(--ink-3)]">
+                  <Folder className="size-4 shrink-0" aria-hidden />
+                  <span className="truncate">{f.name}</span>
+                  <span className="tabular-nums">{f.docs.length}</span>
+                </p>
+                <ul className="mt-1 divide-y divide-[var(--line)]">
+                  {f.docs.map((d) => (
+                    <li key={d.id} className="flex items-center gap-3 py-2">
+                      <span className="shrink-0 text-[var(--ink-3)]">
+                        {isImage(d.fileMimeType) ? <Photo className="size-4" aria-hidden /> : <FileText className="size-4" aria-hidden />}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-[var(--ink)]" title={d.fileName}>{d.fileName}</p>
+                        {humanSize(d.fileSize) && <p className="t-micro text-[var(--ink-3)]">{humanSize(d.fileSize)}</p>}
+                      </div>
+                      <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
+                        <a href={d.fileUrl} download><Download className="size-4" aria-hidden /></a>
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+        ))}
+      </div>
+    </Card>
   );
 }

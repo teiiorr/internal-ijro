@@ -62,7 +62,7 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
         )}
         {task.deadline && (
           <span className={`ml-auto text-xs font-semibold ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--muted)]"}`}>
-            {formattedDeadline}{relIsSameAsDate ? "" : ` · ${rel.text}`}
+            {formattedDeadline}{relIsSameAsDate ? "" : `, ${rel.text}`}
           </span>
         )}
       </div>
@@ -73,7 +73,7 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
           <p className="text-[14px] font-semibold truncate">{shortName(creator?.fullName) || "—"}</p>
           <p className="text-xs text-[var(--muted)] truncate">
             {creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : ""}
-            {creatorDept ? <span> · {creatorDept}</span> : null}
+            {creatorDept ? <span>, {creatorDept}</span> : null}
           </p>
         </div>
         <span className="text-xs text-[var(--muted)] tabular shrink-0">{formatDate(task.createdAt, locale)}</span>

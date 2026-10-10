@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MoneyInput } from "@/components/ui/money-input";
+import { Status } from "@/components/ui-biib/Status";
 import { IconTrash as Trash2, IconPlus as Plus, IconCircleCheck as CheckCircle2 } from "@tabler/icons-react";
 import { addStagePayment, setStagePaymentStatus, deleteStagePayment } from "@/server/actions/stages";
 import { formatDate } from "@/lib/dates";
@@ -64,53 +65,53 @@ export function StagePayments({
 
   return (
     <div className="space-y-4">
-      {/* jami / reja va tölangan — punktir ramka, rangli raqamlar, kulrang fon yöq */}
-      <div className="rounded-xl border border-dashed border-[var(--border-strong)] p-4 space-y-2">
+      {/* jami / reja va tölangan — rangli raqamlar, ramkasiz */}
+      <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-[var(--muted)]">{t("projects.stagePayments.paid")}</span>
+          <span className="text-[var(--ink-2)]">{t("projects.stagePayments.paid")}</span>
           <span className="whitespace-nowrap font-bold tabular-nums text-[var(--success)]">{fmt(paid, currency)}</span>
         </div>
         {plannedAmount != null && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[var(--muted)]">{t("projects.stagePayments.planned")}</span>
-            <span className="whitespace-nowrap font-semibold tabular-nums">{fmt(plannedAmount, currency)}</span>
+            <span className="text-[var(--ink-2)]">{t("projects.stagePayments.planned")}</span>
+            <span className="whitespace-nowrap font-semibold tabular-nums text-[var(--ink)]">{fmt(plannedAmount, currency)}</span>
           </div>
         )}
         {pendingSum > 0 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[var(--muted)]">{t("projects.stagePayments.pending")}</span>
+            <span className="text-[var(--ink-2)]">{t("projects.stagePayments.pending")}</span>
             <span className="whitespace-nowrap font-bold tabular-nums text-[var(--warning)]">{fmt(pendingSum, currency)}</span>
           </div>
         )}
         {plannedPct != null && (
           <>
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold tabular-nums text-[var(--muted)]">{plannedPct}%</span>
+            <div className="flex items-center justify-between pt-1 t-micro">
+              <span className="font-semibold tabular-nums text-[var(--ink-3)]">{plannedPct}%</span>
               {fullyPaid && (
-                <span className="inline-flex items-center gap-1 rounded-md bg-[var(--success)]/12 px-2 py-0.5 text-xs font-bold text-[var(--success)]">
+                <Status tone="success" className="gap-1">
                   <CheckCircle2 className="size-3.5" />
                   {t("projects.stagePayments.fullyPaid")}
-                </span>
+                </Status>
               )}
             </div>
-            <div className="h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden">
+            <div className="h-1.5 overflow-hidden rounded-full bg-[var(--surface-3)]">
               <div className="h-full bg-[var(--success)] transition-[width] duration-300" style={{ width: `${plannedPct}%` }} />
             </div>
           </>
         )}
       </div>
 
-      {/* röyxat — punktir qatorlar, summa holat böyicha ranglangan (yaşil — tölangan / sariq — kutilmoqda) */}
-      <ul className="space-y-2">
+      {/* röyxat — ajratuvchi qatorlar, summa holat böyicha ranglangan */}
+      <ul className="-mt-1 divide-y divide-[var(--line)] border-t border-[var(--line)]">
         {payments.map((p) => (
-          <li key={p.id} className="rounded-xl border border-dashed border-[var(--border)] px-3 py-2.5 space-y-2">
+          <li key={p.id} className="space-y-2 py-3">
             <div className="flex items-center gap-3">
               <div className="flex-1 min-w-0">
                 <p className={`text-sm font-bold tabular-nums ${p.status === "paid" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
                   {fmt(Number(p.amount), p.currency)}
                 </p>
-                <p className="text-xs text-[var(--muted)] truncate">
-                  {p.note ? `${p.note} · ` : ""}
+                <p className="t-micro text-[var(--ink-3)] truncate">
+                  {p.note ? `${p.note}, ` : ""}
                   {p.status === "paid" && p.paidAt ? formatDate(p.paidAt as Date, locale) : formatDate(p.createdAt as Date, locale)}
                 </p>
               </div>
@@ -133,7 +134,7 @@ export function StagePayments({
             )}
           </li>
         ))}
-        {payments.length === 0 && <li className="text-sm text-[var(--muted)]">{t("projects.stagePayments.empty")}</li>}
+        {payments.length === 0 && <li className="py-3 t-small text-[var(--ink-3)]">{t("projects.stagePayments.empty")}</li>}
       </ul>
 
       {/* qöşiş — tor ustunlarda çiroyli tarzda qatorga öradi */}

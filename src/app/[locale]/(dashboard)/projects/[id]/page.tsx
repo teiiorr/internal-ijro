@@ -2,27 +2,28 @@ import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
-import { IconCalendarClock as CalendarClock } from "@tabler/icons-react";
+import { IconCalendarClock as CalendarClock, IconMessageCircle as MessageCircle } from "@tabler/icons-react";
 import { BackButton } from "@/components/ui/back-button";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
 import { getProject, listContractors } from "@/server/queries/projects";
 import { getStageProject } from "@/server/queries/stages";
 import { ProjectContractor } from "@/components/projects/project-contractor";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui-biib/Card";
+import { Section } from "@/components/ui-biib/Section";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Button } from "@/components/ui-biib/Button";
+import { FactList, type Fact } from "@/components/ui-biib/FactList";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { StagesList } from "@/components/projects/stages-list";
 import { StagePath } from "@/components/projects/stage-path";
 import { ProjectPoster } from "@/components/projects/project-poster";
 import { ProjectDocsPanels } from "@/components/projects/project-docs-panels";
-import { FitText } from "@/components/ui/fit-text";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 
 import { ProjectActionsMenu } from "@/components/projects/project-actions-menu";
-import { derivedStatus } from "@/lib/projects/progress";
+import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney, canUploadProjectDocs, MONEY_MASK } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
@@ -39,7 +40,11 @@ import { users } from "@/lib/db/schema";
 import { sql } from "drizzle-orm";
 
 // Summalar whitespace-nowrap konteynerlar içida körsatiladi, şunda "… UZS" heç qaçon alohida qatorga tuşmaydi.
-const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
+const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
+
+// Hisoblangan statusni BIIB toniga xaritalaymiz (manager donut bilan bir xil).
+const statusToneOf = (s: DerivedStatus): StatusTone =>
+  s === "completed" ? "success" : s === "in_progress" ? "info" : s === "on_hold" ? "warning" : "neutral";
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -76,7 +81,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const canDelete = editor;
   // Butun loyihani öçiriş qaytarib bölmaydi → faqat editor + yuqori rahbariyat.
   const canDeleteProject = editor && ["direktor", "orinbosar", "koordinator"].includes(me.position);
-  const canTogglePayment = editor;
   // Byudjet va tölov summalarini faqat "money" allowlistidagilar YOKI huquq berilgan foydalanuvçilar köradi.
   const showMoney = canViewMoney(me.email) || (await hasGrant(me.id, "money.view"));
   const canUpload = canUploadProjectDocs(me.email) || editor || (await hasGrant(me.id, "projects.upload_docs"));
@@ -101,131 +105,163 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     const contractors = await listContractors("approved");
     const canManageContractor = editor;
     const status = derivedStatus(sp.project.progressPercentage, sp.project.statusOverride);
-    const statusTone: StatusTone =
-      status === "completed" ? "green"
-      : status === "in_progress" ? "amber"
-      : status === "on_hold" ? "red"
-      : "muted";
     const currency = sp.project.budgetCurrency ?? "UZS";
+    const remaining = Math.max(0, sp.totals.planned - sp.totals.paid);
+
+    // Faktlar: Muddat, Kurator, Studiya, soʻngra Tur / Janr / Boshlanish / Byudjet / Bajarilish.
+    const facts: Fact[] = [
+      {
+        term: t("projects.details.dueDate"),
+        value: sp.project.deadline ? (
+          <span className="inline-flex flex-wrap items-center gap-2">
+            {formatDate(sp.project.deadline, locale)}
+            {activeStage?.plannedDeadline && <DeadlineCountdown deadline={activeStage.plannedDeadline} />}
+          </span>
+        ) : (
+          t("common.emptyValue")
+        ),
+      },
+      {
+        term: t("projects.curatorLabel"),
+        value: sp.curators.length > 0 ? <CuratorList curators={sp.curators} locale={locale} /> : t("common.emptyValue"),
+      },
+      ...(hasStudio && sp.company
+        ? [{
+            term: t("projects.contractorLabel"),
+            value: (
+              <Link href={`/contractors/${sp.project.externalCompanyId}`} className="font-semibold text-[var(--tint)] hover:underline">
+                {sp.company.name}
+              </Link>
+            ),
+          } satisfies Fact]
+        : []),
+      ...(sp.type ? [{ term: t("projects.fields.type"), value: sp.type.name } satisfies Fact] : []),
+      ...(isProjectGenre(sp.project.genre)
+        ? [{ term: t("projects.fields.genre"), value: t(`projects.genre.${sp.project.genre}` as "projects.genre.film") } satisfies Fact]
+        : []),
+      { term: t("projects.details.startDate"), value: sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue") },
+      {
+        term: t("projects.details.budget"),
+        value: <span className="tabular-nums">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</span>,
+      },
+      { term: t("projects.fields.progress"), value: <span className="font-bold tabular-nums">{sp.project.progressPercentage}%</span> },
+    ];
 
     return (
-      <div className="space-y-6 stagger-children">
-        {/* sarlavha (töliq kenglik) */}
-        <div className="flex items-start gap-3">
-          <BackButton fallbackHref="/projects" className="mt-0.5 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight leading-snug break-words">{sp.project.name}</h1>
-          </div>
-          {(canManage || canDeleteProject) && (
-            <div className="shrink-0">
-              <ProjectActionsMenu
-                project={editProject}
-                curators={curatorOptions}
-                canManage={canManage}
-                canDelete={canDeleteProject}
-                showInProgress={canManage && sp.project.statusOverride !== "on_hold" && (sp.project.progressPercentage === 0 || sp.project.statusOverride === "in_progress")}
-                onHold={sp.project.statusOverride === "on_hold"}
-                inProgress={sp.project.statusOverride === "in_progress"}
-              />
-            </div>
-          )}
-        </div>
-
-        {sp.project.description && (
-          <Card><CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">{sp.project.description}</CardContent></Card>
-        )}
-
-        {(sp.project.currentStatus || canManage || hasStudio) && (
-          <CurrentStatusEditor projectId={id} text={sp.project.currentStatus} lastUpdate={lastStatus} canEdit={canManage} />
-        )}
-
-        {/* Studiya faolligi: faol bosqich bo'yicha studiya progressi + so'rovlar navbati */}
-        {hasStudio && (activeStage || studioRequests.length > 0) && (
-          <Card>
-            <CardContent className="space-y-5 p-5 sm:p-6">
+      <div>
+        <PageHeader
+          back={<BackButton fallbackHref="/projects" />}
+          title={
+            <span className="inline-flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              {sp.project.name}
+              <Status tone={statusToneOf(status)}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Status>
+            </span>
+          }
+          actions={
+            <>
               {activeStage && (
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-[var(--primary)] px-2.5 py-0.5 text-xs font-bold text-white">{t("studio.deadlines.active")}</span>
-                    <Link href={`/projects/${id}/stages/${activeStage.id}`} className="min-w-0 flex-1 break-words text-base font-bold hover:underline">{activeStage.name}</Link>
-                  </div>
-                  <StageProgressBadge data={activeProgress} />
-                </div>
+                <Button asChild variant="primary" size="40" icon={CalendarClock}>
+                  <Link href={`/projects/${id}/stages/${activeStage.id}`}>{t("projects.stagePath.currentStage")}</Link>
+                </Button>
               )}
-              {studioRequests.length > 0 && (
-                <div className={activeStage ? "border-t border-[var(--border)] pt-4" : ""}>
-                  <h3 className="mb-3 text-base font-semibold">{t("studio.requests.title")}</h3>
-                  <StageRequestsList requests={studioRequests} canDecide={canDecideRequests} showProject linkBase="/projects" />
-                </div>
+              {hasStudio && sp.project.externalCompanyId && (
+                <Button asChild variant="glass" size="40" icon={MessageCircle}>
+                  <Link href={`/contractors/${sp.project.externalCompanyId}/chat/${id}`}>{t("projects.tabs.chat")}</Link>
+                </Button>
               )}
-            </CardContent>
-          </Card>
-        )}
+              {(canManage || canDeleteProject) && (
+                <ProjectActionsMenu
+                  project={editProject}
+                  curators={curatorOptions}
+                  canManage={canManage}
+                  canDelete={canDeleteProject}
+                  showInProgress={canManage && sp.project.statusOverride !== "on_hold" && (sp.project.progressPercentage === 0 || sp.project.statusOverride === "in_progress")}
+                  onHold={sp.project.statusOverride === "on_hold"}
+                  inProgress={sp.project.statusOverride === "in_progress"}
+                />
+              )}
+            </>
+          }
+        />
 
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="text-base font-semibold mb-4">{t("projects.details.title")}</h3>
-            <dl className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 lg:grid-cols-4 gap-2 text-sm">
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
-                <dd className="mt-0.5"><StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag></dd>
-              </div>
-              {sp.type && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
-                  <dd className="font-semibold mt-0.5 truncate">{sp.type.name}</dd>
-                </div>
-              )}
-              {isProjectGenre(sp.project.genre) && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
-                  <dd className="mt-0.5"><StatusTag tone="muted">{t(`projects.genre.${sp.project.genre}` as "projects.genre.film")}</StatusTag></dd>
-                </div>
-              )}
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
-                <dd className="font-bold tabular-nums mt-0.5">{sp.project.progressPercentage}%</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue")}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="font-semibold mt-0.5">{sp.project.deadline ? formatDate(sp.project.deadline, locale) : t("common.emptyValue")}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-                <dd className="font-semibold mt-0.5 tabular-nums">{sp.project.budget != null ? (showMoney ? money(Number(sp.project.budget), currency) : MONEY_MASK) : t("common.emptyValue")}</dd>
-              </div>
-              {sp.curators.length > 0 && (
-                <div>
-                  <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                  <dd className="mt-1 flex justify-center">
-                    <CuratorList curators={sp.curators} locale={locale} />
-                  </dd>
-                </div>
-              )}
-            </dl>
-          </CardContent>
-        </Card>
+        <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
+          {/* Umumiy — faktlar + tavsif + joriy holat (chap); poster + studiya + toʻlov (oʻng) */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start lg:gap-8">
+            <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
+              <Card>
+                <FactList items={facts} />
+                {sp.project.description && (
+                  <p className="mt-5 line-clamp-[8] whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">
+                    {sp.project.description}
+                  </p>
+                )}
+              </Card>
 
-        {/* bosqiçlar röyxati (asosiy) + tölov jamlanmasi (yon panel) — töliq kenglikni egallaydi */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px] items-start">
-          <div className="space-y-6 order-2 lg:order-1 min-w-0">
-            <Card>
-              <CardContent className="p-5 sm:p-6">
-                <h3 className="text-base font-semibold mb-4">{t("projects.stagePath.title")}</h3>
-                <StagePath projectId={sp.project.id} stages={sp.stages} />
-              </CardContent>
+              {(sp.project.currentStatus || canManage || hasStudio) && (
+                <CurrentStatusEditor projectId={id} text={sp.project.currentStatus} lastUpdate={lastStatus} canEdit={canManage} />
+              )}
+            </div>
+
+            <div className="order-1 flex flex-col gap-6 lg:order-2">
+              <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={canManage} />
+              {hasStudio && (
+                <Card>
+                  <ProjectContractor
+                    projectId={sp.project.id}
+                    company={sp.company}
+                    contractors={contractors.map((c) => ({ id: c.id, name: c.name }))}
+                    canManage={canManageContractor}
+                  />
+                </Card>
+              )}
+              <Card>
+                <h3 className="mb-3 t-h3 text-[var(--ink)]">{t("projects.stagePayments.projectTotal")}</h3>
+                <FactList
+                  items={[
+                    { term: t("projects.stagePayments.planned"), value: <span className="font-semibold tabular-nums">{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</span> },
+                    { term: t("projects.stagePayments.paid"), value: <span className="font-semibold tabular-nums text-[var(--success)]">{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</span> },
+                    { term: t("projects.stagePayments.remaining"), value: <span className="font-semibold tabular-nums text-[var(--warning)]">{showMoney ? money(remaining, currency) : MONEY_MASK}</span> },
+                  ]}
+                />
+              </Card>
+            </div>
+          </div>
+
+          {/* Bosqichlar */}
+          <Section title={t("projects.stagePath.title")}>
+            <Card bare className="px-5 py-3 sm:px-6">
+              <StagePath projectId={sp.project.id} stages={sp.stages} />
             </Card>
+          </Section>
 
-            {/* Bosqich muddatlari o'zgarishlari tarixi (kim, qachon, nega) */}
-            <Suspense fallback={null}>
-              <DeadlineHistoryCard projectId={id} locale={locale} />
-            </Suspense>
+          {/* Bosqich muddatlari o'zgarishlari tarixi (kim, qachon, nega) */}
+          <Suspense fallback={null}>
+            <DeadlineHistoryCard projectId={id} locale={locale} />
+          </Suspense>
 
-            {/* Loyiha darajasidagi hujjat bölimlari — bosqiçlar ostidagi böş joyni töldiradi. */}
+          {/* Studiya faolligi: faol bosqich progressi + so'rovlar navbati */}
+          {hasStudio && (activeStage || studioRequests.length > 0) && (
+            <Section title={t("conversation.studio")}>
+              <Card className="flex flex-col gap-5">
+                {activeStage && (
+                  <div className="flex flex-col gap-2">
+                    <Link href={`/projects/${id}/stages/${activeStage.id}`} className="min-w-0 break-words text-[0.9375rem] font-semibold text-[var(--ink)] hover:underline">
+                      {activeStage.name}
+                    </Link>
+                    <StageProgressBadge data={activeProgress} />
+                  </div>
+                )}
+                {studioRequests.length > 0 && (
+                  <div className={activeStage ? "border-t border-[var(--line)] pt-5" : ""}>
+                    <StageRequestsList requests={studioRequests} canDecide={canDecideRequests} showProject linkBase="/projects" />
+                  </div>
+                )}
+              </Card>
+            </Section>
+          )}
+
+          {/* Loyiha darajasidagi hujjatlar */}
+          <Section title={t("projects.documents.title")}>
             <ProjectDocsPanels
               projectId={sp.project.id}
               canManage={canUpload}
@@ -234,67 +270,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               tahlil={sp.documents.tahlil.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
               xalqaro={sp.documents.xalqaro_tajriba.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
             />
-          </div>
-
-          <div className="space-y-6 order-1 lg:order-2">
-            <ProjectPoster projectId={sp.project.id} posterUrl={sp.project.posterUrl} name={sp.project.name} canManage={canManage} />
-            <Card>
-              <CardContent className="p-5">
-                <ProjectContractor
-                  projectId={sp.project.id}
-                  company={sp.company}
-                  contractors={contractors.map((c) => ({ id: c.id, name: c.name }))}
-                  canManage={canManageContractor}
-                />
-              </CardContent>
-            </Card>
-            <Card>
-            <CardContent className="p-5 space-y-3">
-              <h3 className="text-base font-semibold">{t("projects.stagePayments.projectTotal")}</h3>
-              <dl className="space-y-2.5 text-sm">
-                <div className="flex items-baseline gap-2">
-                  <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.planned")}</dt>
-                  <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums">
-                    <FitText>{showMoney ? money(sp.totals.planned, currency) : MONEY_MASK}</FitText>
-                  </dd>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.paid")}</dt>
-                  <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums text-[var(--success)]">
-                    <FitText>{showMoney ? money(sp.totals.paid, currency) : MONEY_MASK}</FitText>
-                  </dd>
-                </div>
-                {/* Qoldiq = rejalaştirilgan − tölangan (heç qaçon noldan past emas). */}
-                <div className="flex items-baseline gap-2">
-                  <dt className="shrink-0 text-[var(--muted)]">{t("projects.stagePayments.remaining")}</dt>
-                  <dd className="min-w-0 flex-1 text-right font-semibold tabular-nums text-[var(--warning)]">
-                    <FitText>{showMoney ? money(Math.max(0, sp.totals.planned - sp.totals.paid), currency) : MONEY_MASK}</FitText>
-                  </dd>
-                </div>
-              </dl>
-              {activeStage && (
-                <div className="space-y-2 border-t border-[var(--border)] pt-3">
-                  <p className="text-sm text-[var(--muted)]">
-                    {t("projects.stagePath.currentStage")}: <span className="font-medium text-[var(--foreground)]">{activeStage.name}</span>
-                  </p>
-                  <div className="flex flex-wrap items-center gap-2 text-sm">
-                    <CalendarClock className="size-3.5 shrink-0 text-[var(--muted)]" />
-                    <span className={`font-medium ${activeStage.plannedDeadline ? "" : "text-[var(--muted)]"}`}>
-                      {activeStage.plannedDeadline ? formatDate(activeStage.plannedDeadline, locale) : t("projects.stageDeadline.notSet")}
-                    </span>
-                    {activeStage.plannedDeadline && <DeadlineCountdown deadline={activeStage.plannedDeadline} />}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-            </Card>
-          </div>
+          </Section>
         </div>
-
       </div>
     );
   }
 
+  // ---- Eski (turi belgilanmagan) loyiha ----
   const stages = data.milestones.map((m) => ({
     id: m.id,
     title: m.title,
@@ -305,21 +287,44 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   }));
 
   const status = derivedStatus(data.project.progressPercentage, data.project.statusOverride);
-  const statusVariant =
-    status === "completed" ? "success"
-    : status === "on_hold" ? "warning"
-    : status === "in_progress" ? "default"
-    : "secondary";
+  const legacyFacts: Fact[] = [
+    { term: t("projects.details.dueDate"), value: data.project.deadline ? formatDate(data.project.deadline, locale) : t("common.emptyValue") },
+    { term: t("projects.fields.type"), value: t(`projects.type.${data.project.type}` as "projects.type.internal") },
+    ...(isProjectGenre(data.project.genre)
+      ? [{ term: t("projects.fields.genre"), value: t(`projects.genre.${data.project.genre}` as "projects.genre.film") } satisfies Fact]
+      : []),
+    ...(data.curators.length > 0
+      ? [{ term: t("projects.curatorLabel"), value: <CuratorList curators={data.curators} locale={locale} /> } satisfies Fact]
+      : []),
+    ...(data.company
+      ? [{
+          term: t("projects.contractorLabel"),
+          value: (
+            <Link href={`/contractors/${data.company.id}`} className="font-semibold text-[var(--tint)] hover:underline">
+              {data.company.name}
+            </Link>
+          ),
+        } satisfies Fact]
+      : []),
+    { term: t("projects.details.startDate"), value: data.project.startDate ? formatDate(data.project.startDate, locale) : t("common.emptyValue") },
+    {
+      term: t("projects.details.budget"),
+      value: <span className="tabular-nums">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</span>,
+    },
+  ];
 
   return (
-    <div className="space-y-6 max-w-5xl stagger-children">
-      <div className="flex items-center gap-2 flex-wrap">
-        <BackButton fallbackHref="/projects" />
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug break-words">{data.project.name}</h1>
-        </div>
-        {(canManage || canDeleteProject) && (
-          <div className="shrink-0">
+    <div className="mx-auto max-w-5xl">
+      <PageHeader
+        back={<BackButton fallbackHref="/projects" />}
+        title={
+          <span className="inline-flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            {data.project.name}
+            <Status tone={statusToneOf(status)}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Status>
+          </span>
+        }
+        actions={
+          (canManage || canDeleteProject) && (
             <ProjectActionsMenu
               project={editProject}
               curators={curatorOptions}
@@ -329,99 +334,43 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               onHold={data.project.statusOverride === "on_hold"}
               inProgress={data.project.statusOverride === "in_progress"}
             />
-          </div>
+          )
+        }
+      />
+
+      <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
+        <Card>
+          <FactList items={legacyFacts} />
+          {data.project.description && (
+            <p className="mt-5 whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">{data.project.description}</p>
+          )}
+        </Card>
+
+        {data.project.currentStatus && (
+          <Card>
+            <h3 className="mb-2 t-h3 text-[var(--ink)]">{t("projects.fields.currentStatus")}</h3>
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">{data.project.currentStatus}</p>
+          </Card>
         )}
+
+        <Section title={t("projects.stagePath.title")}>
+          <Card>
+            <StagesList projectId={data.project.id} items={stages} canManage={canManage} canDelete={canDelete} />
+          </Card>
+        </Section>
+
+        <Section title={t("projects.documents.title")}>
+          <Card>
+            <DeliverablesList
+              projectId={data.project.id}
+              items={data.deliverables.map((d) => ({ ...d, submittedAt: d.submittedAt as Date }))}
+              milestones={stages.map((s) => ({ id: s.id, title: s.title }))}
+              canSubmit={me.position === "kontragent" || canManage}
+              canReview={canManage}
+            />
+          </Card>
+        </Section>
       </div>
-
-      {data.project.description && (
-        <Card>
-          <CardContent className="p-5 text-sm leading-relaxed whitespace-pre-wrap">
-            {data.project.description}
-          </CardContent>
-        </Card>
-      )}
-
-      {data.project.currentStatus && (
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="mb-2 text-base font-semibold">{t("projects.fields.currentStatus")}</h3>
-            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--foreground)]">{data.project.currentStatus}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Tafsilotlar — barça ma'lumotlar bitta bölimda */}
-      <Card>
-        <CardContent className="p-5 sm:p-6 space-y-4">
-          <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
-          <dl className="detail-grid grid grid-cols-2 min-[500px]:grid-cols-3 gap-2 text-sm">
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
-              <dd className="mt-0.5"><Badge variant={statusVariant}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Badge></dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.type")}</dt>
-              <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.type.${data.project.type}` as "projects.type.internal")}</Badge></dd>
-            </div>
-            {isProjectGenre(data.project.genre) && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.genre")}</dt>
-                <dd className="mt-0.5"><Badge variant="secondary">{t(`projects.genre.${data.project.genre}` as "projects.genre.film")}</Badge></dd>
-              </div>
-            )}
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-              <dd className="font-semibold mt-0.5">{data.project.startDate ? formatDate(data.project.startDate, locale) : t("common.emptyValue")}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-              <dd className="font-semibold mt-0.5">{data.project.deadline ? formatDate(data.project.deadline, locale) : t("common.emptyValue")}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.budget")}</dt>
-              <dd className="font-semibold mt-0.5 tabular-nums">{data.project.budget != null ? (showMoney ? money(Number(data.project.budget), data.project.budgetCurrency) : MONEY_MASK) : t("common.emptyValue")}</dd>
-            </div>
-            {data.curators.length > 0 && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</dt>
-                <dd className="mt-1 flex justify-center">
-                  <CuratorList curators={data.curators} locale={locale} />
-                </dd>
-              </div>
-            )}
-            {data.company && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.contractorLabel")}</dt>
-                <dd className="mt-0.5"><Link href="/contractors" className="hover:underline text-[var(--primary)] font-semibold truncate">{data.company.name}</Link></dd>
-              </div>
-            )}
-          </dl>
-        </CardContent>
-      </Card>
-
-      {/* Bosqiçlar */}
-      <Card>
-        <CardContent className="p-5 sm:p-6">
-          <StagesList projectId={data.project.id} items={stages} canManage={canManage} canDelete={canDelete} />
-        </CardContent>
-      </Card>
-
-      {/* Hujjatlar */}
-      <Card>
-        <CardContent className="p-5 sm:p-6 space-y-4">
-          <h3 className="text-base font-semibold">{t("projects.documents.title")}</h3>
-          <DeliverablesList
-            projectId={data.project.id}
-            items={data.deliverables.map((d) => ({ ...d, submittedAt: d.submittedAt as Date }))}
-            milestones={stages.map((s) => ({ id: s.id, title: s.title }))}
-            canSubmit={me.position === "kontragent" || canManage}
-            canReview={canManage}
-          />
-        </CardContent>
-      </Card>
-
-      {/* işlatilmagan parametrni qanoatlantiriş uçun */}
-      <span className="hidden">{canTogglePayment ? "" : ""}</span>
     </div>
   );
 }

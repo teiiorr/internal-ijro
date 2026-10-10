@@ -4,7 +4,9 @@ import { auth } from "@/lib/auth";
 import { listAssignableUsers } from "@/server/queries/tasks";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { BackButton } from "@/components/ui/back-button";
+import { Card } from "@/components/ui-biib/Card";
 import { NewTaskForm } from "@/components/tasks/new-task-form";
 
 export default async function NewTaskPage() {
@@ -20,11 +22,11 @@ export default async function NewTaskPage() {
   ]);
 
   return (
-    <Card className="max-w-3xl">
-      <CardHeader><CardTitle>{t("tasks.newTitle")}</CardTitle></CardHeader>
-      <CardContent>
+    <div className="mx-auto max-w-3xl">
+      <PageHeader title={t("tasks.newTitle")} back={<BackButton fallbackHref="/tasks" />} />
+      <Card>
         <NewTaskForm assignees={assignees} projects={prjs} />
-      </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }

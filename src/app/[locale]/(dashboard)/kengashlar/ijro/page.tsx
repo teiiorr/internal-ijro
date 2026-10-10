@@ -1,18 +1,11 @@
-import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
-import {
-  IconAlertTriangle as AlertTriangle,
-  IconBan as Ban,
-  IconCircleCheck as CircleCheck,
-  IconCircleDashed as CircleDashed,
-  IconClockHour4 as Clock,
-  IconDownload as Download,
-} from "@tabler/icons-react";
+import { IconDownload as Download } from "@tabler/icons-react";
 import { requirePosition } from "@/lib/session";
 import { can } from "@/lib/permissions/capabilities";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/ui/back-button";
-import { StatCard } from "@/components/ui/stat-card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Segmented, type SegmentedItem } from "@/components/ui-biib/Segmented";
+import { CouncilTabs } from "@/components/councils/council-tabs";
 import { ResolutionsFilters } from "@/components/staff/council-resolutions/resolutions-filters";
 import { ResolutionsTable, type TableRow } from "@/components/staff/council-resolutions/resolutions-table";
 import {
@@ -30,9 +23,10 @@ import {
 
 type SP = Promise<Record<string, string | string[] | undefined>>;
 
+const STATUSES: EffectiveStatus[] = ["open", "due_soon", "overdue", "done", "cancelled"];
+
 /** Kengash qarorlari ijrosi — every resolution point across both councils. */
 export default async function CouncilResolutionsPage({
-  params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
@@ -40,8 +34,11 @@ export default async function CouncilResolutionsPage({
 }) {
   // hr (and anyone outside the kengash audience) is redirected to /dashboard.
   const me = await requirePosition([...STAFF_POSITIONS]);
-  const { locale } = await params;
-  const t = await getTranslations("staffX.councilResolutions");
+  const [t, tnav, tc] = await Promise.all([
+    getTranslations("staffX.councilResolutions"),
+    getTranslations("nav"),
+    getTranslations("common"),
+  ]);
   const sp = await searchParams;
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
   const filters = parseResolutionFilters(get, me.position);
@@ -58,61 +55,54 @@ export default async function CouncilResolutionsPage({
     perms: rowPermissions(r, me, editorEverywhere || r.meetingCreatorId === me.id, canAssign),
   }));
 
-  // StatCard renders next/link directly, so its hrefs carry the locale prefix themselves.
-  const base = `/${locale}/kengashlar/ijro`;
-  const statusHref = (s: EffectiveStatus) =>
-    resolutionsHref({ ...filters, status: filters.status === s ? undefined : s }, base, me.position);
-  const exportHref = resolutionsHref(filters, "/api/export/council-resolutions", me.position);
+  // Segmented / i18n Link lokalni oʻzi qoʻshadi — lokalsiz baza beramiz.
+  const base = "/kengashlar/ijro";
+  const total = STATUSES.reduce((n, s) => n + counters[s], 0);
+  const seg = (status?: EffectiveStatus) => resolutionsHref({ ...filters, status }, base, me.position);
+  const count = (n: number) => <span className="ml-1 tabular-nums text-[var(--ink-3)]">{n}</span>;
 
-  const cards: Array<{
-    key: EffectiveStatus;
-    tone: "default" | "primary" | "success" | "warning" | "danger";
-    icon: ReactNode;
-  }> = [
-    { key: "open", tone: "primary", icon: <CircleDashed className="size-4" /> },
-    { key: "due_soon", tone: "warning", icon: <Clock className="size-4" /> },
-    { key: "overdue", tone: "danger", icon: <AlertTriangle className="size-4" /> },
-    { key: "done", tone: "success", icon: <CircleCheck className="size-4" /> },
-    { key: "cancelled", tone: "default", icon: <Ban className="size-4" /> },
+  // 5 ta StatCard oʻrniga bitta holat segmentlagichi + sanoqlar (A6.5 Kengashlar).
+  // "Hammasi" + har bir holat; faol holatni bosish uni oʻchiradi (toggle).
+  const segments: SegmentedItem[] = [
+    { href: seg(undefined), label: <>{tc("all")}{count(total)}</>, active: !filters.status },
+    ...STATUSES.map((s) => ({
+      href: filters.status === s ? seg(undefined) : seg(s),
+      label: (
+        <>
+          {t(`status.${s}`)}
+          {count(counters[s])}
+        </>
+      ),
+      active: filters.status === s,
+    })),
   ];
 
+  const exportHref = resolutionsHref(filters, "/api/export/council-resolutions", me.position);
+
   return (
-    <div className="space-y-5 sm:space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex min-w-0 items-start gap-3">
-          <BackButton fallbackHref="/kengashlar/smeta" className="mt-0.5" />
-          <div className="min-w-0">
-            <h1 className="break-words text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("title")}</h1>
-            <p className="mt-1 text-sm font-medium text-[var(--muted)]">{t("subtitle")}</p>
-          </div>
-        </div>
-        <Button asChild variant="outline" className="self-start sm:shrink-0">
-          <a href={exportHref}>
-            <Download className="size-4" /> {t("export")}
-          </a>
-        </Button>
+    <div className="flex flex-col gap-8 lg:gap-12">
+      <PageHeader
+        title={tnav("group.councils")}
+        tools={<CouncilTabs active="ijro" />}
+        actions={
+          <Button asChild variant="outline">
+            <a href={exportHref}>
+              <Download className="size-4" /> {t("export")}
+            </a>
+          </Button>
+        }
+      />
+
+      <div className="flex min-w-0 flex-col gap-4">
+        <Segmented
+          items={segments}
+          className="min-w-0 max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        />
+
+        <ResolutionsFilters current={filters} position={me.position} people={options.people} departments={options.departments} />
+
+        <ResolutionsTable rows={tableRows} />
       </div>
-
-      {/* Counters — each card toggles the ?status filter */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {cards.map((c, i) => (
-          <StatCard
-            key={c.key}
-            label={t(`status.${c.key}`)}
-            value={counters[c.key]}
-            icon={c.icon}
-            tone={c.tone}
-            href={statusHref(c.key)}
-            filled={filters.status === c.key || (c.key === "overdue" && !filters.status && counters.overdue > 0)}
-            className={i === cards.length - 1 ? "col-span-2 sm:col-span-1" : undefined}
-          />
-        ))}
-      </div>
-
-      <ResolutionsFilters current={filters} position={me.position} people={options.people} departments={options.departments} />
-
-      <ResolutionsTable rows={tableRows} />
     </div>
   );
 }

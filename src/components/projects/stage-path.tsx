@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { IconCheck as Check, IconLock as Lock, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { useTranslations, useLocale } from "next-intl";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { formatDate } from "@/lib/dates";
 import { shortName } from "@/lib/names";
@@ -35,9 +35,8 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
         const isLocked = !isCompleted && !isActive;
         const last = i === stages.length - 1;
 
-        const tone: StatusTone = isCompleted ? "green" : isActive ? "amber" : "red";
+        const tone: StatusTone = isCompleted ? "success" : isActive ? "info" : "neutral";
         const label = isCompleted ? t("projects.stagePath.done") : isActive ? t("projects.stagePath.active") : t("projects.stagePath.locked");
-        const meta = [s.responsibleName, s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : null].filter(Boolean).join(" · ");
 
         return (
           <li key={s.id}>
@@ -52,8 +51,8 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
                     isCompleted
                       ? "bg-[var(--success)] text-white"
                       : isActive
-                        ? "border-2 border-[var(--warning)] text-[var(--warning)]"
-                        : "border-2 border-dashed border-[var(--border-strong)] text-[var(--subtle)]"
+                        ? "border-2 border-[var(--tint)] text-[var(--tint)]"
+                        : "border-2 border-dashed border-[var(--line-strong)] text-[var(--ink-3)]"
                   }`}
                 >
                   {isCompleted ? <Check className="size-5" /> : isActive ? i + 1 : <Lock className="size-4" />}
@@ -62,23 +61,23 @@ export function StagePath({ projectId, stages, basePath }: { projectId: string; 
                   (isCompleted ? (
                     <span aria-hidden className="my-1 w-0.5 flex-1 rounded bg-[var(--success)]" />
                   ) : (
-                    <span aria-hidden className="my-1 w-0 flex-1 border-l-2 border-dashed border-[var(--border-strong)]" />
+                    <span aria-hidden className="my-1 w-0 flex-1 border-l-2 border-dashed border-[var(--line)]" />
                   ))}
               </div>
 
               {/* mazmun */}
               <div className="min-w-0 flex-1 py-2 pr-1">
                 <div className="flex items-center gap-2">
-                  <span className={`min-w-0 flex-1 font-semibold leading-6 truncate ${isLocked ? "text-[var(--muted)]" : "text-[var(--foreground)]"}`}>
+                  <span className={`min-w-0 flex-1 font-semibold leading-6 truncate ${isLocked ? "text-[var(--ink-3)]" : "text-[var(--ink)]"}`}>
                     {i + 1}. {s.name}
                   </span>
-                  <StatusTag tone={tone}>{label}</StatusTag>
+                  <Status tone={tone}>{label}</Status>
                   {isActive && s.plannedDeadline && <DeadlineCountdown deadline={s.plannedDeadline} />}
-                  <ChevronRight className="size-5 shrink-0 text-[var(--subtle)] transition-colors group-hover:text-[var(--foreground)]" />
+                  <ChevronRight className="size-5 shrink-0 text-[var(--ink-3)] transition-colors group-hover:text-[var(--ink)]" />
                 </div>
                 {(s.responsibleName || s.plannedDeadline) && (
-                  <p className="mt-1 text-sm text-[var(--muted)] truncate">
-                    {[shortName(s.responsibleName), s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : null].filter(Boolean).join(" · ")}
+                  <p className="mt-1 text-sm text-[var(--ink-2)] truncate">
+                    {[shortName(s.responsibleName), s.plannedDeadline ? formatDate(s.plannedDeadline, locale) : null].filter(Boolean).join(", ")}
                   </p>
                 )}
               </div>

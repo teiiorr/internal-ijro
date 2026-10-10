@@ -78,21 +78,18 @@ export function TodoQuickAdd({ defaultDate = null }: { defaultDate?: string | nu
         </div>
       </form>
 
-      <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
+      <p className="flex items-center gap-1.5 t-micro text-[var(--ink-3)]">
         <IconLock className="size-3.5 shrink-0" aria-hidden />
         {t("privateHint")}
       </p>
 
       {pending.length > 0 && (
-        <ul className="space-y-1" aria-live="polite">
+        <ul className="divide-y divide-[var(--line)]" aria-live="polite">
           {pending.map((p) => (
-            <li
-              key={p.key}
-              className="flex items-center gap-3 rounded-xl border border-dashed border-[var(--border)] px-3 py-2 text-[15px] text-[var(--muted)]"
-            >
+            <li key={p.key} className="flex items-center gap-3 py-2.5 text-[0.9375rem] text-[var(--ink-3)]">
               <IconLoader2 className="size-4 shrink-0 animate-spin" aria-hidden />
-              <span className="min-w-0 flex-1 truncate font-semibold">{p.title}</span>
-              {p.date && <span className="shrink-0 text-[13px]">{shortDate(p.date, locale)}</span>}
+              <span className="min-w-0 flex-1 truncate font-medium">{p.title}</span>
+              {p.date && <span className="shrink-0 t-micro tabular-nums">{shortDate(p.date, locale)}</span>}
             </li>
           ))}
         </ul>

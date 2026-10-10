@@ -5,7 +5,9 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { departments, users } from "@/lib/db/schema";
 import { InviteEmployeeForm } from "@/components/hr/invite-employee-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { BackButton } from "@/components/ui/back-button";
 
 export default async function NewEmployeePage() {
   const session = await auth();
@@ -24,13 +26,11 @@ export default async function NewEmployeePage() {
   void eq;
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
-        <CardTitle>{t("employees.newTitle")}</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div>
+      <PageHeader title={t("employees.newTitle")} back={<BackButton fallbackHref="/employees" />} />
+      <Card solid className="max-w-2xl">
         <InviteEmployeeForm departments={dept} managers={mgrs} />
-      </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }

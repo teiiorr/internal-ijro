@@ -10,8 +10,8 @@ import {
 } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { StatusTag } from "@/components/ui/status-tag";
+import { Card } from "@/components/ui-biib/Card";
+import { Status } from "@/components/ui-biib/Status";
 import { formatDate } from "@/lib/dates";
 import { setStagePaymentStatus } from "@/server/actions/stages";
 import type { CurrencyTotal, RegisterRow } from "@/server/queries/finance";
@@ -62,11 +62,7 @@ function MarkPaidButton({ paymentId, className }: { paymentId: string; className
 function StatusChip({ status }: { status: string }) {
   const t = useTranslations("staffX.paymentsRegister");
   const paid = status === "paid";
-  return (
-    <StatusTag tone={paid ? "green" : "amber"} size="sm">
-      {paid ? t("paid") : t("pending")}
-    </StatusTag>
-  );
+  return <Status tone={paid ? "success" : "warning"}>{paid ? t("paid") : t("pending")}</Status>;
 }
 
 /** Barcha loyihalar boʻyicha bosqich toʻlovlari reestri: filtrlar, valyuta kesimidagi jami, jadval/kartalar, sahifalash. */
@@ -98,37 +94,37 @@ export function RegisterTable({ rows, total, page, pageSize, totals, canEdit, st
     <div className="space-y-4">
       <RegisterFiltersBar studios={studios} projects={projects} types={types} />
 
-      {/* Valyuta kesimidagi jami — UZS va USD hech qachon qoʻshilmaydi */}
+      {/* Valyuta kesimidagi jami — UZS va USD hech qachon qoʻshilmaydi (bitta idish) */}
       {totals.length > 0 && (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {totals.map((tot) => (
-            <div key={tot.currency} className="min-w-0 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)]">
-              <p className="text-xs font-bold uppercase tracking-wide text-[var(--muted)]">{t("totals", { currency: tot.currency })}</p>
-              <div className="mt-2 space-y-1 text-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-[var(--muted)]">{t("paid")}</span>
-                  <span className="break-all text-right font-bold tabular-nums text-[var(--success)]">{formatMoney(tot.paid, tot.currency)}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-[var(--muted)]">{t("pending")}</span>
-                  <span className="break-all text-right font-bold tabular-nums text-[var(--warning)]">{formatMoney(tot.pending, tot.currency)}</span>
+        <Card solid>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+            {totals.map((tot) => (
+              <div key={tot.currency} className="min-w-0">
+                <p className="t-label text-[var(--ink-3)]">{t("totals", { currency: tot.currency })}</p>
+                <div className="mt-1.5 space-y-1 text-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[var(--ink-2)]">{t("paid")}</span>
+                    <span className="break-all text-right font-bold tabular-nums text-[var(--success)]">{formatMoney(tot.paid, tot.currency)}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[var(--ink-2)]">{t("pending")}</span>
+                    <span className="break-all text-right font-bold tabular-nums text-[var(--warning)]">{formatMoney(tot.pending, tot.currency)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </Card>
       )}
 
       {rows.length === 0 ? (
-        <Card>
-          <CardContent className="py-14 text-center text-sm text-[var(--muted)]">{t("empty")}</CardContent>
-        </Card>
+        <Card solid className="py-14 text-center t-small text-[var(--ink-3)]">{t("empty")}</Card>
       ) : (
         <div className={navigating ? "opacity-60 transition-opacity" : "transition-opacity"}>
           {/* Desktop jadval — keng boʻlsa gorizontal suriladi */}
-          <div className="hidden overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] md:block">
+          <Card solid bare className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[960px] text-sm">
-              <thead className="bg-[var(--surface-2)] text-left text-[12px] font-semibold text-[var(--muted)]">
+              <thead className="bg-[var(--surface-2)] text-left text-[12px] font-semibold text-[var(--ink-2)]">
                 <tr>
                   <th className="px-4 py-3">{t("date")}</th>
                   <th className="px-4 py-3">{t("project")}</th>
@@ -182,41 +178,41 @@ export function RegisterTable({ rows, total, page, pageSize, totals, canEdit, st
                 ))}
               </tbody>
             </table>
-          </div>
+          </Card>
 
-          {/* Mobil kartalar */}
-          <ul className="space-y-2 md:hidden">
+          {/* Mobil ro'yxat — ajratuvchi qatorlar */}
+          <Card solid bare className="divide-y divide-[var(--line)] md:hidden">
             {rows.map((r) => (
-              <li key={r.paymentId} className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)]">
+              <div key={r.paymentId} className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <p className={`min-w-0 break-words text-base font-bold tabular-nums ${amountTone(r)}`}>{formatMoney(r.amount, r.currency)}</p>
                   <StatusChip status={r.status} />
                 </div>
                 <Link href={stageHref(r)} className="mt-2 block min-w-0">
-                  <p className="break-words text-sm font-semibold">{r.projectName}</p>
-                  <p className="break-words text-sm text-[var(--muted)]">
+                  <p className="break-words text-sm font-semibold text-[var(--ink)]">{r.projectName}</p>
+                  <p className="break-words text-sm text-[var(--ink-2)]">
                     {r.stageName}
-                    {r.contractNumber ? ` · ${t("contract")} ${r.contractNumber}` : ""}
+                    {r.contractNumber ? `, ${t("contract")} ${r.contractNumber}` : ""}
                   </p>
                 </Link>
-                <p className="mt-1 truncate text-xs text-[var(--muted)]">
-                  {dateOf(r)} · {r.studioName ?? "—"}
+                <p className="mt-1 truncate text-xs text-[var(--ink-3)]">
+                  {dateOf(r)}, {r.studioName ?? "—"}
                 </p>
                 {r.plannedAmount != null && (
-                  <p className="mt-1 text-xs text-[var(--muted)]">
+                  <p className="mt-1 text-xs text-[var(--ink-3)]">
                     {t("planned")}: <span className="tabular-nums">{formatMoney(r.plannedAmount, r.projectCurrency)}</span>
                   </p>
                 )}
-                {r.note && <p className="mt-1 break-words text-xs">{r.note}</p>}
+                {r.note && <p className="mt-1 break-words text-xs text-[var(--ink-2)]">{r.note}</p>}
                 {r.createdByName && (
-                  <p className="mt-1 truncate text-xs text-[var(--subtle)]">
+                  <p className="mt-1 truncate text-xs text-[var(--ink-3)]">
                     {t("createdBy")}: {r.createdByName}
                   </p>
                 )}
                 {canEdit && r.status !== "paid" && <MarkPaidButton paymentId={r.paymentId} className="mt-3 w-full" />}
-              </li>
+              </div>
             ))}
-          </ul>
+          </Card>
         </div>
       )}
 

@@ -106,40 +106,40 @@ export function CommandPalette() {
         type="button"
         onClick={() => handleOpenChange(true)}
         aria-label={t("open")}
-        className="flex items-center gap-2 rounded-md border border-[var(--input)] bg-[var(--glass-fill)] px-3 h-9 text-[13px] font-medium text-[var(--subtle)] hover:border-[var(--primary)] hover:text-[var(--foreground)] transition-colors"
+        className="flex items-center gap-2 rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] px-3 h-9 text-[13px] font-medium text-[var(--ink-3)] hover:border-[var(--line-strong)] hover:text-[var(--ink)] transition-colors"
       >
         <Search className="size-4" />
         <span className="hidden md:inline">{t("open")}</span>
-        <kbd className="hidden md:inline rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-1.5 py-0.5 text-[10px] font-bold">Ctrl + K</kbd>
+        <kbd className="hidden md:inline rounded-[6px] border border-[var(--line)] bg-[var(--surface)] px-1.5 py-0.5 text-[10px] font-bold">Ctrl + K</kbd>
       </button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="top-[8%] sm:top-[12%] translate-y-0 w-[calc(100vw-1.25rem)] max-w-xl p-0 gap-0 overflow-hidden">
           <DialogTitle className="sr-only">{t("open")}</DialogTitle>
-          <div className="flex items-center gap-2.5 border-b border-[var(--border)] pl-4 pr-14">
-            <Search className="size-5 shrink-0 text-[var(--subtle)]" />
+          <div className="flex items-center gap-2.5 border-b border-[var(--line)] pl-4 pr-14">
+            <Search className="size-5 shrink-0 text-[var(--ink-3)]" />
             <input
               autoFocus
               value={q}
               onChange={onQueryChange}
               onKeyDown={onInputKey}
               placeholder={t("placeholder")}
-              className="h-14 w-full bg-transparent text-[15px] font-medium placeholder:text-[var(--subtle)] focus:outline-none"
+              className="h-14 w-full bg-transparent text-[15px] font-medium text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none"
             />
           </div>
 
           <div className="max-h-[60vh] overflow-y-auto p-2">
             {term.length < 2 ? (
-              <p className="px-3 py-8 text-center text-sm text-[var(--muted)]">{t("hint")}</p>
+              <p className="px-3 py-8 text-center text-sm text-[var(--ink-2)]">{t("hint")}</p>
             ) : total === 0 ? (
-              <p className="px-3 py-8 text-center text-sm text-[var(--muted)]">{loading ? t("searching") : t("noResults")}</p>
+              <p className="px-3 py-8 text-center text-sm text-[var(--ink-2)]">{loading ? t("searching") : t("noResults")}</p>
             ) : (
               GROUP_META.map(({ key, icon: Icon }) => {
                 const hits = results[key];
                 if (hits.length === 0) return null;
                 return (
                   <div key={key} className="mb-1.5 last:mb-0">
-                    <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-wide text-[var(--subtle)]">
+                    <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-wide text-[var(--ink-3)]">
                       {t(`groups.${key}` as "groups.projects")}
                     </p>
                     {hits.map((h) => {
@@ -153,16 +153,16 @@ export function CommandPalette() {
                           onClick={() => go(h.href)}
                           onMouseEnter={() => setActive(idx)}
                           className={cn(
-                            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
-                            isActive ? "bg-[var(--primary-soft)]" : "hover:bg-[var(--glass-fill)]"
+                            "flex w-full items-center gap-3 rounded-[var(--radius-control)] px-3 py-2.5 text-left transition-colors",
+                            isActive ? "bg-[var(--surface-2)]" : "hover:bg-[var(--surface-2)]"
                           )}
                         >
-                          <Icon className="size-4 shrink-0 text-[var(--muted)]" />
+                          <Icon className="size-4 shrink-0 text-[var(--ink-3)]" />
                           <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-semibold text-[var(--foreground)]">{h.label}</span>
-                            {h.sub && <span className="block truncate text-xs text-[var(--muted)]">{h.sub}</span>}
+                            <span className="block truncate text-sm font-semibold text-[var(--ink)]">{h.label}</span>
+                            {h.sub && <span className="block truncate text-xs text-[var(--ink-2)]">{h.sub}</span>}
                           </span>
-                          {isActive && <Enter className="size-3.5 shrink-0 text-[var(--primary)]" />}
+                          {isActive && <Enter className="size-3.5 shrink-0 text-[var(--tint)]" />}
                         </button>
                       );
                     })}

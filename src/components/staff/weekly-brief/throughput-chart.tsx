@@ -1,14 +1,13 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { IconChartLine as ChartLine } from "@tabler/icons-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
 import { cn } from "@/lib/utils";
 import { shortDay } from "@/lib/reports/weekly-brief-core";
-import { BriefSectionTitle } from "./brief-group";
 
 function ChartSkeleton() {
-  return <div className="skeleton-shimmer h-[240px] w-full rounded-xl" />;
+  return <div className="skeleton-shimmer h-[240px] w-full rounded-[var(--radius-card)]" />;
 }
 
 // recharts ogʻir — grafik boʻlagi faqat mijozda, paint'dan keyin yuklanadi.
@@ -19,7 +18,8 @@ const ThroughputChartInner = dynamic(() => import("./throughput-chart-inner").th
 
 /**
  * Topshiriqlar oqimi: hafta kunlari boʻyicha yaratilgan va bajarilgan topshiriqlar
- * (recharts LineChart) + boʻlimlar kesimidagi jadval.
+ * (recharts LineChart) + boʻlimlar kesimidagi jadval. BIIB: seksiya sarlavhasi + sarhisob
+ * meta, oyna karta ichida grafik, boʻlimlar jadvali qattiq kartada.
  */
 export function ThroughputChart({
   days,
@@ -34,78 +34,76 @@ export function ThroughputChart({
   const totalCompleted = days.reduce((s, d) => s + d.completed, 0);
   const hasActivity = totalCreated + totalCompleted > 0;
 
-  return (
-    <Card className="min-w-0">
-      <CardContent className="space-y-4 p-4 sm:p-6">
-        <BriefSectionTitle
-          icon={<ChartLine className="size-5" />}
-          title={t("throughput")}
-          aside={
-            <div className="flex flex-wrap gap-2">
-              <span className="rounded-md bg-[var(--primary-soft)] px-3 py-1 text-xs font-bold tabular-nums text-[var(--primary)]">
-                {t("created")}: {totalCreated}
-              </span>
-              <span className="rounded-md bg-[var(--success-soft)] px-3 py-1 text-xs font-bold tabular-nums text-[var(--success)]">
-                {t("completed")}: {totalCompleted}
-              </span>
-            </div>
-          }
-        />
+  const meta = (
+    <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+      <span className="text-[var(--tint)]">
+        {t("created")}: {totalCreated}
+      </span>
+      <span className="text-[var(--success)]">
+        {t("completed")}: {totalCompleted}
+      </span>
+    </span>
+  );
 
-        {!hasActivity && byDepartment.length === 0 ? (
-          <p className="py-6 text-center text-sm text-[var(--muted)]">{t("noTasks")}</p>
-        ) : (
-          <>
-            {rows.length > 0 && (
-              // Tor ekranda 7 nuqta ezilib ketmasligi uchun gorizontal suriladi.
+  return (
+    <Section title={t("throughput")} meta={meta}>
+      {!hasActivity && byDepartment.length === 0 ? (
+        <Card>
+          <p className="py-6 text-center t-small text-[var(--ink-3)]">{t("noTasks")}</p>
+        </Card>
+      ) : (
+        <div className="flex flex-col gap-5">
+          {rows.length > 0 && (
+            <Card>
+              {/* Tor ekranda 7 nuqta ezilmasligi uchun gorizontal suriladi. */}
               <div className="-mx-1 overflow-x-auto px-1">
                 <div className="min-w-[420px]">
                   <ThroughputChartInner rows={rows} labels={{ created: t("created"), completed: t("completed") }} />
                 </div>
               </div>
-            )}
+            </Card>
+          )}
 
-            {byDepartment.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-bold">{t("byDepartment")}</h3>
-                <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
-                  <table className="w-full min-w-[420px] text-sm">
-                    <thead className="bg-[var(--surface-2)] text-left text-[12px] font-semibold text-[var(--muted)]">
-                      <tr>
-                        <th className="px-4 py-2.5">{t("department")}</th>
-                        <th className="px-4 py-2.5 text-right">{t("created")}</th>
-                        <th className="px-4 py-2.5 text-right">{t("completed")}</th>
-                        <th className="px-4 py-2.5 text-right">{t("overdue")}</th>
+          {byDepartment.length > 0 && (
+            <Card solid bare className="overflow-hidden">
+              <h3 className="px-5 pt-5 t-label text-[var(--ink-2)] sm:px-6 sm:pt-6">{t("byDepartment")}</h3>
+              <div className="mt-3 overflow-x-auto">
+                <table className="w-full min-w-[420px] text-sm">
+                  <thead className="bg-[var(--surface-2)] text-left t-micro text-[var(--ink-3)]">
+                    <tr>
+                      <th className="px-5 py-2.5 font-semibold sm:px-6">{t("department")}</th>
+                      <th className="px-4 py-2.5 text-right font-semibold">{t("created")}</th>
+                      <th className="px-4 py-2.5 text-right font-semibold">{t("completed")}</th>
+                      <th className="px-5 py-2.5 text-right font-semibold sm:px-6">{t("overdue")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {byDepartment.map((d, i) => (
+                      <tr key={`${d.department ?? "-"}-${i}`} className="border-t border-[var(--line)]">
+                        <td className="max-w-[280px] truncate px-5 py-2.5 font-medium text-[var(--ink)] sm:px-6" title={d.department ?? undefined}>
+                          {d.department ?? <span className="text-[var(--ink-3)]">{t("noDepartment")}</span>}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-2.5 text-right tabular-nums text-[var(--ink-2)]">{d.created}</td>
+                        <td className="whitespace-nowrap px-4 py-2.5 text-right tabular-nums text-[var(--success)]">
+                          {d.completed}
+                        </td>
+                        <td
+                          className={cn(
+                            "whitespace-nowrap px-5 py-2.5 text-right font-semibold tabular-nums sm:px-6",
+                            d.overdue > 0 ? "text-[var(--danger)]" : "text-[var(--ink-3)]"
+                          )}
+                        >
+                          {d.overdue}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {byDepartment.map((d, i) => (
-                        <tr key={`${d.department ?? "-"}-${i}`} className="border-t border-[var(--border)]">
-                          <td className="max-w-[280px] truncate px-4 py-2.5 font-medium" title={d.department ?? undefined}>
-                            {d.department ?? <span className="text-[var(--muted)]">{t("noDepartment")}</span>}
-                          </td>
-                          <td className="whitespace-nowrap px-4 py-2.5 text-right tabular-nums">{d.created}</td>
-                          <td className="whitespace-nowrap px-4 py-2.5 text-right tabular-nums text-[var(--success)]">
-                            {d.completed}
-                          </td>
-                          <td
-                            className={cn(
-                              "whitespace-nowrap px-4 py-2.5 text-right font-semibold tabular-nums",
-                              d.overdue > 0 ? "text-[var(--danger)]" : "text-[var(--subtle)]"
-                            )}
-                          >
-                            {d.overdue}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            )}
-          </>
-        )}
-      </CardContent>
-    </Card>
+            </Card>
+          )}
+        </div>
+      )}
+    </Section>
   );
 }

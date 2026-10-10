@@ -7,17 +7,17 @@ import { cn } from "@/lib/utils";
 
 type Opt = { id: string; name: string };
 
-// Loyihalar / reestr sahifalaridagi filtr paneli bilan bir xil punktir uslub.
+// BIIB boshqaruv: qattiq chegara (--line-strong), radius-control, oyna emas (filtr paneli).
 const FIELD =
-  "h-11 w-full min-w-0 rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3.5 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none";
+  "h-11 w-full min-w-0 rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--surface)] px-3.5 t-body text-[var(--ink)] transition-colors focus:border-[var(--tint)] focus:outline-none";
 
 const KEYS = ["typeId", "studioId", "curatorId"] as const;
 type Key = (typeof KEYS)[number];
 
 function Sel({ label, value, onChange, children }: { label: string; value: string; onChange: (v: string) => void; children: React.ReactNode }) {
   return (
-    <label className="flex min-w-0 flex-col gap-1">
-      <span className="text-xs font-semibold text-[var(--muted)]">{label}</span>
+    <label className="flex min-w-0 flex-col gap-1.5">
+      <span className="t-micro text-[var(--ink-2)]">{label}</span>
       <span className="relative min-w-0">
         <select
           aria-label={label}
@@ -27,7 +27,7 @@ function Sel({ label, value, onChange, children }: { label: string; value: strin
         >
           {children}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--ink-3)]" />
       </span>
     </label>
   );
@@ -63,7 +63,7 @@ export function SlippageFilters({ types, studios, curators }: { types: Opt[]; st
   }
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+    <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-end">
       <div className={cn("grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-3", pending && "opacity-70")}>
         <Sel label={t("type")} value={value("typeId")} onChange={(v) => set("typeId", v)}>
           <option value="">{t("allTypes")}</option>
@@ -95,7 +95,7 @@ export function SlippageFilters({ types, studios, curators }: { types: Opt[]; st
           type="button"
           onClick={reset}
           disabled={!hasAny}
-          className={`${FIELD} inline-flex shrink-0 items-center justify-center gap-1.5 text-[var(--muted)] hover:text-[var(--foreground)] sm:w-auto`}
+          className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-[var(--radius-control)] px-3.5 t-label text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] disabled:opacity-50 sm:w-auto"
         >
           {pending ? <Loader2 className="size-4 animate-spin" /> : <X className="size-4" />}
           {t("reset")}

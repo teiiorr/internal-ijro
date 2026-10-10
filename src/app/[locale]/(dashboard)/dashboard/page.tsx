@@ -5,7 +5,8 @@ import { db } from "@/lib/db";
 import { users, departments } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { localizeName } from "@/lib/names";
-import { isOwner, OWNER_TITLE } from "@/lib/permissions/owner";
+import { isOwner } from "@/lib/permissions/owner";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { HrWidgets } from "@/components/dashboards/hr-widgets";
 import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
@@ -14,8 +15,8 @@ import { PinnedAnnouncementsBanner } from "@/components/staff/announcements/pinn
 import { TodayStrip } from "@/components/staff/my-work/today-strip";
 import { AckWidget } from "@/components/staff/normative-ack/ack-widget";
 
-function WidgetSkeleton() {
-  return <div className="h-32 rounded-2xl bg-[var(--surface-2)] animate-pulse" />;
+function SectionSkeleton() {
+  return <div className="h-40 rounded-[var(--radius-card)] bg-[var(--surface-2)] animate-pulse" />;
 }
 
 export default async function DashboardPage() {
@@ -26,65 +27,56 @@ export default async function DashboardPage() {
   const isManager = ["direktor", "orinbosar", "koordinator", "bolim_boshligi"].includes(user.position);
   const isHr = user.position === "hr";
 
-  // Toşkent vaqti (UTC+5, yozgi vaqtsiz) böyicha salomlaşuv.
-  const hour = (new Date().getUTCHours() + 5) % 24;
-  const greetKey = hour < 5 ? "night" : hour < 11 ? "morning" : hour < 18 ? "afternoon" : hour < 22 ? "evening" : "night";
-  const greet = t(`dashboard.greeting.${greetKey}` as "dashboard.greeting.morning");
   const owner = isOwner(user.email);
   const [meRow] = await db
-    .select({ positionTitle: users.positionTitle, deptName: departments.name })
+    .select({ positionTitle: users.positionTitle, deptName: departments.name, avatarUrl: users.avatarUrl })
     .from(users)
     .leftJoin(departments, eq(departments.id, users.departmentId))
     .where(eq(users.id, user.id))
     .limit(1);
-  // Tölovlar körinişi: direktor, Moliya bölimidagi har kim va har bir bölim boşliği.
+  const fullName = localizeName(user.fullName, locale);
+  // "Ism Familiya, Boʻlim, Lavozim" — bitta qatorda, bir xil shrift (Manrope).
+  const roleText = owner ? t("dashboard.ownerRole") : (meRow?.positionTitle ?? t(`positions.${user.position}` as "positions.direktor"));
+  const subline = [meRow?.deptName, roleText].filter(Boolean).join(", ");
   const showPayments =
     user.position === "direktor" ||
     user.position === "bolim_boshligi" ||
     /moliya/i.test(meRow?.deptName ?? "");
 
   return (
-    <div className="space-y-6 stagger-children">
-      <div>
-        <p className="text-sm text-[var(--muted)] font-medium mb-1">{greet},</p>
-        <h1 className="font-bold tracking-tight text-xl sm:text-2xl md:text-3xl break-words">
-          <span className="gradient-text">{localizeName(user.fullName, locale)}</span>
+    <div className="flex flex-col gap-8 lg:gap-12">
+      {/* Profil: dumaloq foto + ism + "boʻlim, lavozim" — bitta qatorda, Manrope */}
+      <header className="flex min-w-0 items-center gap-3">
+        <UserAvatar name={fullName} avatarUrl={meRow?.avatarUrl} size="md" />
+        <h1 className="min-w-0 truncate font-[family-name:var(--font-ui)] text-base font-bold tracking-tight text-[var(--ink)] sm:text-lg">
+          {fullName}
+          {subline && <span className="font-medium text-[var(--ink-2)]">, {subline}</span>}
         </h1>
-        {owner && (
-          <p className="godfather-title mt-1.5 text-3xl leading-none sm:text-4xl md:text-5xl">
-            {OWNER_TITLE}
-          </p>
-        )}
-        <p className="text-[var(--muted)] mt-1 text-sm font-medium">
-          {owner ? t("dashboard.ownerRole") : (meRow?.positionTitle ?? t(`positions.${user.position}` as "positions.direktor"))}
-        </p>
-      </div>
+      </header>
 
-      {/* Muhim eʼlonlar (qadalgan, oʻqilmagan) */}
       <Suspense fallback={null}>
         <PinnedAnnouncementsBanner userId={user.id} position={user.position} departmentId={user.departmentId} />
       </Suspense>
 
-      {/* Bugungi ishlar qisqa lentasi → /my-work */}
-      <Suspense fallback={<WidgetSkeleton />}>
+      {/* Bugun — "hozir nima qilaman": bitta ajratuvchi-qatorli roʻyxat */}
+      <Suspense fallback={<SectionSkeleton />}>
         <TodayStrip userId={user.id} locale={locale} />
       </Suspense>
 
-      {/* Meʼyoriy hujjatlar bilan tanishib chiqish kutilmoqda */}
       <Suspense fallback={null}>
         <AckWidget userId={user.id} />
       </Suspense>
 
-      <Suspense fallback={<WidgetSkeleton />}>
+      <Suspense fallback={<SectionSkeleton />}>
         <ManagerWidgets showPayments={showPayments} />
       </Suspense>
 
-      <Suspense fallback={<WidgetSkeleton />}>
+      <Suspense fallback={<SectionSkeleton />}>
         <ProjectStatusBoard />
       </Suspense>
 
-      {isHr && <Suspense fallback={<WidgetSkeleton />}><HrWidgets /></Suspense>}
-      {!isManager && !isHr && <Suspense fallback={<WidgetSkeleton />}><SpecialistWidgets userId={user.id} /></Suspense>}
+      {isHr && <Suspense fallback={<SectionSkeleton />}><HrWidgets /></Suspense>}
+      {!isManager && !isHr && <Suspense fallback={<SectionSkeleton />}><SpecialistWidgets userId={user.id} /></Suspense>}
     </div>
   );
 }

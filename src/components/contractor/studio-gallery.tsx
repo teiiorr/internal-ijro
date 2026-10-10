@@ -35,15 +35,15 @@ export function StudioGallery({
 
   return (
     <div className="space-y-4">
-      {/* Loyiha böyicha filtr */}
+      {/* Loyiha boʻyicha filtr */}
       {projects.length > 1 && (
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
           <button
             onClick={() => setFilter("all")}
-            className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
+            className={`shrink-0 rounded-[var(--radius-control)] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
               filter === "all"
-                ? "bg-[var(--primary)] text-white"
-                : "bg-[var(--surface-2)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                ? "bg-[var(--surface-2)] text-[var(--ink)]"
+                : "text-[var(--ink-3)] hover:text-[var(--ink)]"
             }`}
           >
             {t("allProjects")}
@@ -52,10 +52,10 @@ export function StudioGallery({
             <button
               key={p.id}
               onClick={() => setFilter(p.name)}
-              className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
+              className={`shrink-0 rounded-[var(--radius-control)] px-3 py-1.5 text-[13px] font-semibold transition-colors ${
                 filter === p.name
-                  ? "bg-[var(--primary)] text-white"
-                  : "bg-[var(--surface-2)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                  ? "bg-[var(--surface-2)] text-[var(--ink)]"
+                  : "text-[var(--ink-3)] hover:text-[var(--ink)]"
               }`}
             >
               {p.name}
@@ -64,11 +64,11 @@ export function StudioGallery({
         </div>
       )}
 
-      {/* Setka */}
+      {/* Setka — oʻlcham/grid oʻzgarmaydi */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-[var(--muted)]">
-          <PhotoIcon className="size-10 mb-2 opacity-40" />
-          <p className="text-sm font-medium">{t("empty")}</p>
+        <div className="flex flex-col items-center justify-center py-12 text-[var(--ink-3)]">
+          <PhotoIcon className="mb-2 size-10 opacity-40" aria-hidden />
+          <p className="t-small font-medium">{t("empty")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 stagger-children">
@@ -76,7 +76,7 @@ export function StudioGallery({
             <button
               key={img.id}
               onClick={() => setLightboxIdx(i)}
-              className="group relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-3)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] hover-scale"
+              className="group relative aspect-square overflow-hidden rounded-[var(--radius-m)] bg-[var(--surface-2)] focus:outline-none focus:ring-2 focus:ring-[var(--tint)] hover-scale"
             >
               <img
                 src={img.fileUrl}

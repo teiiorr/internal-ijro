@@ -113,16 +113,16 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
       {/* Umumiy bajarilish */}
       <div className="space-y-2.5">
         <div className="flex items-baseline justify-between gap-3">
-          <h3 className="text-base font-semibold">{t("projects.stages.overall")}</h3>
-          <span className="text-2xl font-bold tracking-tight tabular">{total}%</span>
+          <span className="t-label text-[var(--ink-2)]">{t("projects.stages.overall")}</span>
+          <span className="text-2xl font-bold tracking-tight tabular text-[var(--ink)]">{total}%</span>
         </div>
-        <div className="h-2.5 rounded-full bg-[var(--surface-3)] overflow-hidden">
+        <div className="h-2.5 overflow-hidden rounded-full bg-[var(--surface-3)]">
           <div
-            className="h-full rounded-full bg-[var(--primary)] animate-progress"
+            className="h-full rounded-full bg-[var(--tint)] animate-progress"
             style={{ width: `${total}%` }}
           />
         </div>
-        <p className="text-xs text-[var(--muted)]">
+        <p className="t-micro text-[var(--ink-3)]">
           {stages.length === 0
             ? t("projects.stages.zeroCaption")
             : t("projects.stages.computedCaption", { count: stages.length })}
@@ -131,15 +131,13 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
 
       {/* Bosqiçlar röyxati */}
       {stages.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-6 text-center">
-          <p className="text-sm text-[var(--muted)]">{t("projects.stages.empty")}</p>
-        </div>
+        <p className="py-4 t-small text-[var(--ink-3)]">{t("projects.stages.empty")}</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y divide-[var(--line)] border-t border-[var(--line)]">
           {stages.map((s, idx) => (
             <li
               key={s.id}
-              className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 sm:p-4 space-y-3"
+              className="space-y-3 py-4"
             >
               <div className="flex items-start gap-2">
                 {canManage && (
@@ -265,7 +263,7 @@ export function StagesList({ projectId, items: initialItems, canManage, canDelet
         adding ? (
           <form
             onSubmit={add}
-            className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 space-y-3"
+            className="space-y-3 border-t border-[var(--line)] pt-4"
           >
             <div className="space-y-2">
               <Label htmlFor="stage-title">{t("projects.stages.newTitle")}</Label>

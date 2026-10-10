@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
 import { IconAlertTriangle as AlertTriangle, IconChevronRight as ChevronRight } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui-biib/Card";
+import { Section } from "@/components/ui-biib/Section";
 import type { PayableRow } from "@/server/queries/finance";
 import { formatMoney } from "./format";
 
@@ -34,41 +34,34 @@ function PayableItem({ row, kind }: { row: PayableRow; kind: "accepted" | "upcom
   const unpaid = t("unpaidAmount", { amount: formatMoney(row.remaining, row.currency) });
 
   return (
-    <li>
-      <Link
-        href={`/projects/${row.projectId}/stages/${row.stageId}`}
-        className={cn(
-          "group flex items-center gap-3 rounded-2xl border p-4 shadow-[var(--shadow-1)] transition-colors",
-          aged
-            ? "border-[var(--danger)] bg-[var(--danger-soft)] hover:bg-[var(--danger-soft)]"
-            : "border-[var(--border)] bg-[var(--card)] hover:bg-[var(--surface-2)]",
-        )}
-      >
-        <div className="min-w-0 flex-1 space-y-1">
-          <p className="break-words text-sm font-semibold">
-            {row.projectName}
-            <span className="font-normal text-[var(--muted)]"> · {row.stageName}</span>
-          </p>
-          {row.studioName && <p className="truncate text-xs text-[var(--muted)]">{row.studioName}</p>}
-          <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm">
-            {aged && <AlertTriangle className="size-4 shrink-0 text-[var(--danger)]" aria-hidden />}
-            {ageText && (
-              <span className={aged ? "font-semibold text-[var(--danger)]" : "text-[var(--muted)]"}>{ageText}</span>
-            )}
-            {ageText && <span className="text-[var(--subtle)]">·</span>}
-            <span className="break-words font-bold tabular-nums text-[var(--warning)]">{unpaid}</span>
-          </p>
-          <p className="text-xs tabular-nums text-[var(--subtle)]">
-            {t("planned")}: {formatMoney(row.planned, row.currency)} · {t("paid")}: {formatMoney(row.paid, row.currency)}
-          </p>
-        </div>
-        <ChevronRight className="size-5 shrink-0 text-[var(--muted)] transition-transform group-hover:translate-x-0.5" aria-hidden />
-      </Link>
-    </li>
+    <Link
+      href={`/projects/${row.projectId}/stages/${row.stageId}`}
+      className="group flex items-center gap-3 px-5 py-4 transition-colors hover:bg-[var(--surface-2)] sm:px-6"
+    >
+      <div className="min-w-0 flex-1 space-y-1">
+        <p className="break-words text-sm font-semibold text-[var(--ink)]">
+          {row.projectName}
+          <span className="font-normal text-[var(--ink-2)]">, {row.stageName}</span>
+        </p>
+        {row.studioName && <p className="truncate t-micro text-[var(--ink-3)]">{row.studioName}</p>}
+        <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm">
+          {aged && <AlertTriangle className="size-4 shrink-0 text-[var(--danger)]" aria-hidden />}
+          {ageText && (
+            <span className={aged ? "font-semibold text-[var(--danger)]" : "text-[var(--ink-3)]"}>{ageText}</span>
+          )}
+          {ageText && <span className="text-[var(--ink-3)]">,</span>}
+          <span className="break-words font-bold tabular-nums text-[var(--warning)]">{unpaid}</span>
+        </p>
+        <p className="t-micro tabular-nums text-[var(--ink-3)]">
+          {t("planned")}: {formatMoney(row.planned, row.currency)}, {t("paid")}: {formatMoney(row.paid, row.currency)}
+        </p>
+      </div>
+      <ChevronRight className="size-5 shrink-0 text-[var(--ink-3)] transition-transform group-hover:translate-x-0.5" aria-hidden />
+    </Link>
   );
 }
 
-function Section({
+function PayablesSection({
   title,
   hint,
   rows,
@@ -81,42 +74,29 @@ function Section({
 }) {
   const t = useTranslations("staffX.paymentsRegister");
   const totals = remainingByCurrency(rows);
+  const meta = (
+    <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+      <span className="text-[var(--ink-3)]">{rows.length}</span>
+      {totals.map((x) => (
+        <span key={x.currency} className="tabular-nums text-[var(--warning)]">
+          {formatMoney(x.amount, x.currency)}
+        </span>
+      ))}
+    </span>
+  );
   return (
-    <section className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="flex items-center gap-2 text-lg font-bold tracking-tight">
-            {title}
-            <span className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 text-xs font-bold tabular-nums text-[var(--muted)]">{rows.length}</span>
-          </h2>
-          <p className="text-sm text-[var(--muted)]">{hint}</p>
-        </div>
-        {totals.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {totals.map((x) => (
-              <span
-                key={x.currency}
-                className="rounded-xl border border-dashed border-[var(--border-strong)] px-3 py-1.5 text-sm font-bold tabular-nums"
-              >
-                <span className="font-semibold text-[var(--muted)]">{t("totals", { currency: x.currency })}: </span>
-                {formatMoney(x.amount, x.currency)}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
+    <Section title={title} meta={meta}>
+      <p className="mb-3 t-small text-[var(--ink-3)]">{hint}</p>
       {rows.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-[var(--muted)]">{t("empty")}</CardContent>
-        </Card>
+        <Card solid className="py-10 text-center t-small text-[var(--ink-3)]">{t("empty")}</Card>
       ) : (
-        <ul className="space-y-2">
+        <Card solid bare className="divide-y divide-[var(--line)]">
           {rows.map((r) => (
             <PayableItem key={r.stageId} row={r} kind={kind} />
           ))}
-        </ul>
+        </Card>
       )}
-    </section>
+    </Section>
   );
 }
 
@@ -124,9 +104,9 @@ function Section({
 export function PayablesList({ accepted, upcoming }: { accepted: PayableRow[]; upcoming: PayableRow[] }) {
   const t = useTranslations("staffX.paymentsRegister");
   return (
-    <div className="space-y-8">
-      <Section title={t("acceptedUnpaid")} hint={t("acceptedHint", { days: PAYABLE_AGING_DAYS })} rows={accepted} kind="accepted" />
-      <Section title={t("upcoming")} hint={t("upcomingHint")} rows={upcoming} kind="upcoming" />
+    <div className="flex flex-col gap-8 lg:gap-12">
+      <PayablesSection title={t("acceptedUnpaid")} hint={t("acceptedHint", { days: PAYABLE_AGING_DAYS })} rows={accepted} kind="accepted" />
+      <PayablesSection title={t("upcoming")} hint={t("upcomingHint")} rows={upcoming} kind="upcoming" />
     </div>
   );
 }

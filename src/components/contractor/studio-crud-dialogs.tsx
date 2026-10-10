@@ -73,23 +73,23 @@ export function CreateStudioButton() {
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <label className="text-xs font-semibold text-[var(--muted)] mb-1 block">{t("fields.name")}</label>
+              <label className="t-label text-[var(--ink)] mb-1 block">{t("fields.name")}</label>
               <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Studio nomi" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-[var(--muted)] mb-1 block">{t("fields.contactPerson")}</label>
+              <label className="t-label text-[var(--ink)] mb-1 block">{t("fields.contactPerson")}</label>
               <Input value={form.contactPerson} onChange={(e) => setForm((f) => ({ ...f, contactPerson: e.target.value }))} placeholder="Ism Familiya" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-[var(--muted)] mb-1 block">{t("fields.email")}</label>
+              <label className="t-label text-[var(--ink)] mb-1 block">{t("fields.email")}</label>
               <Input type="email" value={form.contactEmail} onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))} placeholder="email@example.com" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-[var(--muted)] mb-1 block">{t("fields.password")}</label>
+              <label className="t-label text-[var(--ink)] mb-1 block">{t("fields.password")}</label>
               <Input type="text" value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} placeholder="Parol (kamida 6 belgi)" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-[var(--muted)] mb-1 block">{t("fields.phone")}</label>
+              <label className="t-label text-[var(--ink)] mb-1 block">{t("fields.phone")}</label>
               <Input value={form.contactPhone} onChange={(e) => setForm((f) => ({ ...f, contactPhone: e.target.value }))} placeholder="+998..." />
             </div>
           </div>
@@ -132,7 +132,7 @@ export function RenameStudioButton({ companyId, currentName }: { companyId: stri
       <button
         type="button"
         onClick={() => { setName(currentName); setOpen(true); }}
-        className="grid size-8 place-items-center rounded-lg text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)] transition-colors"
+        className="grid size-8 place-items-center rounded-[var(--radius-m)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
         title={t("editName")}
       >
         <Pencil className="size-4" />
@@ -184,7 +184,7 @@ export function DeleteStudioButton({ companyId, studioName, hasProjects }: { com
         type="button"
         onClick={() => setOpen(true)}
         disabled={hasProjects}
-        className="grid size-8 place-items-center rounded-lg text-[var(--danger)] hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        className="grid size-8 place-items-center rounded-[var(--radius-m)] text-[var(--danger)] transition-colors hover:bg-[var(--danger-soft)] disabled:cursor-not-allowed disabled:opacity-30"
         title={hasProjects ? t("cannotDeleteHasProjects") : t("deleteStudio")}
       >
         <Trash className="size-4" />
@@ -194,7 +194,7 @@ export function DeleteStudioButton({ companyId, studioName, hasProjects }: { com
           <DialogHeader>
             <DialogTitle>{t("deleteStudio")}</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="t-small text-[var(--ink-2)]">
             {t("deleteConfirm", { name: studioName })}
           </p>
           <DialogFooter>

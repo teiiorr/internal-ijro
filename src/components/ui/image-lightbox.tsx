@@ -48,7 +48,7 @@ export function ImageLightbox({
       {/* Yuqori panel */}
       <div className="flex items-center justify-between px-4 py-3 text-white/80" onClick={(e) => e.stopPropagation()}>
         <p className="min-w-0 truncate text-sm font-medium">{img.name}</p>
-        <button onClick={onClose} className="grid size-10 shrink-0 place-items-center rounded-full hover:bg-white/10 transition-colors">
+        <button onClick={onClose} className="grid size-11 shrink-0 place-items-center rounded-[var(--radius-control)] hover:bg-white/10 transition-colors">
           <X className="size-5" />
         </button>
       </div>
@@ -58,7 +58,7 @@ export function ImageLightbox({
         {hasPrev && (
           <button
             onClick={() => onNavigate(index - 1)}
-            className="absolute left-2 sm:left-4 z-10 grid size-10 sm:size-12 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors"
+            className="absolute left-2 sm:left-4 z-10 grid size-11 sm:size-12 place-items-center rounded-[var(--radius-control)] bg-white/10 text-white hover:bg-white/20 transition-colors"
           >
             <ChevronLeft className="size-6" />
           </button>
@@ -66,12 +66,12 @@ export function ImageLightbox({
         <img
           src={img.url}
           alt={img.name}
-          className="max-h-[80dvh] max-w-full rounded-lg object-contain"
+          className="max-h-[80dvh] max-w-full rounded-[var(--radius-media)] object-contain"
         />
         {hasNext && (
           <button
             onClick={() => onNavigate(index + 1)}
-            className="absolute right-2 sm:right-4 z-10 grid size-10 sm:size-12 place-items-center rounded-full bg-black/40 text-white hover:bg-black/60 transition-colors"
+            className="absolute right-2 sm:right-4 z-10 grid size-11 sm:size-12 place-items-center rounded-[var(--radius-control)] bg-white/10 text-white hover:bg-white/20 transition-colors"
           >
             <ChevronRight className="size-6" />
           </button>

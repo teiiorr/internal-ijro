@@ -1,24 +1,22 @@
 import { useTranslations } from "next-intl";
 import {
-  IconAlertTriangle as AlertTriangle,
   IconZzz as Zzz,
   IconHourglassHigh as Hourglass,
   IconClockExclamation as ClockExclamation,
   IconCircleCheck as CircleCheck,
 } from "@tabler/icons-react";
-import { Link } from "@/i18n/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
+import { Row } from "@/components/ui-biib/Rows";
 import { formatDate, formatDateTime } from "@/lib/dates";
 import { shortDay } from "@/lib/reports/weekly-brief-core";
 import type { WeeklyAttention } from "@/server/queries/weekly-brief";
-import { BriefGroup, BriefRow, BriefSectionTitle } from "./brief-group";
-
-const linkCls = "hover:text-[var(--primary)] hover:underline underline-offset-2";
+import { BriefGroup, BriefRow } from "./brief-group";
 
 /**
  * "Eʼtibor talab qiladi" — HOZIRGI holat: 14 kundan beri jim loyihalar (ogohlantirish),
  * BKRM'ni 5 kundan ortiq kutayotgan topshirishlar (xavf) va meʼyoriy muddatdan oshgan
- * bosqichlar (ogohlantirish).
+ * bosqichlar (ogohlantirish). BIIB: bitta seksiya, oyna karta, ajratuvchi qatorlar.
  */
 export function AttentionList({ attention, locale }: { attention: WeeklyAttention; locale: string }) {
   const t = useTranslations("staffX.weeklyBrief");
@@ -28,17 +26,15 @@ export function AttentionList({ attention, locale }: { attention: WeeklyAttentio
   const stageHref = (projectId: string, stageId: string) => `/projects/${projectId}/stages/${stageId}`;
 
   return (
-    <Card className="min-w-0">
-      <CardContent className="space-y-3 p-4 sm:p-6">
-        <BriefSectionTitle icon={<AlertTriangle className="size-5" />} title={t("attention")} />
-
+    <Section title={t("attention")} headingLevel={3}>
+      <Card bare className="px-5 sm:px-6">
         {empty ? (
-          <p className="flex flex-col items-center gap-2 py-6 text-center text-sm text-[var(--muted)]">
+          <p className="flex flex-col items-center gap-2 py-6 text-center t-small text-[var(--ink-3)]">
             <CircleCheck className="size-6 text-[var(--success)]" aria-hidden />
             {t("attentionEmpty")}
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="flex min-w-0 flex-col gap-6 py-1">
             {waitingReview.length > 0 && (
               <BriefGroup
                 title={t("waitingReview")}
@@ -48,19 +44,17 @@ export function AttentionList({ attention, locale }: { attention: WeeklyAttentio
                 getKey={(s) => s.stageId}
                 moreLabel={more}
                 render={(s) => (
-                  <BriefRow
-                    primary={
-                      <Link href={stageHref(s.projectId, s.stageId)} className={linkCls}>
-                        {s.projectName}
-                      </Link>
-                    }
-                    secondary={s.stageName}
-                    meta={
-                      <span className="font-semibold text-[var(--danger)]" title={formatDateTime(s.submittedAt, locale)}>
-                        {t("days", { count: s.days })}
-                      </span>
-                    }
-                  />
+                  <Row href={stageHref(s.projectId, s.stageId)}>
+                    <BriefRow
+                      primary={s.projectName}
+                      secondary={s.stageName}
+                      meta={
+                        <span className="font-semibold text-[var(--danger)]" title={formatDateTime(s.submittedAt, locale)}>
+                          {t("days", { count: s.days })}
+                        </span>
+                      }
+                    />
+                  </Row>
                 )}
               />
             )}
@@ -74,19 +68,17 @@ export function AttentionList({ attention, locale }: { attention: WeeklyAttentio
                 getKey={(s) => s.stageId}
                 moreLabel={more}
                 render={(s) => (
-                  <BriefRow
-                    primary={
-                      <Link href={stageHref(s.projectId, s.stageId)} className={linkCls}>
-                        {s.projectName}
-                      </Link>
-                    }
-                    secondary={`${s.stageName} · ${shortDay(s.startedAt)}`}
-                    meta={
-                      <span className="font-semibold text-[var(--warning)]" title={formatDate(s.startedAt, locale)}>
-                        {t("overrunDetail", { actual: s.actualDays, norm: s.defaultDays })}
-                      </span>
-                    }
-                  />
+                  <Row href={stageHref(s.projectId, s.stageId)}>
+                    <BriefRow
+                      primary={s.projectName}
+                      secondary={`${s.stageName}, ${shortDay(s.startedAt)}`}
+                      meta={
+                        <span className="font-semibold text-[var(--warning)]" title={formatDate(s.startedAt, locale)}>
+                          {t("overrunDetail", { actual: s.actualDays, norm: s.defaultDays })}
+                        </span>
+                      }
+                    />
+                  </Row>
                 )}
               />
             )}
@@ -100,28 +92,26 @@ export function AttentionList({ attention, locale }: { attention: WeeklyAttentio
                 getKey={(p) => p.id}
                 moreLabel={more}
                 render={(p) => (
-                  <BriefRow
-                    primary={
-                      <Link href={`/projects/${p.id}`} className={linkCls}>
-                        {p.name}
-                      </Link>
-                    }
-                    meta={
-                      p.lastActivityAt ? (
-                        <span title={formatDateTime(p.lastActivityAt, locale)}>
-                          {t("lastActivity", { date: formatDate(p.lastActivityAt, locale) })}
-                        </span>
-                      ) : (
-                        <span>{t("noActivity")}</span>
-                      )
-                    }
-                  />
+                  <Row href={`/projects/${p.id}`}>
+                    <BriefRow
+                      primary={p.name}
+                      meta={
+                        p.lastActivityAt ? (
+                          <span title={formatDateTime(p.lastActivityAt, locale)}>
+                            {t("lastActivity", { date: formatDate(p.lastActivityAt, locale) })}
+                          </span>
+                        ) : (
+                          <span>{t("noActivity")}</span>
+                        )
+                      }
+                    />
+                  </Row>
                 )}
               />
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   );
 }

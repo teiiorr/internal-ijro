@@ -3,10 +3,9 @@ import { useRouter } from "@/i18n/navigation";
 import { IconArrowLeft as ArrowLeft } from "@tabler/icons-react";
 
 /**
- * Katta yumaloq "orqaga" tugmasi. history back() dan foydalanadi, şu bois oldingi
- * sahifaga holati saqlangan holda qaytadi (masalan, filtrlangan loyihalar röyxati
- * filtrlarini saqlab qoladi); tarix bölmasa (deep link / sahifani yangilaş)
- * `fallbackHref` ga qaytadi. Çaqqon bosiş animatsiyasi.
+ * «Orqaga» boshqaruvi — BIIB призрач (ghost) tugma: ramka/karta foni/soya yoʻq, hover'da
+ * `--surface-2`. history back() dan foydalanadi, shu bois oldingi sahifaga holati saqlangan
+ * holda qaytadi; tarix boʻlmasa `fallbackHref` ga qaytadi.
  */
 export function BackButton({ fallbackHref, className = "" }: { fallbackHref: string; className?: string }) {
   const router = useRouter();
@@ -19,10 +18,9 @@ export function BackButton({ fallbackHref, className = "" }: { fallbackHref: str
         else router.push(fallbackHref);
       }}
       className={
-        "grid size-11 shrink-0 place-items-center rounded-full border border-[var(--border)] bg-[var(--card)] " +
-        "text-[var(--foreground)] shadow-[var(--shadow-1)] transition-[transform,background-color,box-shadow] duration-150 ease-out " +
-        "hover:bg-[var(--surface-2)] hover:shadow-[var(--shadow-2)] active:scale-90 " +
-        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-glow)] " +
+        "grid size-11 shrink-0 place-items-center rounded-[var(--radius-control)] " +
+        "text-[var(--ink-2)] transition-colors duration-[var(--dur-ui)] ease-[var(--ease-ui)] " +
+        "[@media(hover:hover)]:hover:bg-[var(--surface-2)] [@media(hover:hover)]:hover:text-[var(--ink)] active:scale-95 " +
         className
       }
     >

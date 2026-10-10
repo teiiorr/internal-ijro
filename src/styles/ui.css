@@ -528,3 +528,32 @@
     --accent-text: #e3c46e;
   }
 }
+
+/* BIIB fakt-roʻyxati (dl) — detail-grid oʻrnini bosadi: yacheyka-ramkalarsiz, chapga tekis. */
+@layer components {
+  .fact-list {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 24px;
+    row-gap: 16px;
+    align-items: baseline;
+  }
+  .fact-list dt {
+    font-family: var(--font-ui);
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .fact-list dd {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: var(--fs-small, 0.875rem);
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 0;
+  }
+  @media (max-width: 599px) {
+    .fact-list { grid-template-columns: 1fr; row-gap: 4px; }
+    .fact-list dd { margin-bottom: 12px; }
+  }
+}

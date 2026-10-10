@@ -122,7 +122,7 @@ describe("digestText", () => {
     expect(d).not.toBeNull();
     expect(d!.title).toBe("Ertalabki xulosa / Утренняя сводка");
     expect(d!.message).toBe(
-      "Bugun muddati: 2 · Kechikkan: 1 · Tasdiqlashingizni kutmoqda: 3 / Сегодня срок: 2 · Просрочено: 1 · Ждут вашего утверждения: 3"
+      "Bugun muddati: 2, Kechikkan: 1, Tasdiqlashingizni kutmoqda: 3 / Сегодня срок: 2, Просрочено: 1, Ждут вашего утверждения: 3"
     );
   });
 

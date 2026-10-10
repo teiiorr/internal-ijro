@@ -5,9 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { IconArrowForwardUp as ArrowForward, IconCheck as Check, IconHourglass as Hourglass } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { localizeName } from "@/lib/names";
-import { cn } from "@/lib/utils";
 import { carryoverTopic, tashkentDateOf } from "@/lib/councils/resolution-status";
 import type { ResolutionRow } from "@/server/queries/council-resolutions";
 import { addCarryoverToAgenda } from "@/server/actions/council-resolutions";
@@ -38,36 +36,37 @@ export function OpenResolutionsCarryover({
   const visible = showAll ? rows : rows.slice(0, PREVIEW);
 
   return (
-    <Card className="!border-[var(--warning)]/40 !bg-[var(--warning-soft)]">
-      <CardContent className="space-y-3 p-4 sm:p-5">
-        <div className="flex min-w-0 items-start gap-2">
-          <Hourglass className="mt-0.5 size-4 shrink-0 text-[var(--warning)]" />
-          <div className="min-w-0">
-            <h3 className="break-words text-base font-semibold">{t("carryover", { count: rows.length })}</h3>
-            <p className="text-xs font-medium text-[var(--muted)]">{t("carryoverHint")}</p>
-          </div>
+    <div
+      className="rounded-[var(--radius-card)] border border-[color-mix(in_oklab,var(--warning)_35%,transparent)] px-4 py-4 sm:px-5"
+      style={{ background: "color-mix(in oklab, var(--warning) 8%, transparent)" }}
+    >
+      <div className="flex min-w-0 items-start gap-2">
+        <Hourglass className="mt-0.5 size-4 shrink-0 text-[var(--warning)]" />
+        <div className="min-w-0">
+          <h3 className="break-words font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("carryover", { count: rows.length })}</h3>
+          <p className="t-micro text-[var(--ink-3)]">{t("carryoverHint")}</p>
         </div>
-        <ul className="space-y-2">
-          {visible.map((r) => (
-            <CarryoverItem
-              key={r.id}
-              row={r}
-              meetingId={meetingId}
-              added={topics.has(carryoverTopic(r.number, tashkentDateOf(r.meetingDate)))}
-            />
-          ))}
-        </ul>
-        {rows.length > PREVIEW && (
-          <button
-            type="button"
-            onClick={() => setShowAll((v) => !v)}
-            className="text-sm font-semibold text-[var(--primary)] hover:underline"
-          >
-            {showAll ? t("showLess") : t("showAll", { count: rows.length })}
-          </button>
-        )}
-      </CardContent>
-    </Card>
+      </div>
+      <ul className="mt-3 divide-y divide-[color-mix(in_oklab,var(--warning)_22%,transparent)]">
+        {visible.map((r) => (
+          <CarryoverItem
+            key={r.id}
+            row={r}
+            meetingId={meetingId}
+            added={topics.has(carryoverTopic(r.number, tashkentDateOf(r.meetingDate)))}
+          />
+        ))}
+      </ul>
+      {rows.length > PREVIEW && (
+        <button
+          type="button"
+          onClick={() => setShowAll((v) => !v)}
+          className="mt-3 text-sm font-semibold text-[var(--tint)] hover:underline"
+        >
+          {showAll ? t("showLess") : t("showAll", { count: rows.length })}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -97,21 +96,16 @@ function CarryoverItem({ row, meetingId, added }: { row: ResolutionRow; meetingI
   }
 
   return (
-    <li
-      className={cn(
-        "flex min-w-0 flex-col gap-2.5 rounded-xl border bg-[var(--card)] p-3 sm:flex-row sm:items-center sm:gap-3",
-        row.effective === "overdue" ? "border-[var(--danger)]/30" : "border-[var(--border)]"
-      )}
-    >
+    <li className="flex min-w-0 flex-col gap-2.5 py-3 sm:flex-row sm:items-center sm:gap-3">
       <div className="min-w-0 flex-1 space-y-1.5">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-[var(--muted)]">
-          <span className="tabular-nums text-[var(--foreground)]">№{row.number}</span>
-          <span>·</span>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-[var(--ink-3)]">
+          <span className="tabular-nums text-[var(--ink)]">№{row.number}</span>
+          <span>,</span>
           <span>{t("meetingOf", { date: fmtDay(row.meetingDate, locale) })}</span>
           <ResolutionStatusChip status={row.effective} />
         </div>
-        <p className="line-clamp-2 break-words text-sm font-medium [overflow-wrap:anywhere]">{row.text}</p>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted)]">
+        <p className="line-clamp-2 break-words text-sm font-medium text-[var(--ink)] [overflow-wrap:anywhere]">{row.text}</p>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--ink-3)]">
           <span className="min-w-0 truncate">
             {row.responsibleName ? localizeName(row.responsibleName, locale) : t("noResponsible")}
           </span>
@@ -119,7 +113,7 @@ function CarryoverItem({ row, meetingId, added }: { row: ResolutionRow; meetingI
         </div>
       </div>
       {added ? (
-        <span className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-xl bg-[var(--success-soft)] px-3 py-2 text-sm font-semibold text-[var(--success)] sm:self-center">
+        <span className="inline-flex shrink-0 items-center gap-1.5 self-start text-sm font-semibold text-[var(--success)] sm:self-center">
           <Check className="size-4" />
           {t("inAgenda")}
         </span>

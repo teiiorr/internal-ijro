@@ -5,6 +5,10 @@ import { cn } from "@/lib/utils";
 
 export const Tabs = TabsPrimitive.Root;
 
+/**
+ * BIIB ichki-boshqaruv (A4.4.2): oyna emas — `--surface-2` yoʻlak, radius 12 (kapsula emas).
+ * Faol trigger `--surface` yarmi bilan suriladigan indikator koʻrinishida ajralib turadi.
+ */
 export const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -12,7 +16,7 @@ export const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-12 items-center justify-start gap-1 rounded-2xl glass p-1.5 text-[var(--muted)]",
+      "inline-flex items-center justify-start gap-1 rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] p-1 text-[var(--ink-2)]",
       className
     )}
     {...p}
@@ -27,10 +31,10 @@ export const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-xl px-4 py-1.5 text-sm font-semibold transition-all " +
-      "data-[state=active]:bg-[var(--glass-fill-strong)] data-[state=active]:text-[var(--foreground)] " +
-      "data-[state=active]:shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_2px_8px_-2px_rgba(20,25,60,0.10)] " +
-      "hover:text-[var(--foreground)]",
+      "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-[9px] px-3 py-1.5 text-[13px] font-semibold " +
+      "transition-colors duration-[var(--dur-ui)] ease-[var(--ease-ui)] " +
+      "text-[var(--ink-2)] [@media(hover:hover)]:hover:text-[var(--ink)] " +
+      "data-[state=active]:bg-[var(--surface)] data-[state=active]:text-[var(--ink)] data-[state=active]:shadow-[var(--shadow-1)]",
       className
     )}
     {...p}

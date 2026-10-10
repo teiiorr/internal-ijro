@@ -116,23 +116,23 @@ export function NudgeDialog({
                 <label
                   htmlFor={inputId}
                   className={cn(
-                    "flex min-w-0 items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors",
-                    checked ? "border-[var(--primary)]/40 bg-[var(--primary-soft)]" : "border-[var(--border)] bg-[var(--surface-2)]",
-                    disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:border-[var(--primary)]/40"
+                    "flex min-w-0 items-center gap-3 rounded-[var(--radius-control)] px-3 py-2.5 transition-colors",
+                    checked ? "bg-[var(--surface-2)]" : "hover:bg-[var(--surface-2)]",
+                    disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
                   )}
                 >
                   <input
                     id={inputId}
                     type="checkbox"
-                    className="size-4 shrink-0 accent-[var(--primary)]"
+                    className="size-4 shrink-0 accent-[var(--tint)]"
                     checked={checked}
                     disabled={disabled}
                     onChange={(e) => toggle(a.userId, e.target.checked)}
                   />
                   <UserAvatar name={shortName(a.fullName)} avatarUrl={a.avatarUrl} size="xs" clickable={false} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold">{shortName(a.fullName)}</span>
-                    <span className="flex items-center gap-1 truncate text-xs text-[var(--muted)]">
+                    <span className="block truncate text-sm font-semibold text-[var(--ink)]">{shortName(a.fullName)}</span>
+                    <span className="flex items-center gap-1 truncate t-micro text-[var(--ink-3)]">
                       {throttled ? (
                         <>
                           <ClockPause className="size-3.5 shrink-0" />

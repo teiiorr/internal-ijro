@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import {
-  IconCalendarEvent as CalendarEvent,
   IconCircleCheck as CircleCheck,
   IconAlarm as Alarm,
   IconArrowsShuffle as ArrowsShuffle,
@@ -8,20 +7,21 @@ import {
   IconSparkles as Sparkles,
   IconMessageCircle as MessageCircle,
 } from "@tabler/icons-react";
-import { Link } from "@/i18n/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Status } from "@/components/ui-biib/Status";
 import { formatDateTime } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
 import { formatInt, numericDay, shortDay } from "@/lib/reports/weekly-brief-core";
 import type { WeeklyEvents } from "@/server/queries/weekly-brief";
-import { BriefGroup, BriefRow, BriefSectionTitle } from "./brief-group";
-
-const linkCls = "hover:text-[var(--primary)] hover:underline underline-offset-2";
+import { BriefGroup, BriefRow } from "./brief-group";
 
 /**
  * "Bu hafta nima boʻldi" — vaqt belgilaridan hisoblangan hodisalar (har qanday oʻtgan hafta
  * uchun, snapshot'siz ham toʻgʻri): yakunlangan bosqichlar, muddati oʻtgan bosqichlar,
- * muddat oʻzgarishlari, toʻlovlar, yangi loyihalar va studiya soʻrovlari.
+ * muddat oʻzgarishlari, toʻlovlar, yangi loyihalar va studiya soʻrovlari. BIIB: bitta
+ * seksiya, oyna karta, ajratuvchi qatorlar (butun qator — havola), ramkasiz guruhlar.
  */
 export function WeekEvents({ events, locale }: { events: WeeklyEvents; locale: string }) {
   const t = useTranslations("staffX.weeklyBrief");
@@ -41,21 +41,21 @@ export function WeekEvents({ events, locale }: { events: WeeklyEvents; locale: s
   const stageHref = (projectId: string, stageId: string) => `/projects/${projectId}/stages/${stageId}`;
 
   return (
-    <Card className="min-w-0">
-      <CardContent className="space-y-3 p-4 sm:p-6">
-        <BriefSectionTitle icon={<CalendarEvent className="size-5" />} title={t("whatHappened")} />
-
+    <Section title={t("whatHappened")} headingLevel={3}>
+      <Card bare className="px-5 sm:px-6">
         {empty ? (
-          <p className="py-6 text-center text-sm text-[var(--muted)]">{t("empty")}</p>
+          <p className="py-6 text-center t-small text-[var(--ink-3)]">{t("empty")}</p>
         ) : (
-          <div className="space-y-3">
+          <div className="flex min-w-0 flex-col gap-6 py-1">
             {(studioRequests.opened > 0 || studioRequests.decided > 0) && (
-              <p className="flex items-start gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2.5 text-sm sm:px-4">
-                <MessageCircle className="mt-0.5 size-4 shrink-0 text-[var(--muted)]" aria-hidden />
-                <Link href="/contractors/requests" className={`min-w-0 break-words font-medium ${linkCls}`}>
-                  {t("studioRequests", { opened: studioRequests.opened, decided: studioRequests.decided })}
-                </Link>
-              </p>
+              <Rows>
+                <Row href="/contractors/requests">
+                  <MessageCircle className="size-[18px] shrink-0 text-[var(--ink-3)]" aria-hidden />
+                  <span className="min-w-0 flex-1 text-[0.9375rem] font-medium text-[var(--ink)]">
+                    {t("studioRequests", { opened: studioRequests.opened, decided: studioRequests.decided })}
+                  </span>
+                </Row>
+              </Rows>
             )}
 
             {completedStages.length > 0 && (
@@ -67,15 +67,13 @@ export function WeekEvents({ events, locale }: { events: WeeklyEvents; locale: s
                 getKey={(s) => `${s.stageId}-${s.at.getTime()}`}
                 moreLabel={more}
                 render={(s) => (
-                  <BriefRow
-                    primary={
-                      <Link href={stageHref(s.projectId, s.stageId)} className={linkCls}>
-                        {s.projectName}
-                      </Link>
-                    }
-                    secondary={s.stageName}
-                    meta={<span title={formatDateTime(s.at, locale)}>{shortDay(s.at)}</span>}
-                  />
+                  <Row href={stageHref(s.projectId, s.stageId)}>
+                    <BriefRow
+                      primary={s.projectName}
+                      secondary={s.stageName}
+                      meta={<span title={formatDateTime(s.at, locale)}>{shortDay(s.at)}</span>}
+                    />
+                  </Row>
                 )}
               />
             )}
@@ -89,22 +87,20 @@ export function WeekEvents({ events, locale }: { events: WeeklyEvents; locale: s
                 getKey={(s) => s.stageId}
                 moreLabel={more}
                 render={(s) => (
-                  <BriefRow
-                    primary={
-                      <Link href={stageHref(s.projectId, s.stageId)} className={linkCls}>
-                        {s.projectName}
-                      </Link>
-                    }
-                    secondary={s.stageName}
-                    meta={
-                      <span className="flex flex-wrap items-center gap-x-2 sm:justify-end">
-                        <span>{shortDay(s.deadline)}</span>
-                        <span className={s.stillOpen ? "font-semibold text-[var(--danger)]" : "text-[var(--warning)]"}>
-                          {s.stillOpen ? t("stillOpen") : t("completedLate")}
+                  <Row href={stageHref(s.projectId, s.stageId)}>
+                    <BriefRow
+                      primary={s.projectName}
+                      secondary={s.stageName}
+                      meta={
+                        <span className="flex items-center justify-end gap-2">
+                          <span>{shortDay(s.deadline)}</span>
+                          <Status tone={s.stillOpen ? "danger" : "warning"}>
+                            {s.stillOpen ? t("stillOpen") : t("completedLate")}
+                          </Status>
                         </span>
-                      </span>
-                    }
-                  />
+                      }
+                    />
+                  </Row>
                 )}
               />
             )}
@@ -118,28 +114,26 @@ export function WeekEvents({ events, locale }: { events: WeeklyEvents; locale: s
                 getKey={(m, i) => `${m.stageId}-${m.at.getTime()}-${i}`}
                 moreLabel={more}
                 render={(m) => (
-                  <BriefRow
-                    primary={
-                      <Link href={stageHref(m.projectId, m.stageId)} className={linkCls}>
-                        {m.projectName}
-                      </Link>
-                    }
-                    secondary={
-                      <>
-                        {m.stageName}
-                        {m.by ? ` · ${localizeName(m.by, locale)}` : ""}
-                        {m.viaStudio ? ` · ${t("viaStudio")}` : ""}
-                      </>
-                    }
-                    meta={
-                      <span title={formatDateTime(m.at, locale)}>
-                        {m.oldValue ? `${numericDay(m.oldValue)} → ` : "→ "}
-                        <span className="font-semibold text-[var(--foreground)]">
-                          {m.newValue ? numericDay(m.newValue) : "—"}
+                  <Row href={stageHref(m.projectId, m.stageId)}>
+                    <BriefRow
+                      primary={m.projectName}
+                      secondary={
+                        <>
+                          {m.stageName}
+                          {m.by ? `, ${localizeName(m.by, locale)}` : ""}
+                          {m.viaStudio ? `, ${t("viaStudio")}` : ""}
+                        </>
+                      }
+                      meta={
+                        <span title={formatDateTime(m.at, locale)}>
+                          {m.oldValue ? `${numericDay(m.oldValue)} → ` : "→ "}
+                          <span className="font-semibold text-[var(--ink)]">
+                            {m.newValue ? numericDay(m.newValue) : "—"}
+                          </span>
                         </span>
-                      </span>
-                    }
-                  />
+                      }
+                    />
+                  </Row>
                 )}
               />
             )}
@@ -152,19 +146,17 @@ export function WeekEvents({ events, locale }: { events: WeeklyEvents; locale: s
                 getKey={(p, i) => `${p.stageId}-${p.paidAt.getTime()}-${i}`}
                 moreLabel={more}
                 render={(p) => (
-                  <BriefRow
-                    primary={
-                      <Link href={stageHref(p.projectId, p.stageId)} className={linkCls}>
-                        {p.projectName}
-                      </Link>
-                    }
-                    secondary={`${p.stageName} · ${shortDay(p.paidAt)}`}
-                    meta={
-                      <span className="font-semibold text-[var(--foreground)]">
-                        {typeof p.amount === "number" ? `${formatInt(p.amount)} ${p.currency}` : p.amount}
-                      </span>
-                    }
-                  />
+                  <Row href={stageHref(p.projectId, p.stageId)}>
+                    <BriefRow
+                      primary={p.projectName}
+                      secondary={`${p.stageName}, ${shortDay(p.paidAt)}`}
+                      meta={
+                        <span className="font-semibold text-[var(--ink)]">
+                          {typeof p.amount === "number" ? `${formatInt(p.amount)} ${p.currency}` : p.amount}
+                        </span>
+                      }
+                    />
+                  </Row>
                 )}
               />
             )}
@@ -178,20 +170,18 @@ export function WeekEvents({ events, locale }: { events: WeeklyEvents; locale: s
                 getKey={(p) => p.id}
                 moreLabel={more}
                 render={(p) => (
-                  <BriefRow
-                    primary={
-                      <Link href={`/projects/${p.id}`} className={linkCls}>
-                        {p.name}
-                      </Link>
-                    }
-                    meta={<span title={formatDateTime(p.at, locale)}>{shortDay(p.at)}</span>}
-                  />
+                  <Row href={`/projects/${p.id}`}>
+                    <BriefRow
+                      primary={p.name}
+                      meta={<span title={formatDateTime(p.at, locale)}>{shortDay(p.at)}</span>}
+                    />
+                  </Row>
                 )}
               />
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   );
 }

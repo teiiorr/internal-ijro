@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { IconList } from "@tabler/icons-react";
+import { IconList, IconTimeline } from "@tabler/icons-react";
 import { requireUser } from "@/lib/session";
 import { getPortfolioTimeline, PORTFOLIO_PROJECT_LIMIT } from "@/server/queries/portfolio";
 import { parseGroup, parseZoom, tashkentToday } from "@/lib/projects/timeline";
-import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Segmented } from "@/components/ui-biib/Segmented";
 import { TimelineFilters } from "@/components/staff/portfolio-timeline/timeline-filters";
 import { PortfolioTimeline } from "@/components/staff/portfolio-timeline/portfolio-timeline";
 
@@ -56,17 +57,18 @@ export default async function ProjectsTimelinePage({
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("title")}</h1>
-          <p className="mt-1 break-words text-sm text-[var(--muted)]">{t("subtitle")}</p>
-        </div>
-        <Button asChild variant="outline" className="shrink-0 self-start">
-          <Link href={backHref}>
-            <IconList className="size-4" /> {t("list")}
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title={t("title")}
+        subtitle={t("subtitle")}
+        tools={
+          <Segmented
+            items={[
+              { href: backHref, label: t("list"), active: false, icon: <IconList className="size-4" /> },
+              { href: "/projects/timeline", label: t("title"), active: true, icon: <IconTimeline className="size-4" /> },
+            ]}
+          />
+        }
+      />
 
       <TimelineFilters types={data.types} studios={data.studios} curators={data.curators} />
 

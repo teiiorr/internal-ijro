@@ -111,49 +111,49 @@ export function ResponseReviewDrawer({
         <DialogHeader className="min-w-0 pr-10">
           <DialogTitle className="text-lg sm:text-xl">{tc("reviewTitle")}</DialogTitle>
           <DialogDescription className="break-words">
-            <Link href={`/tasks/${taskId}`} className="hover:text-[var(--primary)] hover:underline">
+            <Link href={`/tasks/${taskId}`} className="hover:text-[var(--tint)] hover:underline">
               {taskTitle}
             </Link>
           </DialogDescription>
         </DialogHeader>
 
         {visible.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-[var(--border)] px-4 py-10 text-center text-sm text-[var(--muted)]">
+          <p className="px-4 py-10 text-center t-small text-[var(--ink-3)]">
             {tc("reviewEmpty")}
           </p>
         ) : (
-          <ul className="min-w-0 space-y-3">
+          <ul className="min-w-0 divide-y divide-[var(--line)]">
             {visible.map((a) => {
               const busy = pending && busyId === a.userId;
               const rejecting = rejectingId === a.userId;
               return (
-                <li key={a.userId} className="min-w-0 space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4">
+                <li key={a.userId} className="min-w-0 space-y-3 py-4 first:pt-0 last:pb-0">
                   <div className="flex min-w-0 items-center gap-3">
                     <UserAvatar name={shortName(a.fullName)} avatarUrl={a.avatarUrl} size="sm" clickable={false} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold">{shortName(a.fullName)}</p>
-                      <p className="truncate text-xs text-[var(--muted)]">{a.departmentName ?? "—"}</p>
+                      <p className="truncate text-xs text-[var(--ink-3)]">{a.departmentName ?? "—"}</p>
                     </div>
                     {a.responseSubmittedAt && (
-                      <span className="shrink-0 text-right text-[11px] tabular-nums text-[var(--muted)]">
+                      <span className="shrink-0 text-right text-[11px] tabular-nums text-[var(--ink-3)]">
                         {formatDateTime(a.responseSubmittedAt, locale)}
                       </span>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-medium text-[var(--muted)]">{t("tasks.review.responseLabel")}</p>
+                    <p className="text-xs font-medium text-[var(--ink-3)]">{t("tasks.review.responseLabel")}</p>
                     {a.responseText ? (
                       <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{a.responseText}</p>
                     ) : (
-                      <p className="text-sm text-[var(--muted)]">{t("tasks.review.noResponse")}</p>
+                      <p className="text-sm text-[var(--ink-3)]">{t("tasks.review.noResponse")}</p>
                     )}
                     {a.responseFileUrl && (
                       <a
                         href={a.responseFileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex max-w-full items-center gap-2 text-sm text-[var(--primary)] hover:underline"
+                        className="inline-flex max-w-full items-center gap-2 text-sm text-[var(--tint)] hover:underline"
                       >
                         <FileText className="size-4 shrink-0" />
                         <span className="truncate">{a.responseFileName ?? t("common.file")}</span>

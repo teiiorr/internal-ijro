@@ -139,7 +139,7 @@ function IconAction({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className={danger ? "text-[var(--danger)] hover:text-[var(--danger)]" : "text-[var(--muted)] hover:text-[var(--foreground)]"}
+      className={danger ? "text-[var(--danger)] hover:text-[var(--danger)]" : "text-[var(--ink-2)] hover:text-[var(--ink)]"}
     >
       {children}
     </Button>
@@ -185,7 +185,7 @@ function NoteDialog({ mode, row, onDone }: { mode: "close" | "cancel"; row: Acti
       <DialogContent className="max-w-md p-5 sm:p-7">
         <DialogHeader className="pr-8">
           <DialogTitle className="text-lg sm:text-xl">
-            {mode === "close" ? t("closeTitle") : t("cancelTitle")} · №{row.number}
+            {mode === "close" ? t("closeTitle") : t("cancelTitle")}, №{row.number}
           </DialogTitle>
           <DialogDescription className="line-clamp-3 break-words">{row.text}</DialogDescription>
         </DialogHeader>
@@ -206,7 +206,7 @@ function NoteDialog({ mode, row, onDone }: { mode: "close" | "cancel"; row: Acti
             disabled={pending}
             autoFocus
           />
-          {mode === "close" && <p className="text-xs text-[var(--muted)]">{t("closeHint")}</p>}
+          {mode === "close" && <p className="text-xs text-[var(--ink-3)]">{t("closeHint")}</p>}
           {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
         </div>
         <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
@@ -254,19 +254,19 @@ function SendAsTaskDialog({ row, onDone }: { row: ActionRow; onDone: () => void 
     <Dialog open onOpenChange={(o) => !o && !pending && onDone()}>
       <DialogContent className="max-w-md p-5 sm:p-7">
         <DialogHeader className="pr-8">
-          <DialogTitle className="text-lg sm:text-xl">{t("sendAsTask")} · №{row.number}</DialogTitle>
+          <DialogTitle className="text-lg sm:text-xl">{t("sendAsTask")}, №{row.number}</DialogTitle>
           <DialogDescription>{t("sendHint")}</DialogDescription>
         </DialogHeader>
-        <div className="space-y-3 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-3 sm:p-4">
-          <p className="line-clamp-4 whitespace-pre-line break-words text-sm font-medium">{row.text}</p>
+        <div className="space-y-3 rounded-[var(--radius-m)] bg-[var(--surface-2)] p-3 sm:p-4">
+          <p className="line-clamp-4 whitespace-pre-line break-words text-sm font-medium text-[var(--ink)]">{row.text}</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
             <span className="flex min-w-0 items-center gap-2">
               <UserAvatar name={row.responsibleName ?? "?"} avatarUrl={row.responsibleAvatar} size="xs" clickable={false} />
-              <span className="truncate font-semibold">{localizeName(row.responsibleName, locale)}</span>
+              <span className="truncate font-semibold text-[var(--ink)]">{localizeName(row.responsibleName, locale)}</span>
             </span>
             {row.dueDate && (
-              <span className="whitespace-nowrap text-[var(--muted)]">
-                {t("dueDate")}: <span className="font-semibold text-[var(--foreground)]">{fmtDay(row.dueDate, locale)}</span>
+              <span className="whitespace-nowrap text-[var(--ink-3)]">
+                {t("dueDate")}: <span className="font-semibold text-[var(--ink)]">{fmtDay(row.dueDate, locale)}</span>
               </span>
             )}
           </div>

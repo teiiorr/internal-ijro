@@ -16,7 +16,7 @@ export default async function ReportsLayout({ children }: { children: React.Reac
   const [t, tNav] = await Promise.all([getTranslations("staffX.weeklyBrief"), getTranslations("nav")]);
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="flex flex-col gap-6">
       <ReportsTabs labels={{ nav: tNav("reports"), weekly: t("tabWeekly"), slippage: t("tabSlippage") }} />
       {children}
     </div>

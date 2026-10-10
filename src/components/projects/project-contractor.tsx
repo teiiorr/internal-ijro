@@ -31,7 +31,7 @@ export function ProjectContractor({
   const [phone, setPhone] = useState("");
 
   const field =
-    "h-10 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3 text-sm font-medium text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none";
+    "h-10 w-full rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] px-3 text-sm font-medium text-[var(--ink)] focus:border-[var(--line-strong)] focus:outline-none";
 
   const matchesExisting = (v: string) => contractors.some((c) => c.name.trim().toLowerCase() === v.trim().toLowerCase());
 

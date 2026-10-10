@@ -25,7 +25,7 @@ export function ArchiveButton({ userId, status }: { userId: string; status: stri
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="h-10 rounded-lg border border-[var(--border)] px-3 text-sm bg-[var(--surface)]"
+          className="h-10 rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--surface-2)] px-3 text-sm text-[var(--ink)]"
         />
         <Button
           variant="destructive"

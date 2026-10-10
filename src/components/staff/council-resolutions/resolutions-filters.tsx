@@ -47,7 +47,7 @@ export function ResolutionsFilters({
       <div className="flex min-w-0 items-center gap-2">
         <div
           role="tablist"
-          className="flex min-w-0 flex-1 gap-1 overflow-x-auto rounded-[10px] bg-[var(--surface-3)] p-1 [scrollbar-width:none] sm:flex-initial [&::-webkit-scrollbar]:hidden"
+          className="flex min-w-0 flex-1 gap-1 overflow-x-auto rounded-[12px] border border-[var(--line)] bg-[var(--surface-2)] p-1 [scrollbar-width:none] sm:flex-initial [&::-webkit-scrollbar]:hidden"
         >
           {kinds.map((k) => {
             const active = current.kind === k.value;
@@ -59,10 +59,10 @@ export function ResolutionsFilters({
                 aria-selected={active}
                 onClick={() => push({ kind: k.value })}
                 className={cn(
-                  "shrink-0 whitespace-nowrap rounded-[8px] px-3 py-1.5 text-[13px] font-semibold transition-all sm:px-4 sm:text-sm",
+                  "shrink-0 whitespace-nowrap rounded-[9px] px-3 py-1.5 text-[13px] font-semibold transition-colors sm:px-4",
                   active
-                    ? "bg-[var(--surface)] text-[var(--foreground)] shadow-[var(--shadow-1)]"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "bg-[var(--surface)] text-[var(--ink)] shadow-[var(--shadow-1)]"
+                    : "text-[var(--ink-2)] hover:text-[var(--ink)]"
                 )}
               >
                 {k.label}
@@ -76,7 +76,7 @@ export function ResolutionsFilters({
             onClick={() =>
               push({ kind: undefined, status: undefined, responsibleId: undefined, departmentId: undefined, mine: false })
             }
-            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-2.5 text-sm font-semibold text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)]"
+            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-[var(--radius-control)] px-2.5 text-sm font-semibold text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
             title={t("clearFilters")}
           >
             <FilterOff className="size-4" />
@@ -87,7 +87,7 @@ export function ResolutionsFilters({
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
         <label className="min-w-0 space-y-1">
-          <span className="block text-xs font-semibold text-[var(--muted)]">{t("responsible")}</span>
+          <span className="block t-label text-[var(--ink-2)]">{t("responsible")}</span>
           <span className="relative block">
             <select
               value={current.mine ? "" : (current.responsibleId ?? "")}
@@ -102,12 +102,12 @@ export function ResolutionsFilters({
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--ink-3)]" />
           </span>
         </label>
 
         <label className="min-w-0 space-y-1">
-          <span className="block text-xs font-semibold text-[var(--muted)]">{tg("common.department")}</span>
+          <span className="block t-label text-[var(--ink-2)]">{tg("common.department")}</span>
           <span className="relative block">
             <select
               value={current.departmentId ?? ""}
@@ -121,20 +121,20 @@ export function ResolutionsFilters({
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--muted)]" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[var(--ink-3)]" />
           </span>
         </label>
 
-        <label className="flex h-10 cursor-pointer select-none items-center gap-2.5 rounded-xl border border-[var(--border-strong)] bg-[var(--surface-2)] px-3 text-sm font-semibold has-[:focus-visible]:border-[var(--primary)] has-[:focus-visible]:shadow-[0_0_0_2px_var(--primary-soft)]">
+        <label className="flex h-11 cursor-pointer select-none items-center gap-2.5 rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--surface)] px-3 text-sm font-semibold text-[var(--ink)] has-[:focus-visible]:border-[var(--tint)]">
           <span
             className={cn(
               "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors",
-              current.mine ? "bg-[var(--primary)]" : "bg-[var(--surface-3)]"
+              current.mine ? "bg-[var(--tint)]" : "bg-[var(--surface-3)]"
             )}
           >
             <span
               className={cn(
-                "inline-block size-4 rounded-full bg-[var(--card)] shadow-[var(--shadow-1)] transition-transform",
+                "inline-block size-4 rounded-full bg-[var(--surface)] shadow-[var(--shadow-1)] transition-transform",
                 current.mine ? "translate-x-[18px]" : "translate-x-0.5"
               )}
             />

@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { NormativeDocuments } from "@/components/normative/normative-documents";
+import { AddNormativeDoc } from "@/components/normative/add-normative-doc";
 import { listNormativeDocuments } from "@/server/queries/normative";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { MyPendingAcks } from "@/components/staff/normative-ack/my-pending-acks";
@@ -33,26 +33,30 @@ export default async function NormativeDocsPage({
     canSendAck ? getAckComposerOptions(viewer) : Promise.resolve(undefined),
   ]);
 
+  const folderNames = [...new Set(docs.map((d) => d.category).filter((c): c is string => !!c))].sort((a, b) =>
+    a.localeCompare(b)
+  );
+
   return (
-    <div className="space-y-6">
-      <PageHeader title={t("normative.title")} subtitle={t("normative.subtitle")} />
-      {pendingAcks.length > 0 && <MyPendingAcks items={pendingAcks} highlight={ack} />}
-      <Card>
-        <CardContent className="p-5 sm:p-6">
-          <NormativeDocuments
-            documents={docs.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
-            canManage={canManage}
-            maxBytes={MAX_UPLOAD_BYTES}
-            currentUserId={me.id}
-            currentUserPosition={me.position}
-            canSendAck={canSendAck}
-            ackSummaries={ackSummaries}
-            allDocs={docs.map((d) => ({ id: d.id, fileName: d.fileName }))}
-            ackOptions={ackOptions}
-            today={tashkentYmd()}
-          />
-        </CardContent>
-      </Card>
+    <div>
+      <PageHeader
+        title={t("normative.title")}
+        actions={canManage ? <AddNormativeDoc folderNames={folderNames} maxBytes={MAX_UPLOAD_BYTES} /> : undefined}
+      />
+      <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
+        {pendingAcks.length > 0 && <MyPendingAcks items={pendingAcks} highlight={ack} />}
+        <NormativeDocuments
+          documents={docs.map((d) => ({ ...d, uploadedAt: d.uploadedAt as Date }))}
+          canManage={canManage}
+          currentUserId={me.id}
+          currentUserPosition={me.position}
+          canSendAck={canSendAck}
+          ackSummaries={ackSummaries}
+          allDocs={docs.map((d) => ({ id: d.id, fileName: d.fileName }))}
+          ackOptions={ackOptions}
+          today={tashkentYmd()}
+        />
+      </div>
     </div>
   );
 }

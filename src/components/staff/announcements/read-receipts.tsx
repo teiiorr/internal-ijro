@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { IconEye, IconBellRinging, IconChevronDown, IconLoader2, IconCircleCheck } from "@tabler/icons-react";
+import { IconBellRinging, IconChevronDown, IconLoader2, IconCircleCheck } from "@tabler/icons-react";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/ui/user-avatar";
@@ -14,8 +14,9 @@ import { errorKey, percent } from "./logic";
 type UnreadPerson = { id: string; fullName: string; avatarUrl: string | null; departmentName: string | null };
 
 /**
- * "Koʻrildi X/Y" progress-bar, hali koʻrmaganlarning ochiladigan roʻyxati va
- * "Qayta eslatish" (server 12 soatda bir martadan koʻp yubormaydi → too_soon toast).
+ * Koʻrilganlik: progress-bar (foiz), hali koʻrmaganlarning ochiladigan ajratuvchi-qatorli
+ * roʻyxati va "Qayta eslatish" (server 12 soatda bir martadan koʻp yubormaydi → too_soon toast).
+ * "Koʻrildi X/Y" sarlavhasi tashqi `Section` meta'sida koʻrsatiladi — bu yerda takrorlanmaydi.
  */
 export function ReadReceipts({
   announcementId,
@@ -58,61 +59,56 @@ export function ReadReceipts({
 
   return (
     <div className="min-w-0 space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-            <IconEye className="size-4" aria-hidden />
-            {t("receiptsTitle")}
-          </p>
-          <p className="mt-1 text-lg font-bold tabular-nums">
-            {t("seen", { read, total })}
-            <span className="ml-2 text-sm font-semibold text-[var(--muted)]">{pct}%</span>
-          </p>
+      <div className="flex items-center gap-4">
+        <div
+          role="progressbar"
+          aria-label={t("seen", { read, total })}
+          aria-valuemin={0}
+          aria-valuemax={total}
+          aria-valuenow={read}
+          className="h-2.5 min-w-0 flex-1 overflow-hidden rounded-full bg-[var(--surface-3)]"
+        >
+          <div
+            className="h-full rounded-full bg-[var(--success)] transition-[width] duration-500"
+            style={{ width: `${pct}%` }}
+          />
         </div>
-        {canRemind && unread.length > 0 && (
-          <Button variant="soft" size="sm" onClick={remind} disabled={pending} className="w-full sm:w-auto">
-            {pending ? <IconLoader2 className="size-4 animate-spin" /> : <IconBellRinging className="size-4" />}
-            {t("remindAgain")}
-          </Button>
-        )}
+        <span className="shrink-0 t-small font-semibold tabular-nums text-[var(--ink-2)]">{pct}%</span>
       </div>
 
-      <div
-        role="progressbar"
-        aria-label={t("seen", { read, total })}
-        aria-valuemin={0}
-        aria-valuemax={total}
-        aria-valuenow={read}
-        className="h-2.5 w-full overflow-hidden rounded-full bg-[var(--surface-3)]"
-      >
-        <div className="h-full rounded-full bg-[var(--success)] transition-[width] duration-500" style={{ width: `${pct}%` }} />
-      </div>
-
-      {lastRemindedLabel && <p className="text-xs text-[var(--muted)]">{t("lastReminded", { date: lastRemindedLabel })}</p>}
+      {lastRemindedLabel && <p className="t-small text-[var(--ink-3)]">{t("lastReminded", { date: lastRemindedLabel })}</p>}
 
       {unread.length > 0 ? (
-        <div>
-          <button
-            type="button"
-            onClick={() => setOpen((o) => !o)}
-            aria-expanded={open}
-            className="flex w-full items-center justify-between gap-2 rounded-xl py-1.5 text-left text-sm font-semibold transition-colors hover:text-[var(--primary)]"
-          >
-            <span className="min-w-0 truncate">
-              {t("notSeen")} <span className="tabular-nums text-[var(--muted)]">({unread.length})</span>
-            </span>
-            <IconChevronDown className={cn("size-4 shrink-0 transition-transform", open && "rotate-180")} />
-          </button>
+        <div className="min-w-0 space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setOpen((o) => !o)}
+              aria-expanded={open}
+              className="inline-flex min-w-0 items-center gap-1.5 py-1 text-left t-label text-[var(--ink)] transition-colors hover:text-[var(--tint)]"
+            >
+              <span className="min-w-0 truncate">
+                {t("notSeen")} <span className="tabular-nums text-[var(--ink-3)]">({unread.length})</span>
+              </span>
+              <IconChevronDown className={cn("size-4 shrink-0 transition-transform", open && "rotate-180")} aria-hidden />
+            </button>
+            {canRemind && (
+              <Button variant="soft" size="sm" onClick={remind} disabled={pending}>
+                {pending ? <IconLoader2 className="size-4 animate-spin" /> : <IconBellRinging className="size-4" />}
+                {t("remindAgain")}
+              </Button>
+            )}
+          </div>
           {open && (
-            <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <ul className="divide-y divide-[var(--line)]">
               {unread.map((u) => {
                 const name = localizeName(u.fullName, locale);
                 return (
-                  <li key={u.id} className="flex min-w-0 items-center gap-2.5 rounded-xl bg-[var(--surface-2)] px-2.5 py-2">
+                  <li key={u.id} className="flex min-w-0 items-center gap-3 py-2.5">
                     <UserAvatar name={name} avatarUrl={u.avatarUrl} size="xs" />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{name}</p>
-                      {u.departmentName && <p className="truncate text-xs text-[var(--muted)]">{u.departmentName}</p>}
+                      <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{name}</p>
+                      {u.departmentName && <p className="truncate t-small text-[var(--ink-3)]">{u.departmentName}</p>}
                     </div>
                   </li>
                 );
@@ -121,7 +117,7 @@ export function ReadReceipts({
           )}
         </div>
       ) : total > 0 ? (
-        <p className="flex items-center gap-1.5 text-sm font-semibold text-[var(--success)]">
+        <p className="flex items-center gap-1.5 t-small font-medium text-[var(--success)]">
           <IconCircleCheck className="size-4" aria-hidden />
           {t("allSeen")}
         </p>

@@ -32,7 +32,7 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
       <div className="relative md:col-span-2">
-        <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+        <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)]" />
         <Input
           placeholder={t("common.search")}
           defaultValue={sp.get("q") ?? ""}
@@ -43,7 +43,7 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
       <Select defaultValue={sp.get("departmentId") ?? "all"} onValueChange={(v) => update("departmentId", v)}>
         <SelectTrigger>
           <span className="flex min-w-0 items-center gap-2">
-            <Building2 className="size-4 shrink-0 text-[var(--muted)]" />
+            <Building2 className="size-4 shrink-0 text-[var(--ink-3)]" />
             <SelectValue placeholder={t("nav.departments")} />
           </span>
         </SelectTrigger>
@@ -57,7 +57,7 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
       <Select defaultValue={sp.get("position") ?? "all"} onValueChange={(v) => update("position", v)}>
         <SelectTrigger>
           <span className="flex min-w-0 items-center gap-2">
-            <Briefcase className="size-4 shrink-0 text-[var(--muted)]" />
+            <Briefcase className="size-4 shrink-0 text-[var(--ink-3)]" />
             <SelectValue placeholder={t("common.position")} />
           </span>
         </SelectTrigger>
@@ -72,7 +72,7 @@ export function EmployeesFilterBar({ departments }: { departments: Dept[] }) {
         <Select defaultValue={sp.get("status") ?? "all"} onValueChange={(v) => update("status", v)}>
           <SelectTrigger>
             <span className="flex min-w-0 items-center gap-2">
-              <Activity className="size-4 shrink-0 text-[var(--muted)]" />
+              <Activity className="size-4 shrink-0 text-[var(--ink-3)]" />
               <SelectValue placeholder={t("common.status")} />
             </span>
           </SelectTrigger>

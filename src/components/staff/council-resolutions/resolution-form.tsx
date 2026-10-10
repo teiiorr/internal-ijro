@@ -103,7 +103,7 @@ function Fields({
         </div>
       </div>
       {lockAssignment && taskLinked && (
-        <p className="flex items-start gap-2 text-xs font-medium text-[var(--muted)]">
+        <p className="flex items-start gap-2 text-xs font-medium text-[var(--ink-3)]">
           <InfoCircle className="mt-px size-3.5 shrink-0" />
           <span className="min-w-0 break-words">{t("errors.task_linked")}</span>
         </p>
@@ -174,7 +174,7 @@ export function AddResolutionForm({
   }
 
   return (
-    <div className="space-y-3 rounded-2xl border border-dashed border-[var(--border-strong)] p-3 sm:p-4">
+    <div className="mt-2 space-y-3 border-t border-[var(--line)] pt-4">
       <Fields idPrefix={`res-add-${meetingId}`} values={values} set={set} agendaItems={agendaItems} people={people} disabled={pending} />
       {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -274,7 +274,7 @@ export function EditResolutionDialog({
       <DialogContent className="max-w-2xl p-5 sm:p-7">
         <DialogHeader className="pr-8">
           <DialogTitle className="text-lg sm:text-xl">
-            {t("editTitle")} · №{row.number}
+            {t("editTitle")}, №{row.number}
           </DialogTitle>
         </DialogHeader>
         <Fields

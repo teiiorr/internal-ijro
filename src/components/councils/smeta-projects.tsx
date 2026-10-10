@@ -5,34 +5,22 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { IconPlus as Plus, IconX as X, IconFileInvoice as FileInvoice } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Status } from "@/components/ui-biib/Status";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmptyState } from "@/components/empty-state";
 import { formatDate } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
-import { cn } from "@/lib/utils";
 import { addSmetaCommissionProject, removeSmetaCommissionProject, type SmetaProjectError } from "@/server/actions/smeta-commission";
 import type { SmetaCommissionProject } from "@/server/queries/smeta-commission";
 
-/** "Jarayonda" belgisi: navbat bilan sakraydigan uchta sariq nuqta + yozuv. */
-function InProcess({ className }: { className: string }) {
-  const t = useTranslations("kengash.smetaProjects");
-  return (
-    <span className={cn("shrink-0 items-center gap-2 rounded-md bg-[#EAB308]/15 px-3 py-1.5 text-xs font-bold text-[#7A5A00] dark:text-[#FACC15]", className)}>
-      <span className="process-dots" aria-hidden>
-        <span />
-        <span />
-        <span />
-      </span>
-      {t("inProcess")}
-    </span>
-  );
-}
-
 /**
- * Smeta komissiyasiga yoʻnaltirilgan loyihalar: "+" tugmasi nom kiritish maydonini ochadi
- * (tizimdagi loyihalar taklif qilinadi); roʻyxat topshirilgan tartibda raqamlanib,
- * har biri "Jarayonda" holatida koʻrsatiladi.
+ * Smeta komissiyasiga yoʻnaltirilgan loyihalar: sarlavha oʻngida "Loyiha qoʻshish",
+ * roʻyxat esa ajratuvchi qatorlar (quti emas). Har bir loyiha "Jarayonda" xotirjam
+ * holat belgisi bilan koʻrsatiladi.
  */
 export function SmetaProjects({
   items,
@@ -49,13 +37,11 @@ export function SmetaProjects({
   const locale = useLocale();
   const router = useRouter();
   const listId = useId();
-  const formId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [lastAdded, setLastAdded] = useState<string | null>(null);
   const canAdd = canManage && ready;
 
   // Maydon ochilishi bilan kursor unga tushadi.
@@ -84,7 +70,6 @@ export function SmetaProjects({
       if (!r.ok) return setError(errorText(r.error));
       // Maydon ochiq qoladi — ketma-ket bir nechta loyiha qoʻshish qulay boʻlsin.
       setName("");
-      setLastAdded(v.toLowerCase());
       toast.success(t("added"));
       router.refresh();
       inputRef.current?.focus();
@@ -102,136 +87,110 @@ export function SmetaProjects({
   }
 
   return (
-    <Card>
-      <CardContent className="p-5 sm:p-6">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="min-w-0 text-lg font-bold tracking-tight sm:text-xl">
-            {t("title")}
-            <span className="ml-2 inline-grid h-7 min-w-7 place-items-center rounded-full bg-[var(--primary-soft)] px-2 align-middle text-sm font-bold tabular-nums text-[var(--primary)]">
-              {items.length}
-            </span>
-          </h2>
-          {canAdd && (
-            <button
-              type="button"
-              onClick={() => (open ? close() : setOpen(true))}
-              aria-expanded={open}
-              aria-controls={formId}
-              aria-label={open ? t("close") : t("addProject")}
-              title={open ? t("close") : t("addProject")}
-              className={cn(
-                "grid size-10 shrink-0 place-items-center rounded-full shadow-[var(--shadow-1)] transition-colors duration-200 active:scale-95",
-                open ? "bg-[var(--surface-2)] text-[var(--foreground)] hover:bg-[var(--surface-3)]" : "bg-[var(--primary)] text-white hover:brightness-110"
-              )}
-            >
-              <Plus className={cn("size-5 transition-transform duration-300", open && "rotate-45")} />
-            </button>
-          )}
-        </div>
-
-        {/* "+" bosilganda silliq ochiladigan maydon; yopiqligida joy egallamaydi va fokuslanmaydi. */}
-        {canAdd && (
-          <div
-            id={formId}
-            inert={!open}
-            className={cn(
-              "grid transition-[grid-template-rows,opacity] duration-300 ease-out",
-              open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-            )}
+    <Section
+      title={t("title")}
+      meta={items.length > 0 ? items.length : undefined}
+      action={
+        canAdd ? (
+          <Button
+            variant={open ? "ghost" : "default"}
+            size="sm"
+            onClick={() => (open ? close() : setOpen(true))}
+            aria-expanded={open}
           >
-            <div className="-mx-1 min-h-0 overflow-hidden px-1">
-              <form onSubmit={submit} className="space-y-1.5 pb-1 pt-4">
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <Input
-                    ref={inputRef}
-                    value={name}
-                    onChange={(e) => { setName(e.target.value); if (error) setError(null); }}
-                    onKeyDown={(e) => { if (e.key === "Escape") close(); }}
-                    list={listId}
-                    maxLength={300}
-                    placeholder={t("placeholder")}
-                    aria-label={t("placeholder")}
-                    className="sm:flex-1"
-                  />
-                  <datalist id={listId}>
-                    {suggestions.map((p) => (
-                      <option key={p.id} value={p.name} />
-                    ))}
-                  </datalist>
-                  <Button type="submit" disabled={pending || name.trim().length < 2} className="w-full sm:w-auto">
-                    <Plus className="size-4" />
-                    {t("add")}
-                  </Button>
-                </div>
-                {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : <p className="text-xs text-[var(--subtle)]">{t("hint")}</p>}
-              </form>
+            {open ? <X className="size-4" /> : <Plus className="size-4" />}
+            {open ? t("close") : t("addProject")}
+          </Button>
+        ) : undefined
+      }
+    >
+      <div className="flex flex-col gap-4">
+        {/* Qoʻshish maydoni — "Loyiha qoʻshish" bosilganda ochiladi */}
+        {canAdd && open && (
+          <form onSubmit={submit} className="space-y-1.5">
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input
+                ref={inputRef}
+                value={name}
+                onChange={(e) => { setName(e.target.value); if (error) setError(null); }}
+                onKeyDown={(e) => { if (e.key === "Escape") close(); }}
+                list={listId}
+                maxLength={300}
+                placeholder={t("placeholder")}
+                aria-label={t("placeholder")}
+                className="sm:flex-1"
+              />
+              <datalist id={listId}>
+                {suggestions.map((p) => (
+                  <option key={p.id} value={p.name} />
+                ))}
+              </datalist>
+              <Button type="submit" disabled={pending || name.trim().length < 2} className="w-full sm:w-auto">
+                <Plus className="size-4" />
+                {t("add")}
+              </Button>
             </div>
-          </div>
+            {error ? <p className="t-small text-[var(--danger)]">{error}</p> : <p className="t-micro text-[var(--ink-3)]">{t("hint")}</p>}
+          </form>
         )}
+
         {canManage && !ready && (
-          <p className="mt-4 rounded-2xl bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--muted)]">{t("errors.unavailable")}</p>
+          <p className="rounded-[var(--radius-m)] bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--ink-2)]">{t("errors.unavailable")}</p>
         )}
 
         {items.length === 0 ? (
-          <div className="mt-4 flex flex-col items-center gap-2 rounded-2xl border border-dashed border-[var(--border-strong)] px-4 py-10 text-center">
-            <FileInvoice className="size-7 text-[var(--subtle)]" />
-            <p className="text-sm font-semibold text-[var(--muted)]">{t("empty")}</p>
-            {canAdd && !open && (
-              <button
-                type="button"
-                onClick={() => setOpen(true)}
-                className="mt-1 inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary-soft)] active:scale-95"
-              >
-                <Plus className="size-4" />
-                {t("addProject")}
-              </button>
-            )}
-          </div>
+          <Card solid bare>
+            <EmptyState
+              icon={FileInvoice}
+              title={t("empty")}
+              action={
+                canAdd && !open ? (
+                  <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+                    <Plus className="size-4" />
+                    {t("addProject")}
+                  </Button>
+                ) : undefined
+              }
+            />
+          </Card>
         ) : (
-          <ol className="mt-4 space-y-2">
-            {items.map((it, i) => (
-              <li
-                key={it.id}
-                className={cn(
-                  "flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 transition-colors hover:border-[var(--border-strong)] sm:p-3.5",
-                  lastAdded === it.name.toLowerCase() && "animate-[item-enter_0.6s_cubic-bezier(0.16,1,0.3,1)_both]"
-                )}
-              >
-                <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-[var(--surface-2)] text-sm font-bold tabular-nums text-[var(--muted)]">
-                  {i + 1}
-                </span>
-                <div className="min-w-0 flex-1">
-                  {it.projectId ? (
-                    <Link href={`/projects/${it.projectId}`} className="break-words text-[15px] font-semibold leading-snug hover:text-[var(--primary)] hover:underline">
-                      {it.name}
-                    </Link>
-                  ) : (
-                    <p className="break-words text-[15px] font-semibold leading-snug">{it.name}</p>
+          <Card solid bare className="px-5 sm:px-6">
+            <Rows>
+              {items.map((it, i) => (
+                <Row key={it.id}>
+                  <span className="shrink-0 text-sm font-bold tabular-nums text-[var(--ink-3)]">{i + 1}</span>
+                  <div className="min-w-0 flex-1">
+                    {it.projectId ? (
+                      <Link href={`/projects/${it.projectId}`} className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
+                        {it.name}
+                      </Link>
+                    ) : (
+                      <p className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)]">{it.name}</p>
+                    )}
+                    <p className="mt-0.5 t-micro text-[var(--ink-3)]">
+                      {formatDate(it.createdAt, locale)}
+                      {it.createdByName && `, ${localizeName(it.createdByName, locale)}`}
+                    </p>
+                  </div>
+                  <Status tone="info" dot className="shrink-0">{t("inProcess")}</Status>
+                  {canManage && (
+                    <button
+                      type="button"
+                      onClick={() => remove(it)}
+                      disabled={pending}
+                      aria-label={t("remove")}
+                      title={t("remove")}
+                      className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--danger)] active:scale-95 disabled:opacity-50"
+                    >
+                      <X className="size-4" />
+                    </button>
                   )}
-                  <p className="mt-0.5 text-xs text-[var(--muted)]">
-                    {formatDate(it.createdAt, locale)}
-                    {it.createdByName && ` · ${localizeName(it.createdByName, locale)}`}
-                  </p>
-                  <InProcess className="mt-2 inline-flex sm:hidden" />
-                </div>
-                <InProcess className="hidden sm:inline-flex" />
-                {canManage && (
-                  <button
-                    type="button"
-                    onClick={() => remove(it)}
-                    disabled={pending}
-                    aria-label={t("remove")}
-                    title={t("remove")}
-                    className="grid size-9 shrink-0 place-items-center rounded-xl text-[var(--subtle)] transition-colors hover:bg-[var(--danger-soft)] hover:text-[var(--danger)] active:scale-95 disabled:opacity-50"
-                  >
-                    <X className="size-4" />
-                  </button>
-                )}
-              </li>
-            ))}
-          </ol>
+                </Row>
+              ))}
+            </Rows>
+          </Card>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </Section>
   );
 }

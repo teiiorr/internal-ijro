@@ -18,7 +18,7 @@ function Row({ item, prefix }: { item: InboxItem; prefix?: string }) {
         <p className="text-[15px] font-semibold truncate">{item.title}</p>
         <div className="flex items-center gap-2 mt-1 text-[13px] text-[var(--muted)]">
           {item.registrationNumber && <span className="tabular">№ {item.registrationNumber}</span>}
-          {prefix && <span className="inline-flex items-center gap-1">· {prefix} {(item.responseFromName ?? item.creatorName) && <UserAvatar name={(item.responseFromName ?? item.creatorName)!} avatarUrl={item.avatarUrl} size="xs" clickable={false} />}{item.responseFromName ?? item.creatorName}</span>}
+          {prefix && <span className="inline-flex items-center gap-1">{prefix} {(item.responseFromName ?? item.creatorName) && <UserAvatar name={(item.responseFromName ?? item.creatorName)!} avatarUrl={item.avatarUrl} size="xs" clickable={false} />}{item.responseFromName ?? item.creatorName}</span>}
         </div>
       </div>
       <DeadlineCountdown deadline={item.deadline} />

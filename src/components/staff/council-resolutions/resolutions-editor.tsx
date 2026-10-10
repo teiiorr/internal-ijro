@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  IconGavel as Gavel,
   IconInfoCircle as InfoCircle,
   IconListDetails as ListDetails,
   IconClipboardList as ClipboardList,
@@ -49,21 +48,16 @@ export function ResolutionsEditor({
   const editing = editingId ? rows.find((r) => r.id === editingId) : undefined;
 
   return (
-    <section className={cn("min-w-0 space-y-3", !compact && "border-t border-[var(--border)] pt-5")} data-kind={kind}>
-      <div className="flex min-w-0 items-center gap-2">
-        <Gavel className="size-4 shrink-0 text-[var(--primary)]" />
-        <h3 className="min-w-0 truncate text-base font-semibold">{t("block")}</h3>
-        {rows.length > 0 && (
-          <span className="rounded-md bg-[var(--surface-3)] px-2 py-0.5 text-xs font-bold tabular-nums text-[var(--muted)]">
-            {rows.length}
-          </span>
-        )}
+    <section className={cn("min-w-0 space-y-3", !compact && "mt-5 border-t border-[var(--line)] pt-5")} data-kind={kind}>
+      <div className="flex min-w-0 items-baseline gap-2.5">
+        <h3 className="min-w-0 truncate font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("block")}</h3>
+        {rows.length > 0 && <span className="t-micro tabular-nums text-[var(--ink-3)]">{rows.length}</span>}
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-[var(--muted)]">{t("empty")}</p>
+        <p className="text-sm text-[var(--ink-3)]">{t("empty")}</p>
       ) : (
-        <ol className="space-y-2">
+        <ol className="-my-1 divide-y divide-[var(--line)]">
           {rows.map((row) => (
             <EditorItem
               key={row.id}
@@ -78,7 +72,7 @@ export function ResolutionsEditor({
       {canEdit && <AddResolutionForm meetingId={meetingId} agendaItems={agendaItems} people={people} collapsible={compact} />}
 
       {!compact && canEdit && rows.length > 0 && (
-        <p className="flex items-start gap-1.5 text-xs text-[var(--subtle)]">
+        <p className="flex items-start gap-1.5 t-micro text-[var(--ink-3)]">
           <InfoCircle className="mt-px size-3.5 shrink-0" />
           <span className="min-w-0 break-words">{t("deleteMeetingNote")}</span>
         </p>
@@ -102,26 +96,17 @@ function EditorItem({
 }) {
   const t = useTranslations(NS);
   const locale = useLocale();
-  const overdue = row.effective === "overdue";
   const closed = !isActiveStatus(row.effective);
 
   return (
-    <li
-      className={cn(
-        "rounded-xl border p-3 sm:p-3.5",
-        overdue ? "border-[var(--danger)]/30 bg-[var(--danger-soft)]" : "border-[var(--border)] bg-[var(--surface-2)]",
-        row.effective === "cancelled" && "opacity-70"
-      )}
-    >
+    <li className={cn("py-3", row.effective === "cancelled" && "opacity-70")}>
       <div className="flex min-w-0 items-start gap-2.5 sm:gap-3">
-        <span className="mt-0.5 shrink-0 rounded-lg bg-[var(--card)] px-1.5 py-0.5 text-xs font-bold tabular-nums text-[var(--muted)] shadow-[var(--shadow-1)]">
-          №{row.number}
-        </span>
+        <span className="mt-0.5 shrink-0 text-xs font-bold tabular-nums text-[var(--ink-3)]">№{row.number}</span>
         <div className="min-w-0 flex-1 space-y-2">
-          <ExpandableText text={row.text} className={cn("text-sm font-medium", row.effective === "cancelled" && "line-through")} />
+          <ExpandableText text={row.text} className={cn("text-sm font-medium text-[var(--ink)]", row.effective === "cancelled" && "line-through")} />
 
           {row.agendaTopic && (
-            <p className="flex min-w-0 items-center gap-1.5 text-xs text-[var(--muted)]">
+            <p className="flex min-w-0 items-center gap-1.5 text-xs text-[var(--ink-3)]">
               <ListDetails className="size-3.5 shrink-0" />
               <span className="min-w-0 truncate">{row.agendaTopic}</span>
             </p>
@@ -131,17 +116,17 @@ function EditorItem({
             {row.responsibleName ? (
               <span className="flex min-w-0 items-center gap-1.5">
                 <UserAvatar name={row.responsibleName} avatarUrl={row.responsibleAvatar} size="xs" clickable={false} className="!size-6" />
-                <span className="min-w-0 truncate font-semibold">{localizeName(row.responsibleName, locale)}</span>
+                <span className="min-w-0 truncate font-semibold text-[var(--ink)]">{localizeName(row.responsibleName, locale)}</span>
               </span>
             ) : (
-              <span className="text-[var(--subtle)]">{t("noResponsible")}</span>
+              <span className="text-[var(--ink-3)]">{t("noResponsible")}</span>
             )}
             <DueCell dueDate={row.dueDate} effective={row.effective} />
             <ResolutionStatusChip status={row.effective} />
             {row.taskId && (
               <Link
                 href={`/tasks/${row.taskId}`}
-                className="inline-flex items-center gap-1 whitespace-nowrap rounded-md text-xs font-semibold text-[var(--primary)] hover:underline"
+                className="inline-flex items-center gap-1 whitespace-nowrap text-xs font-semibold text-[var(--tint)] hover:underline"
               >
                 <ClipboardList className="size-3.5" />№ {row.taskRegNumber ?? "—"}
               </Link>
@@ -149,13 +134,13 @@ function EditorItem({
           </div>
 
           {row.closedNote && (
-            <p className="break-words text-xs text-[var(--muted)]">
+            <p className="break-words text-xs text-[var(--ink-3)]">
               <span className="font-semibold">{t("closedNote")}:</span> {row.closedNote}
             </p>
           )}
 
           {row.taskId && !closed && (
-            <p className="flex items-start gap-1.5 text-xs text-[var(--subtle)]">
+            <p className="flex items-start gap-1.5 text-xs text-[var(--ink-3)]">
               <InfoCircle className="mt-px size-3.5 shrink-0" />
               <span className="min-w-0 break-words">{t("taskLinkedCannotClose")}</span>
             </p>

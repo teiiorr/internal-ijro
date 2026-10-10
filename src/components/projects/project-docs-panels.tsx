@@ -3,8 +3,9 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations, useLocale } from "next-intl";
-import { IconDownload as Download, IconTrash as Trash2, IconFileText as FileText, IconPlus as Plus, IconLoader2 as Loader2, IconChartBar as BarChart3, IconWorld as Globe2, IconChevronUp as ChevronUp } from "@tabler/icons-react";
+import { IconDownload as Download, IconTrash as Trash2, IconFileText as FileText, IconPlus as Plus, IconLoader2 as Loader2, IconChevronUp as ChevronUp } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui-biib/Card";
 import { FileInput } from "@/components/ui/file-input";
 import { removeProjectDocument } from "@/server/actions/projects";
 import { compressImage } from "@/lib/images/compress";
@@ -28,23 +29,6 @@ function humanSize(bytes: number | null): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-// Har bir bölimga alohida rang jamlanmasi va belgi beriladi — şunda ikkala panel
-// közga taşlanadigan, uslubga mos, bir-biridan aniq farq qiladigan bloklarga öxşaydi.
-const THEME: Record<Kind, { grad: string; btn: string; soft: string; Icon: typeof BarChart3 }> = {
-  tahlil: {
-    grad: "from-[#6366f1] to-[#8b5cf6]",
-    btn: "bg-[#6366f1] hover:bg-[#5457e0] text-white",
-    soft: "bg-[var(--primary-soft)] text-[var(--primary)]",
-    Icon: BarChart3,
-  },
-  xalqaro_tajriba: {
-    grad: "from-[#0ea5e9] to-[#06b6d4]",
-    btn: "bg-[#0891b2] hover:bg-[#0e7490] text-white",
-    soft: "bg-[#06b6d4]/12 text-[#0891b2]",
-    Icon: Globe2,
-  },
-};
-
 function DocPanel({
   projectId,
   kind,
@@ -65,8 +49,6 @@ function DocPanel({
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const theme = THEME[kind];
-  const Icon = theme.Icon;
   const [pending, start] = useTransition();
   const [staged, setStaged] = useState<Staged | null>(null);
   const [preparing, setPreparing] = useState(false);
@@ -135,123 +117,106 @@ function DocPanel({
   const busy = preparing || uploading;
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]">
-      {/* Gradiyentli sarlavha — matn markazda, belgi va son çetlarga mahkamlangan.
-          Asosiy `h3 { color }` qoidasini yengish uchun text-white bevosita <h3> ga qöyilgan. */}
-      <div className={`relative bg-gradient-to-r ${theme.grad} px-4 py-3.5`}>
-        <span className="absolute left-4 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-xl bg-white/20 text-white backdrop-blur-sm">
-          <Icon className="size-5" />
-        </span>
-        <h3 className="truncate px-14 text-center text-[15px] font-bold leading-tight text-white">{title}</h3>
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-md bg-white/25 px-2 py-0.5 text-xs font-bold tabular-nums text-white">
-          {docs.length}
-        </span>
+    <Card className="flex h-full flex-col">
+      {/* Sarlavha — oddiy matn, sanoq meta sifatida (plashka yoki belgili chip emas) */}
+      <div className="flex items-baseline justify-between gap-2">
+        <h3 className="t-h3 text-[var(--ink)]">{title}</h3>
+        {docs.length > 0 && <span className="t-micro tabular-nums text-[var(--ink-3)]">{docs.length}</span>}
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        {docs.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-[var(--border-strong)] py-5 text-center text-sm text-[var(--muted)]">
-            {t("projects.projectDocs.empty")}
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {docs.map((d) => {
-              const meta = `${humanSize(d.fileSize)}${d.uploaderName ? ` · ${d.uploaderName}` : ""} · ${formatDate(d.uploadedAt as Date, locale)}`;
-              return (
-                <li
-                  key={d.id}
-                  className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5"
-                >
-                  <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${theme.soft}`}>
-                    <FileText className="size-4" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold" title={d.fileName}>{d.fileName}</p>
-                    <p className="truncate text-xs text-[var(--muted)]">{meta}</p>
-                  </div>
-                  <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
-                    <a href={d.fileUrl} download>
-                      <Download className="size-4" />
-                    </a>
+      {docs.length === 0 ? (
+        <p className="mt-4 t-small text-[var(--ink-3)]">{t("projects.projectDocs.empty")}</p>
+      ) : (
+        <ul className="-mx-5 mt-3 divide-y divide-[var(--line)] sm:-mx-6">
+          {docs.map((d) => {
+            const meta = `${humanSize(d.fileSize)}${d.uploaderName ? `, ${d.uploaderName}` : ""}, ${formatDate(d.uploadedAt as Date, locale)}`;
+            return (
+              <li key={d.id} className="flex items-center gap-2.5 px-5 py-3 sm:px-6">
+                <FileText className="size-[18px] shrink-0 text-[var(--ink-3)]" aria-hidden />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-[var(--ink)]" title={d.fileName}>{d.fileName}</p>
+                  <p className="truncate t-micro text-[var(--ink-3)]">{meta}</p>
+                </div>
+                <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
+                  <a href={d.fileUrl} download>
+                    <Download className="size-4" />
+                  </a>
+                </Button>
+                {canDelete && (
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    disabled={pending}
+                    aria-label={t("common.delete")}
+                    onClick={() => start(async () => { await removeProjectDocument(d.id); })}
+                  >
+                    <Trash2 className="size-4" />
                   </Button>
-                  {canDelete && (
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      disabled={pending}
-                      aria-label={t("common.delete")}
-                      onClick={() => start(async () => { await removeProjectDocument(d.id); })}
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
 
-        {/* Yuklaş qismi pastga mahkamlangan — şunda har bir panelda neçta fayl
-            bölişidan qat'i nazar, tugma bir xil joyda turadi. Standart holatda yiğilgan;
-            almaştirilganda tugma va forma özaro animatsiyalanadi (balandlik + söniş). */}
-        {canManage && (
-          <div className="mt-auto">
-            <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}>
-              <div className="overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setOpen(true)}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-[var(--border-strong)] py-2.5 text-sm font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
-                >
-                  <Plus className="size-4" />
-                  {t("projects.projectDocs.addFile")}
-                </button>
-              </div>
+      {/* Yuklaş qismi pastga mahkamlangan. Standart holatda yiğilgan. */}
+      {canManage && (
+        <div className="mt-auto pt-4">
+          <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"}`}>
+            <div className="overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="flex w-full items-center justify-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface-2)] py-2.5 text-sm font-semibold text-[var(--ink-2)] transition-colors hover:border-[var(--line-strong)] hover:text-[var(--ink)]"
+              >
+                <Plus className="size-4" />
+                {t("projects.projectDocs.addFile")}
+              </button>
             </div>
-            <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-              <div className="overflow-hidden">
-                <div className="space-y-2.5">
-                  <FileInput key={pickerKey} onFileChange={onFileChange} disabled={busy} />
-                  {preparing && (
-                    <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
-                      <Loader2 className="size-3.5 animate-spin" />
-                      {t("projects.stageDocs.preparing")}
-                    </p>
-                  )}
-                  {staged && !preparing && (
-                    <p className={"text-xs " + (tooBig ? "text-[var(--danger)]" : "text-[var(--muted)]")}>
-                      {staged.compressed
-                        ? t("projects.stageDocs.compressedNote", { from: humanSize(staged.originalSize), to: humanSize(staged.file.size) })
-                        : humanSize(staged.file.size)}
-                      {tooBig ? ` · ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
-                    </p>
-                  )}
-                  <div className="flex gap-2">
-                    <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className={`flex-1 ${theme.btn}`}>
-                      {uploading ? (
-                        <>
-                          <Loader2 className="size-4 animate-spin" />
-                          {t("projects.stageDocs.uploading")}
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="size-4" />
-                          {t("common.add")}
-                        </>
-                      )}
-                    </Button>
-                    <Button type="button" variant="ghost" disabled={uploading} onClick={() => { setOpen(false); setStaged(null); }}>
-                      <ChevronUp className="size-4" />
-                      {t("projects.projectDocs.hide")}
-                    </Button>
-                  </div>
+          </div>
+          <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+            <div className="overflow-hidden">
+              <div className="space-y-2.5">
+                <FileInput key={pickerKey} onFileChange={onFileChange} disabled={busy} />
+                {preparing && (
+                  <p className="flex items-center gap-1.5 t-micro text-[var(--ink-3)]">
+                    <Loader2 className="size-3.5 animate-spin" />
+                    {t("projects.stageDocs.preparing")}
+                  </p>
+                )}
+                {staged && !preparing && (
+                  <p className={"t-micro " + (tooBig ? "text-[var(--danger)]" : "text-[var(--ink-3)]")}>
+                    {staged.compressed
+                      ? t("projects.stageDocs.compressedNote", { from: humanSize(staged.originalSize), to: humanSize(staged.file.size) })
+                      : humanSize(staged.file.size)}
+                    {tooBig ? `, ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className="flex-1">
+                    {uploading ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        {t("projects.stageDocs.uploading")}
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="size-4" />
+                        {t("common.add")}
+                      </>
+                    )}
+                  </Button>
+                  <Button type="button" variant="ghost" disabled={uploading} onClick={() => { setOpen(false); setStaged(null); }}>
+                    <ChevronUp className="size-4" />
+                    {t("projects.projectDocs.hide")}
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </Card>
   );
 }
 
@@ -272,7 +237,7 @@ export function ProjectDocsPanels({
 }) {
   const t = useTranslations();
   return (
-    <div className="grid grid-cols-1 items-stretch gap-4 sm:gap-5 md:grid-cols-2">
+    <div className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2">
       <DocPanel projectId={projectId} kind="tahlil" title={t("projects.projectDocs.tahlilTitle")} docs={tahlil} canManage={canManage} canDelete={canDelete} maxBytes={maxBytes} />
       <DocPanel projectId={projectId} kind="xalqaro_tajriba" title={t("projects.projectDocs.xalqaroTitle")} docs={xalqaro} canManage={canManage} canDelete={canDelete} maxBytes={maxBytes} />
     </div>

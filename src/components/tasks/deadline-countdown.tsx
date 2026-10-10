@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
-import { StatusTag } from "@/components/ui/status-tag";
+import { Status } from "@/components/ui-biib/Status";
 
 type Props = {
   deadline: Date | string | null | undefined;
@@ -51,9 +51,9 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
 
   if (diffMs <= 0) {
     return (
-      <StatusTag tone="red" className={cn("tabular-nums", className)}>
+      <Status tone="danger" dot className={cn("tabular-nums", className)}>
         {l.overdue}
-      </StatusTag>
+      </Status>
     );
   }
 
@@ -65,7 +65,7 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
 
   const urgent = days === 0 && hours < 6;
   const soon = days < 3;
-  const tone = urgent ? "red" : soon ? "amber" : "green";
+  const tone = urgent ? "danger" : soon ? "warning" : "success";
 
   let text: string;
   if (days > 0) {
@@ -79,8 +79,8 @@ export function DeadlineCountdown({ deadline, completed = false, className }: Pr
   }
 
   return (
-    <StatusTag tone={tone} className={cn("tabular-nums", className)}>
+    <Status tone={tone} className={cn("tabular-nums", className)}>
       {text}
-    </StatusTag>
+    </Status>
   );
 }

@@ -3,21 +3,21 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { IconDeviceFloppy as DeviceFloppy, IconNotes as Notes } from "@tabler/icons-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { IconDeviceFloppy as DeviceFloppy } from "@tabler/icons-react";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
+import { Button } from "@/components/ui-biib/Button";
+import { Textarea } from "@/components/ui-biib/Textarea";
 import { DocMarkdown } from "@/components/councils/doc-markdown";
 import { formatDateTime } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
 import { SUMMARY_MAX_LENGTH } from "@/lib/reports/weekly-brief-core";
 import { saveWeeklySummary } from "@/server/actions/weekly-brief";
-import { BriefSectionTitle } from "./brief-group";
 
 /**
  * "Hafta xulosasi": direktor / oʻrinbosar / egasi uchun matn maydoni (Markdown), qolganlar
- * uchun DocMarkdown bilan faqat oʻqish. Hafta almashganda holat yangilanishi uchun sahifa
- * komponentni `key={weekStart}` bilan qayta yaratadi.
+ * uchun faqat oʻqish. BIIB: ramkasiz — oyna karta ichida bevosita maydon yoki matn (ichki
+ * quti yoʻq). Hafta almashganda holat `key={weekStart}` orqali yangilanadi.
  */
 export function WeeklySummaryEditor({
   weekStart,
@@ -70,10 +70,8 @@ export function WeeklySummaryEditor({
   }
 
   return (
-    <Card className="min-w-0">
-      <CardContent className="space-y-3 p-4 sm:p-6">
-        <BriefSectionTitle icon={<Notes className="size-5" />} title={t("summary")} />
-
+    <Section title={t("summary")}>
+      <Card>
         {canEdit ? (
           <div className="space-y-3">
             <Textarea
@@ -85,25 +83,32 @@ export function WeeklySummaryEditor({
               disabled={pending}
               aria-label={t("summary")}
             />
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="min-w-0 break-words text-xs text-[var(--muted)]">{meta ?? t("markdownHint")}</p>
-              <Button onClick={onSave} disabled={pending || !dirty} className="self-start sm:self-auto">
-                <DeviceFloppy className="size-4" />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="min-w-0 break-words t-small text-[var(--ink-3)]">{meta ?? t("markdownHint")}</p>
+              <Button
+                variant="primary"
+                size="40"
+                icon={DeviceFloppy}
+                onClick={onSave}
+                loading={pending}
+                disabled={pending || !dirty}
+                className="max-sm:w-full"
+              >
                 {tc("save")}
               </Button>
             </div>
           </div>
         ) : note ? (
           <div className="space-y-2">
-            <div className="min-w-0 break-words rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-4 py-3">
+            <div className="min-w-0 break-words">
               <DocMarkdown>{note}</DocMarkdown>
             </div>
-            {meta && <p className="break-words text-xs text-[var(--muted)]">{meta}</p>}
+            {meta && <p className="break-words t-small text-[var(--ink-3)]">{meta}</p>}
           </div>
         ) : (
-          <p className="py-4 text-center text-sm text-[var(--muted)]">{t("noSummary")}</p>
+          <p className="py-4 text-center t-small text-[var(--ink-3)]">{t("noSummary")}</p>
         )}
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   );
 }

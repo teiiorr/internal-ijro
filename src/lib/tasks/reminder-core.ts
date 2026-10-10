@@ -83,8 +83,8 @@ export function digestText(c: DigestCounts): { title: string; message: string } 
   return {
     title: "Ertalabki xulosa / Утренняя сводка",
     message:
-      `Bugun muddati: ${dueToday} · Kechikkan: ${overdue} · Tasdiqlashingizni kutmoqda: ${awaiting}` +
-      ` / Сегодня срок: ${dueToday} · Просрочено: ${overdue} · Ждут вашего утверждения: ${awaiting}`,
+      `Bugun muddati: ${dueToday}, Kechikkan: ${overdue}, Tasdiqlashingizni kutmoqda: ${awaiting}` +
+      ` / Сегодня срок: ${dueToday}, Просрочено: ${overdue}, Ждут вашего утверждения: ${awaiting}`,
   };
 }
 

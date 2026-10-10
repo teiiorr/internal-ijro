@@ -96,7 +96,7 @@ export function ContestForm({ contest }: { contest?: Contest }) {
             <Label htmlFor="ct-desc">{t("tanlov.descriptionLabel")}</Label>
             <Textarea id="ct-desc" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
           </div>
-          {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
+          {error && <p className="t-small text-[var(--danger)]">{error}</p>}
           <DialogFooter>
             <DialogClose asChild><Button type="button" variant="ghost">{t("common.cancel")}</Button></DialogClose>
             <Button type="submit" disabled={pending}>

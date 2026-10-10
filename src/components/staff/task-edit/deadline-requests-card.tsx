@@ -3,11 +3,11 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { IconArrowRight, IconCalendarTime } from "@tabler/icons-react";
-import { Card } from "@/components/ui/card";
+import { IconArrowRight } from "@tabler/icons-react";
+import { Card } from "@/components/ui-biib/Card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { formatDateTime } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
@@ -21,10 +21,10 @@ export type DeadlineRequestsCardProps = {
 };
 
 const TONE: Record<DeadlineRequestView["status"], StatusTone> = {
-  pending: "amber",
-  approved: "green",
-  rejected: "red",
-  cancelled: "muted",
+  pending: "warning",
+  approved: "success",
+  rejected: "danger",
+  cancelled: "neutral",
 };
 
 const STATUS_KEY: Record<DeadlineRequestView["status"], string> = {
@@ -38,11 +38,11 @@ function DateShift({ r }: { r: DeadlineRequestView }) {
   const t = useTranslations("staffX.taskEdit");
   const days = r.previousDate ? diffDaysIso(r.previousDate, r.requestedDate) : null;
   return (
-    <span className="inline-flex flex-wrap items-center gap-1.5 text-sm font-semibold tabular">
+    <span className="inline-flex flex-wrap items-center gap-1.5 text-sm font-semibold tabular-nums">
       <span>{fmtDdMm(r.previousDate)}</span>
-      <IconArrowRight className="size-3.5 text-[var(--muted)]" />
-      <span className="text-[var(--primary)]">{fmtDdMm(r.requestedDate)}</span>
-      {days !== null && <span className="text-[var(--muted)]">({t("extraDays", { days })})</span>}
+      <IconArrowRight className="size-3.5 text-[var(--ink-3)]" aria-hidden />
+      <span className="text-[var(--tint)]">{fmtDdMm(r.requestedDate)}</span>
+      {days !== null && <span className="text-[var(--ink-3)]">({t("extraDays", { days })})</span>}
     </span>
   );
 }
@@ -54,29 +54,27 @@ export function DeadlineRequestsCard({ requests, canDecide, locale }: DeadlineRe
   if (requests.length === 0) return null;
 
   return (
-    <Card className="overflow-hidden">
-      <div className="flex items-center justify-between gap-3 px-5 pb-3 pt-5 sm:px-7 sm:pt-6">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <div className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--warning-soft)]">
-            <IconCalendarTime className="size-5 text-[var(--warning)]" />
-          </div>
-          <h3 className="min-w-0 truncate text-lg font-bold tracking-tight">{t("requestsCard")}</h3>
-        </div>
-        {pending.length > 0 && <StatusTag tone="amber" size="sm">{pending.length}</StatusTag>}
+    <Card>
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <h3 className="min-w-0 truncate font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">
+          {t("requestsCard")}
+        </h3>
+        {pending.length > 0 && <Status tone="warning">{pending.length}</Status>}
       </div>
 
-      <div className="space-y-3 px-3 pb-5 sm:px-5">
+      <div className="space-y-3">
         {pending.map((r) => (
           <div
             key={r.id}
-            className="rounded-2xl border border-[var(--warning)]/40 bg-[var(--warning-soft)] p-3 sm:p-4"
+            className="rounded-[var(--radius-control)] p-3 sm:p-4"
+            style={{ backgroundColor: "color-mix(in oklab, var(--warning) 10%, transparent)" }}
           >
             <div className="flex min-w-0 items-start gap-3">
               <UserAvatar name={r.requesterName} avatarUrl={r.requesterAvatar} size="sm" clickable={false} />
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-                  <p className="min-w-0 truncate text-[15px] font-semibold">{localizeName(r.requesterName, locale)}</p>
-                  <span className="shrink-0 text-xs text-[var(--muted)] tabular">{formatDateTime(r.createdAt, locale)}</span>
+                  <p className="min-w-0 truncate text-[15px] font-semibold text-[var(--ink)]">{localizeName(r.requesterName, locale)}</p>
+                  <span className="shrink-0 t-micro tabular-nums text-[var(--ink-3)]">{formatDateTime(r.createdAt, locale)}</span>
                 </div>
                 <DateShift r={r} />
                 <p className="whitespace-pre-wrap break-words text-sm leading-relaxed [overflow-wrap:anywhere]">{r.reason}</p>
@@ -87,21 +85,21 @@ export function DeadlineRequestsCard({ requests, canDecide, locale }: DeadlineRe
         ))}
 
         {past.length > 0 && (
-          <ul className="divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)]">
+          <ul className="divide-y divide-[var(--line)]">
             {past.map((r) => (
-              <li key={r.id} className="flex flex-col gap-1.5 px-3 py-2.5 sm:px-4">
+              <li key={r.id} className="flex flex-col gap-1.5 py-2.5">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <StatusTag tone={TONE[r.status]} size="sm">{t(STATUS_KEY[r.status])}</StatusTag>
-                  <span className="min-w-0 truncate text-sm font-semibold">{localizeName(r.requesterName, locale)}</span>
+                  <Status tone={TONE[r.status]}>{t(STATUS_KEY[r.status])}</Status>
+                  <span className="min-w-0 truncate text-sm font-semibold text-[var(--ink)]">{localizeName(r.requesterName, locale)}</span>
                   <DateShift r={r} />
-                  <span className="ml-auto text-xs text-[var(--subtle)] tabular">
+                  <span className="ml-auto t-micro tabular-nums text-[var(--ink-3)]">
                     {formatDateTime(r.decidedAt ?? r.createdAt, locale)}
                   </span>
                 </div>
-                <p className="line-clamp-2 break-words text-xs text-[var(--muted)] [overflow-wrap:anywhere]">{r.reason}</p>
+                <p className="line-clamp-2 break-words t-micro text-[var(--ink-3)] [overflow-wrap:anywhere]">{r.reason}</p>
                 {(r.decisionNote || r.deciderName) && r.status !== "cancelled" && (
-                  <p className="break-words border-l-2 border-[var(--border-strong)] pl-2.5 text-xs italic text-[var(--muted)] [overflow-wrap:anywhere]">
-                    {r.deciderName && <span className="font-semibold not-italic">{localizeName(r.deciderName, locale)}</span>}
+                  <p className="break-words border-l-2 border-[var(--line-strong)] pl-2.5 t-micro italic text-[var(--ink-3)] [overflow-wrap:anywhere]">
+                    {r.deciderName && <span className="font-semibold not-italic text-[var(--ink-2)]">{localizeName(r.deciderName, locale)}</span>}
                     {r.deciderName && r.decisionNote && ": "}
                     {r.decisionNote}
                   </p>
@@ -143,7 +141,7 @@ function DecisionControls({ requestId }: { requestId: string }) {
   }
 
   return (
-    <div className="mt-3 space-y-2 border-t border-[var(--warning)]/30 pt-3">
+    <div className="mt-3 space-y-2 border-t border-[var(--line)] pt-3">
       <Input
         value={note}
         onChange={(e) => setNote(e.target.value)}

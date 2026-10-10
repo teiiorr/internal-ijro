@@ -23,7 +23,7 @@ export default async function ContractorsPage() {
   const [rows, reviewGroups, pendingRequests] = await Promise.all([listContractorsWithProjects(), getReviewQueue(), countPendingRequests()]);
 
   return (
-    <div className="space-y-6 stagger-children">
+    <div>
       <PageHeader
         title={t("contractors.pageTitle")}
         actions={canManage && <CreateStudioButton />}
@@ -38,7 +38,7 @@ export default async function ContractorsPage() {
                   <span className="inline-flex items-center gap-1.5">
                     {t("studio.staffQueue.link")}
                     {pendingRequests > 0 && (
-                      <span className="rounded-md bg-[var(--warning-soft)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--warning)]">{pendingRequests}</span>
+                      <span className="tabular-nums text-[var(--warning)]">{pendingRequests}</span>
                     )}
                   </span>
                 ),
@@ -48,15 +48,17 @@ export default async function ContractorsPage() {
         }
       />
 
-      {canManage && <ReviewQueuePanel groups={reviewGroups} />}
+      <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
+        {canManage && <ReviewQueuePanel groups={reviewGroups} />}
 
-      <StudioGrid
-        studios={rows.map((c) => ({
-          ...c,
-          rating: c.rating as string | null,
-          lastOnlineLabel: c.lastLoginAt ? timeAgo(c.lastLoginAt, locale) : null,
-        }))}
-      />
+        <StudioGrid
+          studios={rows.map((c) => ({
+            ...c,
+            rating: c.rating as string | null,
+            lastOnlineLabel: c.lastLoginAt ? timeAgo(c.lastLoginAt, locale) : null,
+          }))}
+        />
+      </div>
     </div>
   );
 }

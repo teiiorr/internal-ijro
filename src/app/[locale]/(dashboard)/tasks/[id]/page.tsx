@@ -13,7 +13,8 @@ import { EditTaskButton } from "@/components/staff/task-edit/edit-task-button";
 import { DeadlineRequestsCard } from "@/components/staff/task-edit/deadline-requests-card";
 import { TaskHistoryCard } from "@/components/staff/task-edit/task-history-card";
 import { CouncilResolutionBadge } from "@/components/staff/council-resolutions/council-resolution-badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { Button } from "@/components/ui/button";
 import { CommentsSection } from "@/components/tasks/comments-section";
 import { AttachmentsSection } from "@/components/tasks/attachments-section";
@@ -75,31 +76,30 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
     .orderBy(usersTbl.fullName);
 
   return (
-    <div className="space-y-5 max-w-5xl stagger-children">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-2">
-        <div className="flex items-start gap-2 min-w-0 flex-1">
-          <BackButton fallbackHref="/tasks" className="mt-0.5 shrink-0" />
-          <h1 className="min-w-0 flex-1 text-base sm:text-lg font-semibold tracking-tight leading-snug break-words">
-            {data.task.title}
-          </h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-2 pl-10 sm:pl-0 sm:shrink-0 sm:justify-end">
-          {canManage && (
-            <EditTaskButton
-              task={{ id: data.task.id, title: data.task.title, description: data.task.description, priority: data.task.priority, deadlineDate, status: data.task.status }}
-              assignees={data.assignees.map((a) => ({ userId: a.userId, fullName: a.fullName, avatarUrl: a.avatarUrl, status: a.status, hasResponse: !!a.responseSubmittedAt }))}
-              people={people}
-            />
-          )}
-          {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
-          <Button asChild variant="outline" size="sm" className="shrink-0">
-            <a href={`/api/export/task/${data.task.id}`} target="_blank">
-              <Printer className="size-4" /> {t("tasks.print")}
-            </a>
-          </Button>
-        </div>
-      </div>
+    <div className="mx-auto max-w-5xl">
+      <PageHeader
+        title={data.task.title}
+        back={<BackButton fallbackHref="/tasks" />}
+        actions={
+          <>
+            {canManage && (
+              <EditTaskButton
+                task={{ id: data.task.id, title: data.task.title, description: data.task.description, priority: data.task.priority, deadlineDate, status: data.task.status }}
+                assignees={data.assignees.map((a) => ({ userId: a.userId, fullName: a.fullName, avatarUrl: a.avatarUrl, status: a.status, hasResponse: !!a.responseSubmittedAt }))}
+                people={people}
+              />
+            )}
+            {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
+            <Button asChild variant="outline" size="sm" className="shrink-0">
+              <a href={`/api/export/task/${data.task.id}`} target="_blank">
+                <Printer className="size-4" /> {t("tasks.print")}
+              </a>
+            </Button>
+          </>
+        }
+      />
 
+      <div className="flex min-w-0 flex-col gap-5">
       <TaskHeaderCard
         creator={data.creator}
         task={{
@@ -144,42 +144,34 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
 
       {data.task.rejectionReason && (
         <Card>
-          <CardContent className="p-5">
-            <p className="text-xs font-medium text-[var(--danger)] mb-1">{t("tasks.sections.rejectionReason")}</p>
-            <p className="text-sm">{data.task.rejectionReason}</p>
-          </CardContent>
+          <p className="t-micro font-medium text-[var(--danger)] mb-1">{t("tasks.sections.rejectionReason")}</p>
+          <p className="text-sm text-[var(--ink)]">{data.task.rejectionReason}</p>
         </Card>
       )}
 
       {data.dependencies.length > 0 && (
         <Card>
-          <CardContent className="p-5 space-y-3">
-            <h3 className="text-base font-semibold">{t("tasks.sections.dependencies")}</h3>
-            <ul className="space-y-1 text-sm">
-              {data.dependencies.map((d) => (
-                <li key={d.id}>
-                  <Link href={`/tasks/${d.dependsOnTaskId}`} className="hover:underline font-medium">{d.dependsOnTitle}</Link>{" "}
-                  <span className="text-[var(--muted)]">— {t(`status.${d.dependsOnStatus}` as "status.completed")}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
+          <h3 className="mb-3 font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("tasks.sections.dependencies")}</h3>
+          <ul className="space-y-1 text-sm">
+            {data.dependencies.map((d) => (
+              <li key={d.id}>
+                <Link href={`/tasks/${d.dependsOnTaskId}`} className="font-medium text-[var(--ink)] hover:text-[var(--tint)] hover:underline">{d.dependsOnTitle}</Link>{" "}
+                <span className="text-[var(--ink-3)]">— {t(`status.${d.dependsOnStatus}` as "status.completed")}</span>
+              </li>
+            ))}
+          </ul>
         </Card>
       )}
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <Card>
-          <CardContent className="p-5 space-y-3">
-            <h3 className="text-base font-semibold">{t("tasks.sections.attachments")}</h3>
-            <AttachmentsSection taskId={data.task.id} attachments={data.attachments} canEdit={canEdit} />
-          </CardContent>
+          <h3 className="mb-3 font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("tasks.sections.attachments")}</h3>
+          <AttachmentsSection taskId={data.task.id} attachments={data.attachments} canEdit={canEdit} />
         </Card>
 
         <Card>
-          <CardContent className="p-5 space-y-3">
-            <h3 className="text-base font-semibold">{t("tasks.sections.comments")}</h3>
-            <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
-          </CardContent>
+          <h3 className="mb-3 font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("tasks.sections.comments")}</h3>
+          <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
         </Card>
       </div>
 
@@ -188,6 +180,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           <TaskHistoryCard taskId={id} taskCreatedAt={data.task.createdAt} locale={locale} />
         </Suspense>
       )}
+      </div>
     </div>
   );
 }

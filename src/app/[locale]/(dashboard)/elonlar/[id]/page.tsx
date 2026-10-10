@@ -1,14 +1,16 @@
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { IconCalendar, IconUsers, IconPinFilled, IconHourglass, IconDownload, IconPaperclip } from "@tabler/icons-react";
+import { IconCalendar, IconUsers, IconHourglass, IconDownload, IconPaperclip, IconPinFilled } from "@tabler/icons-react";
 import { requireUser } from "@/lib/session";
 import { describeAudience } from "@/lib/audience";
 import { formatDate, formatDateTime } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
 import { BackButton } from "@/components/ui/back-button";
-import { Card, CardContent } from "@/components/ui/card";
-import { StatusTag } from "@/components/ui/status-tag";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Section } from "@/components/ui-biib/Section";
+import { Status } from "@/components/ui-biib/Status";
 import { DocMarkdown } from "@/components/councils/doc-markdown";
 import { PollBlock } from "@/components/staff/announcements/poll-block";
 import { ReadReceipts } from "@/components/staff/announcements/read-receipts";
@@ -38,66 +40,70 @@ export default async function AnnouncementDetailPage({ params }: { params: Promi
   const author = a.authorName ? localizeName(a.authorName, locale) : "—";
 
   return (
-    <div className="mx-auto max-w-3xl space-y-5">
-      <div className="flex items-center justify-between gap-2">
-        <BackButton fallbackHref="/elonlar" />
-        {a.canManage && (
-          <div className="flex items-center gap-2">
-            <EditAnnouncementButton
-              a={{
-                id: a.id,
-                title: a.title,
-                body: a.body,
-                pinnedUntil: a.pinnedUntil ? tashkentYmd(a.pinnedUntil) : null,
-                expiresAt: a.expiresAt ? tashkentYmd(a.expiresAt) : null,
-              }}
-              today={todayTashkentYmd()}
-            />
-            <DeleteAnnouncementButton id={a.id} />
-          </div>
-        )}
-      </div>
+    <div className="mx-auto max-w-3xl">
+      <PageHeader
+        back={<BackButton fallbackHref="/elonlar" />}
+        title={a.title}
+        actions={
+          a.canManage ? (
+            <>
+              <EditAnnouncementButton
+                a={{
+                  id: a.id,
+                  title: a.title,
+                  body: a.body,
+                  pinnedUntil: a.pinnedUntil ? tashkentYmd(a.pinnedUntil) : null,
+                  expiresAt: a.expiresAt ? tashkentYmd(a.expiresAt) : null,
+                }}
+                today={todayTashkentYmd()}
+              />
+              <DeleteAnnouncementButton id={a.id} />
+            </>
+          ) : null
+        }
+      />
 
-      <header className="min-w-0">
-        {(important || a.pinned) && (
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            {important && <StatusTag tone="red">{t("important")}</StatusTag>}
-            {a.pinned && a.pinnedUntil && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--primary)]">
-                <IconPinFilled className="size-4" aria-hidden />
-                {t("pinnedUntilOn", { date: formatDate(a.pinnedUntil, locale) })}
+      <div className="flex flex-col gap-8 lg:gap-12">
+        {/* Sarlavha ostidagi holat + metadata (oltin yoʻq, chapga tekis) */}
+        <div className="flex min-w-0 flex-col gap-3">
+          {(important || (a.pinned && a.pinnedUntil)) && (
+            <div className="flex flex-wrap items-center gap-2">
+              {important && <Status tone="danger">{t("important")}</Status>}
+              {a.pinned && a.pinnedUntil && (
+                <span className="inline-flex items-center gap-1.5 t-micro text-[var(--ink-2)]">
+                  <IconPinFilled className="size-3.5" aria-hidden />
+                  {t("pinnedUntilOn", { date: formatDate(a.pinnedUntil, locale) })}
+                </span>
+              )}
+            </div>
+          )}
+          <div className="flex min-w-0 flex-col gap-2 t-small text-[var(--ink-3)] sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5">
+            <span className="inline-flex min-w-0 items-center gap-2">
+              <UserAvatar name={author} avatarUrl={a.authorAvatar} size="xs" />
+              <span className="truncate font-medium text-[var(--ink-2)]">{author}</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <IconCalendar className="size-4 shrink-0" aria-hidden />
+              <time dateTime={new Date(a.createdAt).toISOString()}>{formatDateTime(a.createdAt, locale)}</time>
+            </span>
+            <span className="inline-flex min-w-0 items-start gap-1.5">
+              <IconUsers className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span className="min-w-0 break-words">{audienceText}</span>
+            </span>
+            {a.expiresAt && (
+              <span className="inline-flex items-center gap-1.5">
+                <IconHourglass className="size-4 shrink-0" aria-hidden />
+                {t("expiresOn", { date: formatDate(a.expiresAt, locale) })}
               </span>
             )}
           </div>
-        )}
-        <h1 className="break-words text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{a.title}</h1>
-        <div className="mt-3 flex flex-col gap-2 text-sm text-[var(--muted)] sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-5">
-          <span className="inline-flex min-w-0 items-center gap-2">
-            <UserAvatar name={author} avatarUrl={a.authorAvatar} size="xs" />
-            <span className="truncate font-semibold text-[var(--foreground)]">{author}</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <IconCalendar className="size-4 shrink-0" aria-hidden />
-            <time dateTime={new Date(a.createdAt).toISOString()}>{formatDateTime(a.createdAt, locale)}</time>
-          </span>
-          <span className="inline-flex min-w-0 items-start gap-1.5">
-            <IconUsers className="mt-0.5 size-4 shrink-0" aria-hidden />
-            <span className="min-w-0 break-words">{audienceText}</span>
-          </span>
-          {a.expiresAt && (
-            <span className="inline-flex items-center gap-1.5">
-              <IconHourglass className="size-4 shrink-0" aria-hidden />
-              {t("expiresOn", { date: formatDate(a.expiresAt, locale) })}
-            </span>
-          )}
         </div>
-      </header>
 
-      {(a.body || a.attachmentUrl) && (
-        <Card>
-          <CardContent className="space-y-5 p-5 sm:p-6">
+        {/* Oʻqish ustuni: matn + ilova (ajratuvchi qator, quti emas) */}
+        {(a.body || a.attachmentUrl) && (
+          <div className="flex min-w-0 max-w-[var(--measure)] flex-col gap-6">
             {a.body && (
-              <div className="min-w-0 break-words [&>div]:text-[15px] [&_img]:h-auto [&_img]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-[var(--surface-2)] [&_pre]:p-3">
+              <div className="min-w-0 break-words [&>div]:text-[0.9375rem] [&>div]:leading-relaxed [&_img]:h-auto [&_img]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-[var(--surface-2)] [&_pre]:p-3">
                 <DocMarkdown>{a.body}</DocMarkdown>
               </div>
             )}
@@ -105,46 +111,44 @@ export default async function AnnouncementDetailPage({ params }: { params: Promi
               <a
                 href={a.attachmentUrl}
                 download={a.attachmentName ?? undefined}
-                className="flex min-w-0 items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2.5 transition-colors hover:border-[var(--primary)] hover:bg-[var(--primary-soft)]"
+                className="flex min-w-0 items-center gap-3 border-t border-[var(--line)] pt-4 transition-colors hover:text-[var(--tint)]"
               >
-                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]">
-                  <IconPaperclip className="size-5" aria-hidden />
-                </span>
+                <IconPaperclip className="size-5 shrink-0 text-[var(--ink-3)]" aria-hidden />
                 <span className="min-w-0 flex-1">
-                  <span className="block text-xs font-semibold text-[var(--muted)]">{t("attachment")}</span>
-                  <span className="block truncate text-sm font-semibold">{a.attachmentName ?? tr("common.file")}</span>
+                  <span className="block t-micro text-[var(--ink-3)]">{t("attachment")}</span>
+                  <span className="block truncate text-[0.9375rem] font-medium text-[var(--ink)]">
+                    {a.attachmentName ?? tr("common.file")}
+                  </span>
                 </span>
-                <span className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-[var(--primary)]">
+                <span className="inline-flex shrink-0 items-center gap-1.5 t-label text-[var(--tint)]">
                   <IconDownload className="size-4" aria-hidden />
                   <span className="hidden sm:inline">{tr("common.download")}</span>
                 </span>
               </a>
             )}
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
 
-      {a.poll && (
-        <Card>
-          <CardContent className="p-5 sm:p-6">
+        {a.poll && (
+          <Card>
             <PollBlock announcementId={a.id} poll={a.poll} showResultsAlways={a.isAuthor} />
-          </CardContent>
-        </Card>
-      )}
+          </Card>
+        )}
 
-      {receipts && (
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <ReadReceipts
-              announcementId={a.id}
-              read={receipts.read}
-              total={receipts.total}
-              unread={receipts.unread}
-              lastRemindedLabel={receipts.lastRemindedAt ? formatDateTime(receipts.lastRemindedAt, locale) : null}
-            />
-          </CardContent>
-        </Card>
-      )}
+        {receipts && (
+          <Section title={t("receiptsTitle")} meta={t("seen", { read: receipts.read, total: receipts.total })}>
+            <Card>
+              <ReadReceipts
+                announcementId={a.id}
+                read={receipts.read}
+                total={receipts.total}
+                unread={receipts.unread}
+                lastRemindedLabel={receipts.lastRemindedAt ? formatDateTime(receipts.lastRemindedAt, locale) : null}
+              />
+            </Card>
+          </Section>
+        )}
+      </div>
 
       {!a.isRead && <MarkRead id={a.id} />}
     </div>

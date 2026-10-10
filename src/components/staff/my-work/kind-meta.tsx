@@ -26,27 +26,14 @@ export const KIND_ICON: Record<MyWorkKind, TablerIcon> = {
   todo: IconLock,
 };
 
-/** Tur belgisi rangi (token orqali — qorongʻi rejimda ham toʻgʻri). */
-export const KIND_TONE: Record<MyWorkKind, string> = {
-  task: "text-[var(--primary)] bg-[var(--primary-soft)]",
-  approval: "text-[var(--warning)] bg-[var(--warning-soft)]",
-  stage: "text-[var(--success)] bg-[var(--success-soft)]",
-  review: "text-[var(--warning)] bg-[var(--warning-soft)]",
-  studio_request: "text-[var(--danger)] bg-[var(--danger-soft)]",
-  council: "text-[var(--primary)] bg-[var(--primary-soft)]",
-  todo: "text-[var(--muted)] bg-[var(--surface-3)]",
-};
-
+/**
+ * Tur yorligʻi — xotirjam, rangsiz: belgi + matn (--ink-3). Kapsula/rangli chip emas
+ * (BIIB: tur oddiy metadata, qaror talab qilmaydi). Kindʼning rangi endi yoʻq.
+ */
 export function KindChip({ kind, label, className }: { kind: MyWorkKind; label: string; className?: string }) {
   const Icon = KIND_ICON[kind];
   return (
-    <span
-      className={cn(
-        "inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold leading-4",
-        KIND_TONE[kind],
-        className,
-      )}
-    >
+    <span className={cn("inline-flex shrink-0 items-center gap-1 t-micro text-[var(--ink-3)]", className)}>
       <Icon className="size-3.5" aria-hidden />
       {label}
     </span>

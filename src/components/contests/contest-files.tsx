@@ -3,7 +3,8 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
-import { IconFileText as FileText, IconDownload as Download, IconTrash as Trash2, IconPlus as Plus, IconLoader2 as Loader2, IconPaperclip as Paperclip } from "@tabler/icons-react";
+import { IconFileText as FileText, IconDownload as Download, IconTrash as Trash2, IconPlus as Plus, IconLoader2 as Loader2 } from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
 import { compressImage } from "@/lib/images/compress";
 import { removeContestFile } from "@/server/actions/contests";
 import { formatDate } from "@/lib/dates";
@@ -49,50 +50,60 @@ export function ContestFiles({ contestId, files, canManage }: { contestId: strin
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-base font-semibold"><Paperclip className="size-4 text-[var(--muted)]" />{t("tanlov.files")}</h3>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-2.5 gap-y-2">
+        <div className="flex flex-wrap items-baseline gap-x-2.5">
+          <h3 className="font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)] sm:text-[1.1875rem]">{t("tanlov.files")}</h3>
+          <span className="t-micro tabular-nums text-[var(--ink-3)]">{files.length}</span>
+        </div>
         {canManage && (
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-dashed border-[var(--border-strong)] px-3 py-1.5 text-xs font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]"
-          >
-            {uploading ? <Loader2 className="size-3.5 animate-spin" /> : <Plus className="size-3.5" />}
+          <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileRef.current?.click()}>
+            {uploading ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
             {t("tanlov.addFile")}
-          </button>
+          </Button>
         )}
         <input ref={fileRef} type="file" className="sr-only" onChange={onPick} />
       </div>
 
       {files.length === 0 ? (
-        <p className="text-sm text-[var(--muted)]">{t("tanlov.noFiles")}</p>
+        <p className="t-small text-[var(--ink-3)]">{t("tanlov.noFiles")}</p>
       ) : (
-        <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+        <ul className="-my-1 divide-y divide-[var(--line)]">
           {files.map((f) => (
-            <li key={f.id} className="flex min-w-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5">
-              <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]">
-                <FileText className="size-4" />
-              </div>
+            <li key={f.id} className="flex min-w-0 items-center gap-3 py-3">
+              <FileText className="size-[18px] shrink-0 text-[var(--ink-3)]" aria-hidden />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold" title={f.fileName}>{f.fileName}</p>
-                <p className="truncate text-xs text-[var(--muted)]">
-                  {humanSize(f.fileSize)}{f.uploaderName ? ` · ${f.uploaderName}` : ""} · {formatDate(f.uploadedAt as Date, locale)}
+                <a
+                  href={f.fileUrl}
+                  download
+                  className="block truncate text-sm font-medium text-[var(--ink)] hover:text-[var(--tint)]"
+                  title={f.fileName}
+                >
+                  {f.fileName}
+                </a>
+                <p className="truncate t-small text-[var(--ink-3)]">
+                  {humanSize(f.fileSize)}{f.uploaderName ? `, ${f.uploaderName}` : ""}, {formatDate(f.uploadedAt as Date, locale)}
                 </p>
               </div>
-              <a href={f.fileUrl} download className="grid size-8 shrink-0 place-items-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]" title={t("common.download")}>
-                <Download className="size-4" />
+              <a
+                href={f.fileUrl}
+                download
+                aria-label={t("common.download")}
+                title={t("common.download")}
+                className="grid size-10 shrink-0 place-items-center rounded-[var(--radius-s)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+              >
+                <Download className="size-[18px]" />
               </a>
               {canManage && (
                 <button
                   type="button"
                   aria-label={t("common.delete")}
+                  title={t("common.delete")}
                   disabled={pending}
                   onClick={() => start(async () => { await removeContestFile(f.id); router.refresh(); })}
-                  className="grid size-8 shrink-0 place-items-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--danger-soft)] hover:text-[var(--danger)]"
+                  className="grid size-10 shrink-0 place-items-center rounded-[var(--radius-s)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--danger)]"
                 >
-                  <Trash2 className="size-4" />
+                  <Trash2 className="size-[18px]" />
                 </button>
               )}
             </li>

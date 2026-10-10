@@ -1,16 +1,22 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
+import { IconArrowRight } from "@tabler/icons-react";
+import { Link } from "@/i18n/navigation";
 import { BackButton } from "@/components/ui/back-button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { externalCompanies, projectStages, stageDocuments } from "@/lib/db/schema";
 import { getProject } from "@/server/queries/projects";
 import { getStageProject } from "@/server/queries/stages";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui-biib/Card";
+import { Section } from "@/components/ui-biib/Section";
+import { Heading } from "@/components/ui-biib/Heading";
+import { FactList } from "@/components/ui-biib/FactList";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Button } from "@/components/ui-biib/Button";
 import { StagePath } from "@/components/projects/stage-path";
 import { SmoothImage } from "@/components/ui/smooth-image";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { MilestonesList } from "@/components/projects/milestones-list";
 import { DeliverablesList } from "@/components/projects/deliverables-list";
 import { ProjectChat } from "@/components/projects/project-chat";
@@ -21,10 +27,16 @@ import { shortName } from "@/lib/names";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CurrentStatusEditor } from "@/components/studio/current-status-editor";
-import { StageProgressReporter } from "@/components/studio/stage-progress";
-import { StageRequestButtons, StageRequestsList } from "@/components/studio/stage-requests";
-import { getLatestStageProgress, getLatestStatusUpdates, listStageRequests } from "@/server/queries/studio";
+import { StageRequestsList } from "@/components/studio/stage-requests";
+import { getLatestStatusUpdates, listStageRequests } from "@/server/queries/studio";
 import { desc, eq } from "drizzle-orm";
+
+const STATUS_TONE: Record<string, StatusTone> = {
+  completed: "success",
+  in_progress: "info",
+  on_hold: "warning",
+  not_started: "neutral",
+};
 
 export default async function ContractorProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -51,11 +63,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
     if (!sp) notFound();
 
     const status = derivedStatus(sp.project.progressPercentage, sp.project.statusOverride);
-    const statusTone: StatusTone =
-      status === "completed" ? "green"
-      : status === "in_progress" ? "amber"
-      : status === "on_hold" ? "red"
-      : "muted";
+    const statusTone = STATUS_TONE[status] ?? "neutral";
 
     const docs = await db
       .select({
@@ -73,121 +81,101 @@ export default async function ContractorProjectPage({ params }: { params: Promis
       .orderBy(desc(stageDocuments.uploadedAt));
     const folderSuggestions = [...new Set(docs.map((d) => d.category).filter((c): c is string => !!c))];
 
-    // Studiya boshqaruvi: joriy holat, faol bosqich progressi va so'rovlar.
+    // Studiya boshqaruvi: joriy holat va soʻrovlar. Bajarilish foizi va soʻrov tugmalari
+    // bosqich sahifasida (oʻzining kanonik joyida).
     const activeStage = sp.stages.find((s) => s.status === "active") ?? null;
-    const [statusUpdates, progressMap, requests] = await Promise.all([
+    const [statusUpdates, requests] = await Promise.all([
       getLatestStatusUpdates([id]),
-      getLatestStageProgress(activeStage ? [activeStage.id] : []),
       listStageRequests({ projectId: id }),
     ]);
     const lastStatus = statusUpdates.get(id) ?? null;
-    const latestProgress = activeStage ? progressMap.get(activeStage.id) ?? null : null;
 
     return (
-      <div className="space-y-5 stagger-children">
-        {/* Sarlavha — orqaga + poster miniatyurasi + nom */}
-        <div className="flex items-center gap-3">
-          <BackButton fallbackHref="/contractor/projects" />
-          <div className="flex min-w-0 flex-1 items-center gap-3">
+      <div className="flex flex-col gap-8 lg:gap-12">
+        {/* Sarlavha — orqaga + poster + nom, oʻngda asosiy amal */}
+        <header className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex min-w-0 flex-1 items-start gap-2">
+            <BackButton fallbackHref="/contractor/projects" className="mt-0.5 shrink-0" />
             {sp.project.posterUrl && (
-              <div className="relative size-11 shrink-0 overflow-hidden rounded-xl bg-[var(--surface-2)] sm:size-12">
+              <div className="relative size-11 shrink-0 overflow-hidden rounded-[var(--radius-s)] bg-[var(--surface-2)] sm:size-12">
                 <SmoothImage src={sp.project.posterUrl} alt={sp.project.name} className="size-full object-cover object-[center_25%]" />
               </div>
             )}
-            <h1 className="min-w-0 flex-1 text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{sp.project.name}</h1>
+            <Heading level={1} trim className="min-w-0 flex-1 break-words">{sp.project.name}</Heading>
           </div>
-        </div>
+          {activeStage && (
+            <Button asChild variant="primary" size="40" icon={IconArrowRight} iconPosition="end" className="max-sm:w-full">
+              <Link href={`/contractor/projects/${id}/stages/${activeStage.id}`}>{t("contractor.openStage")}</Link>
+            </Button>
+          )}
+        </header>
 
-        {/* Ixcham ma'lumot — eng ustda: holat, bajarilish, sanalar, kurator, tavsif */}
+        {/* Ixcham maʼlumot: holat, bajarilish, sanalar, kurator, tavsif */}
         <Card>
-          <CardContent className="space-y-4 p-5 sm:p-6">
-            <dl className="detail-grid grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
-                <dd className="mt-0.5"><StatusTag tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</StatusTag></dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
-                <dd className="mt-0.5 font-bold tabular-nums">{sp.project.progressPercentage}%</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="mt-0.5 font-semibold">{sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue")}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="mt-0.5 font-semibold">{sp.project.deadline ? formatDate(sp.project.deadline, locale) : t("common.emptyValue")}</dd>
-              </div>
-            </dl>
-            {sp.curator && (
-              <div className="flex items-center gap-2 border-t border-[var(--border)] pt-4">
-                <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="sm" clickable={false} />
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</p>
-                  <p className="truncate text-sm font-semibold">{shortName(sp.curator.fullName)}</p>
-                </div>
-              </div>
-            )}
-            {sp.project.description && (
-              <p className="whitespace-pre-wrap border-t border-[var(--border)] pt-4 text-sm leading-relaxed text-[var(--muted)]">{sp.project.description}</p>
-            )}
-          </CardContent>
+          <FactList
+            items={[
+              { term: t("common.status"), value: <Status tone={statusTone}>{t(`projects.derivedStatus.${status}` as "projects.derivedStatus.in_progress")}</Status> },
+              { term: t("projects.fields.progress"), value: <span className="font-bold tabular-nums text-[var(--ink)]">{sp.project.progressPercentage}%</span> },
+              { term: t("projects.details.startDate"), value: sp.project.startDate ? formatDate(sp.project.startDate, locale) : t("common.emptyValue") },
+              { term: t("projects.details.dueDate"), value: sp.project.deadline ? formatDate(sp.project.deadline, locale) : t("common.emptyValue") },
+              ...(sp.curator
+                ? [{
+                    term: t("projects.curatorLabel"),
+                    value: (
+                      <span className="flex items-center gap-2">
+                        <UserAvatar name={shortName(sp.curator.fullName)} avatarUrl={sp.curator.avatarUrl} size="xs" clickable={false} />
+                        <span className="truncate font-medium text-[var(--ink)]">{shortName(sp.curator.fullName)}</span>
+                      </span>
+                    ),
+                  }]
+                : []),
+            ]}
+          />
+          {sp.project.description && (
+            <p className="mt-5 whitespace-pre-wrap t-body text-[var(--ink-2)]">{sp.project.description}</p>
+          )}
         </Card>
 
-        {/* Joriy holat — studiya yozadi, xodimlar panelida darhol ko'rinadi */}
+        {/* Joriy holat — studiya yozadi, xodimlar panelida darhol koʻrinadi */}
         <CurrentStatusEditor projectId={id} text={sp.project.currentStatus} lastUpdate={lastStatus} canEdit />
 
-        {/* Faol bosqich: bajarilish foizi + muddat/muammo so'rovlari */}
-        {activeStage && (
-          <Card>
-            <CardContent className="space-y-5 p-5 sm:p-6">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-[var(--primary)] px-2.5 py-0.5 text-xs font-bold text-white">{t("studio.deadlines.active")}</span>
-                <h3 className="min-w-0 flex-1 break-words text-base font-bold">{activeStage.name}</h3>
-                {activeStage.plannedDeadline && (
-                  <span className="text-xs font-semibold text-[var(--muted)]">
-                    {t("projects.details.dueDate")}: {formatDate(activeStage.plannedDeadline, locale)}
-                  </span>
-                )}
-              </div>
-              <StageProgressReporter stageId={activeStage.id} latest={latestProgress} />
-              <div className="space-y-3 border-t border-[var(--border)] pt-4">
-                <h4 className="text-sm font-bold">{t("studio.requests.title")}</h4>
-                <StageRequestButtons stageId={activeStage.id} currentDeadline={activeStage.plannedDeadline ?? null} />
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
+        {/* Soʻrovlar — bitta roʻyxat */}
         {requests.length > 0 && (
-          <Card>
-            <CardContent className="p-5 sm:p-6">
-              <h3 className="mb-4 text-base font-semibold">{t("studio.requests.title")}</h3>
+          <Section title={t("studio.requests.title")}>
+            <Card bare className="px-5 sm:px-6">
               <StageRequestsList requests={requests} showProject linkBase="/contractor/projects" />
-            </CardContent>
-          </Card>
+            </Card>
+          </Section>
         )}
 
-        {/* Qayerdaman — bosqichlar körsatkichi */}
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="mb-4 text-base font-semibold">{t("projects.stagePath.title")}</h3>
+        {/* Qayerdaman — bosqichlar koʻrsatkichi */}
+        <Section title={t("projects.stagePath.title")}>
+          <Card>
             <StagePath projectId={sp.project.id} stages={sp.stages} basePath="/contractor/projects" />
-          </CardContent>
-        </Card>
+          </Card>
+        </Section>
 
-        {/* Topşirilgan barcha fayllar */}
-        <Card>
-          <CardContent className="p-5 sm:p-6">
-            <h3 className="mb-4 text-base font-semibold">{t("contractor.tabs.docs")}</h3>
+        {/* Topshirilgan barcha fayllar */}
+        <Section title={t("projects.stageDocs.title")}>
+          <Card>
             <StudioDocuments projectId={id} documents={docs} suggestions={folderSuggestions} maxBytes={maxBytes} />
-          </CardContent>
+          </Card>
+        </Section>
+
+        {/* Suhbat — toʻliq ekranli chatga oʻtish */}
+        <Card bare className="px-5 sm:px-6">
+          <Rows>
+            <Row href={`/contractor/chats/${id}`}>
+              <span className="min-w-0 flex-1 truncate text-[0.9375rem] font-medium text-[var(--ink)]">{t("projects.tabs.chat")}</span>
+              <IconArrowRight className="size-4 shrink-0 text-[var(--ink-3)]" aria-hidden />
+            </Row>
+          </Rows>
         </Card>
       </div>
     );
   }
 
-  // Eski (milestone) usuldagi loyiha — aynan şu soddalaştiriş: ichki moliya körsatilmaydi.
+  // Eski (milestone) usuldagi loyiha — ichki moliya koʻrsatilmaydi.
   const stages = data.milestones.map((m) => ({
     id: m.id,
     title: m.title,
@@ -198,53 +186,35 @@ export default async function ContractorProjectPage({ params }: { params: Promis
   }));
 
   return (
-    <div className="space-y-6 stagger-children">
-      <div className="flex items-center gap-3">
-        <BackButton fallbackHref="/contractor/projects" />
-        <div className="min-w-0 flex-1">
-          <h1 className="text-xl font-bold leading-snug tracking-tight break-words sm:text-2xl">{data.project.name}</h1>
-        </div>
-      </div>
-
-      {data.project.description && (
-        <Card><CardContent className="whitespace-pre-wrap p-5 text-sm leading-relaxed">{data.project.description}</CardContent></Card>
-      )}
+    <div className="flex flex-col gap-8 lg:gap-12">
+      <header className="flex items-start gap-2">
+        <BackButton fallbackHref="/contractor/projects" className="mt-0.5 shrink-0" />
+        <Heading level={1} trim className="min-w-0 flex-1 break-words">{data.project.name}</Heading>
+      </header>
 
       <Card>
-        <CardContent className="space-y-4 p-5 sm:p-6">
-          <h3 className="text-base font-semibold">{t("projects.details.title")}</h3>
-          <dl className="detail-grid grid grid-cols-2 gap-2 text-sm min-[500px]:grid-cols-3">
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("common.status")}</dt>
-              <dd className="mt-0.5"><Badge variant={data.project.status === "completed" ? "success" : "default"}>{t(`status.${data.project.status}` as "status.planning")}</Badge></dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.fields.progress")}</dt>
-              <dd className="mt-0.5 font-bold tabular-nums">{data.project.progressPercentage}%</dd>
-            </div>
-            {data.project.startDate && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.startDate")}</dt>
-                <dd className="mt-0.5 font-semibold">{formatDate(data.project.startDate, locale)}</dd>
-              </div>
-            )}
-            {data.project.deadline && (
-              <div>
-                <dt className="text-xs font-medium text-[var(--muted)]">{t("projects.details.dueDate")}</dt>
-                <dd className="mt-0.5 font-semibold">{formatDate(data.project.deadline, locale)}</dd>
-              </div>
-            )}
-          </dl>
-          {data.curator && (
-            <div className="flex items-center gap-2 border-t border-[var(--border)] pt-3">
-              <UserAvatar name={data.curator.fullName} avatarUrl={data.curator.avatarUrl} size="sm" clickable={false} />
-              <div className="min-w-0">
-                <p className="text-xs font-medium text-[var(--muted)]">{t("projects.curatorLabel")}</p>
-                <p className="truncate text-sm font-semibold">{shortName(data.curator.fullName)}</p>
-              </div>
-            </div>
-          )}
-        </CardContent>
+        <FactList
+          items={[
+            { term: t("common.status"), value: <Status tone={data.project.status === "completed" ? "success" : "info"}>{t(`status.${data.project.status}` as "status.planning")}</Status> },
+            { term: t("projects.fields.progress"), value: <span className="font-bold tabular-nums text-[var(--ink)]">{data.project.progressPercentage}%</span> },
+            ...(data.project.startDate ? [{ term: t("projects.details.startDate"), value: formatDate(data.project.startDate, locale) }] : []),
+            ...(data.project.deadline ? [{ term: t("projects.details.dueDate"), value: formatDate(data.project.deadline, locale) }] : []),
+            ...(data.curator
+              ? [{
+                  term: t("projects.curatorLabel"),
+                  value: (
+                    <span className="flex items-center gap-2">
+                      <UserAvatar name={data.curator.fullName} avatarUrl={data.curator.avatarUrl} size="xs" clickable={false} />
+                      <span className="truncate font-medium text-[var(--ink)]">{shortName(data.curator.fullName)}</span>
+                    </span>
+                  ),
+                }]
+              : []),
+          ]}
+        />
+        {data.project.description && (
+          <p className="mt-5 whitespace-pre-wrap t-body text-[var(--ink-2)]">{data.project.description}</p>
+        )}
       </Card>
 
       <Tabs defaultValue="deliverables">
@@ -254,7 +224,7 @@ export default async function ContractorProjectPage({ params }: { params: Promis
           <TabsTrigger value="chat">{t("projects.tabs.chat")}</TabsTrigger>
         </TabsList>
         <TabsContent value="deliverables">
-          <Card><CardContent className="p-6">
+          <Card solid>
             <DeliverablesList
               projectId={data.project.id}
               items={data.deliverables.map((d) => ({ ...d, submittedAt: d.submittedAt as Date }))}
@@ -262,10 +232,10 @@ export default async function ContractorProjectPage({ params }: { params: Promis
               canSubmit={true}
               canReview={false}
             />
-          </CardContent></Card>
+          </Card>
         </TabsContent>
         <TabsContent value="milestones">
-          <Card><CardContent className="p-6">
+          <Card solid>
             <MilestonesList
               projectId={data.project.id}
               items={data.milestones.map((m) => ({ ...m, paymentAmount: m.paymentAmount as string | null }))}
@@ -273,12 +243,12 @@ export default async function ContractorProjectPage({ params }: { params: Promis
               canChangePayment={false}
               showMoney={false}
             />
-          </CardContent></Card>
+          </Card>
         </TabsContent>
         <TabsContent value="chat">
-          <Card><CardContent className="p-6">
+          <Card solid>
             <ProjectChat projectId={data.project.id} currentUserId={session.user.id} currentUserName={session.user.fullName} messages={data.messages.map((m) => ({ ...m, createdAt: m.createdAt as Date }))} />
-          </CardContent></Card>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

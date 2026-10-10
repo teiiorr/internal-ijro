@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { IconCalendarPlus as CalendarPlus, IconClockPlus as ClockPlus, IconX as X } from "@tabler/icons-react";
 import { createCouncilMeeting } from "@/server/actions/councils";
 
-export function CouncilMeetingForm({ kind }: { kind: "ekspert" | "smeta" }) {
+export function CouncilMeetingForm({ kind, onDone }: { kind: "ekspert" | "smeta"; onDone?: () => void }) {
   const t = useTranslations();
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -25,57 +25,58 @@ export function CouncilMeetingForm({ kind }: { kind: "ekspert" | "smeta" }) {
         await createCouncilMeeting({ kind, date, time: showTime ? time || null : null, title: title || null });
         setDate(""); setTime(""); setShowTime(false); setTitle("");
         router.refresh();
+        onDone?.();
       } catch (e) { setError((e as Error).message); }
     });
   }
 
   return (
-    <div className="space-y-2">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-end">
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-[var(--muted)]">{t("kengash.meetingDate")}</label>
-          <div className="flex flex-wrap items-center gap-1.5">
-            <Input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-[150px] shrink-0 px-3"
-            />
-            {showTime ? (
-              <>
-                <Input
-                  type="time"
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  className="w-[110px] shrink-0 px-3"
-                />
-                <button
-                  type="button"
-                  onClick={() => { setShowTime(false); setTime(""); }}
-                  className="grid size-9 shrink-0 place-items-center rounded-xl text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] active:scale-95"
-                  aria-label={t("common.delete")}
-                >
-                  <X className="size-4" />
-                </button>
-              </>
-            ) : (
+    <div className="space-y-4">
+      <div className="space-y-1.5">
+        <label className="t-label text-[var(--ink)]">{t("kengash.meetingDate")}</label>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-[150px] shrink-0 px-3"
+          />
+          {showTime ? (
+            <>
+              <Input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="w-[110px] shrink-0 px-3"
+              />
               <button
                 type="button"
-                onClick={() => setShowTime(true)}
-                className="inline-flex h-11 shrink-0 items-center gap-1 rounded-xl px-2.5 text-xs font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)] active:scale-95"
+                onClick={() => { setShowTime(false); setTime(""); }}
+                className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] active:scale-95"
+                aria-label={t("common.delete")}
               >
-                <ClockPlus className="size-4" />{t("kengash.addTime")}
+                <X className="size-4" />
               </button>
-            )}
-          </div>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowTime(true)}
+              className="inline-flex h-11 shrink-0 items-center gap-1 rounded-[var(--radius-control)] px-2.5 t-micro text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] active:scale-95"
+            >
+              <ClockPlus className="size-4" />{t("kengash.addTime")}
+            </button>
+          )}
         </div>
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-[var(--muted)]">{t("kengash.meetingTitle")}</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
-        </div>
+      </div>
+      <div className="space-y-1.5">
+        <label className="t-label text-[var(--ink)]">{t("kengash.meetingTitle")}</label>
+        <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+      </div>
+      {error && <p className="t-small text-[var(--danger)]">{error}</p>}
+      <div className="flex justify-end">
         <Button onClick={submit} disabled={pending} className="w-full sm:w-auto"><CalendarPlus className="size-4" />{t("kengash.createMeeting")}</Button>
       </div>
-      {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
     </div>
   );
 }

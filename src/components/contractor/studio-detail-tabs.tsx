@@ -12,7 +12,7 @@ import {
 function Count({ n, unread }: { n?: number; unread?: boolean }) {
   if (!n) return null;
   return (
-    <span className={`ml-1 inline-flex min-w-[1.25rem] items-center justify-center rounded-md px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${unread ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--surface-3)] text-[var(--muted)]"}`}>
+    <span className={`ml-1 text-[11px] font-semibold tabular-nums ${unread ? "text-[var(--tint)]" : "text-[var(--ink-3)]"}`}>
       {n}
     </span>
   );

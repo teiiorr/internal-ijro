@@ -3,17 +3,18 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { signSmetaDocForWord } from "@/server/actions/smeta-docs";
 import {
-  IconPinned as Pinned,
   IconFileTypePdf as PdfIcon,
   IconFileTypeDocx as WordIcon,
   IconPhoto as PhotoIcon,
   IconFileText as FileIcon,
   IconDownload as Download,
   IconExternalLink as ExternalLink,
-  IconFolderOpen as FolderOpen,
   IconX as X,
 } from "@tabler/icons-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
+import { Status } from "@/components/ui-biib/Status";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import manifest from "@/data/smeta-docs.json";
 
@@ -36,14 +37,13 @@ const KIND_ICON: Record<Kind, React.ComponentType<{ className?: string }>> = {
   pdf: PdfIcon, word: WordIcon, image: PhotoIcon, other: FileIcon,
 };
 const KIND_TONE: Record<Kind, string> = {
-  pdf: "text-[#E02424]", word: "text-[#2563EB]", image: "text-[#16A34A]", other: "text-[var(--muted)]",
+  pdf: "text-[var(--danger)]", word: "text-[var(--info)]", image: "text-[var(--success)]", other: "text-[var(--ink-3)]",
 };
 
 /**
- * Smeta komissiyasi sonlari arxivi: 1 dan oxirgigacha har bir son "butunlab"
- * qadab qoʻyilган kartada; fayllar yashirin turadi, sonni bosganda oʻsha sonning
- * barcha fayllari ochiladi. PDF/rasm — brauzerda yangi oynada; Word — Word'da ochish
- * yoki yuklab olish. Fayllar serverda kod/repozitoriydan tashqarida saqlanadi.
+ * Smeta komissiyasi sonlari arxivi: 1 dan oxirgigacha har bir son bitta oyna-kartadagi
+ * raqamli katakda; fayllar yashirin turadi, sonni bosganda oʻsha sonning fayllari oʻsha
+ * kartaning ichida ajratuvchi qatorlar boʻlib ochiladi (quti ichida quti emas).
  */
 export function SmetaDocs() {
   const t = useTranslations("kengash.smetaDocs");
@@ -52,7 +52,7 @@ export function SmetaDocs() {
   const items = DATA.items;
   const current = items.find((i) => i.n === active) ?? null;
 
-  // Son ochilganda fayllar paneli koʻrinishga keltiriladi (mobilda panel grid'dan keyin turadi).
+  // Son ochilganda fayllar paneli koʻrinishga keltiriladi.
   useEffect(() => {
     if (active !== null) panelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [active]);
@@ -66,18 +66,10 @@ export function SmetaDocs() {
   }
 
   return (
-    <Card>
-      <CardContent className="space-y-4 p-5 sm:p-6">
-        <div className="flex items-center gap-2">
-          <FolderOpen className="size-5 shrink-0 text-[var(--primary)]" />
-          <div className="min-w-0">
-            <h2 className="text-lg font-bold tracking-tight sm:text-xl">{t("title")}</h2>
-            <p className="mt-0.5 text-sm text-[var(--muted)]">{t("subtitle", { last: DATA.lastNumber })}</p>
-          </div>
-        </div>
-
-        {/* Qadab qoʻyilган sonlar: 1 dan oxirgigacha. Bosilganda fayllari ochiladi. */}
-        <div className="grid grid-cols-3 gap-3 pt-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+    <Section title={t("title")} meta={t("subtitle", { last: DATA.lastNumber })}>
+      <Card>
+        {/* Raqamli kataklar: 1 dan oxirgigacha. Bosilganda fayllari pastda ochiladi. */}
+        <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
           {items.map((it) => {
             const empty = it.files.length === 0;
             const isOpen = it.n === active;
@@ -90,23 +82,16 @@ export function SmetaDocs() {
                 aria-expanded={isOpen}
                 title={empty ? t("noFiles") : t("filesCount", { n: it.files.length })}
                 className={cn(
-                  "group relative flex flex-col items-center justify-center gap-1 rounded-2xl border px-2 pb-3 pt-5 text-center transition-all",
+                  "flex flex-col items-center justify-center gap-1 rounded-[var(--radius-m)] px-2 py-3 text-center transition-colors",
                   empty
-                    ? "cursor-default border-dashed border-[var(--border)] opacity-45"
+                    ? "cursor-default text-[var(--ink-3)] opacity-55"
                     : isOpen
-                      ? "border-[var(--primary)] bg-[var(--primary-soft)] shadow-[var(--shadow-2)]"
-                      : "border-[var(--border)] bg-[var(--surface)] hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-[var(--shadow-1)]"
+                      ? "bg-[var(--surface-3)] text-[var(--tint)]"
+                      : "bg-[var(--surface-2)] text-[var(--ink)] hover:bg-[var(--surface-3)]"
                 )}
               >
-                {/* Butun (pushpin) — kartani qadab turgandek */}
-                <Pinned
-                  className={cn(
-                    "absolute -top-2.5 left-1/2 size-5 -translate-x-1/2 -rotate-12 drop-shadow transition-colors",
-                    empty ? "text-[var(--subtle)]" : isOpen ? "text-[var(--primary)]" : "text-[#E08C10] group-hover:text-[var(--primary)]"
-                  )}
-                />
                 <span className="text-xl font-extrabold tabular-nums leading-none">{it.n}</span>
-                <span className="text-[11px] font-semibold leading-tight text-[var(--muted)]">
+                <span className="t-micro leading-tight text-[var(--ink-3)]">
                   {empty ? t("noFiles") : t("filesShort", { n: it.files.length })}
                 </span>
               </button>
@@ -114,75 +99,57 @@ export function SmetaDocs() {
           })}
         </div>
 
-        {/* Bosilgan sonning fayllari */}
+        {/* Bosilgan sonning fayllari — bir xil karta ichida, ajratuvchi chiziq bilan */}
         {current && current.files.length > 0 && (
-          <div ref={panelRef} className="scroll-mt-24 rounded-2xl border border-[var(--border-strong)] bg-[var(--surface-1)] p-4 sm:p-5">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Pinned className="size-5 -rotate-12 text-[var(--primary)]" />
-                <h3 className="text-base font-bold">
-                  {t("numberTitle", { n: current.n })}
-                  {current.dateLabel && <span className="ml-2 text-sm font-medium text-[var(--muted)]">· {current.dateLabel}</span>}
-                </h3>
-              </div>
+          <div ref={panelRef} className="mt-5 scroll-mt-24 border-t border-[var(--line)] pt-4">
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <h3 className="font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">
+                {t("numberTitle", { n: current.n })}
+                {current.dateLabel && <span className="ml-2 t-small font-medium text-[var(--ink-3)]">, {current.dateLabel}</span>}
+              </h3>
               <button
                 type="button"
                 onClick={() => setActive(null)}
                 aria-label={t("close")}
-                className="grid size-8 shrink-0 place-items-center rounded-xl text-[var(--muted)] transition-colors hover:bg-[var(--glass-fill)] active:scale-95"
+                className="grid size-8 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] active:scale-95"
               >
                 <X className="size-4" />
               </button>
             </div>
 
-            <ul className="space-y-2">
+            <ul className="divide-y divide-[var(--line)]">
               {current.files.map((f) => {
                 const Icon = KIND_ICON[f.kind];
                 const isWord = f.kind === "word";
                 return (
-                  <li
-                    key={f.id}
-                    className="flex flex-col gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 sm:flex-row sm:items-center sm:gap-3"
-                  >
+                  <li key={f.id} className="flex flex-col gap-2.5 py-3 sm:flex-row sm:items-center sm:gap-3">
                     <Icon className={cn("size-6 shrink-0", KIND_TONE[f.kind])} />
                     <div className="min-w-0 flex-1">
-                      <p className="break-words text-sm font-semibold leading-snug">{f.name}</p>
-                      <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-[var(--muted)]">
+                      <p className="break-words text-sm font-semibold leading-snug text-[var(--ink)]">{f.name}</p>
+                      <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 t-micro text-[var(--ink-3)]">
                         <span className="uppercase">{t(`kind.${f.kind}`)}</span>
-                        <span>·</span>
+                        <span>,</span>
                         <span className="tabular-nums">{humanSize(f.size)}</span>
-                        {f.sealed && (
-                          <span className="rounded-md bg-[#E08C10]/15 px-1.5 py-0.5 text-[10px] font-bold text-[#B26E00] dark:text-[#F0A43A]">
-                            {t("sealed")}
-                          </span>
-                        )}
+                        {f.sealed && <Status tone="warning">{t("sealed")}</Status>}
                       </p>
                     </div>
                     <div className="flex shrink-0 flex-wrap gap-2">
                       {isWord ? (
-                        <button
-                          type="button"
-                          onClick={() => openInWord(f)}
-                          className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] px-3 py-1.5 text-xs font-bold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95"
-                        >
-                          <WordIcon className="size-4 text-[#2563EB]" /> {t("openWord")}
-                        </button>
+                        <Button type="button" variant="outline" size="sm" onClick={() => openInWord(f)}>
+                          <WordIcon className="size-4 text-[var(--info)]" /> {t("openWord")}
+                        </Button>
                       ) : (
-                        <a
-                          href={fileUrl(f)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] px-3 py-1.5 text-xs font-bold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95"
-                        >
-                          <ExternalLink className="size-4" /> {t("open")}
-                        </a>
+                        <Button asChild variant="outline" size="sm">
+                          <a href={fileUrl(f)} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="size-4" /> {t("open")}
+                          </a>
+                        </Button>
                       )}
-                      <a
-                        href={dlUrl(f)}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3 py-1.5 text-xs font-bold text-white transition-colors hover:brightness-110 active:scale-95"
-                      >
-                        <Download className="size-4" /> {t("download")}
-                      </a>
+                      <Button asChild size="sm">
+                        <a href={dlUrl(f)}>
+                          <Download className="size-4" /> {t("download")}
+                        </a>
+                      </Button>
                     </div>
                   </li>
                 );
@@ -190,7 +157,7 @@ export function SmetaDocs() {
             </ul>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   );
 }

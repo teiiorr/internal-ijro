@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { listDepartments } from "@/server/queries/departments";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { DepartmentsManager } from "@/components/hr/departments-manager";
 
 export default async function DepartmentsPage() {
@@ -23,8 +24,8 @@ export default async function DepartmentsPage() {
   ]);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{t("departments.pageTitle")}</h1>
+    <div>
+      <PageHeader title={t("departments.pageTitle")} />
       <DepartmentsManager departments={depts} managers={managers} />
     </div>
   );

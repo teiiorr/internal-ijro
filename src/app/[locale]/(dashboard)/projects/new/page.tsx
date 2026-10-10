@@ -7,7 +7,9 @@ import { db } from "@/lib/db";
 import { externalCompanies, users, projectTypes } from "@/lib/db/schema";
 import { localizedTypeName } from "@/server/queries/stages";
 import { NewProjectForm } from "@/components/projects/new-project-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BackButton } from "@/components/ui/back-button";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 
 export default async function NewProjectPage() {
   const session = await auth();
@@ -26,11 +28,11 @@ export default async function NewProjectPage() {
   ]);
   const types = typeRows.map((r) => ({ id: r.id, name: localizedTypeName(r, locale) }));
   return (
-    <Card className="max-w-3xl">
-      <CardHeader><CardTitle>{t("projects.newTitle")}</CardTitle></CardHeader>
-      <CardContent>
+    <div className="mx-auto max-w-3xl">
+      <PageHeader back={<BackButton fallbackHref="/projects" />} title={t("projects.newTitle")} />
+      <Card>
         <NewProjectForm companies={companies} curators={curators} responsibles={responsibles} types={types} />
-      </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }

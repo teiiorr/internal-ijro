@@ -4,11 +4,11 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { listProjects } from "@/server/queries/projects";
 import { listProjectTypes, listStageOptionsByType } from "@/server/queries/stages";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
 import { Button } from "@/components/ui-biib/Button";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { Segmented } from "@/components/ui-biib/Segmented";
-import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { ProjectsFilters } from "@/components/projects/projects-filters";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { ScrollMemory } from "@/components/scroll-memory";
@@ -21,12 +21,13 @@ import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors
 type Sort = "created" | "name" | "deadline" | "progress";
 type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_hold" | "at_risk";
 
-// Status ranglari: yaşil — yakunlangan, sariq — jarayonda, qizil — töxtatilgan, xira — başlanmagan.
+// Holat ranglari BIIB tonlari bilan (manager donut bilan bir xil): koʻk — jarayonda,
+// yashil — yakunlangan, sariq — toʻxtatilgan, neytral — boshlanmagan.
 const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
-  completed: "green",
-  in_progress: "amber",
-  on_hold: "red",
-  not_started: "muted",
+  completed: "success",
+  in_progress: "info",
+  on_hold: "warning",
+  not_started: "neutral",
 };
 
 export default async function ProjectsPage({
@@ -130,26 +131,28 @@ export default async function ProjectsPage({
   if (stage) extra.set("stage", stage);
   const extraQs = extra.toString() ? `&${extra.toString()}` : "";
 
-  const FilterTab = ({ value, label, count }: { value: StatusFilter; label: string; count: number }) => (
-    <Link
-      href={`/projects?status=${value}&sort=${sort}${extraQs}`}
-      replace
-      className={
-        "px-3 sm:px-4 py-2 rounded-[8px] text-[13px] sm:text-[14px] font-semibold transition-all flex items-center gap-2 shrink-0 " +
-        (statusFilter === value
-          ? "bg-[var(--surface)] shadow-[var(--shadow-1)] text-[var(--foreground)]"
-          : "text-[var(--muted)] hover:text-[var(--foreground)]")
-      }
-    >
-      <span>{label}</span>
-      <span className="rounded-md px-1.5 py-0 text-[11px] font-bold tabular bg-[var(--surface-3)] text-[var(--muted)]">
-        {count}
+  // Holat — yagona segmented koʻlam oʻlchovi, sanoqlar oddiy matn (plashka emas).
+  const statusDefs: { value: StatusFilter; label: string; count: number }[] = [
+    { value: "all", label: t("common.all"), count: counts.all },
+    { value: "not_started", label: t("projects.derivedStatus.not_started"), count: counts.not_started },
+    { value: "in_progress", label: t("projects.derivedStatus.in_progress"), count: counts.in_progress },
+    { value: "completed", label: t("projects.derivedStatus.completed"), count: counts.completed },
+    { value: "on_hold", label: t("projects.derivedStatus.on_hold"), count: counts.on_hold },
+    { value: "at_risk", label: t("projects.atRisk"), count: counts.at_risk },
+  ];
+  const statusItems = statusDefs.map((d) => ({
+    href: `/projects?status=${d.value}&sort=${sort}${extraQs}`,
+    active: statusFilter === d.value,
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        {d.label}
+        <span className="t-micro tabular-nums text-[var(--ink-3)]">{d.count}</span>
       </span>
-    </Link>
-  );
+    ),
+  }));
 
   return (
-    <div className="space-y-5 sm:space-y-6 stagger-children">
+    <div>
       {/* Loyihadan qaytganda röyxatning skroll holatini tiklaydi. */}
       <ScrollMemory />
       <PageHeader
@@ -178,73 +181,64 @@ export default async function ProjectsPage({
         }
       />
 
-      <div className="space-y-3">
-        <div className="flex gap-1 bg-[var(--surface-3)] rounded-[10px] p-1 overflow-x-auto no-scrollbar">
-          <FilterTab value="all"         label={t("common.all")} count={counts.all} />
-          <FilterTab value="not_started" label={t("projects.derivedStatus.not_started")} count={counts.not_started} />
-          <FilterTab value="in_progress" label={t("projects.derivedStatus.in_progress")} count={counts.in_progress} />
-          <FilterTab value="completed"   label={t("projects.derivedStatus.completed")} count={counts.completed} />
-          <FilterTab value="on_hold"     label={t("projects.derivedStatus.on_hold")} count={counts.on_hold} />
-          <FilterTab value="at_risk"     label={t("projects.atRisk")} count={counts.at_risk} />
+      <div className="flex min-w-0 flex-col gap-5 sm:gap-6">
+        {/* Holat — yagona segmented (mobil'da gorizontal suriladi) */}
+        <div className="-mx-1 overflow-x-auto px-1 no-scrollbar">
+          <Segmented className="min-w-max" items={statusItems} />
         </div>
 
         {/* Real vaqt filtrlari — "Qöllaş" tugmasi yöq. Bosqiç röyxati tur böyiça çeklangan. */}
         <ProjectsFilters types={projectTypeOptions} stagesByType={stagesByType} />
-      </div>
 
-      {/* Poster töri — katta kvadrat muqovalar */}
-      {filtered.length === 0 ? (
-        <Card><CardContent className="py-16 text-center text-sm text-[var(--muted)]">{t("projects.empty")}</CardContent></Card>
-      ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-          {filtered.map((p) => (
-            <Link
-              key={p.id}
-              href={`/projects/${p.id}`}
-              className="group block rounded-2xl bg-[var(--card)] p-2 shadow-[var(--shadow-1)] transition-[box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-2)] hover:ring-1 hover:ring-[var(--line-strong)]"
-            >
-              {/* Kursor ustiga kelganda poster özgarmaydi — faqat uning ortidagi/atrofidagi plitka binafşa rangga ötadi. */}
-              <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
-                {p.posterUrl ? (
-                  <SmoothImage src={p.posterUrl} alt={p.name} className="size-full object-cover" />
-                ) : (
-                  <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
-                    <span className="select-none text-5xl font-black text-[var(--subtle)]">{p.name.trim().charAt(0).toUpperCase()}</span>
+        {/* Poster töri — katta kvadrat muqovalar (tör va oʻlcham oʻzgarmaydi) */}
+        {filtered.length === 0 ? (
+          <Card className="py-16 text-center t-small text-[var(--ink-3)]">{t("projects.empty")}</Card>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+            {filtered.map((p) => (
+              <Link
+                key={p.id}
+                href={`/projects/${p.id}`}
+                className="group block rounded-[var(--radius-media)] border border-transparent p-2 transition-[transform,border-color] duration-[var(--dur-ui)] ease-[var(--ease-ui)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-[var(--line-strong)]"
+              >
+                <div className="relative aspect-square overflow-hidden rounded-xl bg-[var(--surface-2)]">
+                  {p.posterUrl ? (
+                    <SmoothImage src={p.posterUrl} alt={p.name} className="size-full object-cover" />
+                  ) : (
+                    <div className="grid size-full place-items-center bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-3)]">
+                      <span className="select-none text-5xl font-black text-[var(--ink-3)]">{p.name.trim().charAt(0).toUpperCase()}</span>
+                    </div>
+                  )}
+                  {p.atRisk && (
+                    <span className="absolute right-2 top-2 grid size-7 place-items-center rounded-lg bg-[var(--danger)] text-white shadow-sm" title={t("projects.atRisk")}>
+                      <AlertTriangle className="size-4" />
+                    </span>
+                  )}
+                  {/* Bitta ingichka jarayon signali — posterning pastida */}
+                  <div className="absolute inset-x-0 bottom-0 h-1 bg-black/20">
+                    <div className="h-full bg-[var(--tint)]" style={{ width: `${p.progressPercentage}%` }} />
                   </div>
-                )}
-                <span className="absolute left-2 top-2 rounded-md bg-black/40 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-white backdrop-blur-sm">
-                  {p.progressPercentage}%
-                </span>
-                {p.atRisk && (
-                  <span className="absolute right-2 top-2 grid size-7 place-items-center rounded-lg bg-[var(--danger)] text-white shadow-sm" title={t("projects.atRisk")}>
-                    <AlertTriangle className="size-4" />
-                  </span>
-                )}
-                <div className="absolute inset-x-0 bottom-0 h-1.5 bg-black/15">
-                  <div className="h-full bg-[var(--success)]" style={{ width: `${p.progressPercentage}%` }} />
                 </div>
-              </div>
-              {/* Futer — plitka ustida turadi, şuning uçun kursor kelib plitka binafşa rangga
-                  ötganda matn on-primary rangiga özgaradi. Sarlavha markazda; tur çapda, status
-                  belgisi öngda; kursor kelganda belgi punktir ramka bölib qolmay, töliq böyaladi. */}
-              <div className="space-y-2 px-1.5 pb-1 pt-2.5">
-                <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug">{p.name}</p>
-                <div className="flex items-center justify-between gap-2">
-                  {/* Agar janr belgilangan bölsa öşani körsatamiz (masalan, eksklyuziv loyihalar); aks holda pipeline turini. Uzun nomlar suriladi. */}
-                  <Marquee className="min-w-0 flex-1 text-xs text-[var(--muted)]">
-                    {isProjectGenre(p.genre)
-                      ? t(`projects.genre.${p.genre}` as "projects.genre.film")
-                      : (p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal"))}
-                  </Marquee>
-                  <StatusTag tone={STATUS_TONE[p.derived]} className="shrink-0">
-                    {t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}
-                  </StatusTag>
+                {/* Poster ostidagi matn: nom markazda; tur çapda, holat öngda. */}
+                <div className="space-y-2 px-1.5 pb-1 pt-2.5">
+                  <p className="line-clamp-2 min-h-[2.75em] text-center text-sm font-semibold leading-snug text-[var(--ink)]">{p.name}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    {/* Agar janr belgilangan bölsa öşani körsatamiz; aks holda pipeline turini. Uzun nomlar suriladi. */}
+                    <Marquee className="min-w-0 flex-1 text-xs text-[var(--ink-2)]">
+                      {isProjectGenre(p.genre)
+                        ? t(`projects.genre.${p.genre}` as "projects.genre.film")
+                        : (p.projectTypeName ?? t(`projects.type.${p.type}` as "projects.type.internal"))}
+                    </Marquee>
+                    <Status tone={STATUS_TONE[p.derived]} className="shrink-0">
+                      {t(`projects.derivedStatus.${p.derived}` as `projects.derivedStatus.${DerivedStatus}`)}
+                    </Status>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

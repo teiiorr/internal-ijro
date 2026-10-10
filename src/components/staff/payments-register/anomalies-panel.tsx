@@ -1,60 +1,41 @@
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import {
-  IconAlertOctagon as AlertOctagon,
-  IconCircleCheck as CircleCheck,
-  IconFileAlert as FileAlert,
-  IconScale as Scale,
-} from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
+import { Section } from "@/components/ui-biib/Section";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { cn } from "@/lib/utils";
 import type { BudgetMismatchRow, MissingAmountsRow, OverpaidRow } from "@/server/queries/finance";
 import { formatMoney } from "./format";
 
-const ROW =
-  "block rounded-xl border border-[var(--border)] px-3 py-2.5 transition-colors hover:border-[var(--primary)] hover:bg-[var(--surface-2)]";
+const ROW = "block px-5 py-3 transition-colors hover:bg-[var(--surface-2)] sm:px-6";
 
-function AnomalyCard({
-  icon: Icon,
+function AnomalySection({
   title,
   count,
   tone,
   children,
 }: {
-  icon: typeof AlertOctagon;
   title: string;
   count: number;
-  tone: "danger" | "warning";
-  children: React.ReactNode;
+  tone: StatusTone;
+  children: ReactNode;
 }) {
   const t = useTranslations("staffX.paymentsRegister");
   const active = count > 0;
   return (
-    <Card className="min-w-0">
-      <CardContent className="space-y-4 p-5 sm:p-6">
-        <div className="flex items-start gap-3">
-          <span
-            className={cn(
-              "grid size-10 shrink-0 place-items-center rounded-xl",
-              !active && "bg-[var(--success-soft)] text-[var(--success)]",
-              active && tone === "danger" && "bg-[var(--danger-soft)] text-[var(--danger)]",
-              active && tone === "warning" && "bg-[var(--warning-soft)] text-[var(--warning)]",
-            )}
-          >
-            {active ? <Icon className="size-5" /> : <CircleCheck className="size-5" />}
-          </span>
-          <div className="min-w-0 flex-1">
-            <h3 className="break-words text-base font-bold leading-snug">{title}</h3>
-            <p className="text-3xl font-black tabular-nums">{count}</p>
-          </div>
-        </div>
-        {active ? (
-          <ul className="max-h-[480px] space-y-2 overflow-y-auto overscroll-contain pr-1">{children}</ul>
-        ) : (
-          <p className="text-sm text-[var(--muted)]">{t("noAnomalies")}</p>
-        )}
-      </CardContent>
-    </Card>
+    <Section
+      title={title}
+      meta={active ? <Status tone={tone} dot>{count}</Status> : <Status tone="success" dot>{count}</Status>}
+    >
+      {active ? (
+        <Card solid bare className="max-h-[480px] divide-y divide-[var(--line)] overflow-y-auto overscroll-contain">
+          {children}
+        </Card>
+      ) : (
+        <Card solid className="py-8 text-center t-small text-[var(--ink-3)]">{t("noAnomalies")}</Card>
+      )}
+    </Section>
   );
 }
 
@@ -70,67 +51,61 @@ export function AnomaliesPanel({
 }) {
   const t = useTranslations("staffX.paymentsRegister");
   return (
-    <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-      <AnomalyCard icon={AlertOctagon} title={t("overpaid")} count={overpaid.length} tone="danger">
+    <div className="grid grid-cols-1 gap-8 xl:grid-cols-3 xl:gap-10">
+      <AnomalySection title={t("overpaid")} count={overpaid.length} tone="danger">
         {overpaid.map((r) => (
-          <li key={r.stageId}>
-            <Link href={`/projects/${r.projectId}/stages/${r.stageId}`} className={ROW}>
-              <p className="break-words text-sm font-semibold">
-                {r.projectName}
-                <span className="font-normal text-[var(--muted)]"> · {r.stageName}</span>
-              </p>
-              <p className="mt-1 text-xs tabular-nums text-[var(--muted)]">
-                {t("planned")}: {formatMoney(r.planned, r.currency)} · {t("paid")}: {formatMoney(r.paid, r.currency)}
-              </p>
-              <p className="mt-0.5 text-sm font-bold tabular-nums text-[var(--danger)]">
-                {t("overpaidBy", { amount: formatMoney(r.over, r.currency) })}
-              </p>
-            </Link>
-          </li>
+          <Link key={r.stageId} href={`/projects/${r.projectId}/stages/${r.stageId}`} className={ROW}>
+            <p className="break-words text-sm font-semibold text-[var(--ink)]">
+              {r.projectName}
+              <span className="font-normal text-[var(--ink-2)]">, {r.stageName}</span>
+            </p>
+            <p className="mt-1 t-micro tabular-nums text-[var(--ink-3)]">
+              {t("planned")}: {formatMoney(r.planned, r.currency)}, {t("paid")}: {formatMoney(r.paid, r.currency)}
+            </p>
+            <p className="mt-0.5 text-sm font-bold tabular-nums text-[var(--danger)]">
+              {t("overpaidBy", { amount: formatMoney(r.over, r.currency) })}
+            </p>
+          </Link>
         ))}
-      </AnomalyCard>
+      </AnomalySection>
 
-      <AnomalyCard icon={Scale} title={t("budgetMismatch")} count={budgetMismatch.length} tone="warning">
+      <AnomalySection title={t("budgetMismatch")} count={budgetMismatch.length} tone="warning">
         {budgetMismatch.map((r) => {
           const diff = r.stagesTotal - r.budget;
           return (
-            <li key={r.projectId}>
-              <Link href={`/projects/${r.projectId}`} className={ROW}>
-                <p className="break-words text-sm font-semibold">{r.projectName}</p>
-                <p className="mt-1 text-xs tabular-nums text-[var(--muted)]">
-                  {t("budget")}: {formatMoney(r.budget, r.currency)}
-                </p>
-                <p className="text-xs tabular-nums text-[var(--muted)]">
-                  {t("stagesTotal")}: {formatMoney(r.stagesTotal, r.currency)}
-                </p>
-                <p className={cn("mt-0.5 text-sm font-bold tabular-nums", diff > 0 ? "text-[var(--danger)]" : "text-[var(--warning)]")}>
-                  {t("difference")}: {diff > 0 ? "+" : ""}
-                  {formatMoney(diff, r.currency)}
-                </p>
-              </Link>
-            </li>
+            <Link key={r.projectId} href={`/projects/${r.projectId}`} className={ROW}>
+              <p className="break-words text-sm font-semibold text-[var(--ink)]">{r.projectName}</p>
+              <p className="mt-1 t-micro tabular-nums text-[var(--ink-3)]">
+                {t("budget")}: {formatMoney(r.budget, r.currency)}
+              </p>
+              <p className="t-micro tabular-nums text-[var(--ink-3)]">
+                {t("stagesTotal")}: {formatMoney(r.stagesTotal, r.currency)}
+              </p>
+              <p className={cn("mt-0.5 text-sm font-bold tabular-nums", diff > 0 ? "text-[var(--danger)]" : "text-[var(--warning)]")}>
+                {t("difference")}: {diff > 0 ? "+" : ""}
+                {formatMoney(diff, r.currency)}
+              </p>
+            </Link>
           );
         })}
-      </AnomalyCard>
+      </AnomalySection>
 
-      <AnomalyCard icon={FileAlert} title={t("missingAmounts")} count={missingAmounts.length} tone="warning">
+      <AnomalySection title={t("missingAmounts")} count={missingAmounts.length} tone="warning">
         {missingAmounts.map((r) => (
-          <li key={r.projectId}>
-            <Link href={`/projects/${r.projectId}`} className={ROW}>
-              <p className="break-words text-sm font-semibold">{r.projectName}</p>
-              <p className="mt-1 text-xs text-[var(--muted)]">
-                {t("missingOf", { missing: r.missingCount, total: r.totalStages })}
-              </p>
-              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--surface-2)]">
-                <div
-                  className="h-full bg-[var(--warning)]"
-                  style={{ width: `${r.totalStages > 0 ? Math.round((r.missingCount / r.totalStages) * 100) : 0}%` }}
-                />
-              </div>
-            </Link>
-          </li>
+          <Link key={r.projectId} href={`/projects/${r.projectId}`} className={ROW}>
+            <p className="break-words text-sm font-semibold text-[var(--ink)]">{r.projectName}</p>
+            <p className="mt-1 t-micro text-[var(--ink-3)]">
+              {t("missingOf", { missing: r.missingCount, total: r.totalStages })}
+            </p>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--surface-3)]">
+              <div
+                className="h-full bg-[var(--warning)]"
+                style={{ width: `${r.totalStages > 0 ? Math.round((r.missingCount / r.totalStages) * 100) : 0}%` }}
+              />
+            </div>
+          </Link>
         ))}
-      </AnomalyCard>
+      </AnomalySection>
     </div>
   );
 }

@@ -8,7 +8,11 @@ import { shortDate } from "./kind-meta";
 
 const WEEKDAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 
-/** Mon–Sun hafta tasmasi: kun bosilganda ?day= oʻrnatiladi, qayta bosilganda olib tashlanadi. */
+/**
+ * Mon–Sun hafta tasmasi: kun bosilganda ?day= oʻrnatiladi, qayta bosilganda olib tashlanadi.
+ * BIIB: kapsulasiz, xotirjam kataklar — tanlangan kun tint-fonda, bugun tint qirrada,
+ * sanoq esa oddiy raqam (suzuvchi nishoncha emas).
+ */
 export function WeekStrip({
   days,
   counts,
@@ -50,7 +54,7 @@ export function WeekStrip({
     <div className="space-y-2">
       <div
         ref={scroller}
-        className="-mx-1 flex gap-2 overflow-x-auto pb-1 pl-1 pr-2.5 pt-2 scrollbar-thin sm:grid sm:grid-cols-7 sm:overflow-visible sm:px-1"
+        className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 pt-0.5 sm:grid sm:grid-cols-7 sm:overflow-visible"
       >
         {days.map((day, i) => {
           const isToday = day === today;
@@ -68,37 +72,43 @@ export function WeekStrip({
               aria-current={isSelected ? "true" : isToday ? "date" : undefined}
               aria-label={`${shortDate(day, locale, year)} — ${t("dayCount", { count })}`}
               className={cn(
-                "relative flex min-w-[3.25rem] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border px-2 py-2 transition-colors sm:min-w-0",
+                "flex min-h-[3.25rem] min-w-[3.25rem] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[var(--radius-control)] border px-2 py-2 transition-colors sm:min-w-0",
                 isSelected
-                  ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[var(--shadow-1)]"
-                  : "border-[var(--border)] bg-[var(--card)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-2)]",
-                isToday && !isSelected && "ring-2 ring-[var(--primary)] ring-offset-1 ring-offset-[var(--background)]",
+                  ? "border-[var(--tint)] bg-[color-mix(in_oklab,var(--tint)_12%,transparent)]"
+                  : isToday
+                    ? "border-[var(--tint)] bg-[var(--surface)] hover:bg-[var(--surface-2)]"
+                    : "border-[var(--line)] bg-[var(--surface)] hover:border-[var(--line-strong)] hover:bg-[var(--surface-2)]",
                 isPast && !isSelected && "opacity-70",
               )}
             >
               <span
                 className={cn(
                   "text-[11px] font-semibold uppercase tracking-wide",
-                  isSelected ? "text-[var(--primary-foreground)]" : isToday ? "text-[var(--primary)]" : "text-[var(--muted)]",
+                  isSelected || isToday ? "text-[var(--tint)]" : "text-[var(--ink-3)]",
                 )}
               >
                 {t(`weekday.${WEEKDAY_KEYS[i] ?? "mon"}`)}
               </span>
-              <span className="text-lg font-bold leading-none tabular">{Number(day.slice(8, 10))}</span>
-              {count > 0 && (
-                <span
-                  className={cn(
-                    "absolute -right-1.5 -top-1.5 min-w-5 rounded-md px-1.5 text-center text-[11px] font-bold leading-5 tabular shadow-[var(--shadow-1)]",
-                    isSelected
-                      ? "bg-[var(--card)] text-[var(--primary)]"
-                      : isPast
-                        ? "bg-[var(--danger)] text-white"
-                        : "bg-[var(--primary)] text-[var(--primary-foreground)]",
-                  )}
-                >
-                  {count}
-                </span>
-              )}
+              <span
+                className={cn(
+                  "text-lg font-bold leading-none tabular-nums",
+                  isSelected || isToday ? "text-[var(--tint)]" : "text-[var(--ink)]",
+                )}
+              >
+                {Number(day.slice(8, 10))}
+              </span>
+              <span className="min-h-4 leading-4">
+                {count > 0 && (
+                  <span
+                    className={cn(
+                      "t-micro tabular-nums",
+                      isPast && !isSelected ? "text-[var(--danger)]" : "text-[var(--tint)]",
+                    )}
+                  >
+                    {count}
+                  </span>
+                )}
+              </span>
             </Link>
           );
         })}
@@ -108,11 +118,11 @@ export function WeekStrip({
           href={href(null)}
           scroll={false}
           replace
-          className="inline-flex items-center gap-1.5 rounded-md bg-[var(--surface-3)] px-3 py-1 text-[13px] font-semibold text-[var(--muted)] transition-colors hover:text-[var(--foreground)]"
+          className="inline-flex items-center gap-1.5 rounded-[var(--radius-control)] px-2.5 py-1.5 t-label text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
         >
           <IconX className="size-3.5" aria-hidden />
           {t("clearDay")}
-          <span className="font-medium">· {shortDate(selected, locale, year)}</span>
+          <span className="text-[var(--ink-3)]">, {shortDate(selected, locale, year)}</span>
         </Link>
       )}
     </div>

@@ -62,7 +62,7 @@ export function Sidebar({ position, userId, isOwner, reviewCount = 0, showContra
 
   return (
     <aside className="hidden md:block w-[272px] shrink-0">
-      <div className="sticky top-[88px] m-4 p-3 rounded-3xl glass-strong max-h-[calc(100vh-110px)] overflow-y-auto">
+      <div className="sticky top-[88px] m-4 p-3 rounded-[var(--radius-panel)] glass-strong max-h-[calc(100vh-110px)] overflow-y-auto">
         <nav className="space-y-6">
           {sections.map((s) => {
             const items = visible.filter((i) => i.section === s);
@@ -75,17 +75,18 @@ export function Sidebar({ position, userId, isOwner, reviewCount = 0, showContra
                     <Link
                       key={href}
                       href={href}
+                      aria-current={active ? "page" : undefined}
                       className={cn(
-                        "group flex items-center gap-3 rounded-2xl px-4 h-[52px] text-[16px] font-semibold relative transition-all duration-200",
+                        "group flex items-center gap-3 rounded-[12px] px-4 h-[52px] text-[16px] font-semibold relative transition-colors",
                         active
-                          ? "bg-[var(--primary)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.20)]"
-                          : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--glass-fill)]"
+                          ? "bg-[var(--surface-2)] text-[var(--ink)] before:absolute before:left-0 before:top-1/2 before:h-5 before:w-0.5 before:-translate-y-1/2 before:rounded-[2px] before:bg-[var(--tint)] before:content-['']"
+                          : "text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)]"
                       )}
                     >
-                      <Icon className={cn("size-[22px] shrink-0", active ? "text-white" : "text-[var(--subtle)] group-hover:text-[var(--foreground)]")} />
+                      <Icon className={cn("size-[22px] shrink-0", active ? "text-[var(--tint)]" : "text-[var(--ink-3)] group-hover:text-[var(--ink-2)]")} />
                       <span className="min-w-0 flex-1 truncate">{t(key)}</span>
                       {key === "contractors" && reviewCount > 0 && (
-                        <span className={cn("grid h-5 min-w-5 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-bold tabular-nums", active ? "bg-white/25 text-white" : "bg-[var(--warning)] text-white")}>
+                        <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-[6px] bg-[var(--tint)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--on-tint)]">
                           {reviewCount > 99 ? "99+" : reviewCount}
                         </span>
                       )}

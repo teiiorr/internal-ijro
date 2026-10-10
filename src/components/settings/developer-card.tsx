@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
 import {
-  IconCode as Code,
   IconShieldLock as ShieldLock,
   IconExternalLink as ExternalLink,
   IconCertificate as Certificate,
@@ -11,66 +10,54 @@ import {
 } from "@tabler/icons-react";
 
 const CONTACT_CLS =
-  "inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]";
+  "inline-flex items-center gap-1.5 t-small font-semibold text-[var(--ink-2)] transition-colors hover:text-[var(--tint)]";
+const LINK_CLS =
+  "inline-flex items-center gap-1 font-semibold text-[var(--tint)] transition-colors hover:text-[var(--tint-hover)]";
 
-// Dastur muallifi haqida — mualliflik va intellektual mulk to'g'risidagi eslatma.
+// Dastur muallifi haqida — mualliflik va intellektual mulk toʻgʻrisidagi eslatma.
 export async function DeveloperCard() {
   const t = await getTranslations("developer");
   return (
-    <Card>
-      <CardContent className="space-y-4 p-5 sm:p-6">
-        <div className="flex items-center gap-2">
-          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--primary)] text-white">
-            <Code className="size-5" />
-          </span>
-          <h2 className="text-lg font-bold tracking-tight">{t("title")}</h2>
-        </div>
+    <Card className="flex flex-col gap-4">
+      <h2 className="font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)] sm:text-[1.1875rem]">
+        {t("title")}
+      </h2>
 
-        <p className="leading-relaxed text-[var(--foreground)]">{t("p1")}</p>
+      <p className="t-body leading-relaxed text-[var(--ink)]">{t("p1")}</p>
 
-        <div className="flex items-start gap-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-3.5 text-sm">
-          <ShieldLock className="mt-0.5 size-4 shrink-0 text-[var(--primary)]" />
-          <div className="space-y-2">
-            <p className="leading-relaxed">{t("p2")}</p>
-            <p className="leading-relaxed text-[var(--muted)]">{t("p3")}</p>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5">
-              <a
-                href="/guvohnoma-dgu-68862.pdf"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline"
-              >
-                <Certificate className="size-4" />
-                {t("cert")}
-              </a>
-              <a
-                href="https://lex.uz/uz/docs/-1022944"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline"
-              >
-                <ExternalLink className="size-3.5" />
-                {t("lex")}
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <p className="text-sm font-semibold">{t("contacts")}</p>
-          <div className="flex flex-wrap gap-2">
-            <a href="https://t.me/B_D_Murodkhojaev" target="_blank" rel="noreferrer" className={CONTACT_CLS}>
-              <Telegram className="size-4" /> @B_D_Murodkhojaev
+      {/* Huquqiy eslatma: bitta --surface-2 qadam, ramkasiz */}
+      <div className="flex items-start gap-2.5 rounded-[var(--radius-m)] bg-[var(--surface-2)] p-4 t-small">
+        <ShieldLock className="mt-0.5 size-4 shrink-0 text-[var(--tint)]" aria-hidden />
+        <div className="flex flex-col gap-2">
+          <p className="leading-relaxed text-[var(--ink)]">{t("p2")}</p>
+          <p className="leading-relaxed text-[var(--ink-3)]">{t("p3")}</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-0.5">
+            <a href="/guvohnoma-dgu-68862.pdf" target="_blank" rel="noreferrer" className={LINK_CLS}>
+              <Certificate className="size-4" aria-hidden />
+              {t("cert")}
             </a>
-            <a href="https://instagram.com/teiior" target="_blank" rel="noreferrer" className={CONTACT_CLS}>
-              <Instagram className="size-4" /> @teiior
-            </a>
-            <a href="tel:+998884649669" className={CONTACT_CLS}>
-              <Phone className="size-4" /> +998 88 464 96 69
+            <a href="https://lex.uz/uz/docs/-1022944" target="_blank" rel="noreferrer" className={LINK_CLS}>
+              <ExternalLink className="size-3.5" aria-hidden />
+              {t("lex")}
             </a>
           </div>
         </div>
-      </CardContent>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <p className="t-small font-semibold text-[var(--ink)]">{t("contacts")}</p>
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
+          <a href="https://t.me/B_D_Murodkhojaev" target="_blank" rel="noreferrer" className={CONTACT_CLS}>
+            <Telegram className="size-4" aria-hidden /> @B_D_Murodkhojaev
+          </a>
+          <a href="https://instagram.com/teiior" target="_blank" rel="noreferrer" className={CONTACT_CLS}>
+            <Instagram className="size-4" aria-hidden /> @teiior
+          </a>
+          <a href="tel:+998884649669" className={CONTACT_CLS}>
+            <Phone className="size-4" aria-hidden /> +998 88 464 96 69
+          </a>
+        </div>
+      </div>
     </Card>
   );
 }

@@ -1,48 +1,51 @@
 "use client";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { IconCircleCheck } from "@tabler/icons-react";
+import { Button } from "@/components/ui-biib/Button";
+import { Field } from "@/components/ui-biib/Field";
+import { Input } from "@/components/ui-biib/Input";
 import { Link } from "@/i18n/navigation";
 import { requestPasswordReset } from "@/server/actions/auth-flow";
+import { AuthShell, AUTH_LINK } from "../_components/auth-shell";
 
 export default function ForgotPasswordPage() {
   const t = useTranslations();
   const [done, setDone] = useState(false);
+  const [pending, setPending] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setPending(true);
     await requestPasswordReset(new FormData(e.currentTarget));
+    setPending(false);
     setDone(true);
   }
 
   return (
-    <div className="glass-strong rounded-3xl p-7 sm:p-8 space-y-6">
-      <h1 className="text-center text-3xl font-extrabold tracking-tight gradient-text">{t("auth.forgot.title")}</h1>
+    <AuthShell
+      title={t("auth.forgot.title")}
+      footer={
+        <Link href="/login" className={AUTH_LINK}>
+          {t("auth.forgot.backToLogin")}
+        </Link>
+      }
+    >
       {done ? (
-        <div className="space-y-4 text-center">
-          <div className="rounded-2xl bg-[var(--success-soft)] border border-[var(--success)]/20 px-4 py-4">
-            <p className="text-sm font-bold text-[var(--success)]">{t("auth.forgot.sent")}</p>
-          </div>
-          <Link className="inline-block text-[var(--primary)] font-bold hover:underline text-sm" href="/login">
-            {t("auth.forgot.backToLogin")}
-          </Link>
-        </div>
+        <p className="flex items-start gap-2 t-small font-medium text-[var(--success)]">
+          <IconCircleCheck className="mt-0.5 size-5 shrink-0" aria-hidden />
+          {t("auth.forgot.sent")}
+        </p>
       ) : (
-        <form onSubmit={onSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("auth.login.email")}</Label>
-            <Input id="email" name="email" type="email" required />
-          </div>
-          <Button type="submit" className="w-full" size="lg">{t("auth.forgot.submit")}</Button>
-          <div className="text-center pt-2">
-            <Link className="text-sm text-[var(--muted)] hover:text-[var(--primary)] font-semibold transition-colors" href="/login">
-              {t("auth.forgot.backToLogin")}
-            </Link>
-          </div>
+        <form onSubmit={onSubmit} className="flex flex-col gap-5">
+          <Field id="email" label={t("auth.login.email")} required>
+            {(c) => <Input {...c} name="email" type="email" autoComplete="email" />}
+          </Field>
+          <Button type="submit" variant="primary" size="56" loading={pending} className="w-full">
+            {t("auth.forgot.submit")}
+          </Button>
         </form>
       )}
-    </div>
+    </AuthShell>
   );
 }

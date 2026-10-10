@@ -154,37 +154,30 @@ export function StageDocuments({
   const busy = preparing || uploading;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {documents.length === 0 ? (
-        <p className="text-sm text-[var(--muted)]">{t("projects.stageDocs.empty")}</p>
+        <p className="t-small text-[var(--ink-3)]">{t("projects.stageDocs.empty")}</p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
           {groups.map((g) => (
-            <section key={g.key || "__loose__"} className="space-y-2">
+            <section key={g.key || "__loose__"}>
               <div className="flex items-center gap-2">
-                <Folder className="size-4 shrink-0 text-[var(--primary)]" />
-                <span className="min-w-0 truncate text-sm font-semibold">{g.name}</span>
-                <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">
-                  {g.docs.length}
-                </span>
+                <Folder className="size-4 shrink-0 text-[var(--ink-3)]" />
+                <span className="min-w-0 truncate text-sm font-semibold text-[var(--ink)]">{g.name}</span>
+                <span className="shrink-0 t-micro tabular-nums text-[var(--ink-3)]">{g.docs.length}</span>
               </div>
-              <ul className="space-y-2 sm:pl-6">
+              <ul className="mt-2 divide-y divide-[var(--line)] border-t border-[var(--line)]">
                 {g.docs.map((d) => (
-                  <li
-                    key={d.id}
-                    className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 sm:gap-3"
-                  >
-                    <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--primary-soft)] text-[var(--primary)]">
-                      <FileText className="size-4" />
-                    </div>
+                  <li key={d.id} className="flex items-center gap-2 py-3 sm:gap-3">
+                    <FileText className="size-[18px] shrink-0 text-[var(--ink-3)]" aria-hidden />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold" title={d.fileName}>
+                      <p className="truncate text-sm font-semibold text-[var(--ink)]" title={d.fileName}>
                         {d.fileName}
                       </p>
-                      <p className="truncate text-xs text-[var(--muted)]">
+                      <p className="truncate t-micro text-[var(--ink-3)]">
                         {humanSize(d.fileSize)}
-                        {d.uploaderName ? ` · ${d.uploaderName}` : ""}
-                        {` · ${formatDate(d.uploadedAt as Date, locale)}`}
+                        {d.uploaderName ? `, ${d.uploaderName}` : ""}
+                        {`, ${formatDate(d.uploadedAt as Date, locale)}`}
                       </p>
                     </div>
                     {canManage && folderNames.length > 0 && (
@@ -233,16 +226,16 @@ export function StageDocuments({
       )}
 
       {canManage && (
-        <div className="space-y-2.5 rounded-xl border border-dashed border-[var(--border-strong)] p-3">
+        <div className="space-y-2.5 border-t border-[var(--line)] pt-4">
           <div className="space-y-2">
-            <label htmlFor={`cat-${stageId}`} className="block text-xs font-semibold text-[var(--muted)]">
+            <label htmlFor={`cat-${stageId}`} className="block t-label text-[var(--ink-2)]">
               {t("projects.stageDocs.folder")}
             </label>
             <select
               id={`cat-${stageId}`}
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="h-10 w-full appearance-none rounded-lg border border-[var(--border-strong)] bg-[var(--surface-2)] px-3 pr-8 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none"
+              className="h-10 w-full appearance-none rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface)] px-3 pr-8 text-sm font-medium text-[var(--ink)] transition-colors focus:border-[var(--line-strong)] focus:outline-none"
               style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center" }}
             >
               <option value="">{t("projects.stageDocs.folderPlaceholder")}</option>
@@ -255,7 +248,7 @@ export function StageDocuments({
               onChange={(e) => setCategory(e.target.value)}
               maxLength={120}
               placeholder={t("projects.stageDocs.newFolderPlaceholder") ?? t("projects.stageDocs.folderPlaceholder")}
-              className="h-10 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3 text-sm font-medium text-[var(--foreground)] transition-colors focus:border-[var(--primary)] focus:outline-none"
+              className="h-10 w-full rounded-[var(--radius-control)] border border-[var(--line)] bg-[var(--surface)] px-3 text-sm font-medium text-[var(--ink)] transition-colors focus:border-[var(--line-strong)] focus:outline-none"
             />
           </div>
 
@@ -263,27 +256,27 @@ export function StageDocuments({
 
           {/* Tayyorlangan fayl haqida ma'lumot: yakuniy ölçam va rasm siqilgan bölsa izoh. */}
           {preparing && (
-            <p className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
+            <p className="flex items-center gap-1.5 t-micro text-[var(--ink-3)]">
               <Loader2 className="size-3.5 animate-spin" />
               {t("projects.stageDocs.preparing")}
             </p>
           )}
           {staged && !preparing && (
-            <p className={"text-xs " + (tooBig ? "text-[var(--danger)]" : "text-[var(--muted)]")}>
+            <p className={"t-micro " + (tooBig ? "text-[var(--danger)]" : "text-[var(--ink-3)]")}>
               {staged.compressed
                 ? t("projects.stageDocs.compressedNote", {
                     from: humanSize(staged.originalSize),
                     to: humanSize(staged.file.size),
                   })
                 : humanSize(staged.file.size)}
-              {tooBig ? ` · ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
+              {tooBig ? `, ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
             </p>
           )}
 
-          <p className="text-xs text-[var(--muted)]">
+          <p className="t-micro text-[var(--ink-3)]">
             {t("projects.stageDocs.folderHint", { folder: category.trim() || uncategorized })}
           </p>
-          <p className="text-xs text-[var(--muted)]">{t("projects.stageDocs.sizeHint", { max: humanSize(maxBytes) })}</p>
+          <p className="t-micro text-[var(--ink-3)]">{t("projects.stageDocs.sizeHint", { max: humanSize(maxBytes) })}</p>
 
           <Button type="button" onClick={onAdd} disabled={!staged || busy || tooBig} className="w-full">
             {uploading ? (

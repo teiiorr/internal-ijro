@@ -2,12 +2,12 @@ import { getTranslations } from "next-intl/server";
 import { desc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IconClipboardText as Board } from "@tabler/icons-react";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
 import { derivedStatus } from "@/lib/projects/progress";
 import { ProjectStatusSearch, type ProjectStatusRow } from "./project-status-search";
 
-/** Har bir loyihaning "joriy holat" izohini körsatadigan, qidiruvli dashboard taxtasi. */
+/** Har bir loyihaning "joriy holat" izohini koʻrsatadigan, qidiruvli taxta. */
 export async function ProjectStatusBoard() {
   const t = await getTranslations();
   const rows = await db
@@ -30,19 +30,10 @@ export async function ProjectStatusBoard() {
   }));
 
   return (
-    <Card>
-      <CardHeader className="flex-row items-center gap-3 pb-4">
-        <div className="grid size-10 place-items-center rounded-xl bg-[var(--primary-soft)]">
-          <Board className="size-5 text-[var(--primary)]" />
-        </div>
-        <div>
-          <CardTitle className="text-lg">{t("dashboard.currentStatus.title")}</CardTitle>
-          <p className="mt-0.5 text-sm text-[var(--muted)]">{t("dashboard.currentStatus.subtitle")}</p>
-        </div>
-      </CardHeader>
-      <CardContent>
+    <Section title={t("dashboard.currentStatus.title")}>
+      <Card>
         <ProjectStatusSearch projects={data} />
-      </CardContent>
-    </Card>
+      </Card>
+    </Section>
   );
 }

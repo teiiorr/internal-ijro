@@ -155,7 +155,7 @@ export function StudioDocuments({
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold" title={d.fileName}>{d.fileName}</p>
                       <p className="truncate text-xs text-[var(--muted)]">
-                        {humanSize(d.fileSize)}{` · ${formatDate(d.uploadedAt as Date, locale)}`}
+                        {humanSize(d.fileSize)}{`, ${formatDate(d.uploadedAt as Date, locale)}`}
                       </p>
                     </div>
                     <Button asChild variant="ghost" size="icon-sm" title={t("common.download")}>
@@ -205,7 +205,7 @@ export function StudioDocuments({
             {staged.compressed
               ? t("projects.stageDocs.compressedNote", { from: humanSize(staged.originalSize), to: humanSize(staged.file.size) })
               : humanSize(staged.file.size)}
-            {tooBig ? ` · ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
+            {tooBig ? `, ${t("projects.stageDocs.tooLarge", { max: humanSize(maxBytes) })}` : ""}
           </p>
         )}
 

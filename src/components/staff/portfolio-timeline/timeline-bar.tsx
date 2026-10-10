@@ -98,7 +98,7 @@ export function TimelineBar({
             ref={anchorRef}
             href={href}
             prefetch={false}
-            aria-label={`${bar.name}: ${t("planned")} ${planned} · ${statusLabel}`}
+            aria-label={`${bar.name}: ${t("planned")} ${planned}, ${statusLabel}`}
             onPointerDown={(e) => {
               pointerType.current = e.pointerType;
             }}
@@ -184,7 +184,7 @@ export function TimelineBar({
                 <dt className="shrink-0 text-[var(--muted)]">{t("planned")}:</dt>
                 <dd className="min-w-0 break-words font-medium tabular-nums">
                   {planned}
-                  {bar.estimated && <span className="text-[var(--muted)]"> · {t("legendEstimated")}</span>}
+                  {bar.estimated && <span className="text-[var(--muted)]">, {t("legendEstimated")}</span>}
                 </dd>
               </div>
               {actualStart && actualEnd && (

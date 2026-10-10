@@ -32,7 +32,7 @@ export function CouncilAgenda({
   const [error, setError] = useState<string | null>(null);
 
   const field =
-    "h-11 w-full rounded-lg border border-dashed border-[var(--border-strong)] bg-transparent px-3 text-sm font-medium text-[var(--foreground)] focus:border-[var(--primary)] focus:outline-none";
+    "h-12 w-full rounded-[var(--radius-m)] border border-[var(--line-strong)] bg-[var(--surface)] px-4 t-body text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none";
 
   function add() {
     setError(null);
@@ -57,27 +57,27 @@ export function CouncilAgenda({
 
   return (
     <div className="space-y-4">
-      {/* desktop jadvali — kataklar chegarali (körinishi uçun) */}
+      {/* desktop jadvali — qirrali kataklarsiz: faqat sarlavha osti chizigʻi + qator ajratuvchilari */}
       <div className="hidden overflow-x-auto sm:block">
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold text-[var(--muted)]">
-              <th className="w-10 border border-[var(--border)] px-2 py-2.5 font-semibold">№</th>
-              <th className="border border-[var(--border)] px-3 py-2.5 font-semibold">{t("kengash.topic")}</th>
-              <th className="border border-[var(--border)] px-3 py-2.5 font-semibold">{t("kengash.project")}</th>
-              <th className="border border-[var(--border)] px-3 py-2.5 font-semibold">{t("kengash.studio")}</th>
-              {canManage && <th className="w-10 border border-[var(--border)] py-2.5" />}
+            <tr className="border-b border-[var(--line)] text-left t-micro text-[var(--ink-3)]">
+              <th className="w-10 py-2.5 pr-3 font-semibold">№</th>
+              <th className="py-2.5 pr-3 font-semibold">{t("kengash.topic")}</th>
+              <th className="py-2.5 pr-3 font-semibold">{t("kengash.project")}</th>
+              <th className="py-2.5 pr-3 font-semibold">{t("kengash.studio")}</th>
+              {canManage && <th className="w-10 py-2.5" />}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-[var(--line)]">
             {items.map((row, i) => (
               <tr key={row.id} className="align-top">
-                <td className="border border-[var(--border)] px-2 py-3 font-semibold tabular-nums text-[var(--muted)]">{i + 1}</td>
-                <td className="border border-[var(--border)] px-3 py-3 font-medium">{row.topic}</td>
-                <td className="border border-[var(--border)] px-3 py-3 text-[var(--muted)]">{row.projectName ?? "—"}</td>
-                <td className="border border-[var(--border)] px-3 py-3 text-[var(--muted)]">{row.studioName ?? "—"}</td>
+                <td className="py-3 pr-3 font-semibold tabular-nums text-[var(--ink-3)]">{i + 1}</td>
+                <td className="py-3 pr-3 font-medium text-[var(--ink)]">{row.topic}</td>
+                <td className="py-3 pr-3 text-[var(--ink-2)]">{row.projectName ?? "—"}</td>
+                <td className="py-3 pr-3 text-[var(--ink-2)]">{row.studioName ?? "—"}</td>
                 {canManage && (
-                  <td className="border border-[var(--border)] px-1 py-2 text-center">
+                  <td className="py-2 text-right">
                     <Button variant="ghost" size="icon-sm" disabled={pending} aria-label={t("common.delete")} onClick={() => start(async () => { await deleteAgendaItem(row.id); })}>
                       <Trash2 className="size-4" />
                     </Button>
@@ -86,19 +86,19 @@ export function CouncilAgenda({
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={canManage ? 5 : 4} className="border border-[var(--border)] py-8 text-center text-[var(--muted)]">{t("kengash.noItems")}</td></tr>
+              <tr><td colSpan={canManage ? 5 : 4} className="py-8 text-center text-[var(--ink-3)]">{t("kengash.noItems")}</td></tr>
             )}
           </tbody>
         </table>
       </div>
 
-      {/* mobil kartalar */}
-      <div className="space-y-2 sm:hidden">
+      {/* mobil — ajratuvchi qatorlar (quti emas) */}
+      <div className="divide-y divide-[var(--line)] sm:hidden">
         {items.map((row, i) => (
-          <div key={row.id} className="rounded-xl border border-dashed border-[var(--border)] p-3">
+          <div key={row.id} className="py-3 first:pt-0">
             <div className="flex items-start gap-2">
-              <span className="font-bold tabular-nums text-[var(--muted)]">{i + 1}.</span>
-              <p className="min-w-0 flex-1 font-medium">{row.topic}</p>
+              <span className="font-bold tabular-nums text-[var(--ink-3)]">{i + 1}.</span>
+              <p className="min-w-0 flex-1 font-medium text-[var(--ink)]">{row.topic}</p>
               {canManage && (
                 <Button variant="ghost" size="icon-sm" className="-mr-1 -mt-1 shrink-0" disabled={pending} aria-label={t("common.delete")} onClick={() => start(async () => { await deleteAgendaItem(row.id); })}>
                   <Trash2 className="size-4" />
@@ -107,22 +107,22 @@ export function CouncilAgenda({
             </div>
             <dl className="mt-2 space-y-1 pl-6 text-sm">
               <div className="flex gap-2">
-                <dt className="w-24 shrink-0 text-[var(--muted)]">{t("kengash.project")}</dt>
-                <dd className="font-medium">{row.projectName ?? "—"}</dd>
+                <dt className="w-24 shrink-0 text-[var(--ink-3)]">{t("kengash.project")}</dt>
+                <dd className="font-medium text-[var(--ink)]">{row.projectName ?? "—"}</dd>
               </div>
               <div className="flex gap-2">
-                <dt className="w-24 shrink-0 text-[var(--muted)]">{t("kengash.studio")}</dt>
-                <dd className="font-medium">{row.studioName ?? "—"}</dd>
+                <dt className="w-24 shrink-0 text-[var(--ink-3)]">{t("kengash.studio")}</dt>
+                <dd className="font-medium text-[var(--ink)]">{row.studioName ?? "—"}</dd>
               </div>
             </dl>
           </div>
         ))}
-        {items.length === 0 && <p className="py-8 text-center text-[var(--muted)]">{t("kengash.noItems")}</p>}
+        {items.length === 0 && <p className="py-8 text-center text-[var(--ink-3)]">{t("kengash.noItems")}</p>}
       </div>
 
-      {/* qator qöşiş */}
+      {/* qator qoʻshish */}
       {canManage && (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_220px_auto] sm:items-center">
+        <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-[1fr_220px_auto] sm:items-center">
           <Input placeholder={t("kengash.topic")} value={topic} onChange={(e) => setTopic(e.target.value)} />
           <input
             list={`proj-${meetingId}`}
@@ -138,7 +138,7 @@ export function CouncilAgenda({
           <Button onClick={add} disabled={pending}><Plus className="size-4" />{t("kengash.addItem")}</Button>
         </div>
       )}
-      {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
+      {error && <p className="t-small text-[var(--danger)]">{error}</p>}
     </div>
   );
 }

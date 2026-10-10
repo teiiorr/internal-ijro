@@ -94,7 +94,7 @@ export function MobileNav() {
           >
             <div className="mb-3 flex shrink-0 items-center justify-between">
               <Dialog.Title className="t-h3 text-ink">{t("nav.menu")}</Dialog.Title>
-              <Dialog.Close aria-label={t("common.close")} className="grid size-9 place-items-center rounded-[12px] text-ink-3 hover:bg-[var(--glass-fill)] hover:text-ink transition-colors">
+              <Dialog.Close aria-label={t("common.close")} className="grid size-9 place-items-center rounded-[12px] text-ink-3 hover:bg-[var(--surface-2)] hover:text-ink transition-colors">
                 <IconX className="size-5" />
               </Dialog.Close>
             </div>
@@ -132,8 +132,10 @@ function SheetRow({ item, active, badges }: { item: NavItem; active: boolean; ba
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "flex h-[52px] items-center gap-3 rounded-[16px] px-3 text-[16px] font-semibold transition-colors",
-          active ? "bg-[var(--glass-fill-strong)] text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]" : "text-ink-2 hover:bg-[var(--glass-fill)]",
+          "relative flex h-[52px] items-center gap-3 rounded-[16px] px-3 text-[16px] font-semibold transition-colors",
+          active
+            ? "bg-[var(--surface-2)] text-ink before:absolute before:left-0 before:top-1/2 before:h-6 before:w-0.5 before:-translate-y-1/2 before:rounded-[2px] before:bg-tint before:content-['']"
+            : "text-ink-2 hover:bg-[var(--surface-2)] hover:text-ink",
         )}
       >
         <Icon className={cn("size-5 shrink-0", active ? "text-tint" : "text-ink-3")} stroke={1.75} />

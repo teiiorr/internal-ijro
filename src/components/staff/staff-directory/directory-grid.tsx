@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { IconFilterOff, IconSearch, IconUserSearch, IconX } from "@tabler/icons-react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState } from "@/components/empty-state";
@@ -97,11 +97,11 @@ export function DirectoryGrid({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="relative min-w-0 flex-1">
           <IconSearch
-            className="pointer-events-none absolute left-3.5 top-1/2 size-[18px] -translate-y-1/2 text-[var(--subtle)]"
+            className="pointer-events-none absolute left-3.5 top-1/2 size-[18px] -translate-y-1/2 text-[var(--ink-3)]"
             aria-hidden
           />
           <Input
@@ -149,10 +149,10 @@ export function DirectoryGrid({
                 aria-pressed={active}
                 onClick={() => navigate({ skill: active ? null : s })}
                 className={cn(
-                  "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                  "inline-flex min-h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-[var(--radius-s)] px-3 text-[0.8125rem] font-semibold transition-colors",
                   active
-                    ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-                    : "bg-[var(--surface-3)] text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "bg-[var(--tint)] text-[var(--on-tint)]"
+                    : "bg-[var(--surface-2)] text-[var(--ink-2)] hover:text-[var(--ink)]"
                 )}
               >
                 {s}
@@ -164,14 +164,14 @@ export function DirectoryGrid({
       )}
 
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-[var(--muted)] tabular" aria-live="polite">
+        <p className="t-small font-semibold tabular-nums text-[var(--ink-2)]" aria-live="polite">
           {t("members", { count: people.length })}
         </p>
         {hasFilters && (
           <button
             type="button"
             onClick={clearAll}
-            className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary-soft)]"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-[var(--radius-s)] px-3 text-[0.8125rem] font-semibold text-[var(--tint)] transition-colors hover:bg-[var(--surface-2)]"
           >
             <IconFilterOff className="size-4" aria-hidden />
             {t("clearFilters")}
@@ -186,7 +186,7 @@ export function DirectoryGrid({
       ) : (
         <div
           className={cn(
-            "grid grid-cols-1 gap-3 transition-opacity sm:grid-cols-2 xl:grid-cols-3",
+            "grid grid-cols-1 gap-4 transition-opacity sm:grid-cols-2 xl:grid-cols-3",
             pending && "opacity-60"
           )}
           aria-busy={pending}

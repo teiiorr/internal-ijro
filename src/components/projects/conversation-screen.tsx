@@ -122,7 +122,7 @@ export function ConversationScreen({
         {/* Kanal tanlagich — rangli, katta va doim ko'rinadigan chiplar qatori (bosqichlar + Umumiy). */}
         <div className="border-t border-[var(--primary)]/20 bg-[var(--primary-soft)] px-2 pb-2.5 pt-2 sm:px-3">
           <p className="mb-2 flex items-center gap-1.5 px-1 text-[11px] font-bold uppercase tracking-wide text-[var(--primary)]">
-            <Hash className="size-3.5" /> {t("conversation.channels")} · {list.length}
+            <Hash className="size-3.5" /> {t("conversation.channels")}, {list.length}
           </p>
           <div className="-mx-2 flex snap-x gap-2 overflow-x-auto px-2 pb-0.5 [scrollbar-width:none] sm:-mx-3 sm:px-3 [&::-webkit-scrollbar]:hidden">
             {list.map((c) => {
@@ -158,7 +158,7 @@ export function ConversationScreen({
         {/* Aʼzolar paneli */}
         {membersOpen && (
           <div className="absolute inset-x-0 top-full z-20 max-h-[60dvh] overflow-y-auto border-b border-[var(--border)] glass-strong px-3 py-3 shadow-[var(--shadow-2)] sm:px-4">
-            <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-[var(--muted)]"><Users className="size-3.5" />{t("conversation.members")} · {members.length}</p>
+            <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-[var(--muted)]"><Users className="size-3.5" />{t("conversation.members")}, {members.length}</p>
             <div className="space-y-1">
               {members.map((m) => (
                 <div key={m.id} className="flex items-center gap-2.5 rounded-xl px-1.5 py-1.5">

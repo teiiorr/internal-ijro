@@ -12,11 +12,11 @@ import {
   type Icon as TablerIcon,
 } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { localizeName } from "@/lib/names";
 import { cn } from "@/lib/utils";
-import { type PersonLite, type PersonRow } from "./logic";
+import { type PersonRow } from "./logic";
 
 /** tel: havolasi uchun faqat + va raqamlar. */
 const telHref = (raw: string) => `tel:${raw.replace(/[^+0-9]/g, "")}`;
@@ -32,14 +32,14 @@ function ContactRow({
 }) {
   return (
     <li className="flex min-w-0 items-center gap-2" title={label}>
-      <Icon className="size-4 shrink-0 text-[var(--subtle)]" aria-hidden />
+      <Icon className="size-4 shrink-0 text-[var(--ink-3)]" aria-hidden />
       <span className="sr-only">{label}: </span>
       <span className="min-w-0 truncate">{children}</span>
     </li>
   );
 }
 
-const LINK = "font-medium text-[var(--foreground)] underline-offset-2 hover:text-[var(--primary)] hover:underline";
+const LINK = "font-medium text-[var(--ink)] underline-offset-2 hover:text-[var(--tint)] hover:underline";
 
 /** Maʼlumotnomadagi toʻliq xodim kartasi. */
 export function PersonCard({ person }: { person: PersonRow }) {
@@ -49,9 +49,8 @@ export function PersonCard({ person }: { person: PersonRow }) {
   const name = localizeName(person.fullName, locale);
   const title = person.positionTitle ?? tr(`positions.${person.position}`);
 
-
   return (
-    <Card className="flex min-w-0 flex-col gap-3 p-4 sm:p-5 print:break-inside-avoid print:bg-transparent print:shadow-none print:backdrop-blur-none">
+    <Card className="flex min-w-0 flex-col gap-3 print:break-inside-avoid">
       <div className="flex min-w-0 items-start gap-3">
         <UserAvatar
           name={name}
@@ -63,13 +62,13 @@ export function PersonCard({ person }: { person: PersonRow }) {
         <div className="min-w-0 flex-1">
           <Link
             href={`/employees/${person.id}`}
-            className="block break-words text-[15px] font-semibold leading-snug transition-colors hover:text-[var(--primary)]"
+            className="block break-words text-[0.9375rem] font-semibold leading-snug text-[var(--ink)] transition-colors hover:text-[var(--tint)]"
           >
             {name}
           </Link>
-          <p className="mt-0.5 break-words text-xs font-medium text-[var(--muted)]">{title}</p>
+          <p className="mt-0.5 break-words t-small text-[var(--ink-2)]">{title}</p>
           {person.departmentName && (
-            <p className="mt-0.5 truncate text-xs text-[var(--subtle)]" title={person.departmentName}>
+            <p className="mt-0.5 truncate t-small text-[var(--ink-3)]" title={person.departmentName}>
               {person.departmentName}
             </p>
           )}
@@ -79,35 +78,34 @@ export function PersonCard({ person }: { person: PersonRow }) {
           download
           title={t("vcard")}
           aria-label={t("vcard")}
-          className="grid size-9 shrink-0 place-items-center rounded-xl text-[var(--muted)] transition-colors hover:bg-[var(--primary-soft)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] print:hidden"
+          className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-s)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tint)] print:hidden"
         >
           <IconAddressBook className="size-[18px]" />
         </a>
       </div>
 
-
-      <ul className="space-y-1.5 text-sm">
+      <ul className="space-y-1.5 t-small text-[var(--ink)]">
         {person.workPhone && (
           <ContactRow icon={IconPhone} label={t("workPhone")}>
-            <a href={telHref(person.workPhone)} className={cn(LINK, "tabular")}>
+            <a href={telHref(person.workPhone)} className={cn(LINK, "tabular-nums")}>
               {person.workPhone}
             </a>
           </ContactRow>
         )}
         {person.internalExt && (
           <ContactRow icon={IconHash} label={t("internalExt")}>
-            <span className="text-[var(--muted)]">{t("internalExt")}:</span>{" "}
-            <span className="font-medium tabular">{person.internalExt}</span>
+            <span className="text-[var(--ink-3)]">{t("internalExt")}:</span>{" "}
+            <span className="font-medium tabular-nums">{person.internalExt}</span>
           </ContactRow>
         )}
         {person.room && (
           <ContactRow icon={IconDoor} label={t("room")}>
-            <span className="text-[var(--muted)]">{t("room")}:</span> <span className="font-medium">{person.room}</span>
+            <span className="text-[var(--ink-3)]">{t("room")}:</span> <span className="font-medium">{person.room}</span>
           </ContactRow>
         )}
         {person.mobile && (
           <ContactRow icon={IconDeviceMobile} label={t("mobile")}>
-            <a href={telHref(person.mobile)} className={cn(LINK, "tabular")}>
+            <a href={telHref(person.mobile)} className={cn(LINK, "tabular-nums")}>
               {person.mobile}
             </a>
           </ContactRow>
@@ -131,11 +129,11 @@ export function PersonCard({ person }: { person: PersonRow }) {
         </ContactRow>
       </ul>
 
-      {person.bio && <p className="line-clamp-3 break-words text-sm text-[var(--muted)]">{person.bio}</p>}
+      {person.bio && <p className="line-clamp-3 break-words t-small text-[var(--ink-2)]">{person.bio}</p>}
 
       {person.managerName && (
-        <p className="flex min-w-0 items-center gap-2 text-xs font-medium text-[var(--muted)]">
-          <IconUserUp className="size-4 shrink-0 text-[var(--subtle)]" aria-hidden />
+        <p className="flex min-w-0 items-center gap-2 t-small text-[var(--ink-3)]">
+          <IconUserUp className="size-4 shrink-0 text-[var(--ink-3)]" aria-hidden />
           <span className="min-w-0 truncate">{t("managerLine", { name: localizeName(person.managerName, locale) })}</span>
         </p>
       )}
@@ -145,7 +143,7 @@ export function PersonCard({ person }: { person: PersonRow }) {
           {person.skills.map((s) => (
             <li
               key={s}
-              className="max-w-full truncate rounded-md bg-[var(--primary-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--primary)]"
+              className="max-w-full truncate rounded-[var(--radius-s)] bg-[var(--surface-2)] px-2 py-0.5 t-micro text-[var(--ink-2)]"
             >
               {s}
             </li>
@@ -153,44 +151,5 @@ export function PersonCard({ person }: { person: PersonRow }) {
         </ul>
       )}
     </Card>
-  );
-}
-
-/** Daraxt ichidagi ixcham xodim kartasi (avatar, ism, lavozim, "bugun yoʻq" belgisi). */
-export function PersonCardCompact({
-  person,
-  size = "sm",
-  className,
-}: {
-  person: PersonLite;
-  size?: "sm" | "md";
-  className?: string;
-}) {
-  const tr = useTranslations();
-  const locale = useLocale();
-  const name = localizeName(person.fullName, locale);
-  const title = person.positionTitle ?? tr(`positions.${person.position}`);
-
-  return (
-    <div
-      className={cn(
-        "flex min-w-0 items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-2.5 print:break-inside-avoid print:bg-transparent",
-        className
-      )}
-    >
-      <UserAvatar name={name} avatarUrl={person.avatarUrl} size={size} position={title} />
-      <div className="min-w-0 flex-1">
-        <Link
-          href={`/employees/${person.id}`}
-          className="block truncate text-sm font-semibold transition-colors hover:text-[var(--primary)]"
-          title={name}
-        >
-          {name}
-        </Link>
-        <p className="truncate text-xs text-[var(--muted)]" title={title}>
-          {title}
-        </p>
-      </div>
-    </div>
   );
 }

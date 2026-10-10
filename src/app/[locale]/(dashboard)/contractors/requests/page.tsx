@@ -1,20 +1,19 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { BackButton } from "@/components/ui/back-button";
-import { Card, CardContent } from "@/components/ui/card";
 import { StageRequestsList } from "@/components/studio/stage-requests";
 import { canViewContractorChats } from "@/lib/permissions/contractors";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
 import { isOwner } from "@/lib/permissions/owner";
-import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Segmented } from "@/components/ui-biib/Segmented";
+import { Card } from "@/components/ui-biib/Card";
 import { countPendingRequests, listStageRequests } from "@/server/queries/studio";
 
 export const dynamic = "force-dynamic";
 
-// Xodimlar: studiyalardan kelgan barcha so'rovlar (muddatni uzaytirish + muammolar) bitta navbatda.
+// Xodimlar: studiyalardan kelgan barcha soʻrovlar (muddatni uzaytirish + muammolar) bitta navbatda.
 export default async function StudioRequestsQueuePage({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
@@ -30,39 +29,56 @@ export default async function StudioRequestsQueuePage({ searchParams }: { search
     countPendingRequests(),
   ]);
 
-  const tab = (active: boolean) =>
-    cn(
-      "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors",
-      active ? "border-[var(--primary)] bg-[var(--primary)] text-white" : "border-[var(--border)] hover:border-[var(--primary)]"
-    );
-
   return (
-    <div className="space-y-5">
-      <div className="flex items-start gap-3">
-        <BackButton fallbackHref="/contractors" className="mt-0.5 shrink-0" />
-        <div className="min-w-0 flex-1">
-          <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("studio.staffQueue.title")}</h1>
-          <p className="mt-1 text-sm text-[var(--muted)]">{t("studio.staffQueue.subtitle")}</p>
-        </div>
-      </div>
+    <div>
+      <PageHeader
+        title={t("studio.staffQueue.title")}
+        tools={
+          <Segmented
+            items={[
+              { href: "/contractors", label: t("contractors.pageTitle"), active: false },
+              {
+                href: "/contractors/requests",
+                active: true,
+                label: (
+                  <span className="inline-flex items-center gap-1.5">
+                    {t("studio.staffQueue.link")}
+                    {pending > 0 && <span className="tabular-nums text-[var(--warning)]">{pending}</span>}
+                  </span>
+                ),
+              },
+            ]}
+          />
+        }
+      />
 
-      <div className="flex flex-wrap gap-2">
-        <Link href="/contractors/requests" className={tab(!showAll)}>
-          {t("studio.staffQueue.pendingOnly")}
-          <span className="rounded-full bg-black/10 px-1.5 text-xs tabular-nums">{pending}</span>
-        </Link>
-        <Link href="/contractors/requests?view=all" className={tab(showAll)}>{t("studio.staffQueue.all")}</Link>
-      </div>
+      <div className="flex min-w-0 flex-col gap-5">
+        <Segmented
+          items={[
+            {
+              href: "/contractors/requests",
+              active: !showAll,
+              label: (
+                <span className="inline-flex items-center gap-1.5">
+                  {t("studio.staffQueue.pendingOnly")}
+                  {pending > 0 && <span className="tabular-nums text-[var(--warning)]">{pending}</span>}
+                </span>
+              ),
+            },
+            { href: "/contractors/requests?view=all", active: showAll, label: t("studio.staffQueue.all") },
+          ]}
+        />
 
-      <Card>
-        <CardContent className="p-4 sm:p-6">
-          {requests.length === 0 ? (
-            <p className="py-10 text-center text-sm text-[var(--muted)]">{t("studio.staffQueue.empty")}</p>
-          ) : (
+        {requests.length === 0 ? (
+          <Card solid>
+            <p className="py-10 text-center t-small text-[var(--ink-3)]">{t("studio.staffQueue.empty")}</p>
+          </Card>
+        ) : (
+          <Card solid className="px-5 sm:px-6">
             <StageRequestsList requests={requests} canDecide={canDecide} showProject linkBase="/projects" />
-          )}
-        </CardContent>
-      </Card>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

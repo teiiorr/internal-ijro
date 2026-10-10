@@ -35,7 +35,7 @@ export function StageProgressBadge({ data, compact = false }: { data: StageProgr
       </div>
       {!compact && data.note && <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">{data.note}</p>}
       <p className="text-[11px] text-[var(--subtle)]">
-        {data.byName ? `${data.byName} · ` : ""}
+        {data.byName ? `${data.byName}, ` : ""}
         {timeAgo(data.at, locale)}
       </p>
     </div>

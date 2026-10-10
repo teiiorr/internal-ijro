@@ -12,10 +12,10 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-md px-3 text-xs font-semibold transition-colors",
+        "inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-[var(--radius-control)] px-3 t-label transition-colors",
         active
-          ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-          : "border border-[var(--border)] bg-[var(--surface-2)] text-[var(--muted)] hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
+          ? "bg-[var(--tint)] text-[var(--on-tint)]"
+          : "text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
       )}
     >
       {children}
@@ -26,7 +26,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 /** One scrollable chip row on phones, wrapping on wider screens. */
 function ChipRow({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div role="group" aria-label={label} className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible">
+    <div role="group" aria-label={label} className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] sm:flex-wrap sm:overflow-visible">
       {children}
     </div>
   );
@@ -55,16 +55,16 @@ export function RegistryFilters({
   const active = isFilterActive(value);
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-3">
       <div className="relative">
-        <IconSearch className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[var(--subtle)]" />
+        <IconSearch className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-[var(--ink-3)]" aria-hidden />
         <input
           type="search"
           value={value.q}
           onChange={(e) => set({ q: e.target.value })}
           placeholder={t("search")}
           aria-label={t("search")}
-          className="h-11 w-full min-w-0 rounded-2xl border border-[var(--input)] bg-[var(--surface-2)] pl-10 pr-3 text-[15px] text-[var(--foreground)] placeholder:text-[var(--subtle)] transition-colors focus-visible:border-[var(--primary)] focus-visible:outline-none"
+          className="t-body h-12 w-full min-w-0 rounded-[var(--radius-control)] border border-[var(--line-strong)] bg-[var(--surface-2)] pl-11 pr-4 text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:border-[var(--focus)] focus:outline-none"
         />
       </div>
 
@@ -77,7 +77,7 @@ export function RegistryFilters({
         ))}
       </ChipRow>
 
-      <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
         <ChipRow label={t("status")}>
           <Chip active={value.status === "all"} onClick={() => set({ status: "all" })}>{t("allStatuses")}</Chip>
           <Chip active={value.status === "active"} onClick={() => set({ status: "active" })}>{t("statusActive")}</Chip>
@@ -96,14 +96,14 @@ export function RegistryFilters({
       </div>
 
       {active && (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted)]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 t-small text-[var(--ink-3)]">
           <span className="tabular-nums">{t("found", { shown, total })}</span>
           <button
             type="button"
             onClick={() => onChange(DEFAULT_REGISTRY_FILTER)}
-            className="inline-flex items-center gap-1 font-semibold text-[var(--primary)] hover:underline"
+            className="inline-flex items-center gap-1 font-medium text-[var(--tint)] hover:underline"
           >
-            <IconX className="size-3.5" />
+            <IconX className="size-3.5" aria-hidden />
             {t("clearFilters")}
           </button>
         </div>

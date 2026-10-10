@@ -6,7 +6,8 @@ import { db } from "@/lib/db";
 import { leaves, users } from "@/lib/db/schema";
 import { LeavesPageClient } from "@/components/leaves/leaves-page-client";
 import { LeavesCalendar } from "@/components/leaves/leaves-calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
 
 export default async function LeavesPage() {
   const session = await auth();
@@ -52,21 +53,21 @@ export default async function LeavesPage() {
       : Promise.resolve([]),
   ]);
 
-  return (
-    <div className="space-y-6">
-      {canManage && currentMonth.length > 0 && (
+  const calendar =
+    canManage && currentMonth.length > 0 ? (
+      <Section title={t("leaves.calendar")}>
         <Card>
-          <CardHeader><CardTitle>{t("leaves.calendar")}</CardTitle></CardHeader>
-          <CardContent>
-            <LeavesCalendar items={currentMonth as Parameters<typeof LeavesCalendar>[0]["items"]} />
-          </CardContent>
+          <LeavesCalendar items={currentMonth as Parameters<typeof LeavesCalendar>[0]["items"]} />
         </Card>
-      )}
-      <LeavesPageClient
-        myLeaves={my as unknown as Parameters<typeof LeavesPageClient>[0]["myLeaves"]}
-        pendingForReview={pending as unknown as Parameters<typeof LeavesPageClient>[0]["pendingForReview"]}
-        canManage={canManage}
-      />
-    </div>
+      </Section>
+    ) : null;
+
+  return (
+    <LeavesPageClient
+      myLeaves={my as unknown as Parameters<typeof LeavesPageClient>[0]["myLeaves"]}
+      pendingForReview={pending as unknown as Parameters<typeof LeavesPageClient>[0]["pendingForReview"]}
+      canManage={canManage}
+      calendar={calendar}
+    />
   );
 }

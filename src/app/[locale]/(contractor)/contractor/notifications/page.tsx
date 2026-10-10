@@ -1,20 +1,21 @@
 import { redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import Link from "next/link";
 import { desc, eq } from "drizzle-orm";
+import { IconChecks as CheckCheck } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { notifications } from "@/lib/db/schema";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui-biib/Card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Rows, Row } from "@/components/ui-biib/Rows";
+import { Button } from "@/components/ui-biib/Button";
 import { markAllRead } from "@/server/actions/notifications";
 import { formatDateTime } from "@/lib/dates";
-import { IconChecks as CheckCheck } from "@tabler/icons-react";
 
 export const dynamic = "force-dynamic";
 
-// Studiya bildirishnomalari — xodimlardagi bilan bir xil, joriy foydalanuvchining
-// bildirishnomalari. Havolalar allaqachon qabul qiluvchi tomoniga mos (server actionlar).
+// Studiya bildirishnomalari — joriy foydalanuvchining bildirishnomalari. Faqat qoʻngʻiroqdan
+// ochiladi; butun qator havola (server amallar qabul qiluvchiga mos).
 export default async function ContractorNotificationsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
@@ -29,42 +30,35 @@ export default async function ContractorNotificationsPage() {
     .limit(200);
 
   return (
-    <div className="max-w-3xl space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("notifications.pageTitle")}</h1>
-        <form action={markAllRead}>
-          <Button type="submit" variant="outline" size="sm"><CheckCheck className="size-4" /> {t("notifications.markAllRead")}</Button>
-        </form>
-      </div>
-
-      <div className="space-y-2">
-        {rows.map((n) => (
-          <Card key={n.id} className={n.isRead ? "opacity-70" : ""}>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    {!n.isRead && <span className="size-2 rounded-full bg-[var(--primary)] shrink-0" />}
-                    <h3 className="font-semibold">{n.title}</h3>
-                  </div>
-                  {n.message && <p className="text-sm text-[var(--muted)] mt-1">{n.message}</p>}
+    <div className="max-w-3xl">
+      <PageHeader
+        title={t("notifications.pageTitle")}
+        actions={
+          <form action={markAllRead}>
+            <Button type="submit" variant="glass" size="40" icon={CheckCheck}>{t("notifications.markAllRead")}</Button>
+          </form>
+        }
+      />
+      <Card bare className="px-5 sm:px-6">
+        {rows.length === 0 ? (
+          <p className="py-10 text-center t-small text-[var(--ink-3)]">{t("notifications.empty")}</p>
+        ) : (
+          <Rows>
+            {rows.map((n) => (
+              <Row key={n.id} href={n.link ?? undefined}>
+                {!n.isRead && <span className="mt-1.5 size-2 shrink-0 self-start rounded-full bg-[var(--tint)]" aria-hidden />}
+                <div className="min-w-0 flex-1">
+                  <p className={n.isRead ? "truncate text-[0.9375rem] font-medium text-[var(--ink-2)]" : "truncate text-[0.9375rem] font-bold text-[var(--ink)]"}>
+                    {n.title}
+                  </p>
+                  {n.message && <p className="mt-0.5 line-clamp-2 t-small text-[var(--ink-3)]">{n.message}</p>}
                 </div>
-                <div className="flex flex-col items-end gap-2 shrink-0">
-                  <span className="text-xs text-[var(--muted)] whitespace-nowrap tabular">{formatDateTime(n.createdAt, locale)}</span>
-                  {n.link && (
-                    <Button asChild size="sm" variant="outline">
-                      <Link href={n.link}>{t("notifications.open")}</Link>
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-        {rows.length === 0 && (
-          <Card><CardContent className="p-10 text-center text-[var(--muted)]">{t("notifications.empty")}</CardContent></Card>
+                <span className="shrink-0 whitespace-nowrap t-micro tabular-nums text-[var(--ink-3)]">{formatDateTime(n.createdAt, locale)}</span>
+              </Row>
+            ))}
+          </Rows>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

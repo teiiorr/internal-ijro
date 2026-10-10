@@ -127,36 +127,36 @@ export function AckRequestDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button type="button" variant="soft" size="sm" className="h-8 rounded-xl px-2.5 text-xs">
-          <IconSend className="size-3.5" />
+        <Button type="button" variant="outline" size="sm">
+          <IconSend className="size-4" />
           {t("sendAck")}
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[calc(100%-1.5rem)] max-h-[85vh] gap-4 overflow-y-auto p-5 sm:max-w-2xl sm:p-7">
         <DialogHeader className="pr-8">
           <DialogTitle className="flex items-center gap-2">
-            <IconSend className="size-5 shrink-0 text-[var(--primary)]" />
+            <IconSend className="size-5 shrink-0 text-[var(--tint)]" />
             <span className="min-w-0 break-words">{t("sendAck")}</span>
           </DialogTitle>
           <DialogDescription className="break-words [overflow-wrap:anywhere]">{fileName}</DialogDescription>
         </DialogHeader>
 
         {noScope ? (
-          <div className="flex items-start gap-2 rounded-2xl border border-[var(--warning)]/35 bg-[var(--warning-soft)] p-3 text-sm">
-            <IconAlertTriangle className="mt-0.5 size-4 shrink-0 text-[var(--warning)]" />
-            <span className="min-w-0 break-words">{t("forbiddenAudience")}</span>
+          <div className="flex items-start gap-2 rounded-[var(--radius-control)] p-3 t-body" style={{ backgroundColor: "color-mix(in oklab, var(--warning) 14%, transparent)" }}>
+            <IconAlertTriangle className="mt-0.5 size-4 shrink-0 text-[var(--warning)]" aria-hidden />
+            <span className="min-w-0 break-words text-[var(--ink)]">{t("forbiddenAudience")}</span>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="min-w-0 space-y-5">
-            <p className="text-sm text-[var(--muted)]">{t("sendAckHint")}</p>
+            <p className="t-body text-[var(--ink-2)]">{t("sendAckHint")}</p>
 
             {/* Kimlarga */}
             <fieldset className="min-w-0 space-y-2.5">
-              <legend className="mb-2 text-[13px] font-semibold">{t("audience")}</legend>
+              <legend className="mb-2 t-label font-semibold text-[var(--ink)]">{t("audience")}</legend>
               <div
                 role="radiogroup"
                 aria-label={t("audience")}
-                className={cn("grid gap-1 rounded-2xl bg-[var(--surface-2)] p-1", isAny ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2")}
+                className={cn("grid gap-1 rounded-[var(--radius-control)] bg-[var(--surface-2)] p-1", isAny ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-2")}
               >
                 {modes.map((md) => (
                   <button
@@ -166,10 +166,10 @@ export function AckRequestDialog({
                     aria-checked={mode === md}
                     onClick={() => setMode(md)}
                     className={cn(
-                      "min-h-9 rounded-xl px-2 py-1.5 text-xs font-semibold leading-tight transition-colors sm:text-sm",
+                      "min-h-10 rounded-[calc(var(--radius-control)-4px)] px-2 py-1.5 text-xs font-semibold leading-tight transition-colors sm:text-sm",
                       mode === md
-                        ? "bg-[var(--card)] text-[var(--foreground)] shadow-[var(--shadow-1)]"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                        ? "bg-[var(--surface)] text-[var(--ink)] shadow-[var(--shadow-1)]"
+                        : "text-[var(--ink-2)] hover:text-[var(--ink)]"
                     )}
                   >
                     {modeLabel[md]}
@@ -178,11 +178,11 @@ export function AckRequestDialog({
               </div>
 
               {mode === "departments" && (
-                <div className="grid max-h-56 grid-cols-1 gap-1.5 overflow-y-auto rounded-2xl border border-[var(--border)] p-2 sm:grid-cols-2">
+                <div className="grid max-h-56 grid-cols-1 gap-1 overflow-y-auto rounded-[var(--radius-control)] p-1 sm:grid-cols-2">
                   {options.departments.map((d) => (
                     <label
                       key={d.id}
-                      className="flex min-w-0 cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 text-sm hover:bg-[var(--surface-2)]"
+                      className="flex min-w-0 cursor-pointer items-center gap-2 rounded-[var(--radius-s)] px-2 py-2 text-sm text-[var(--ink)] hover:bg-[var(--surface-2)]"
                     >
                       <input
                         type="checkbox"
@@ -197,11 +197,11 @@ export function AckRequestDialog({
               )}
 
               {mode === "positions" && (
-                <div className="grid grid-cols-1 gap-1.5 rounded-2xl border border-[var(--border)] p-2 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-1 rounded-[var(--radius-control)] p-1 sm:grid-cols-2">
                   {options.positions.map((p) => (
                     <label
                       key={p}
-                      className="flex min-w-0 cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 text-sm hover:bg-[var(--surface-2)]"
+                      className="flex min-w-0 cursor-pointer items-center gap-2 rounded-[var(--radius-s)] px-2 py-2 text-sm text-[var(--ink)] hover:bg-[var(--surface-2)]"
                     >
                       <input
                         type="checkbox"
@@ -216,7 +216,7 @@ export function AckRequestDialog({
               )}
 
               {mode === "people" && (
-                <div className="max-h-[45vh] overflow-y-auto rounded-2xl border border-[var(--border)] p-2 sm:p-3">
+                <div className="max-h-[45vh] overflow-y-auto rounded-[var(--radius-control)] bg-[var(--surface-2)] p-2 sm:p-3">
                   <EmployeePicker
                     people={options.people}
                     selectedIds={userIds}

@@ -64,7 +64,7 @@ function stageName(row: { tiUz: string | null; tiCy: string | null; tiRu: string
 }
 
 function joinSub(...parts: (string | null | undefined)[]): string | null {
-  const s = parts.filter((p): p is string => !!p && p.trim().length > 0).join(" · ");
+  const s = parts.filter((p): p is string => !!p && p.trim().length > 0).join(", ");
   return s || null;
 }
 

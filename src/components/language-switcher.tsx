@@ -49,7 +49,7 @@ export function LanguageSwitcher() {
         disabled={isPending}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
+        className="flex items-center gap-1.5 rounded-[var(--radius-control)] px-2 py-1.5 text-sm font-semibold hover:bg-[var(--surface-2)] transition-colors"
       >
         <span className="text-xl sm:text-2xl leading-none">{current.flag}</span>
         <span className="hidden sm:inline text-[13px]">{current.label}</span>
@@ -57,7 +57,7 @@ export function LanguageSwitcher() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 mt-2 w-48 rounded-2xl border border-[var(--border)] bg-[var(--popover)] p-1.5 shadow-xl z-[100]"
+          className="absolute right-0 mt-2 w-48 rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-1.5 shadow-[var(--shadow-overlay)] z-[100]"
         >
           {routing.locales.map((l) => {
             const lang = LANG[l] ?? { flag: "🌐", label: l };
@@ -67,12 +67,12 @@ export function LanguageSwitcher() {
                 type="button"
                 role="menuitemradio"
                 aria-checked={l === locale}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold hover:bg-[var(--glass-fill)] transition-colors"
+                className="flex w-full items-center gap-3 rounded-[var(--radius-control)] px-3 py-2.5 text-left text-sm font-semibold hover:bg-[var(--surface-2)] transition-colors"
                 onClick={() => switchTo(l as AppLocale)}
               >
                 <span className="text-lg leading-none">{lang.flag}</span>
                 <span className="flex-1">{lang.label}</span>
-                {l === locale && <Check className="size-4 text-[var(--primary)]" aria-hidden />}
+                {l === locale && <Check className="size-4 text-[var(--tint)]" aria-hidden />}
               </button>
             );
           })}

@@ -125,24 +125,24 @@ export function NotificationBell() {
       <Button variant="ghost" size="icon" aria-label={t("nav.notifications")} onClick={toggle} className="relative">
         <Bell className="size-5 sm:size-[22px]" />
         {unread > 0 && (
-          <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-md bg-[var(--accent)] text-white text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--background-2)]">
+          <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 rounded-[6px] bg-[var(--tint)] text-[var(--on-tint)] text-[10px] font-bold tabular flex items-center justify-center ring-2 ring-[var(--surface)]">
             {unread > 99 ? "99+" : unread}
           </span>
         )}
       </Button>
       {open && (
-        <div className="fixed left-2 right-2 top-[64px] z-50 rounded-3xl glass-strong overflow-hidden sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[380px] sm:max-w-[calc(100vw-1rem)]">
-          <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
-            <p className="font-bold text-base">{t("nav.notifications")}</p>
+        <div className="fixed left-2 right-2 top-[64px] z-50 rounded-[var(--radius-panel)] glass-strong overflow-hidden sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[380px] sm:max-w-[calc(100vw-1rem)]">
+          <div className="px-5 py-4 border-b border-[var(--line)] flex items-center justify-between">
+            <p className="font-bold text-base text-[var(--ink)]">{t("nav.notifications")}</p>
             {unread > 0 && (
-              <button onClick={readAll} className="text-xs font-bold text-[var(--primary)] inline-flex items-center gap-1.5 hover:underline">
+              <button onClick={readAll} className="text-xs font-bold text-[var(--tint)] inline-flex items-center gap-1.5 hover:underline">
                 <CheckCheck className="size-3.5" /> {t("notifications.markAllRead")}
               </button>
             )}
           </div>
           <div className="max-h-[60vh] overflow-y-auto">
             {items.length === 0 ? (
-              <p className="text-center text-sm text-[var(--muted)] font-medium py-10">{t("notifications.empty")}</p>
+              <p className="text-center text-sm text-[var(--ink-2)] font-medium py-10">{t("notifications.empty")}</p>
             ) : (
               items.map((n) => (
                 <Link
@@ -150,20 +150,20 @@ export function NotificationBell() {
                   href={n.link ?? notifsHref}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "block px-5 py-3.5 border-b border-[var(--border)] last:border-0 hover:bg-[var(--glass-fill)] transition-colors relative",
-                    !n.isRead && "bg-[var(--primary-soft)]"
+                    "block px-5 py-3.5 border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface-2)] transition-colors relative",
+                    !n.isRead && "bg-[color-mix(in_oklab,var(--tint)_10%,transparent)]"
                   )}
                 >
-                  {!n.isRead && <span className="absolute left-2 top-1/2 -translate-y-1/2 size-2 rounded-full bg-[var(--primary)]" />}
-                  <p className="text-[14px] font-bold leading-snug pl-3">{n.title}</p>
-                  {n.message && <p className="text-[12px] text-[var(--muted)] mt-1 leading-snug line-clamp-2 pl-3 font-medium">{n.message}</p>}
-                  <p className="text-[11px] text-[var(--subtle)] mt-1 tabular pl-3 font-medium">{formatDateTime(n.createdAt, locale)}</p>
+                  {!n.isRead && <span className="absolute left-2 top-1/2 -translate-y-1/2 size-2 rounded-full bg-[var(--tint)]" />}
+                  <p className="text-[14px] font-bold leading-snug pl-3 text-[var(--ink)]">{n.title}</p>
+                  {n.message && <p className="text-[12px] text-[var(--ink-2)] mt-1 leading-snug line-clamp-2 pl-3 font-medium">{n.message}</p>}
+                  <p className="text-[11px] text-[var(--ink-3)] mt-1 tabular pl-3 font-medium">{formatDateTime(n.createdAt, locale)}</p>
                 </Link>
               ))
             )}
           </div>
-          <div className="px-5 py-3 border-t border-[var(--border)] bg-[var(--glass-fill-soft)]">
-            <Link href={notifsHref} onClick={() => setOpen(false)} className="text-sm text-[var(--primary)] font-bold hover:underline">
+          <div className="px-5 py-3 border-t border-[var(--line)]">
+            <Link href={notifsHref} onClick={() => setOpen(false)} className="text-sm text-[var(--tint)] font-bold hover:underline">
               {t("notifications.viewAll")}
             </Link>
           </div>

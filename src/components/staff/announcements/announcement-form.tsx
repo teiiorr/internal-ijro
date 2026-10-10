@@ -232,10 +232,10 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
                       aria-checked={mode === m}
                       onClick={() => setMode(m)}
                       className={cn(
-                        "min-w-0 truncate rounded-xl border px-3 py-2 text-sm font-semibold transition-colors",
+                        "min-w-0 truncate rounded-[var(--radius-control)] px-3 py-2 text-sm font-semibold transition-colors",
                         mode === m
-                          ? "border-[var(--primary)] bg-[var(--primary-soft)] text-[var(--primary)]"
-                          : "border-[var(--border)] text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]"
+                          ? "bg-[var(--primary-soft)] text-[var(--tint)]"
+                          : "text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
                       )}
                     >
                       {modeLabel[m]}
@@ -245,12 +245,12 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
                 {!isAny && <p className="text-xs text-[var(--muted)]">{t("limitedHint")}</p>}
 
                 {mode === "departments" && (
-                  <div className="max-h-52 overflow-y-auto overscroll-contain rounded-xl border border-[var(--border)] p-2">
+                  <div className="max-h-52 overflow-y-auto overscroll-contain rounded-[var(--radius-control)] bg-[var(--surface-2)] p-2">
                     <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                       {options.departments.map((d) => (
                         <label
                           key={d.id}
-                          className="flex min-w-0 cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm hover:bg-[var(--surface-2)]"
+                          className="flex min-w-0 cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm hover:bg-[var(--surface-3)]"
                         >
                           <input
                             type="checkbox"
@@ -266,11 +266,11 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
                 )}
 
                 {mode === "positions" && (
-                  <div className="grid grid-cols-1 gap-1 rounded-xl border border-[var(--border)] p-2 sm:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-1 rounded-[var(--radius-control)] bg-[var(--surface-2)] p-2 sm:grid-cols-2">
                     {options.positions.map((p) => (
                       <label
                         key={p}
-                        className="flex min-w-0 cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm hover:bg-[var(--surface-2)]"
+                        className="flex min-w-0 cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm hover:bg-[var(--surface-3)]"
                       >
                         <input
                           type="checkbox"
@@ -289,7 +289,7 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
                     <p className="text-xs font-semibold text-[var(--muted)]">
                       {t("selectedCount", { count: userIds.length })}
                     </p>
-                    <div className="max-h-72 overflow-y-auto overscroll-contain rounded-xl border border-[var(--border)] p-2">
+                    <div className="max-h-72 overflow-y-auto overscroll-contain rounded-[var(--radius-control)] bg-[var(--surface-2)] p-2">
                       <EmployeePicker
                         people={options.people}
                         selectedIds={userIds}
@@ -315,12 +315,12 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
                   aria-checked={importance === v}
                   onClick={() => setImportance(v)}
                   className={cn(
-                    "inline-flex min-w-0 items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors",
+                    "inline-flex min-w-0 items-center justify-center gap-1.5 rounded-[var(--radius-control)] px-3 py-2 text-sm font-semibold transition-colors",
                     importance === v
                       ? v === "important"
-                        ? "border-[var(--danger)] bg-[var(--danger-soft)] text-[var(--danger)]"
-                        : "border-[var(--primary)] bg-[var(--primary-soft)] text-[var(--primary)]"
-                      : "border-[var(--border)] text-[var(--muted)] hover:bg-[var(--surface-2)] hover:text-[var(--foreground)]"
+                        ? "bg-[var(--danger-soft)] text-[var(--danger)]"
+                        : "bg-[var(--primary-soft)] text-[var(--tint)]"
+                      : "text-[var(--ink-2)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
                   )}
                 >
                   {v === "important" && <IconAlertTriangle className="size-4 shrink-0" />}
@@ -365,7 +365,7 @@ export function AnnouncementForm({ options, today }: { options: ComposerOptions;
           </div>
 
           {/* Soʻrovnoma */}
-          <div className="space-y-3 rounded-2xl border border-[var(--border)] p-3 sm:p-4">
+          <div className="space-y-3 border-t border-[var(--line)] pt-5">
             <button
               type="button"
               role="switch"

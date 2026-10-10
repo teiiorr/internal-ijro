@@ -2,13 +2,16 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown } from "@tabler/icons-react";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Section } from "@/components/ui-biib/Section";
+import { Card } from "@/components/ui-biib/Card";
+import { EmptyState } from "@/components/empty-state";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
 import { getCouncilPage } from "@/server/queries/councils";
-import { Card, CardContent } from "@/components/ui/card";
 import { CouncilAgenda } from "@/components/councils/council-agenda";
-import { CouncilMeetingForm } from "@/components/councils/council-meeting-form";
+import { CouncilMeetingDialog } from "@/components/councils/council-meeting-dialog";
+import { CouncilTabs } from "@/components/councils/council-tabs";
 import { SmetaProjects } from "@/components/councils/smeta-projects";
 import { SmetaDocs } from "@/components/councils/smeta-docs";
 import { listSmetaCommissionProjects } from "@/server/queries/smeta-commission";
@@ -42,7 +45,6 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
     isSmeta ? listSmetaCommissionProjects() : Promise.resolve(null),
   ]);
 
-  const heading = kind === "ekspert" ? t("kengash.ekspertHeading") : t("kengash.smetaHeading");
   const pastMeetings = meetings.filter((m) => !upcoming || m.id !== upcoming.id);
 
   // Kengash qarorlari ijrosi — staff only; every read is guarded (empty before migration 0031).
@@ -65,132 +67,126 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
   const meRef = { id: me.id, position: me.position };
 
   return (
-    <div className="space-y-6">
-      {/* "Qarorlar ijrosi" endi menyu punkti (Kengashlar guruhi) — sarlavhadan tugma olib tashlandi. */}
-      <PageHeader title={heading} />
+    <div className="flex flex-col gap-8 lg:gap-12">
+      <PageHeader
+        title={t("nav.group.councils")}
+        tools={<CouncilTabs active={kind as Kind} showIjro={showResolutions} />}
+        actions={!isSmeta && canManage ? <CouncilMeetingDialog kind="ekspert" /> : undefined}
+      />
 
       {smetaList && (
         <SmetaProjects items={smetaList.items} projects={projectOpts} canManage={canManage} ready={smetaList.ready} />
       )}
 
-      {/* Smeta komissiyasi sonlari arxivi: qadab qoʻyilган sonlar, fayllari bosilganda ochiladi. */}
+      {/* Smeta komissiyasi sonlari arxivi: qadab qoʻyilgan sonlar, bosilganda fayllari ochiladi. */}
       {isSmeta && <SmetaDocs />}
 
-      {/* yaqinlaşayotgan yiğiliş + uning kun tartibi (Smeta'da faqat mavjud bölsa) */}
+      {/* Yaqinlashayotgan majlis va uning kun tartibi (Smeta'da faqat mavjud boʻlsa) */}
       {upcoming ? (
-        <Card>
-          <CardContent className="p-5 sm:p-6 space-y-5">
-            <div className="flex items-center gap-2 text-sm">
-              <CalendarClock className="size-4 text-[var(--primary)]" />
-              <span className="font-semibold">{upcoming.title || t("kengash.agenda")}</span>
-              <span className="text-[var(--muted)]">· {formatDateMaybeTime(upcoming.scheduledAt, locale)}</span>
-            </div>
+        <Section
+          title={upcoming.title || t("kengash.agenda")}
+          meta={formatDateMaybeTime(upcoming.scheduledAt, locale)}
+        >
+          <div className="flex flex-col gap-4">
             {openResolutions.length > 0 && canEditResolutionsOf(upcoming.createdByUserId) && (
               <OpenResolutionsCarryover meetingId={upcoming.id} rows={openResolutions} agendaTopics={agenda.map((a) => a.topic)} />
             )}
-            <CouncilAgenda
-              meetingId={upcoming.id}
-              items={agenda}
-              projects={projectOpts}
-              canManage={canManage}
-            />
-            {showResolutions && (
-              <ResolutionsEditor
+            <Card solid>
+              <CouncilAgenda
                 meetingId={upcoming.id}
-                kind={kind}
-                rows={resolutionsByMeeting[upcoming.id] ?? []}
-                agendaItems={agenda.map((a) => ({ id: a.id, topic: a.topic }))}
-                people={canEditResolutionsOf(upcoming.createdByUserId) ? people : []}
-                canEdit={canEditResolutionsOf(upcoming.createdByUserId)}
-                canAssign={canAssign}
-                me={meRef}
+                items={agenda}
+                projects={projectOpts}
+                canManage={canManage}
               />
-            )}
-          </CardContent>
-        </Card>
+              {showResolutions && (
+                <ResolutionsEditor
+                  meetingId={upcoming.id}
+                  kind={kind}
+                  rows={resolutionsByMeeting[upcoming.id] ?? []}
+                  agendaItems={agenda.map((a) => ({ id: a.id, topic: a.topic }))}
+                  people={canEditResolutionsOf(upcoming.createdByUserId) ? people : []}
+                  canEdit={canEditResolutionsOf(upcoming.createdByUserId)}
+                  canAssign={canAssign}
+                  me={meRef}
+                />
+              )}
+            </Card>
+          </div>
+        </Section>
       ) : (
         !isSmeta && (
-          <Card>
-            <CardContent className="py-12 text-center text-sm text-[var(--muted)]">{t("kengash.noUpcoming")}</CardContent>
+          <Card solid bare>
+            <EmptyState icon={CalendarClock} title={t("kengash.noUpcoming")} />
           </Card>
         )
       )}
 
-      {/* yangi yiğiliş belgilaş (faqat Ekspertlar Kengashi) */}
-      {canManage && !isSmeta && (
-        <Card>
-          <CardContent className="p-5 sm:p-6 space-y-3">
-            <h3 className="text-base font-semibold">{t("kengash.createMeeting")}</h3>
-            <CouncilMeetingForm kind={kind as Kind} />
-          </CardContent>
-        </Card>
-      )}
-
-      {/* arxiv — har bir ötgan yiğiliş öz kun tartibini körsatiş uchun ochiladi */}
+      {/* Arxiv — har bir oʻtgan majlis oʻz kun tartibini koʻrsatish uchun ochiladi */}
       {pastMeetings.length > 0 && (
-        <Card>
-          <CardContent className="p-4 sm:p-6 space-y-3">
-            <h3 className="text-base font-semibold">{t("kengash.history")}</h3>
-            <div className="space-y-2">
+        <Section title={t("kengash.history")} meta={pastMeetings.length}>
+          <Card solid bare className="px-5 sm:px-6">
+            <ul className="divide-y divide-[var(--line)]">
               {pastMeetings.map((m) => {
                 const items = agendaByMeeting[m.id] ?? [];
                 return (
-                  <details key={m.id} className="group rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 sm:px-4 sm:py-3">
-                    <summary className="flex cursor-pointer list-none items-center gap-2 text-sm sm:gap-3 [&::-webkit-details-marker]:hidden">
-                      <CalendarClock className="size-4 shrink-0 text-[var(--subtle)]" />
-                      <span className="min-w-0 flex-1 truncate font-medium">{m.title || t("kengash.agenda")}</span>
-                      <span className="shrink-0 text-xs text-[var(--muted)] sm:text-sm">{formatDateMaybeTime(m.scheduledAt, locale)}</span>
-                      <ChevronDown className="size-4 shrink-0 text-[var(--muted)] transition-transform group-open:rotate-180" />
-                    </summary>
-                    <div className="mt-3 border-t border-[var(--border)] pt-3">
-                      {items.length === 0 ? (
-                        <p className="text-sm text-[var(--muted)]">{t("kengash.emptyAgenda")}</p>
-                      ) : (
-                        <div className="overflow-x-auto">
-                          <table className="w-full border-collapse text-sm">
-                            <thead>
-                              <tr className="text-left text-xs font-semibold text-[var(--muted)]">
-                                <th className="w-8 border border-[var(--border)] px-2 py-2 font-semibold">№</th>
-                                <th className="border border-[var(--border)] px-3 py-2 font-semibold">{t("kengash.topic")}</th>
-                                <th className="border border-[var(--border)] px-3 py-2 font-semibold">{t("kengash.project")}</th>
-                                <th className="border border-[var(--border)] px-3 py-2 font-semibold">{t("kengash.studio")}</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {items.map((it, i) => (
-                                <tr key={it.id} className="align-top">
-                                  <td className="border border-[var(--border)] px-2 py-2 font-semibold tabular-nums text-[var(--muted)]">{i + 1}</td>
-                                  <td className="border border-[var(--border)] px-3 py-2 font-medium">{it.topic}</td>
-                                  <td className="border border-[var(--border)] px-3 py-2 text-[var(--muted)]">{it.projectName ?? "—"}</td>
-                                  <td className="border border-[var(--border)] px-3 py-2 text-[var(--muted)]">{it.studioName ?? "—"}</td>
+                  <li key={m.id}>
+                    <details className="group -mx-5 px-5 py-1 sm:-mx-6 sm:px-6">
+                      <summary className="flex cursor-pointer list-none items-center gap-3 py-2.5 text-sm [&::-webkit-details-marker]:hidden">
+                        <CalendarClock className="size-4 shrink-0 text-[var(--ink-3)]" />
+                        <span className="min-w-0 flex-1 truncate font-medium text-[var(--ink)]">{m.title || t("kengash.agenda")}</span>
+                        <span className="shrink-0 t-micro tabular-nums text-[var(--ink-3)]">{formatDateMaybeTime(m.scheduledAt, locale)}</span>
+                        <ChevronDown className="size-4 shrink-0 text-[var(--ink-3)] transition-transform group-open:rotate-180" />
+                      </summary>
+                      <div className="pb-4 pt-1">
+                        {items.length === 0 ? (
+                          <p className="t-small text-[var(--ink-3)]">{t("kengash.emptyAgenda")}</p>
+                        ) : (
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                              <thead>
+                                <tr className="border-b border-[var(--line)] text-left t-micro text-[var(--ink-3)]">
+                                  <th className="w-8 py-2 pr-3 font-semibold">№</th>
+                                  <th className="py-2 pr-3 font-semibold">{t("kengash.topic")}</th>
+                                  <th className="py-2 pr-3 font-semibold">{t("kengash.project")}</th>
+                                  <th className="py-2 pr-3 font-semibold">{t("kengash.studio")}</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                      {showResolutions && (
-                        <div className="mt-4">
-                          <ResolutionsEditor
-                            compact
-                            meetingId={m.id}
-                            kind={kind}
-                            rows={resolutionsByMeeting[m.id] ?? []}
-                            agendaItems={items.map((it) => ({ id: it.id, topic: it.topic }))}
-                            people={canEditResolutionsOf(m.createdByUserId) ? people : []}
-                            canEdit={canEditResolutionsOf(m.createdByUserId)}
-                            canAssign={canAssign}
-                            me={meRef}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </details>
+                              </thead>
+                              <tbody className="divide-y divide-[var(--line)]">
+                                {items.map((it, i) => (
+                                  <tr key={it.id} className="align-top">
+                                    <td className="py-2 pr-3 font-semibold tabular-nums text-[var(--ink-3)]">{i + 1}</td>
+                                    <td className="py-2 pr-3 font-medium text-[var(--ink)]">{it.topic}</td>
+                                    <td className="py-2 pr-3 text-[var(--ink-2)]">{it.projectName ?? "—"}</td>
+                                    <td className="py-2 pr-3 text-[var(--ink-2)]">{it.studioName ?? "—"}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                        {showResolutions && (
+                          <div className="mt-4">
+                            <ResolutionsEditor
+                              compact
+                              meetingId={m.id}
+                              kind={kind}
+                              rows={resolutionsByMeeting[m.id] ?? []}
+                              agendaItems={items.map((it) => ({ id: it.id, topic: it.topic }))}
+                              people={canEditResolutionsOf(m.createdByUserId) ? people : []}
+                              canEdit={canEditResolutionsOf(m.createdByUserId)}
+                              canAssign={canAssign}
+                              me={meRef}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </details>
+                  </li>
                 );
               })}
-            </div>
-          </CardContent>
-        </Card>
+            </ul>
+          </Card>
+        </Section>
       )}
     </div>
   );

@@ -7,7 +7,7 @@ import { FileInput } from "@/components/ui/file-input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { IconDownload as Download } from "@tabler/icons-react";
 import { submitDeliverable, reviewDeliverable } from "@/server/actions/projects";
 import { formatDateTime } from "@/lib/dates";
@@ -25,6 +25,13 @@ type D = {
 
 const TYPES = ["document", "video", "image", "archive", "other"] as const;
 const REVIEW = ["approved", "revision_requested", "rejected"] as const;
+
+const STATUS_TONE: Record<string, StatusTone> = {
+  approved: "success",
+  rejected: "danger",
+  revision_requested: "warning",
+  submitted: "info",
+};
 
 export function DeliverablesList({
   projectId,
@@ -65,27 +72,27 @@ export function DeliverablesList({
 
   return (
     <div className="space-y-3">
-      <div className="space-y-2">
+      <ul className="divide-y divide-[var(--line)] border-t border-[var(--line)]">
         {items.map((d) => (
-          <div key={d.id} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
+          <li key={d.id} className="space-y-3 py-4">
             <div className="flex items-center justify-between flex-wrap gap-2">
-              <div>
-                <a href={d.fileUrl} className="font-semibold hover:underline">{d.fileName}</a>
-                <p className="text-xs text-[var(--muted)]">{t(`projects.deliverable.types.${d.type}` as "projects.deliverable.types.document")} · {formatDateTime(d.submittedAt, locale)}</p>
+              <div className="min-w-0">
+                <a href={d.fileUrl} className="font-semibold text-[var(--ink)] hover:underline">{d.fileName}</a>
+                <p className="t-micro text-[var(--ink-3)]">{t(`projects.deliverable.types.${d.type}` as "projects.deliverable.types.document")}, {formatDateTime(d.submittedAt, locale)}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant={d.status === "approved" ? "success" : d.status === "rejected" ? "danger" : d.status === "revision_requested" ? "warning" : "secondary"}>
+                <Status tone={STATUS_TONE[d.status] ?? "neutral"}>
                   {t(`status.${d.status}` as "status.submitted")}
-                </Badge>
+                </Status>
                 <Button asChild variant="ghost" size="icon-sm"><a href={d.fileUrl}><Download className="size-4" /></a></Button>
               </div>
             </div>
-            {d.message && <p className="text-sm">{d.message}</p>}
+            {d.message && <p className="text-sm text-[var(--ink-2)]">{d.message}</p>}
             {d.adminFeedback && (
-              <p className="text-sm rounded-xl bg-[var(--surface-2)] p-3"><span className="text-[var(--muted)] font-medium">{t("projects.deliverables.feedback")}:</span> {d.adminFeedback}</p>
+              <p className="rounded-[var(--radius-s)] bg-[var(--surface-2)] p-3 text-sm text-[var(--ink)]"><span className="font-medium text-[var(--ink-3)]">{t("projects.deliverables.feedback")}:</span> {d.adminFeedback}</p>
             )}
             {canReview && d.status === "submitted" && (
-              <div className="space-y-3 pt-2 border-t border-[var(--border)]">
+              <div className="space-y-3 pt-2 border-t border-[var(--line)]">
                 <Input
                   placeholder={t("projects.deliverables.feedback")}
                   value={feedback[d.id] ?? ""}
@@ -106,14 +113,14 @@ export function DeliverablesList({
                 </div>
               </div>
             )}
-          </div>
+          </li>
         ))}
-        {items.length === 0 && <p className="text-sm text-[var(--muted)]">{t("projects.deliverables.noDeliverables")}</p>}
-      </div>
+        {items.length === 0 && <li className="py-4 t-small text-[var(--ink-3)]">{t("projects.deliverables.noDeliverables")}</li>}
+      </ul>
 
       {canSubmit && (
-        <form onSubmit={onSubmit} className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4 space-y-3">
-          <h4 className="font-semibold">{t("projects.deliverables.submit")}</h4>
+        <form onSubmit={onSubmit} className="space-y-3 border-t border-[var(--line)] pt-4">
+          <h4 className="t-h3 text-[var(--ink)]">{t("projects.deliverables.submit")}</h4>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             <div className="space-y-2">
               <Label>{t("projects.deliverables.type")}</Label>
