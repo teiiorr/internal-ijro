@@ -6,13 +6,14 @@ import { usePathname } from "@/i18n/navigation";
 import { STAFF_NAV } from "./staff-nav";
 import { STUDIO_NAV } from "./studio-nav";
 import { activeKey as computeActiveKey, resolveNav, visibleItems } from "./resolve";
-import type { NavViewer, ResolvedEntry } from "./types";
+import type { NavItem, NavViewer, ResolvedEntry } from "./types";
 
 export type NavBadges = { reviewQueue?: number; chatUnread?: number };
 
 type NavContextValue = {
   portal: "staff" | "studio";
   entries: ResolvedEntry[];
+  tabItems: NavItem[];
   badges: NavBadges;
   activeKey: string | null;
   activeGroupKey: string | null;
@@ -44,7 +45,20 @@ export function NavProvider({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const entries = useMemo(() => resolveNav(portal === "staff" ? STAFF_NAV : STUDIO_NAV, viewer), [portal, viewer]);
+  const cfg = portal === "staff" ? STAFF_NAV : STUDIO_NAV;
+  const entries = useMemo(() => resolveNav(cfg, viewer), [cfg, viewer]);
+
+  // Tab bar: prioritet ro'yxatidan birinchi 4 ta KO'RINADIGAN punkt (+ Menyu — UI'da qo'shiladi).
+  const tabItems = useMemo(() => {
+    const byKey = new Map(visibleItems(entries).map((i) => [i.key, i]));
+    const picked: NavItem[] = [];
+    for (const k of cfg.tabBar) {
+      const it = byKey.get(k);
+      if (it) picked.push(it);
+      if (picked.length === 4) break;
+    }
+    return picked;
+  }, [cfg, entries]);
 
   const activeKey = useMemo(
     () => computeActiveKey(pathname, visibleItems(entries), viewer),
@@ -79,8 +93,8 @@ export function NavProvider({
   );
 
   const value = useMemo<NavContextValue>(
-    () => ({ portal, entries, badges, activeKey, activeGroupKey, isOpen, toggle }),
-    [portal, entries, badges, activeKey, activeGroupKey, isOpen, toggle],
+    () => ({ portal, entries, tabItems, badges, activeKey, activeGroupKey, isOpen, toggle }),
+    [portal, entries, tabItems, badges, activeKey, activeGroupKey, isOpen, toggle],
   );
 
   return <NavContext.Provider value={value}>{children}</NavContext.Provider>;

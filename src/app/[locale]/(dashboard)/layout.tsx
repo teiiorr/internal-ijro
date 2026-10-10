@@ -6,7 +6,7 @@ import { isOwner } from "@/lib/permissions/owner";
 import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/nav/Sidebar";
 import { NavProvider } from "@/components/layout/nav/NavProvider";
-import { MobileNav } from "@/components/layout/mobile-nav";
+import { MobileNav } from "@/components/layout/nav/MobileNav";
 import { AppFooter } from "@/components/layout/app-footer";
 import { SessionProvider } from "next-auth/react";
 import { RouteProgress } from "@/components/layout/route-progress";
@@ -51,8 +51,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <AppFooter />
             </main>
           </div>
+          <MobileNav />
         </NavProvider>
-        <MobileNav position={session.user.position} userId={session.user.id} isOwner={owner} reviewCount={reviewCount} showContractors={showContractors} />
       </div>
     </SessionProvider>
   );

@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { IconArrowRight, IconCalendarCheck } from "@tabler/icons-react";
 import { getTodaySummary } from "@/server/queries/my-work";
 import { cn } from "@/lib/utils";
+import { Tag } from "@/components/ui-biib/Tag";
 import { KIND_ICON, KIND_TONE } from "./kind-meta";
 
 /**
@@ -14,8 +15,6 @@ export async function TodayStrip({ userId, locale }: { userId: string; locale: s
   if (s.today === 0 && s.overdue === 0 && s.approvals === 0) return null;
   const t = await getTranslations({ locale, namespace: "staffX.myWork" });
 
-  const chip = "inline-flex shrink-0 items-center rounded-md px-2.5 py-1 text-[13px] font-bold tabular leading-none";
-
   return (
     <div className="glass-strong flex flex-col gap-3 rounded-2xl px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:gap-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -23,17 +22,9 @@ export async function TodayStrip({ userId, locale }: { userId: string; locale: s
           <IconCalendarCheck className="size-[18px]" aria-hidden />
         </span>
         <h2 className="mr-1 text-base font-bold tracking-tight">{t("todayStripTitle")}</h2>
-        {s.today > 0 && (
-          <span className={cn(chip, "bg-[var(--primary-soft)] text-[var(--primary)]")}>{t("todayCount", { count: s.today })}</span>
-        )}
-        {s.overdue > 0 && (
-          <span className={cn(chip, "bg-[var(--danger-soft)] text-[var(--danger)]")}>{t("overdueCount", { count: s.overdue })}</span>
-        )}
-        {s.approvals > 0 && (
-          <span className={cn(chip, "bg-[var(--warning-soft)] text-[var(--warning)]")}>
-            {t("approvalsCount", { count: s.approvals })}
-          </span>
-        )}
+        {s.today > 0 && <Tag tone="info">{t("todayCount", { count: s.today })}</Tag>}
+        {s.overdue > 0 && <Tag tone="danger">{t("overdueCount", { count: s.overdue })}</Tag>}
+        {s.approvals > 0 && <Tag tone="warning">{t("approvalsCount", { count: s.approvals })}</Tag>}
       </div>
 
       {s.top.length > 0 && (
