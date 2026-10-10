@@ -8,8 +8,8 @@ import { CreateStudioButton } from "@/components/contractor/studio-crud-dialogs"
 import { StudioGrid } from "@/components/contractor/studio-grid";
 import { ReviewQueuePanel } from "@/components/contractor/review-queue-panel";
 import { canViewContractorChats, isContractorManager } from "@/lib/permissions/contractors";
-import Link from "next/link";
-import { IconMessageQuestion as Question } from "@tabler/icons-react";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Segmented } from "@/components/ui-biib/Segmented";
 import { countPendingRequests } from "@/server/queries/studio";
 
 export default async function ContractorsPage() {
@@ -24,19 +24,29 @@ export default async function ContractorsPage() {
 
   return (
     <div className="space-y-6 stagger-children">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("contractors.pageTitle")}</h1>
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-          <Link
-            href="/contractors/requests"
-            className={`inline-flex h-9 items-center gap-1.5 rounded-2xl border px-3.5 text-sm font-semibold transition-colors ${pendingRequests > 0 ? "border-[#E08C10]/50 bg-[#E08C10]/10 text-[#B26E00] dark:text-[#F0A43A]" : "border-[var(--border)] hover:border-[var(--primary)]"}`}
-          >
-            <Question className="size-4" /> {t("studio.staffQueue.link")}
-            {pendingRequests > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[#E08C10] px-1.5 text-[11px] font-bold text-white tabular-nums">{pendingRequests}</span>}
-          </Link>
-          {canManage && <CreateStudioButton />}
-        </div>
-      </div>
+      <PageHeader
+        title={t("contractors.pageTitle")}
+        actions={canManage && <CreateStudioButton />}
+        tools={
+          <Segmented
+            items={[
+              { href: "/contractors", label: t("contractors.pageTitle"), active: true },
+              {
+                href: "/contractors/requests",
+                active: false,
+                label: (
+                  <span className="inline-flex items-center gap-1.5">
+                    {t("studio.staffQueue.link")}
+                    {pendingRequests > 0 && (
+                      <span className="rounded-md bg-[var(--warning-soft)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--warning)]">{pendingRequests}</span>
+                    )}
+                  </span>
+                ),
+              },
+            ]}
+          />
+        }
+      />
 
       {canManage && <ReviewQueuePanel groups={reviewGroups} />}
 

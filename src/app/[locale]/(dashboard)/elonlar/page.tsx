@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/empty-state";
 import { cn } from "@/lib/utils";
 import { AnnouncementCard } from "@/components/staff/announcements/announcement-card";
 import { AnnouncementForm } from "@/components/staff/announcements/announcement-form";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { ANNOUNCEMENTS_PAGE_SIZE, todayTashkentYmd } from "@/components/staff/announcements/logic";
 import { canPost, getComposerOptions, listAnnouncements } from "@/server/queries/announcements";
 
@@ -37,13 +38,11 @@ export default async function AnnouncementsPage({ searchParams }: { searchParams
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">{t("title")}</h1>
-          <p className="mt-1 text-sm text-[var(--muted)]">{t("subtitle")}</p>
-        </div>
-        {composer && <AnnouncementForm options={composer} today={todayTashkentYmd()} />}
-      </div>
+      <PageHeader
+        title={t("title")}
+        subtitle={t("subtitle")}
+        actions={composer && <AnnouncementForm options={composer} today={todayTashkentYmd()} />}
+      />
 
       {rows.length === 0 ? (
         <Card>

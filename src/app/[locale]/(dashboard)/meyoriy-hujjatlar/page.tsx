@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { NormativeDocuments } from "@/components/normative/normative-documents";
 import { listNormativeDocuments } from "@/server/queries/normative";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
@@ -34,10 +35,7 @@ export default async function NormativeDocsPage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{t("normative.title")}</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">{t("normative.subtitle")}</p>
-      </div>
+      <PageHeader title={t("normative.title")} subtitle={t("normative.subtitle")} />
       {pendingAcks.length > 0 && <MyPendingAcks items={pendingAcks} highlight={ack} />}
       <Card>
         <CardContent className="p-5 sm:p-6">
