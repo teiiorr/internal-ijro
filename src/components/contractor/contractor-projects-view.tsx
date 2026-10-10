@@ -114,7 +114,7 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
             )}
           >
             <span>{tab.label}</span>
-            <span className="rounded-full bg-[var(--surface-3)] px-1.5 py-0 text-[11px] font-bold tabular-nums">{tab.count}</span>
+            <span className="rounded-md bg-[var(--surface-3)] px-1.5 py-0 text-[11px] font-bold tabular-nums">{tab.count}</span>
           </button>
         ))}
       </div>

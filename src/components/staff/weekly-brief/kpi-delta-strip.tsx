@@ -130,7 +130,7 @@ export function KpiDeltaStrip({
                 )}
                 {isEstimate && tile.pointInTime && (
                   <span
-                    className="ml-auto shrink-0 rounded-full bg-[var(--warning-soft)] px-2 py-0.5 text-[10px] font-bold text-[var(--warning)]"
+                    className="ml-auto shrink-0 rounded-md bg-[var(--warning-soft)] px-2 py-0.5 text-[10px] font-bold text-[var(--warning)]"
                     title={t("estimateHint")}
                   >
                     {t("estimate")}

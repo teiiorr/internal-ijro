@@ -87,7 +87,7 @@ function Section({
         <div className="min-w-0">
           <h2 className="flex items-center gap-2 text-lg font-bold tracking-tight">
             {title}
-            <span className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-xs font-bold tabular-nums text-[var(--muted)]">{rows.length}</span>
+            <span className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 text-xs font-bold tabular-nums text-[var(--muted)]">{rows.length}</span>
           </h2>
           <p className="text-sm text-[var(--muted)]">{hint}</p>
         </div>

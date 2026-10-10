@@ -23,7 +23,7 @@ function Chip({ icon, children, tone = "muted" }: { icon: React.ReactNode; child
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold",
+        "inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold",
         tone === "danger" ? "bg-[var(--danger-soft)] text-[var(--danger)]" : "bg-[var(--surface-2)] text-[var(--muted)]"
       )}
     >

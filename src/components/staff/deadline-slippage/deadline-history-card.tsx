@@ -75,7 +75,7 @@ export async function DeadlineHistoryCard({ projectId, locale }: DeadlineHistory
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5 text-xs">
-            <span className="inline-flex items-center gap-1 rounded-full bg-[var(--surface-2)] px-2 py-0.5 font-semibold tabular">
+            <span className="inline-flex items-center gap-1 rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold tabular">
               {fmtDmy(c.oldDeadline)}
               <IconArrowRight className="size-3 text-[var(--muted)]" aria-hidden />
               {fmtDmy(c.newDeadline)}
@@ -83,14 +83,14 @@ export async function DeadlineHistoryCard({ projectId, locale }: DeadlineHistory
             {delta != null && delta !== 0 && (
               <span
                 className={cn(
-                  "rounded-full px-2 py-0.5 font-bold tabular",
+                  "rounded-md px-2 py-0.5 font-bold tabular",
                   delta > 0 ? "bg-[var(--danger-soft)] text-[var(--danger)]" : "bg-[var(--success-soft)] text-[var(--success)]"
                 )}
               >
                 {t("delta", { sign: delta > 0 ? "+" : "−", days: Math.abs(delta) })}
               </span>
             )}
-            <span className={cn("rounded-full px-2 py-0.5 font-semibold", SOURCE_TONE[source])}>
+            <span className={cn("rounded-md px-2 py-0.5 font-semibold", SOURCE_TONE[source])}>
               {t(`source.${source}`)}
             </span>
           </div>

@@ -18,7 +18,7 @@ import type { SmetaCommissionProject } from "@/server/queries/smeta-commission";
 function InProcess({ className }: { className: string }) {
   const t = useTranslations("kengash.smetaProjects");
   return (
-    <span className={cn("shrink-0 items-center gap-2 rounded-full bg-[#EAB308]/15 px-3 py-1.5 text-xs font-bold text-[#7A5A00] dark:text-[#FACC15]", className)}>
+    <span className={cn("shrink-0 items-center gap-2 rounded-md bg-[#EAB308]/15 px-3 py-1.5 text-xs font-bold text-[#7A5A00] dark:text-[#FACC15]", className)}>
       <span className="process-dots" aria-hidden>
         <span />
         <span />

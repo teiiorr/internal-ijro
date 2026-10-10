@@ -42,7 +42,7 @@ export function KindChip({ kind, label, className }: { kind: MyWorkKind; label: 
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold leading-4",
+        "inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold leading-4",
         KIND_TONE[kind],
         className,
       )}

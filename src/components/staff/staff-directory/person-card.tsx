@@ -145,7 +145,7 @@ export function PersonCard({ person }: { person: PersonRow }) {
           {person.skills.map((s) => (
             <li
               key={s}
-              className="max-w-full truncate rounded-full bg-[var(--primary-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--primary)]"
+              className="max-w-full truncate rounded-md bg-[var(--primary-soft)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--primary)]"
             >
               {s}
             </li>

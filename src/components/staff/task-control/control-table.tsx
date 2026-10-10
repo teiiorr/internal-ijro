@@ -182,7 +182,7 @@ function Progress({ row, tc }: { row: ControlRow; tc: T }) {
       <div className="flex items-center gap-2 text-[13px] font-semibold tabular-nums">
         <span>{tc("answered", { answered: row.answered, total: row.total })}</span>
         {row.underReview > 0 && (
-          <span className="rounded-full bg-[var(--warning)]/15 px-1.5 py-0.5 text-[11px] font-bold text-[var(--warning)]">
+          <span className="rounded-md bg-[var(--warning)]/15 px-1.5 py-0.5 text-[11px] font-bold text-[var(--warning)]">
             {tc("underReviewCount", { count: row.underReview })}
           </span>
         )}

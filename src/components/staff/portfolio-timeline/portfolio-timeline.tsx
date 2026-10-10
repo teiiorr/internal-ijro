@@ -170,7 +170,7 @@ export function PortfolioTimeline({
                     <span className="min-w-0 flex-1 truncate text-[13px] font-bold" title={lane.name}>
                       {lane.name}
                     </span>
-                    <span className="shrink-0 rounded-full bg-[var(--surface-3)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">
+                    <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">
                       {lane.rows.length}
                     </span>
                   </div>
@@ -232,7 +232,7 @@ export function PortfolioTimeline({
                     {/* sticky — gorizontal skrollda chap ustun yonida koʻrinib turadi */}
                     <span
                       className={cn(
-                        "sticky left-[158px] z-[3] ml-2 inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-bold md:left-[268px]",
+                        "sticky left-[158px] z-[3] ml-2 inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-bold md:left-[268px]",
                         lane.parallel >= 3 ? "text-[#3b2a05]" : "bg-[var(--surface-3)] text-[var(--muted)]",
                       )}
                       style={lane.parallel >= 3 ? { backgroundColor: "var(--warning)" } : undefined}

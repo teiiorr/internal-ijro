@@ -33,7 +33,7 @@ export function ContestComments({ contestId, comments, canModerate }: { contestI
       <h3 className="flex items-center gap-2 text-base font-semibold">
         <MessageSquare className="size-4 text-[var(--muted)]" />
         {t("tanlov.comments")}
-        <span className="rounded-full bg-[var(--surface-3)] px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">{comments.length}</span>
+        <span className="rounded-md bg-[var(--surface-3)] px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">{comments.length}</span>
       </h3>
 
       <form onSubmit={submit} className="space-y-2">

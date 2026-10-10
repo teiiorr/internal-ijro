@@ -57,7 +57,7 @@ export function KindChip({ kind, className }: { kind: string; className?: string
   return (
     <span
       className={cn(
-        "inline-flex max-w-full items-center truncate rounded-full px-2 py-0.5 text-[11px] font-bold",
+        "inline-flex max-w-full items-center truncate rounded-md px-2 py-0.5 text-[11px] font-bold",
         kind === "smeta" ? "bg-[var(--accent-soft)] text-[var(--accent)]" : "bg-[var(--primary-soft)] text-[var(--primary)]",
         className
       )}

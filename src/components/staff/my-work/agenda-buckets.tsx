@@ -139,7 +139,7 @@ export async function AgendaBuckets({ items, locale, today }: { items: AgendaIte
                   {t(`bucket.${bucket}`)}
                 </h2>
                 {open > 0 && (
-                  <span className={cn("rounded-full px-2 text-xs font-bold leading-6 tabular", s.badge)}>{open}</span>
+                  <span className={cn("rounded-md px-2 text-xs font-bold leading-6 tabular", s.badge)}>{open}</span>
                 )}
               </header>
               <ul className="space-y-0.5 p-1.5 sm:p-2">

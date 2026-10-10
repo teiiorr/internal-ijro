@@ -106,7 +106,7 @@ export function CommandPalette() {
         type="button"
         onClick={() => handleOpenChange(true)}
         aria-label={t("open")}
-        className="flex items-center gap-2 rounded-full border border-[var(--input)] bg-[var(--glass-fill)] px-3 h-9 text-[13px] font-medium text-[var(--subtle)] hover:border-[var(--primary)] hover:text-[var(--foreground)] transition-colors"
+        className="flex items-center gap-2 rounded-md border border-[var(--input)] bg-[var(--glass-fill)] px-3 h-9 text-[13px] font-medium text-[var(--subtle)] hover:border-[var(--primary)] hover:text-[var(--foreground)] transition-colors"
       >
         <Search className="size-4" />
         <span className="hidden md:inline">{t("open")}</span>

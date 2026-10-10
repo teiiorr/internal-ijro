@@ -72,7 +72,7 @@ export function BriefGroup<T>({
           {icon && <span className="shrink-0 text-[var(--muted)]">{icon}</span>}
           <span className="min-w-0 break-words">{title}</span>
         </h3>
-        <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums", CHIP[tone])}>
+        <span className={cn("shrink-0 rounded-md px-2 py-0.5 text-[11px] font-bold tabular-nums", CHIP[tone])}>
           {items.length}
         </span>
       </div>

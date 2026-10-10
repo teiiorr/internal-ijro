@@ -54,7 +54,7 @@ export function ResolutionsEditor({
         <Gavel className="size-4 shrink-0 text-[var(--primary)]" />
         <h3 className="min-w-0 truncate text-base font-semibold">{t("block")}</h3>
         {rows.length > 0 && (
-          <span className="rounded-full bg-[var(--surface-3)] px-2 py-0.5 text-xs font-bold tabular-nums text-[var(--muted)]">
+          <span className="rounded-md bg-[var(--surface-3)] px-2 py-0.5 text-xs font-bold tabular-nums text-[var(--muted)]">
             {rows.length}
           </span>
         )}

@@ -109,10 +109,10 @@ export function ConversationScreen({
             </div>
           </button>
           {readOnly && (
-            <span className="inline-flex shrink-0 items-center rounded-full bg-[var(--surface-2)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)]">{t("conversation.readOnly")}</span>
+            <span className="inline-flex shrink-0 items-center rounded-md bg-[var(--surface-2)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)]">{t("conversation.readOnly")}</span>
           )}
           {openHref && (
-            <Link href={openHref} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]">
+            <Link href={openHref} className="inline-flex shrink-0 items-center gap-1 rounded-md border border-[var(--border)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:border-[var(--primary)] hover:text-[var(--foreground)]">
               {openLabel ?? t("contractor.openStage")}
               <ArrowRight className="size-3.5" />
             </Link>
@@ -145,7 +145,7 @@ export function ConversationScreen({
                   {c.stageId ? <Hash className="size-4 shrink-0" /> : <Messages className="size-4 shrink-0" />}
                   <span className="max-w-[200px] truncate sm:max-w-[260px]">{c.label}</span>
                   {c.messages.length > 0 && (
-                    <span className={cn("rounded-full px-1.5 py-0.5 text-[11px] leading-none tabular-nums", active ? "bg-white/25 text-white" : "bg-[var(--surface-2)] text-[var(--muted)]")}>
+                    <span className={cn("rounded-md px-1.5 py-0.5 text-[11px] leading-none tabular-nums", active ? "bg-white/25 text-white" : "bg-[var(--surface-2)] text-[var(--muted)]")}>
                       {c.messages.length}
                     </span>
                   )}

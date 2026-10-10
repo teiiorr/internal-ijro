@@ -13,5 +13,5 @@ export function DeadlineChip({ days, className }: { days: number; className?: st
       : days <= 3
         ? "bg-[#E08C10]/14 text-[#B26E00] dark:text-[#F0A43A]"
         : "bg-[var(--surface-2)] text-[var(--muted)]";
-  return <span className={cn("inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-bold tabular-nums", tone, className)}>{label}</span>;
+  return <span className={cn("inline-flex shrink-0 items-center rounded-md px-2.5 py-1 text-xs font-bold tabular-nums", tone, className)}>{label}</span>;
 }

@@ -151,7 +151,7 @@ export function AssigneesCard({
                     <p className="font-semibold text-[15px]">{shortName(a.fullName)}</p>
                     {a.status === "completed" && <BadgeCheck className="size-[18px] text-[var(--success)]" />}
                     {nudge && nudge.count > 0 && (
-                      <span className="rounded-full bg-[var(--surface-3)] px-2 py-0.5 text-[11px] font-semibold text-[var(--muted)] whitespace-nowrap">
+                      <span className="rounded-md bg-[var(--surface-3)] px-2 py-0.5 text-[11px] font-semibold text-[var(--muted)] whitespace-nowrap">
                         {t("staffX.taskControl.nudgedTimes", { count: nudge.count })}
                       </span>
                     )}

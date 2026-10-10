@@ -137,17 +137,17 @@ export async function TaskHistoryCard({ taskId, taskCreatedAt, locale }: TaskHis
           {(fields.length > 0 || showDates || (d.targets && d.targets.length > 0)) && (
             <div className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--muted)]">
               {fields.map((f) => (
-                <span key={f} className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 font-semibold">
+                <span key={f} className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold">
                   {f}
                 </span>
               ))}
               {showDates && (
-                <span className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 font-semibold tabular">
+                <span className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold tabular">
                   {fmtDdMm(d.fromDate)} → {fmtDdMm(d.toDate)}
                 </span>
               )}
               {d.targets?.map((n, i) => (
-                <span key={`${n}-${i}`} className="max-w-full truncate rounded-full bg-[var(--surface-2)] px-2 py-0.5 font-semibold">
+                <span key={`${n}-${i}`} className="max-w-full truncate rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold">
                   {localizeName(n, locale)}
                 </span>
               ))}

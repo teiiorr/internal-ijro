@@ -81,7 +81,7 @@ export function DeadlineRequestDialog({ taskId, currentDeadlineDate, pending }: 
     return (
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[var(--border)] pt-3">
         <span
-          className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full bg-[var(--warning-soft)] px-3 py-1 text-xs font-semibold text-[var(--warning)]"
+          className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-md bg-[var(--warning-soft)] px-3 py-1 text-xs font-semibold text-[var(--warning)]"
           title={pending.reason}
         >
           <IconClockHour4 className="size-3.5 shrink-0" />

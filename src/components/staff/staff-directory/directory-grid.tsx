@@ -149,7 +149,7 @@ export function DirectoryGrid({
                 aria-pressed={active}
                 onClick={() => navigate({ skill: active ? null : s })}
                 className={cn(
-                  "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                  "inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
                   active
                     ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
                     : "bg-[var(--surface-3)] text-[var(--muted)] hover:text-[var(--foreground)]"
@@ -171,7 +171,7 @@ export function DirectoryGrid({
           <button
             type="button"
             onClick={clearAll}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary-soft)]"
+            className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-semibold text-[var(--primary)] transition-colors hover:bg-[var(--primary-soft)]"
           >
             <IconFilterOff className="size-4" aria-hidden />
             {t("clearFilters")}

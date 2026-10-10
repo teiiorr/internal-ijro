@@ -88,7 +88,7 @@ export function WeekStrip({
               {count > 0 && (
                 <span
                   className={cn(
-                    "absolute -right-1.5 -top-1.5 min-w-5 rounded-full px-1.5 text-center text-[11px] font-bold leading-5 tabular shadow-[var(--shadow-1)]",
+                    "absolute -right-1.5 -top-1.5 min-w-5 rounded-md px-1.5 text-center text-[11px] font-bold leading-5 tabular shadow-[var(--shadow-1)]",
                     isSelected
                       ? "bg-[var(--card)] text-[var(--primary)]"
                       : isPast
@@ -108,7 +108,7 @@ export function WeekStrip({
           href={href(null)}
           scroll={false}
           replace
-          className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-3)] px-3 py-1 text-[13px] font-semibold text-[var(--muted)] transition-colors hover:text-[var(--foreground)]"
+          className="inline-flex items-center gap-1.5 rounded-md bg-[var(--surface-3)] px-3 py-1 text-[13px] font-semibold text-[var(--muted)] transition-colors hover:text-[var(--foreground)]"
         >
           <IconX className="size-3.5" aria-hidden />
           {t("clearDay")}

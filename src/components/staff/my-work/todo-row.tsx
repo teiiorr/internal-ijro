@@ -113,7 +113,7 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
             type="button"
             onClick={openDate}
             className={cn(
-              "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 font-medium transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)]",
+              "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium transition-colors hover:bg-[var(--surface-3)] hover:text-[var(--foreground)]",
               overdue && "text-[var(--danger)]",
             )}
             aria-expanded={dateOpen}

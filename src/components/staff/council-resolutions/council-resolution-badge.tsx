@@ -19,7 +19,7 @@ export async function CouncilResolutionBadge({ taskId }: { taskId: string }) {
         <Link
           key={`${r.meetingId}-${r.number}`}
           href={`/kengashlar/${r.meetingKind}`}
-          className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full border border-[var(--primary)]/25 bg-[var(--primary-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--primary)] transition-colors hover:border-[var(--primary)]/60 sm:text-sm"
+          className="inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-md border border-[var(--primary)]/25 bg-[var(--primary-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--primary)] transition-colors hover:border-[var(--primary)]/60 sm:text-sm"
         >
           <Gavel className="size-4 shrink-0" />
           <span className="min-w-0 break-words">

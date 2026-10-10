@@ -77,7 +77,7 @@ function DeptNodeView({
                 {node.name}
               </h3>
               <div className="flex shrink-0 flex-wrap items-center gap-1.5">
-                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--surface-3)] px-2.5 py-0.5 text-xs font-semibold text-[var(--muted)] tabular">
+                <span className="inline-flex items-center gap-1 rounded-md bg-[var(--surface-3)] px-2.5 py-0.5 text-xs font-semibold text-[var(--muted)] tabular">
                   <IconUsers className="size-3.5" aria-hidden />
                   {t("members", { count: node.memberCount })}
                 </span>
@@ -240,7 +240,7 @@ export function OrgTree({ tree }: { tree: OrgTreeData }) {
             className="flex flex-wrap items-center gap-2 text-base font-bold tracking-tight sm:text-lg"
           >
             {t("unassigned")}
-            <span className="rounded-full bg-[var(--surface-3)] px-2.5 py-0.5 text-xs font-semibold text-[var(--muted)] tabular">
+            <span className="rounded-md bg-[var(--surface-3)] px-2.5 py-0.5 text-xs font-semibold text-[var(--muted)] tabular">
               {t("members", { count: tree.unassigned.length })}
             </span>
           </h2>

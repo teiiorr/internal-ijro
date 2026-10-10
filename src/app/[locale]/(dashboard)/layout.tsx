@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isOwner } from "@/lib/permissions/owner";
 import { Header } from "@/components/layout/header";
-import { Sidebar } from "@/components/layout/sidebar";
+import { Sidebar } from "@/components/layout/nav/Sidebar";
+import { NavProvider } from "@/components/layout/nav/NavProvider";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { AppFooter } from "@/components/layout/app-footer";
 import { SessionProvider } from "next-auth/react";
@@ -12,6 +14,8 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { getReviewQueueCount } from "@/server/queries/stages";
 import { canViewContractorChats, isContractorManager } from "@/lib/permissions/contractors";
+import { canSeeMoney } from "@/lib/permissions/money";
+import { canViewWeeklyBrief } from "@/lib/reports/weekly-brief-core";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -24,19 +28,30 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // "Sizni kutmoqda" — körib çiqiş kutayotgan bosqiçlar soni; faqat boşqara oladiganlar amal qiladi.
   const reviewCount = isContractorManager(session.user) ? await getReviewQueueCount() : 0;
 
+  // Navigatsiya: rol/flag tekshiruvlari bir marta, cookie'dan ochiq guruhlar.
+  const money = await canSeeMoney({ id: session.user.id, email: session.user.email });
+  const viewer = {
+    position: session.user.position,
+    isOwner: owner,
+    flags: { contractors: showContractors, money, reports: canViewWeeklyBrief(session.user.position, owner) },
+  };
+  const initialOpen = ((await cookies()).get("ijro_nav_open")?.value ?? "").split(",").filter(Boolean);
+
   return (
     <SessionProvider>
       <RouteProgress />
       {/* overflow-x-clip: hujjat kengligi ekrandan oshmaydi (iOS'da body clip yetarli emas), sticky buzilmaydi. */}
       <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative overflow-x-clip">
         <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
-        <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
-          <Sidebar position={session.user.position} userId={session.user.id} isOwner={owner} reviewCount={reviewCount} showContractors={showContractors} />
-          <main className="flex-1 px-3 sm:px-4 md:px-6 lg:px-8 py-5 sm:py-6 md:py-8 min-w-0 flex flex-col">
-            <div className="flex-1">{children}</div>
-            <AppFooter />
-          </main>
-        </div>
+        <NavProvider portal="staff" viewer={viewer} badges={{ reviewQueue: reviewCount }} initialOpen={initialOpen}>
+          <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
+            <Sidebar />
+            <main className="flex-1 px-3 sm:px-4 md:px-6 lg:px-8 py-5 sm:py-6 md:py-8 min-w-0 flex flex-col">
+              <div className="flex-1">{children}</div>
+              <AppFooter />
+            </main>
+          </div>
+        </NavProvider>
         <MobileNav position={session.user.position} userId={session.user.id} isOwner={owner} reviewCount={reviewCount} showContractors={showContractors} />
       </div>
     </SessionProvider>

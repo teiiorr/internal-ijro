@@ -42,10 +42,10 @@ export function ThroughputChart({
           title={t("throughput")}
           aside={
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-[var(--primary-soft)] px-3 py-1 text-xs font-bold tabular-nums text-[var(--primary)]">
+              <span className="rounded-md bg-[var(--primary-soft)] px-3 py-1 text-xs font-bold tabular-nums text-[var(--primary)]">
                 {t("created")}: {totalCreated}
               </span>
-              <span className="rounded-full bg-[var(--success-soft)] px-3 py-1 text-xs font-bold tabular-nums text-[var(--success)]">
+              <span className="rounded-md bg-[var(--success-soft)] px-3 py-1 text-xs font-bold tabular-nums text-[var(--success)]">
                 {t("completed")}: {totalCompleted}
               </span>
             </div>

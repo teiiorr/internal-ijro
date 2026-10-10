@@ -65,7 +65,7 @@ export function StudioDocumentsFull({ documents }: { documents: Doc[] }) {
         <section key={p.projectId} className="space-y-3">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-bold">{p.projectName}</h3>
-            <span className="shrink-0 rounded-full bg-[var(--surface-3)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--muted)]">
+            <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 py-0.5 text-[10px] font-bold text-[var(--muted)]">
               {p.totalDocs}
             </span>
           </div>
@@ -74,7 +74,7 @@ export function StudioDocumentsFull({ documents }: { documents: Doc[] }) {
               <div className="flex items-center gap-2">
                 <Folder className="size-4 shrink-0 text-[var(--primary)]" />
                 <span className="truncate text-xs font-semibold text-[var(--muted)]">{f.name}</span>
-                <span className="shrink-0 rounded-full bg-[var(--surface-3)] px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-[var(--muted)]">
+                <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-[var(--muted)]">
                   {f.docs.length}
                 </span>
               </div>

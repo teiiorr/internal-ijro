@@ -14,7 +14,7 @@ export async function TodayStrip({ userId, locale }: { userId: string; locale: s
   if (s.today === 0 && s.overdue === 0 && s.approvals === 0) return null;
   const t = await getTranslations({ locale, namespace: "staffX.myWork" });
 
-  const chip = "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[13px] font-bold tabular leading-none";
+  const chip = "inline-flex shrink-0 items-center rounded-md px-2.5 py-1 text-[13px] font-bold tabular leading-none";
 
   return (
     <div className="glass-strong flex flex-col gap-3 rounded-2xl px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:gap-4">

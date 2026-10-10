@@ -12,7 +12,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-full px-3 text-xs font-semibold transition-colors",
+        "inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-md px-3 text-xs font-semibold transition-colors",
         active
           ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
           : "border border-[var(--border)] bg-[var(--surface-2)] text-[var(--muted)] hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"

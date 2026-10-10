@@ -87,7 +87,7 @@ export function StagePayments({
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold tabular-nums text-[var(--muted)]">{plannedPct}%</span>
               {fullyPaid && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--success)]/12 px-2 py-0.5 text-xs font-bold text-[var(--success)]">
+                <span className="inline-flex items-center gap-1 rounded-md bg-[var(--success)]/12 px-2 py-0.5 text-xs font-bold text-[var(--success)]">
                   <CheckCircle2 className="size-3.5" />
                   {t("projects.stagePayments.fullyPaid")}
                 </span>

@@ -48,7 +48,7 @@ export function CuratorList({
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="self-start rounded-full bg-[var(--surface-3)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:bg-[var(--primary-soft)] hover:text-[var(--primary)] active:scale-95"
+          className="self-start rounded-md bg-[var(--surface-3)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)] transition-colors hover:bg-[var(--primary-soft)] hover:text-[var(--primary)] active:scale-95"
         >
           +{hidden}
         </button>

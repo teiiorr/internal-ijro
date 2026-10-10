@@ -11,7 +11,7 @@ import {
 } from "@tabler/icons-react";
 
 const CONTACT_CLS =
-  "inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]";
+  "inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--surface-2)] px-3 py-1.5 text-sm font-semibold text-[var(--foreground)] transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]";
 
 // Dastur muallifi haqida — mualliflik va intellektual mulk to'g'risidagi eslatma.
 export async function DeveloperCard() {

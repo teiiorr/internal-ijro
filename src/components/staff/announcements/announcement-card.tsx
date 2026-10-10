@@ -71,13 +71,13 @@ export function AnnouncementCard({ a }: { a: AnnouncementCardData }) {
             {(a.hasPoll || a.attachmentName) && (
               <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2 text-xs">
                 {a.hasPoll && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-[var(--primary-soft)] px-2.5 py-1 font-semibold text-[var(--primary)]">
+                  <span className="inline-flex items-center gap-1 rounded-md bg-[var(--primary-soft)] px-2.5 py-1 font-semibold text-[var(--primary)]">
                     <IconChartBar className="size-3.5" aria-hidden />
                     {t("poll")}
                   </span>
                 )}
                 {a.attachmentName && (
-                  <span className="inline-flex min-w-0 max-w-full items-center gap-1 rounded-full bg-[var(--surface-2)] px-2.5 py-1 font-medium text-[var(--muted)]">
+                  <span className="inline-flex min-w-0 max-w-full items-center gap-1 rounded-md bg-[var(--surface-2)] px-2.5 py-1 font-medium text-[var(--muted)]">
                     <IconPaperclip className="size-3.5 shrink-0" aria-hidden />
                     <span className="truncate">{a.attachmentName}</span>
                   </span>

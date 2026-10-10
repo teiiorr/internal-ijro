@@ -94,7 +94,7 @@ export function CurrentStatusEditor({
           {!editing && lastUpdate && (
             <p className="mt-2 text-xs text-[var(--muted)]">
               {lastUpdate.byStudio && (
-                <span className="mr-1.5 inline-flex rounded-full bg-[var(--primary)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                <span className="mr-1.5 inline-flex rounded-md bg-[var(--primary)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
                   {t("studio.currentStatus.byStudio")}
                 </span>
               )}

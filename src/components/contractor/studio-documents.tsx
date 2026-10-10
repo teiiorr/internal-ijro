@@ -142,7 +142,7 @@ export function StudioDocuments({
               <div className="flex items-center gap-2">
                 <Folder className="size-4 shrink-0 text-[var(--primary)]" />
                 <span className="min-w-0 truncate text-sm font-semibold">{g.name}</span>
-                <span className="shrink-0 rounded-full bg-[var(--surface-3)] px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">
+                <span className="shrink-0 rounded-md bg-[var(--surface-3)] px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-[var(--muted)]">
                   {g.docs.length}
                 </span>
               </div>

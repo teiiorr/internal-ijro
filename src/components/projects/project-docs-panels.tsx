@@ -143,7 +143,7 @@ function DocPanel({
           <Icon className="size-5" />
         </span>
         <h3 className="truncate px-14 text-center text-[15px] font-bold leading-tight text-white">{title}</h3>
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/25 px-2 py-0.5 text-xs font-bold tabular-nums text-white">
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 rounded-md bg-white/25 px-2 py-0.5 text-xs font-bold tabular-nums text-white">
           {docs.length}
         </span>
       </div>
