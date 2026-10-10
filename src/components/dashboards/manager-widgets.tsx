@@ -7,20 +7,24 @@ import {
   getProjectTypeBreakdown,
   getStageDeadlineBoard,
   getProjectPaymentsSummary,
-  getTopAssigneesByCompleted,
-  getTopAssigneesByOverdue,
-  getDepartmentWorkload,
 } from "@/server/queries/dashboards";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { ProjectStatusDonut, ProjectTypeBar } from "@/components/dashboards/lazy-charts";
-import { shortName } from "@/lib/names";
 import type { DerivedStatus } from "@/lib/projects/progress";
-import { IconTrophy as Trophy, IconAlertTriangle as AlertTriangle, IconStack2 as Layers, IconLayoutKanban as FolderKanban, IconCalendarClock as CalendarClock, IconCalendarX as CalendarX2, IconListCheck as ListChecks, IconChevronRight as ChevronRight, IconChartPie as PieChart, IconChartBar as BarChart3, IconWallet as Wallet } from "@tabler/icons-react";
-import { UserAvatar } from "@/components/ui/user-avatar";
+import {
+  IconLayoutKanban as FolderKanban,
+  IconCalendarClock as CalendarClock,
+  IconCalendarX as CalendarX2,
+  IconListCheck as ListChecks,
+  IconChevronRight as ChevronRight,
+  IconChartPie as PieChart,
+  IconChartBar as BarChart3,
+  IconWallet as Wallet,
+} from "@tabler/icons-react";
 
 const money = (n: number) => `${Math.round(n).toLocaleString("ru-RU")} UZS`;
 
-// Svetofor hex ranglari (recharts fill CSS özgaruvçilarini qabul qilmaydi) — mavzu bilan sinxron saqlanadi.
+// Chart ranglari (recharts SVG fill CSS o'zgaruvchilarni hisoblamaydi) — yangi palitra.
 const STATUS_HEX: Record<DerivedStatus, string> = {
   in_progress: "#2563eb",
   completed: "#16a34a",
@@ -37,19 +41,13 @@ const KPI_TONE = {
 export async function ManagerWidgets({ showPayments = false }: { showPayments?: boolean }) {
   const t = await getTranslations();
   const locale = await getLocale();
-  const [kpi, statusBreak, typeBreak, board, pay, top, slow, deptLoad] = await Promise.all([
+  const [kpi, statusBreak, typeBreak, board, pay] = await Promise.all([
     getProjectStageKpis(),
     getProjectStatusBreakdown(),
     getProjectTypeBreakdown(locale),
     getStageDeadlineBoard(locale, 8),
     getProjectPaymentsSummary(),
-    getTopAssigneesByCompleted(5),
-    getTopAssigneesByOverdue(5),
-    getDepartmentWorkload(),
   ]);
-
-  const topMax = Math.max(...top.map((x) => x.c), 1);
-  const slowMax = Math.max(...slow.map((x) => x.c), 1);
 
   const kpis = [
     { key: "active", href: "/projects", icon: FolderKanban, value: kpi.activeProjects, label: t("dashboard.manager.kpiActiveProjects"), tone: "primary" as const },
@@ -65,35 +63,31 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
     color: STATUS_HEX[k],
   }));
 
-  // Pending = qolgan balans = rejalaştirilgan − tölangan (heç qaçon noldan past emas).
   const payRemaining = Math.max(0, pay.planned - pay.paid);
-  // tölovlar paneli geometriyasi (tölangan — yaşil + qolgan — sariq, rejalaştirilgan qiymatga nisbatan)
   const payBase = Math.max(pay.planned, pay.paid, 1);
   const paidPct = (pay.paid / payBase) * 100;
   const pendingPct = (payRemaining / payBase) * 100;
 
   return (
     <div className="space-y-6">
-      {/* Bosiladigan KPI asosiy qatori */}
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      {/* Ixcham KPI qatori */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {kpis.map((k) => {
           const tone = KPI_TONE[k.tone];
           return (
             <Link
               key={k.key}
               href={k.href}
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)] text-center"
+              className="group flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3.5 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]"
             >
-              <div className="flex items-center justify-between w-full">
-                <div className={`grid size-10 shrink-0 place-items-center rounded-xl ${tone.chip}`}>
-                  <k.icon className={`size-5 ${tone.icon}`} />
-                </div>
-                <ChevronRight className="size-4 shrink-0 text-[var(--subtle)] transition-colors group-hover:text-[var(--foreground)]" />
+              <div className={`grid size-10 shrink-0 place-items-center rounded-xl ${tone.chip}`}>
+                <k.icon className={`size-5 ${tone.icon}`} stroke={1.75} />
               </div>
-              <div>
-                <div className={`text-3xl font-bold leading-none tabular-nums ${tone.value}`}>{k.value}</div>
-                <div className="mt-1.5 text-xs font-medium leading-tight text-[var(--muted)] sm:text-sm">{k.label}</div>
+              <div className="min-w-0">
+                <div className={`text-2xl font-extrabold leading-none tabular-nums ${tone.value}`}>{k.value}</div>
+                <div className="mt-1 truncate text-xs font-medium text-[var(--muted)]">{k.label}</div>
               </div>
+              <ChevronRight className="ml-auto size-4 shrink-0 text-[var(--subtle)] transition-colors group-hover:text-[var(--foreground)]" />
             </Link>
           );
         })}
@@ -132,13 +126,13 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
         </Card>
       </div>
 
-      {/* Bosqiç muddatlari taxtasi — dashboardning amaliy markazi */}
+      {/* Bosqich muddatlari taxtasi — dashboardning amaliy markazi */}
       <Card id="stage-board" className="scroll-mt-24">
         <CardHeader className="flex-row items-center gap-3 pb-4">
           <div className="grid size-10 place-items-center rounded-xl bg-[var(--warning-soft)]">
             <CalendarClock className="size-5 text-[var(--warning)]" />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <CardTitle className="text-lg">{t("dashboard.manager.stageBoard")}</CardTitle>
             <p className="mt-0.5 text-sm text-[var(--muted)]">{t("dashboard.manager.stageBoardDesc")}</p>
           </div>
@@ -168,155 +162,40 @@ export async function ManagerWidgets({ showPayments = false }: { showPayments?: 
         </CardContent>
       </Card>
 
-      {/* Tölovlar şarhi — çeklangan (direktor, Moliya bölimi, bölim boşliqlari) */}
+      {/* To'lovlar sharhi — cheklangan (direktor, Moliya bo'limi, bo'lim boshliqlari) */}
       {showPayments && (
-      <Card>
-        <CardHeader className="flex-row items-center gap-3 pb-4">
-          <div className="grid size-10 place-items-center rounded-xl bg-[var(--success-soft)]">
-            <Wallet className="size-5 text-[var(--success)]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg">{t("dashboard.manager.paymentsTitle")}</CardTitle>
-            <p className="mt-0.5 text-sm text-[var(--muted)]">{t("dashboard.manager.paymentsDesc")}</p>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* mobilda label→qiymat qatorlari ustma-ust (uzun summalar heç qaçon bir-birining ustiga tuşmaydi); sm dan yuqorida 3 ustun */}
-          <div className="space-y-2.5 sm:grid sm:grid-cols-3 sm:gap-3 sm:space-y-0">
-            <div className="flex items-baseline justify-between gap-3 sm:block">
-              <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.planned")}</p>
-              <p className="whitespace-nowrap text-lg font-bold tabular-nums sm:mt-1 sm:text-xl">{money(pay.planned)}</p>
-            </div>
-            <div className="flex items-baseline justify-between gap-3 sm:block">
-              <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.paid")}</p>
-              <p className="whitespace-nowrap text-lg font-bold tabular-nums text-[var(--success)] sm:mt-1 sm:text-xl">{money(pay.paid)}</p>
-            </div>
-            <div className="flex items-baseline justify-between gap-3 sm:block">
-              <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.pending")}</p>
-              <p className="whitespace-nowrap text-lg font-bold tabular-nums text-[var(--warning)] sm:mt-1 sm:text-xl">{money(payRemaining)}</p>
-            </div>
-          </div>
-          <div className="flex h-3 overflow-hidden rounded-full bg-[var(--surface-3)]">
-            {pay.paid > 0 && <div className="bg-[var(--success)] transition-all duration-500" style={{ width: `${paidPct}%` }} title={money(pay.paid)} />}
-            {payRemaining > 0 && <div className="bg-[var(--warning)] transition-all duration-500" style={{ width: `${pendingPct}%` }} title={money(payRemaining)} />}
-          </div>
-        </CardContent>
-      </Card>
-      )}
-
-      {/* Qator: Eng faol xodimlar + Eng köp keçiktirganlar (odamlar) */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex-row items-center gap-3 pb-4">
             <div className="grid size-10 place-items-center rounded-xl bg-[var(--success-soft)]">
-              <Trophy className="size-5 text-[var(--success)]" />
+              <Wallet className="size-5 text-[var(--success)]" />
             </div>
-            <div>
-              <CardTitle className="text-lg">{t("dashboard.manager.topPerformers")}</CardTitle>
-              <p className="mt-0.5 text-sm text-[var(--muted)]">{t("dashboard.manager.topPerformersDesc")}</p>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {top.length === 0 ? (
-              <p className="py-6 text-center text-sm text-[var(--muted)]">{t("dashboard.manager.noCompletions")}</p>
-            ) : (
-              top.map((row, i) => (
-                <div key={row.userId} className="flex items-center gap-3">
-                  <UserAvatar name={shortName(row.fullName)} avatarUrl={row.avatarUrl} size="sm" clickable={false} />
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex justify-between gap-2 text-sm">
-                      <Link href={`/employees/${row.userId}`} className="truncate font-semibold transition-colors hover:text-[var(--success)]">
-                        {shortName(row.fullName)}
-                      </Link>
-                      <span className="shrink-0 font-bold tabular-nums text-[var(--success)]">{row.c}</span>
-                    </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--surface-3)]">
-                      <div className="h-full rounded-full bg-[var(--success)] animate-progress" style={{ width: `${(row.c / topMax) * 100}%` }} />
-                    </div>
-                  </div>
-                  <span className="w-5 shrink-0 text-right text-[11px] font-bold tabular-nums text-[var(--subtle)]">#{i + 1}</span>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex-row items-center gap-3 pb-4">
-            <div className="grid size-10 place-items-center rounded-xl bg-[var(--danger-soft)]">
-              <AlertTriangle className="size-5 text-[var(--danger)]" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">{t("dashboard.manager.mostOverdue")}</CardTitle>
-              <p className="mt-0.5 text-sm text-[var(--muted)]">{t("dashboard.manager.mostOverdueDesc")}</p>
+            <div className="min-w-0 flex-1">
+              <CardTitle className="text-lg">{t("dashboard.manager.paymentsTitle")}</CardTitle>
+              <p className="mt-0.5 text-sm text-[var(--muted)]">{t("dashboard.manager.paymentsDesc")}</p>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
-            {slow.length === 0 ? (
-              <p className="py-6 text-center text-sm text-[var(--muted)]">{t("dashboard.manager.allOnTrack")}</p>
-            ) : (
-              slow.map((row, i) => (
-                <div key={row.userId} className="flex items-center gap-3">
-                  <UserAvatar name={shortName(row.fullName)} avatarUrl={row.avatarUrl} size="sm" clickable={false} />
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex justify-between gap-2 text-sm">
-                      <Link href={`/employees/${row.userId}`} className="truncate font-semibold transition-colors hover:text-[var(--danger)]">
-                        {shortName(row.fullName)}
-                      </Link>
-                      <span className="shrink-0 font-bold tabular-nums text-[var(--danger)]">{row.c}</span>
-                    </div>
-                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--surface-3)]">
-                      <div className="h-full rounded-full bg-[var(--danger)] transition-[width] duration-500" style={{ width: `${(row.c / slowMax) * 100}%` }} />
-                    </div>
-                  </div>
-                  <span className="w-5 shrink-0 text-right text-[11px] font-bold tabular-nums text-[var(--subtle)]">#{i + 1}</span>
-                </div>
-              ))
-            )}
+          <CardContent className="space-y-4">
+            <div className="space-y-2.5 sm:grid sm:grid-cols-3 sm:gap-3 sm:space-y-0">
+              <div className="flex items-baseline justify-between gap-3 sm:block">
+                <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.planned")}</p>
+                <p className="whitespace-nowrap text-lg font-bold tabular-nums sm:mt-1 sm:text-xl">{money(pay.planned)}</p>
+              </div>
+              <div className="flex items-baseline justify-between gap-3 sm:block">
+                <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.paid")}</p>
+                <p className="whitespace-nowrap text-lg font-bold tabular-nums text-[var(--success)] sm:mt-1 sm:text-xl">{money(pay.paid)}</p>
+              </div>
+              <div className="flex items-baseline justify-between gap-3 sm:block">
+                <p className="text-xs font-medium text-[var(--muted)]">{t("projects.stagePayments.pending")}</p>
+                <p className="whitespace-nowrap text-lg font-bold tabular-nums text-[var(--warning)] sm:mt-1 sm:text-xl">{money(payRemaining)}</p>
+              </div>
+            </div>
+            <div className="flex h-3 overflow-hidden rounded-md bg-[var(--surface-3)]">
+              {pay.paid > 0 && <div className="bg-[var(--success)] transition-all duration-500" style={{ width: `${paidPct}%` }} title={money(pay.paid)} />}
+              {payRemaining > 0 && <div className="bg-[var(--warning)] transition-all duration-500" style={{ width: `${pendingPct}%` }} title={money(payRemaining)} />}
+            </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Bölimlar yuklamasi — stacked bar */}
-      <Card>
-        <CardHeader className="flex-row items-center gap-3 pb-4">
-          <div className="grid size-10 place-items-center rounded-xl bg-[var(--primary-soft)]">
-            <Layers className="size-5 text-[var(--primary)]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg">{t("dashboard.manager.deptLoad")}</CardTitle>
-            <p className="mt-0.5 text-sm text-[var(--muted)]">{t("dashboard.manager.deptLoadDesc")}</p>
-          </div>
-          <div className="hidden items-center gap-3 text-xs font-semibold sm:flex">
-            <span className="inline-flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-[var(--primary)]" /> {t("status.in_progress")}</span>
-            <span className="inline-flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-[var(--warning)]" /> {t("status.under_review")}</span>
-            <span className="inline-flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-[var(--danger)]" /> {t("dashboard.manager.overdue")}</span>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {deptLoad.length === 0 ? (
-            <p className="py-6 text-center text-sm text-[var(--muted)]">{t("dashboard.manager.deptEmpty")}</p>
-          ) : (
-            deptLoad.map((d) => {
-              const total = d.in_progress + d.under_review + d.overdue;
-              const pct = (n: number) => (total > 0 ? (n / total) * 100 : 0);
-              return (
-                <div key={d.department} className="space-y-1.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-semibold">{d.department}</span>
-                    <span className="font-bold tabular-nums text-[var(--muted)]">{total}</span>
-                  </div>
-                  <div className="flex h-3 overflow-hidden rounded-full bg-[var(--surface-3)]">
-                    {d.in_progress > 0 && <div title={`${t("status.in_progress")}: ${d.in_progress}`} className="bg-[var(--primary)] transition-all duration-500" style={{ width: `${pct(d.in_progress)}%` }} />}
-                    {d.under_review > 0 && <div title={`${t("status.under_review")}: ${d.under_review}`} className="bg-[var(--warning)] transition-all duration-500" style={{ width: `${pct(d.under_review)}%` }} />}
-                    {d.overdue > 0 && <div title={`${t("dashboard.manager.overdue")}: ${d.overdue}`} className="bg-[var(--danger)] transition-all duration-500" style={{ width: `${pct(d.overdue)}%` }} />}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </CardContent>
-      </Card>
+      )}
     </div>
   );
 }
