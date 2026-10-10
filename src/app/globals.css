@@ -1,7 +1,19 @@
 @import "tailwindcss";
+/* Mahalliy shriftlar: Manrope UZ (matn/UI) + Unbounded UZ (gold sarlavhalar), oʻzbek glifli. */
+@import "../styles/fonts.css" layer(base);
 /* `dark:` utilitalari OS media query'siga emas, .dark klassiga
    ergaşsin (uni ThemeProvider almaştiradi). */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Shrift steklari — endi next/font/google emas, mahalliy @font-face (fonts.css).
+   Manrope = matn/UI; Unbounded = gold display sarlavhalar (va owner unvoni). */
+:root {
+  --font-ui: "Manrope", "Manrope Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-ui);
+  --font-display: "Unbounded", "Unbounded Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-godfather: var(--font-display);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
 
 /* =========================================================================
    SOLID GLASS — tekis fonlar, gradientsiz, toza light va dark rejimlar.
