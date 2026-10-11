@@ -190,14 +190,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start lg:gap-8">
             {/* CHAP USTUN — mazmun va bosqichlar (telefonda birinchi) */}
             <div className="flex min-w-0 flex-col gap-6">
-              <Card>
-                <FactList items={facts} />
-                {sp.project.description && (
-                  <p className="mt-5 line-clamp-[8] whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">
-                    {sp.project.description}
-                  </p>
-                )}
-              </Card>
+              <FactList items={facts} table />
 
               {(sp.project.currentStatus || canManage || hasStudio) && (
                 <CurrentStatusEditor projectId={id} text={sp.project.currentStatus} lastUpdate={lastStatus} canEdit={canManage} />
@@ -208,6 +201,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                   <StagePath projectId={sp.project.id} stages={sp.stages} />
                 </Card>
               </Section>
+
+              {sp.project.description && (
+                <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">
+                  {sp.project.description}
+                </p>
+              )}
             </div>
 
             {/* OʻNG USTUN — poster, toʻlov, studiya, muddat tarixi (telefonda bosqichlardan keyin) */}
@@ -342,12 +341,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       />
 
       <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
-        <Card>
-          <FactList items={legacyFacts} />
-          {data.project.description && (
-            <p className="mt-5 whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">{data.project.description}</p>
-          )}
-        </Card>
+        <FactList items={legacyFacts} table />
 
         {data.project.currentStatus && (
           <Card>
@@ -361,6 +355,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <StagesList projectId={data.project.id} items={stages} canManage={canManage} canDelete={canDelete} />
           </Card>
         </Section>
+
+        {data.project.description && (
+          <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">{data.project.description}</p>
+        )}
 
         <Section title={t("projects.documents.title")}>
           <Card>

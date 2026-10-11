@@ -24,7 +24,7 @@ export function PageHeader({
         <div className="flex min-w-0 items-center gap-2">
           {back}
           <div className="min-w-0">
-            <Heading level={1} trim className="min-w-0 truncate">{title}</Heading>
+            <Heading level={1} className="min-w-0 truncate leading-[1.3]">{title}</Heading>
             {subtitle && <p className="mt-1 text-sm font-medium text-[var(--muted)]">{subtitle}</p>}
           </div>
         </div>

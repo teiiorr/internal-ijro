@@ -562,3 +562,41 @@
    Qatlamsiz + !important: Tailwind utilities (justify-between) qatlamidan ustun. */
 .dash-centered .section-header { justify-content: center !important; text-align: center; }
 .dash-centered .section-header > div:first-child { justify-content: center !important; flex-wrap: wrap; }
+
+/* Fakt jadvali — chegarali yacheykalar panjarasi (gridlines = 1px gap + line fon). */
+@layer components {
+  .fact-table {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    overflow: hidden;
+  }
+  .fact-table > div {
+    background: var(--surface-2);
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .fact-table > div > dt {
+    font-family: var(--font-ui);
+    font-size: var(--fs-micro);
+    font-weight: 600;
+    color: var(--ink-3);
+  }
+  .fact-table > div > dd {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: var(--fs-small, 0.875rem);
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 0;
+  }
+  @media (min-width: 600px) {
+    .fact-table { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+}
