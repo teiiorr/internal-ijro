@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MoneyInput } from "@/components/ui/money-input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Status } from "@/components/ui-biib/Status";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createMilestone, setMilestoneStatus, setMilestonePaymentStatus } from "@/server/actions/projects";
 
@@ -54,10 +54,10 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment, 
                 <h4 className="font-semibold">{m.title}</h4>
                 {m.description && <p className="text-sm text-[var(--muted)]">{m.description}</p>}
               </div>
-              <div className="flex items-center gap-2 text-xs flex-wrap">
-                <Badge variant="secondary">{t("projects.milestones.weight")}: {m.weight}</Badge>
-                {m.deadline && <Badge variant="outline">{m.deadline}</Badge>}
-                {m.paymentAmount && <Badge variant="outline">{showMoney ? m.paymentAmount : "***"}</Badge>}
+              <div className="flex items-center gap-x-3 gap-y-1 text-xs flex-wrap text-[var(--ink-3)]">
+                <span>{t("projects.milestones.weight")}: {m.weight}</span>
+                {m.deadline && <span className="tabular-nums">{m.deadline}</span>}
+                {m.paymentAmount && <span className="tabular-nums">{showMoney ? m.paymentAmount : "***"}</span>}
               </div>
             </div>
             <div className="flex gap-2 flex-wrap text-xs">
@@ -69,7 +69,7 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment, 
                   </SelectContent>
                 </Select>
               ) : (
-                <Badge variant={m.status === "completed" ? "success" : "secondary"}>{t(`status.${m.status}` as "status.pending")}</Badge>
+                <Status tone={m.status === "completed" ? "success" : "neutral"}>{t(`status.${m.status}` as "status.pending")}</Status>
               )}
               {canChangePayment ? (
                 <Select value={m.paymentStatus} onValueChange={(v) => start(async () => { await setMilestonePaymentStatus(m.id, v); })}>
@@ -79,9 +79,9 @@ export function MilestonesList({ projectId, items, canManage, canChangePayment, 
                   </SelectContent>
                 </Select>
               ) : (
-                <Badge variant={m.paymentStatus === "paid" ? "success" : m.paymentStatus === "partial" ? "warning" : "secondary"}>
+                <Status tone={m.paymentStatus === "paid" ? "success" : m.paymentStatus === "partial" ? "warning" : "neutral"}>
                   {t("projects.milestones.paymentLabel")}: {t(`projects.milestones.payment.${m.paymentStatus}` as "projects.milestones.payment.pending")}
-                </Badge>
+                </Status>
               )}
             </div>
           </div>

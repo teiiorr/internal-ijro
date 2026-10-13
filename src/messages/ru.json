@@ -96,7 +96,6 @@
 		"year": "Год",
 		"emptyValue": "—",
 		"selectPlaceholder": "Выбрать",
-		"separator": "·",
 		"notSpecified": "Не указано",
 		"copy": {
 			"success": "Скопировано",
@@ -1461,7 +1460,7 @@
 			"save": "Сохранить",
 			"cancel": "Отмена",
 			"empty": "Текущий статус ещё не указан.",
-			"updatedBy": "{name} · {time}",
+			"updatedBy": "{name} — {time}",
 			"byStudio": "Студия",
 			"saved": "Текущий статус сохранён"
 		},
@@ -2067,7 +2066,7 @@
 			"statusApproved": "Одобрен",
 			"statusRejected": "Отклонён",
 			"statusCancelled": "Отменён",
-			"inboxRow": "Запрос срока · {name} · +{days} дн.",
+			"inboxRow": "Запрос срока — {name}, +{days} дн.",
 			"historyTitle": "История",
 			"historyEmpty": "Пока нет записей",
 			"showAll": "Показать всё",

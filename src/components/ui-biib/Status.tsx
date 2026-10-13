@@ -23,7 +23,7 @@ const TONE_INK: Record<StatusTone, string> = {
 
 /**
  * Holat plashkasi — ESKI "signal flag" shakli (burchaklari qiyilgan), Liquid Glass sirt
- * (.tag-plate). Dumaloq "pilula + nuqta" emas. StatusTag/Badge/DeadlineChip oʻrnini bosadi.
+ * (.tag-plate). Dumaloq "pilula + nuqta" emas — eski status plashkalarining oʻrnini bosadi.
  * Faqat qaror talab qilganda koʻrsatiladi (kechikkan, koʻrik kutmoqda, bloklangan).
  */
 export function Status({

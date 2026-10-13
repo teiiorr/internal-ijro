@@ -96,7 +96,6 @@
 		"year": "Yil",
 		"emptyValue": "—",
 		"selectPlaceholder": "Tanlang",
-		"separator": "·",
 		"notSpecified": "Belgilanmagan",
 		"copy": {
 			"success": "Nusxa olindi",
@@ -1461,7 +1460,7 @@
 			"save": "Saqlash",
 			"cancel": "Bekor qilish",
 			"empty": "Joriy holat hali yozilmagan.",
-			"updatedBy": "{name} · {time}",
+			"updatedBy": "{name} — {time}",
 			"byStudio": "Studiya",
 			"saved": "Joriy holat saqlandi"
 		},
@@ -2067,7 +2066,7 @@
 			"statusApproved": "Tasdiqlangan",
 			"statusRejected": "Rad etilgan",
 			"statusCancelled": "Bekor qilingan",
-			"inboxRow": "Muddat soʻrovi · {name} · +{days} kun",
+			"inboxRow": "Muddat soʻrovi — {name}, +{days} kun",
 			"historyTitle": "Tarix",
 			"historyEmpty": "Hozircha yozuvlar yoʻq",
 			"showAll": "Hammasini koʻrsatish",

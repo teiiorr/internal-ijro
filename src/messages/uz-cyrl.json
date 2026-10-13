@@ -96,7 +96,6 @@
 		"year": "Йил",
 		"emptyValue": "—",
 		"selectPlaceholder": "Танланг",
-		"separator": "·",
 		"notSpecified": "Белгиланмаган",
 		"copy": {
 			"success": "Нусха олинди",
@@ -1461,7 +1460,7 @@
 			"save": "Сақлаш",
 			"cancel": "Бекор қилиш",
 			"empty": "Жорий ҳолат ҳали ёзилмаган.",
-			"updatedBy": "{name} · {time}",
+			"updatedBy": "{name} — {time}",
 			"byStudio": "Студия",
 			"saved": "Жорий ҳолат сақланди"
 		},
@@ -2067,7 +2066,7 @@
 			"statusApproved": "Тасдиқланган",
 			"statusRejected": "Рад этилган",
 			"statusCancelled": "Бекор қилинган",
-			"inboxRow": "Муддат сўрови · {name} · +{days} кун",
+			"inboxRow": "Муддат сўрови — {name}, +{days} кун",
 			"historyTitle": "Тарих",
 			"historyEmpty": "Ҳозирча ёзувлар йўқ",
 			"showAll": "Ҳаммасини кўрсатиш",
