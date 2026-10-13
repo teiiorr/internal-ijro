@@ -1,7 +1,7 @@
 import "server-only";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
+import { projects, users } from "@/lib/db/schema";
 import { smetaCommissionProjects } from "@/lib/db/tables/smeta-commission";
 
 /** Komissiya qarori holati (0036). */
@@ -47,7 +47,8 @@ export async function listSmetaCommissionProjects(): Promise<{ ready: boolean; i
         name: smetaCommissionProjects.name,
         projectId: smetaCommissionProjects.projectId,
         sessionNumber: smetaCommissionProjects.sessionNumber,
-        posterUrl: smetaCommissionProjects.posterUrl,
+        // Smeta yozuvidagi poster boʻsh boʻlsa — bogʻlangan loyihaning posteriga tushamiz.
+        posterUrl: sql<string | null>`coalesce(${smetaCommissionProjects.posterUrl}, ${projects.posterUrl})`,
         info: smetaCommissionProjects.info,
         status: smetaCommissionProjects.status,
         createdAt: smetaCommissionProjects.createdAt,
@@ -55,6 +56,7 @@ export async function listSmetaCommissionProjects(): Promise<{ ready: boolean; i
       })
       .from(smetaCommissionProjects)
       .leftJoin(users, eq(users.id, smetaCommissionProjects.createdByUserId))
+      .leftJoin(projects, eq(projects.id, smetaCommissionProjects.projectId))
       // asc — NULL son'lar oxirida (son belgilanmaganlar roʻyxat yakunida).
       .orderBy(asc(smetaCommissionProjects.sessionNumber), asc(smetaCommissionProjects.createdAt));
     return { ready: true, items: rows.map((r) => ({ ...r, status: asStatus(r.status), createdAt: r.createdAt.toISOString() })) };
@@ -72,13 +74,14 @@ export async function listSmetaCommissionProjects(): Promise<{ ready: boolean; i
         name: smetaCommissionProjects.name,
         projectId: smetaCommissionProjects.projectId,
         sessionNumber: smetaCommissionProjects.sessionNumber,
-        posterUrl: smetaCommissionProjects.posterUrl,
+        posterUrl: sql<string | null>`coalesce(${smetaCommissionProjects.posterUrl}, ${projects.posterUrl})`,
         info: smetaCommissionProjects.info,
         createdAt: smetaCommissionProjects.createdAt,
         createdByName: users.fullName,
       })
       .from(smetaCommissionProjects)
       .leftJoin(users, eq(users.id, smetaCommissionProjects.createdByUserId))
+      .leftJoin(projects, eq(projects.id, smetaCommissionProjects.projectId))
       .orderBy(asc(smetaCommissionProjects.sessionNumber), asc(smetaCommissionProjects.createdAt));
     return {
       ready: true,
@@ -95,18 +98,19 @@ export async function listSmetaCommissionProjects(): Promise<{ ready: boolean; i
         id: smetaCommissionProjects.id,
         name: smetaCommissionProjects.name,
         projectId: smetaCommissionProjects.projectId,
+        posterUrl: projects.posterUrl,
         createdAt: smetaCommissionProjects.createdAt,
         createdByName: users.fullName,
       })
       .from(smetaCommissionProjects)
       .leftJoin(users, eq(users.id, smetaCommissionProjects.createdByUserId))
+      .leftJoin(projects, eq(projects.id, smetaCommissionProjects.projectId))
       .orderBy(asc(smetaCommissionProjects.createdAt));
     return {
       ready: true,
       items: rows.map((r) => ({
         ...r,
         sessionNumber: null,
-        posterUrl: null,
         info: null,
         status: "jarayonda" as const,
         createdAt: r.createdAt.toISOString(),

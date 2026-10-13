@@ -220,8 +220,9 @@ export function SmetaProjects({
     setError(null);
   }
 
-  function openForm(prefillSon?: number) {
-    setSon(String(prefillSon ?? (maxSon || 1)));
+  function openForm(prefillSon?: number | null) {
+    // null — «Hozir koʻrib chiqilayotgan» (sonsiz); undefined — standart (oxirgi son yoki 1).
+    setSon(prefillSon === null ? "" : String(prefillSon ?? (maxSon || 1)));
     resetFields();
     setOpen(true);
   }
@@ -239,8 +240,9 @@ export function SmetaProjects({
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    const sessionNumber = Number.parseInt(son, 10);
-    if (!Number.isInteger(sessionNumber) || sessionNumber < 1) return setError(errorText("invalid"));
+    // Boʻsh son — «Hozir koʻrib chiqilayotgan» (sonsiz loyiha).
+    const sessionNumber = son.trim() === "" ? null : Number.parseInt(son, 10);
+    if (sessionNumber !== null && (!Number.isInteger(sessionNumber) || sessionNumber < 1)) return setError(errorText("invalid"));
 
     const trimmedInfo = info.trim();
 
@@ -426,23 +428,8 @@ export function SmetaProjects({
   );
 
   return (
-    <Section
-      action={
-        canAdd ? (
-          <Button
-            variant={open ? "ghost" : "default"}
-            size="sm"
-            onClick={() => (open ? close() : openForm())}
-            aria-expanded={open}
-          >
-            {open ? <X className="size-4" /> : <Plus className="size-4" />}
-            {open ? t("close") : t("addProject")}
-          </Button>
-        ) : undefined
-      }
-    >
-      <div className="flex flex-col gap-6">
-        {canAdd && open && addForm}
+    <div className="flex min-w-0 flex-col gap-6">
+      {canAdd && open && addForm}
 
         {canManage && !ready && (
           <p className="rounded-[var(--radius-m)] bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--ink-2)]">{t("errors.unavailable")}</p>
@@ -470,8 +457,8 @@ export function SmetaProjects({
               headingLevel={3}
               title={g.sessionNumber != null ? t("sessionTitle", { n: g.sessionNumber }) : t("noSession")}
               action={
-                canAdd && g.sessionNumber != null ? (
-                  <Button variant="ghost" size="sm" onClick={() => openForm(g.sessionNumber!)}>
+                canAdd ? (
+                  <Button variant="ghost" size="sm" onClick={() => openForm(g.sessionNumber)}>
                     <Plus className="size-4" />
                     {t("addProject")}
                   </Button>
@@ -528,7 +515,6 @@ export function SmetaProjects({
             </Section>
           ))
         )}
-      </div>
-    </Section>
+    </div>
   );
 }

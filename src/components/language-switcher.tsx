@@ -58,6 +58,11 @@ export function LanguageSwitcher() {
   function confirm() {
     setOpen(false);
     if (selected === locale) return;
+    // Tanlovni darhol NEXT_LOCALE kukisiga yozamiz — URL bilan bir qatorda til ishonchli
+    // saqlanadi (sahifa yangilansa va keyingi loginda ham standart uz-latn'ga tushmaydi).
+    try {
+      document.cookie = `NEXT_LOCALE=${selected};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax${location.protocol === "https:" ? ";secure" : ""}`;
+    } catch {}
     const qs = searchParams?.toString();
     const href = qs ? `${pathname}?${qs}` : pathname;
     startTransition(() => {

@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { IconShieldLock } from "@tabler/icons-react";
 import { useRouter, Link } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 import { Button } from "@/components/ui-biib/Button";
 import { Field } from "@/components/ui-biib/Field";
 import { Input } from "@/components/ui-biib/Input";
@@ -29,8 +30,18 @@ export default function LoginPage() {
       redirect: false,
     });
     setPending(false);
-    if (res?.error) setError(t("auth.login.invalid"));
-    else router.push("/dashboard");
+    if (res?.error) {
+      setError(t("auth.login.invalid"));
+      return;
+    }
+    // Saqlangan til afzalligiga yoʻnaltiramiz (yangi qurilmada ham standart uz-latn'ga tushib qolmasin).
+    const session = await getSession();
+    const pref = (session?.user as { languagePreference?: string } | undefined)?.languagePreference;
+    const locale =
+      pref && (routing.locales as readonly string[]).includes(pref)
+        ? (pref as (typeof routing.locales)[number])
+        : routing.defaultLocale;
+    router.push("/dashboard", { locale });
   }
 
   return (

@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { notificationSettings, users } from "@/lib/db/schema";
@@ -32,6 +33,18 @@ export async function updateProfilePreferences(input: {
     .update(users)
     .set({ ...input, updatedAt: new Date() })
     .where(eq(users.id, me.id));
+  // Til afzalligini NEXT_LOCALE kukisiga ham yozamiz: sahifa/URL yangilanganda va
+  // keyingi loginda til aynan saqlanadi (standart uz-latn'ga qaytib qolmaydi).
+  if (input.languagePreference) {
+    try {
+      (await cookies()).set("NEXT_LOCALE", input.languagePreference, {
+        maxAge: 60 * 60 * 24 * 365,
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+    } catch {}
+  }
   revalidatePath("/settings");
 }
 
