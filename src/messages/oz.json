@@ -1103,6 +1103,11 @@
       "title": "Jamoa yuklamasi",
       "empty": "Faol vazifalar yöq",
       "inReview": "{n} tekşiruvda"
+    },
+    "paymentsDue": {
+      "title": "Tölanadigan tölovlar",
+      "all": "Barçasi",
+      "daysWaiting": "{n} kun kutmoqda"
     }
   },
   "commandPalette": {

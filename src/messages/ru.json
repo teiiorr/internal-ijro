@@ -1103,6 +1103,11 @@
       "title": "Загрузка команды",
       "empty": "Нет активных задач",
       "inReview": "{n} на проверке"
+    },
+    "paymentsDue": {
+      "title": "Платежи к оплате",
+      "all": "Все",
+      "daysWaiting": "{n} дн. ожидает"
     }
   },
   "commandPalette": {

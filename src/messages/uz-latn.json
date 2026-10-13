@@ -1103,6 +1103,11 @@
       "title": "Jamoa yuklamasi",
       "empty": "Faol vazifalar yoʻq",
       "inReview": "{n} tekshiruvda"
+    },
+    "paymentsDue": {
+      "title": "Toʻlanadigan toʻlovlar",
+      "all": "Barchasi",
+      "daysWaiting": "{n} kun kutmoqda"
     }
   },
   "commandPalette": {
