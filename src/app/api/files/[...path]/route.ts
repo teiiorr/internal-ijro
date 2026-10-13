@@ -5,7 +5,7 @@ import { Readable } from "node:stream";
 import { posix } from "node:path";
 import { auth } from "@/lib/auth";
 import { statFileForDownload } from "@/lib/upload";
-import { can } from "@/lib/permissions/capabilities";
+import { canAccessFile } from "@/lib/permissions/file-access";
 
 export const runtime = "nodejs";
 
@@ -63,12 +63,16 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   // tekshiruvni chetlab oʻtib boʻlmaydi; yuklamalar papkasidan tashqariga chiqish rad etiladi.
   const segs = posix.normalize(path.join("/")).split("/").filter(Boolean);
   if (segs.length < 2 || segs[0] === ".." || segs[0] === ".") return new NextResponse("not_found", { status: 404 });
-  const isEmployeeDoc = segs[0].toLowerCase() === "employee-docs";
-  if (isEmployeeDoc) {
-    const ownerId = segs[1].toLowerCase();
-    const isHr = can(session.user.position, "hr.documents");
-    if (session.user.id.toLowerCase() !== ownerId && !isHr) return new NextResponse("forbidden", { status: 403 });
-  }
+  const type = segs[0].toLowerCase();
+  // Past maxfiylikdagi ko'rsatuv aktivlari (avatar/logo/tanlov) umumiy keshlanadi; qolgani — maxfiy.
+  const isSensitive = !["avatars", "studio-logos", "contest-logos", "contest-photos", "contest-files"].includes(type);
+  // Markazlashgan kirish tekshiruvi (IDOR'ga qarshi): loyiha/bosqich/chat/me'yoriy hujjatlar
+  // endi faqat tegishli foydalanuvchiga beriladi (kontragent faqat o'z studiyasi loyihalariga).
+  const allowed = await canAccessFile(
+    { id: session.user.id, email: session.user.email!, position: session.user.position },
+    segs,
+  );
+  if (!allowed) return new NextResponse("forbidden", { status: 403 });
 
   const fileName = path[path.length - 1];
   const subdir = path.slice(0, -1).join("/");
@@ -82,8 +86,8 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   if (width) {
     const resized = await tryResize(f.path, mime, width);
     if (resized) {
-      // Maxfiy hujjat skanlari umumiy (proxy/CDN) keshida saqlanmasligi kerak.
-      if (isEmployeeDoc) resized.headers.set("Cache-Control", "private, no-store");
+      // Maxfiy (kirish nazoratidagi) fayllar umumiy (proxy/CDN) keshida saqlanmasligi kerak.
+      if (isSensitive) resized.headers.set("Cache-Control", "private, no-store");
       return resized;
     }
   }
@@ -96,7 +100,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   headers.set("Content-Type", isMedia ? mime : "application/octet-stream");
   headers.set("Content-Length", String(f.size));
   headers.set("Content-Disposition", `inline; filename="${fileName}"`);
-  if (isEmployeeDoc) {
+  if (isSensitive) {
     headers.set("Cache-Control", "private, no-store");
   } else if (isMedia) {
     headers.set("Cache-Control", "public, max-age=31536000, immutable");
