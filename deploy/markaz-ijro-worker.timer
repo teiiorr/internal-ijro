@@ -1,0 +1,15 @@
+# /etc/systemd/system/markaz-ijro-worker.timer
+# -----------------------------------------------------------------------------
+# Runs the worker once a day at 08:00 Asia/Tashkent. REFERENCE config.
+# Persistent=true catches up a run missed while the box was off.
+# Verify with:  systemctl list-timers markaz-ijro-worker.timer
+[Unit]
+Description=Run Ichki Ijro deadline reminders daily at 08:00 (Asia/Tashkent)
+
+[Timer]
+OnCalendar=*-*-* 08:00:00 Asia/Tashkent
+Persistent=true
+Unit=markaz-ijro-worker.service
+
+[Install]
+WantedBy=timers.target

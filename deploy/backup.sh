@@ -3,18 +3,19 @@
 # Daily backup — Postgres dump + uploads dir, kept 14 days locally.
 # Add an off-site sync (rclone to Backblaze B2 / S3) below for safety.
 #
+# Defaults target the live box (/opt/markaz-ijro). Override any path via env.
 # Cron suggestion (as root):
-#   0 3 * * * /srv/ichki-ijro/current/deploy/backup.sh >> /var/log/ichki-backup.log 2>&1
+#   0 3 * * * /opt/markaz-ijro/current/deploy/backup.sh >> /var/log/markaz-backup.log 2>&1
 # =========================================================================
 set -euo pipefail
 
-BACKUP_DIR="/var/backups/ichki-ijro"
-UPLOAD_DIR="${UPLOAD_DIR:-/var/lib/ichki-ijro/uploads}"
+BACKUP_DIR="${BACKUP_DIR:-/var/backups/markaz-ijro}"
+UPLOAD_DIR="${UPLOAD_DIR:-/var/lib/markaz-ijro/uploads}"
 STAMP="$(date -u +%Y%m%d-%H%M%S)"
-KEEP_DAYS=14
+KEEP_DAYS="${KEEP_DAYS:-14}"
 
 # Load DB connection from the production env file.
-ENV_FILE="/srv/ichki-ijro/shared/.env.production"
+ENV_FILE="${ENV_FILE:-/opt/markaz-ijro/shared/.env.production}"
 if [ -f "${ENV_FILE}" ]; then
   set -a; . "${ENV_FILE}"; set +a
 fi

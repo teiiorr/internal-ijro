@@ -1,0 +1,44 @@
+# /etc/systemd/system/markaz-ijro.service
+# -----------------------------------------------------------------------------
+# App unit for the LIVE BKRM deployment (domain app.markaz-ijro.uz).
+# REFERENCE — the running unit may differ; diff before assuming they match.
+#
+# Runtime model used by deploy.sh / deploy.yml: the `current` symlink points at
+# a FULL built release (node_modules + .next + src + scripts + tsconfig), so the
+# app runs `next start` and the worker (markaz-ijro-worker) runs tsx from the
+# same dir. (A lower-memory alternative is the standalone server —
+# `node .next/standalone/server.js` — which is what the Dockerfile uses.)
+#
+# Install:
+#   sudo cp deploy/markaz-ijro.service /etc/systemd/system/markaz-ijro.service
+#   sudo systemctl daemon-reload && sudo systemctl enable --now markaz-ijro
+[Unit]
+Description=Ichki Ijro (Next.js) — app.markaz-ijro.uz
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=ijro
+Group=ijro
+WorkingDirectory=/opt/markaz-ijro/current
+EnvironmentFile=/opt/markaz-ijro/shared/.env.production
+# corepack provides pnpm; use an absolute node path and pnpm via the launcher.
+ExecStart=/usr/bin/env pnpm start
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+KillSignal=SIGINT
+TimeoutStopSec=20
+
+# Sandboxing — only the paths the app must write to are writable.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+# uploads live outside the release; .next/cache is written at runtime.
+ReadWritePaths=/var/lib/markaz-ijro/uploads /opt/markaz-ijro/current/.next
+
+[Install]
+WantedBy=multi-user.target

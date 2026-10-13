@@ -1,0 +1,32 @@
+# /etc/systemd/system/markaz-ijro-worker.service
+# -----------------------------------------------------------------------------
+# Cron worker for the LIVE deployment — one pass of scripts/worker.ts then exit.
+# Scheduled by markaz-ijro-worker.timer. REFERENCE config.
+#
+# WHY IT NEEDS THE FULL RELEASE: `pnpm worker` == `tsx scripts/worker.ts`, which
+# imports `@/lib/...` (tsconfig path → src/) and runs under tsx (a devDependency).
+# That is exactly why deploy.sh/deploy.yml ship src/ + scripts/ + tsconfig.json
+# and install devDeps on Linux. Running from /opt/markaz-ijro/current gives it
+# src/, tsconfig.json, scripts/ and node_modules (with tsx) all in one place.
+#
+# Install:
+#   sudo cp deploy/markaz-ijro-worker.service /etc/systemd/system/
+#   sudo cp deploy/markaz-ijro-worker.timer   /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now markaz-ijro-worker.timer
+[Unit]
+Description=Ichki Ijro — stage/task deadline reminders + weekly snapshot (worker)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=oneshot
+User=ijro
+Group=ijro
+WorkingDirectory=/opt/markaz-ijro/current
+EnvironmentFile=/opt/markaz-ijro/shared/.env.production
+ExecStart=/usr/bin/env pnpm worker
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true

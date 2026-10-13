@@ -1,0 +1,46 @@
+# Keep the build context small and never bake host-specific or secret files
+# into the image. Everything here is either regenerated in-image or must not
+# ship to a registry.
+
+# Dependencies & build output — reinstalled/rebuilt inside the image on Linux.
+# (Shipping the Mac's node_modules is exactly the darwin-binary bug we fixed.)
+node_modules
+.next
+out
+build
+dist
+
+# VCS & CI
+.git
+.gitignore
+.github
+
+# Secrets / local env — provided at runtime via --env-file, never baked in.
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# User-uploaded content lives outside the image (mounted volume on the host).
+uploads
+public/uploads
+
+# Local tooling, caches, editor/OS cruft, logs.
+.claude
+.vscode
+.idea
+*.log
+npm-debug.log*
+.DS_Store
+coverage
+.vitest
+.eslintcache
+*.tsbuildinfo
+
+# Docs & infra that don't belong in the runtime image.
+Dockerfile
+.dockerignore
+deploy
+deploy.sh
+DEPLOY.md
+*.md
