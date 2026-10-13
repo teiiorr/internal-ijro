@@ -1332,6 +1332,17 @@
       "backupUnavailable": "Maʼlumot yoʻq (server yoʻlidan tashqarida)",
       "env": "Muhit sozlamalari",
       "secrets": "Maxfiy kalitlar"
+    },
+    "maintenance": {
+      "title": "Texnik rejim",
+      "label": "Texnik pauza",
+      "offHint": "Oʻchiq — sayt hamma uchun ochiq.",
+      "onHint": "Yoqilgan — hamma texnik sahifani koʻradi, faqat siz kirasiz.",
+      "confirmOn": "Texnik rejim yoqilsinmi? Sizdan boshqa hamma texnik sahifaga yoʻnaltiriladi.",
+      "turnedOn": "Texnik rejim yoqildi",
+      "turnedOff": "Texnik rejim oʻchirildi",
+      "error": "Xatolik",
+      "activeWarning": "Hozir faqat siz kira olasiz"
     }
   },
   "normative": {

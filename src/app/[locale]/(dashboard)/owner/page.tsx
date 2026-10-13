@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getTranslations, getLocale } from "next-intl/server";
 import { requireUser } from "@/lib/session";
 import { isOwner, OWNER_TITLE } from "@/lib/permissions/owner";
+import { isMaintenanceOn } from "@/lib/maintenance";
+import { MaintenanceToggle } from "@/components/owner/maintenance-toggle";
 import { localizeName } from "@/lib/names";
 import { formatDateTime } from "@/lib/dates";
 import { getSystemStats, getRecentChanges, getSystemInfo, changeKind } from "@/server/queries/owner";
@@ -39,6 +41,7 @@ export default async function OwnerPage() {
   if (!isOwner(user.email)) redirect("/dashboard");
   const t = await getTranslations();
   const locale = await getLocale();
+  const maintenanceOn = await isMaintenanceOn();
 
   const [stats, changes, logs, sys, emps, grants, studioActivity] = await Promise.all([
     getSystemStats(),
@@ -84,6 +87,13 @@ export default async function OwnerPage() {
       />
 
       <div className="flex min-w-0 flex-col gap-8 lg:gap-12">
+        {/* 0. Texnik rejim tumbleri */}
+        <Section title={t("owner.maintenance.title")}>
+          <Card solid>
+            <MaintenanceToggle initialOn={maintenanceOn} />
+          </Card>
+        </Section>
+
         {/* 1. Holat — tizim koʻrsatkichlari */}
         <Section title={t("owner.statsTitle")}>
           <Card>

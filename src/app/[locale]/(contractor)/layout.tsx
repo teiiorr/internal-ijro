@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { isMaintenanceOn } from "@/lib/maintenance";
 import { eq } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
@@ -29,6 +30,7 @@ export default async function ContractorLayout({ children }: { children: React.R
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (session.user.position !== "kontragent") redirect("/dashboard");
+  if (await isMaintenanceOn()) redirect("/texnik");
   const t = await getTranslations();
 
   const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);

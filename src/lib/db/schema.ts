@@ -1066,6 +1066,13 @@ export const stageRequests = pgTable(
 );
 
 // Qulaylik uçun aniqlangan tiplarni qayta eksport qilamiz
+/** Tizim sozlamalari (kalit-qiymat). Masalan "maintenance_mode" = "on" | "off". */
+export const appSettings = pgTable("app_settings", {
+  key: varchar("key", { length: 64 }).primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type CouncilMeeting = typeof councilMeetings.$inferSelect;
 export type CouncilAgendaItem = typeof councilAgendaItems.$inferSelect;

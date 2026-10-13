@@ -1332,6 +1332,17 @@
       "backupUnavailable": "Maʼlumot yöq (server yölidan taşqarida)",
       "env": "Muhit sozlamalari",
       "secrets": "Maxfiy kalitlar"
+    },
+    "maintenance": {
+      "title": "Texnik rejim",
+      "label": "Texnik pauza",
+      "offHint": "Öçiq — sayt hamma uçun oçiq.",
+      "onHint": "Yoqilgan — hamma texnik sahifani köradi, faqat siz kirasiz.",
+      "confirmOn": "Texnik rejim yoqilsinmi? Sizdan boşqa hamma texnik sahifaga yönaltiriladi.",
+      "turnedOn": "Texnik rejim yoqildi",
+      "turnedOff": "Texnik rejim öçirildi",
+      "error": "Xatolik",
+      "activeWarning": "Hozir faqat siz kira olasiz"
     }
   },
   "normative": {

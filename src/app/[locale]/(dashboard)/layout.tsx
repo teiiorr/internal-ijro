@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isOwner } from "@/lib/permissions/owner";
+import { isMaintenanceOn } from "@/lib/maintenance";
 import { Header } from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/nav/Sidebar";
 import { NavProvider } from "@/components/layout/nav/NavProvider";
@@ -22,6 +23,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!session?.user) redirect("/login");
   if (session.user.position === "kontragent") redirect("/contractor/dashboard");
   const owner = isOwner(session.user.email);
+  // Texnik rejim yoqilgan boʻlsa — egadan boshqa hamma texnik sahifaga yoʻnaltiriladi.
+  if (!owner && (await isMaintenanceOn())) redirect("/texnik");
   const [me] = await db.select({ avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, session.user.id)).limit(1);
   // Studiyalar bölimini kim köradi (boşqaruvçilar + egasi ruxsat bergan xodimlar) va kim boşqaradi.
   const showContractors = await canViewContractorChats(session.user);
