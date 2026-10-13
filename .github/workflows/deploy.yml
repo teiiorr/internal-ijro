@@ -1,16 +1,40 @@
 name: Deploy to Production
 
+# WHY THE TRIGGER CHANGED
+#   This workflow used to fire only on push to `main`, but active development
+#   happens on `redesign-biib`, so production deploys never ran during the
+#   redesign. We now deploy from BOTH branches plus a manual button.
+#
+#   NOTE ON THE MAIN-BASED FLOW: `main` is the real production branch. Pushing
+#   `redesign-biib` here deploys the in-progress redesign to the live box — keep
+#   that only while the redesign IS production. Once it merges to `main`, drop
+#   `redesign-biib` from the list below and deploy from `main` alone.
 on:
   push:
-    branches: [main]
+    branches: [main, redesign-biib]
     paths-ignore:
       - '**.md'
       - '.github/workflows/android-apk.yml'
+  workflow_dispatch: {}   # manual re-deploy from the Actions tab
+
+# One deploy at a time; let a newer push supersede an in-flight older one but
+# never cancel a run mid-swap (that could leave `current` half-pointed).
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ubuntu-latest          # Linux build → Linux artifact (same arch as the droplet)
+    timeout-minutes: 20
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST || 'ijro@64.226.65.211' }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/opt/markaz-ijro' }}
+      APP_SERVICE: ${{ vars.APP_SERVICE || 'markaz-ijro' }}
+      WORKER_UNIT: ${{ vars.WORKER_UNIT || 'markaz-ijro-worker' }}
+      UPLOADS_DIR: ${{ vars.UPLOADS_DIR || '/var/lib/markaz-ijro/uploads' }}
+      HEALTH_URL: ${{ vars.HEALTH_URL || 'https://app.markaz-ijro.uz/api/health' }}
+      SERVER_IP: ${{ vars.SERVER_IP || '64.226.65.211' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -21,40 +45,105 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      # Full install (incl. devDeps) so `next build` AND the tsx worker have
+      # what they need. These node_modules are linux/amd64 — the droplet's arch.
+      - name: Install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: CI=true NODE_OPTIONS='--max-old-space-size=4096' npx next build
+      - name: Build (standalone)
+        run: CI=true NODE_OPTIONS='--max-old-space-size=4096' pnpm build
 
+      # Secrets handling unchanged: the private key is written 0600 and removed
+      # with the runner; the host key is pinned (prefer the KNOWN_HOSTS secret,
+      # fall back to a keyscan) so we don't blindly trust-on-first-use.
       - name: Setup SSH
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H 64.226.65.211 >> ~/.ssh/known_hosts 2>/dev/null
+          if [ -n "${{ secrets.DEPLOY_KNOWN_HOSTS }}" ]; then
+            printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts 2>/dev/null
+          fi
+          chmod 600 ~/.ssh/known_hosts
 
-      - name: Deploy
+      # Ship the WHOLE built tree (built .next + linux node_modules + src/ +
+      # scripts/ + tsconfig.json + drizzle/ + public/ + config) to a fresh
+      # release dir. Shipping src/ + scripts/ + devDeps is what keeps the tsx
+      # worker working — the old workflow omitted them and the worker broke.
+      - name: Upload release
         run: |
-          HOST="root@64.226.65.211"
-          REMOTE="/opt/markaz-ijro/app"
-
-          ssh "$HOST" "systemctl stop markaz-ijro || true"
-
+          RELEASE="$(date -u +%Y%m%d-%H%M%S)"
+          echo "RELEASE=$RELEASE" >> "$GITHUB_ENV"
+          RELEASE_DIR="${DEPLOY_PATH}/releases/${RELEASE}"
+          echo "RELEASE_DIR=$RELEASE_DIR" >> "$GITHUB_ENV"
+          ssh "$DEPLOY_HOST" "mkdir -p '$RELEASE_DIR'"
           rsync -az --delete \
-            --exclude='.env' \
-            --exclude='.env.local' \
-            --exclude='uploads' \
             --exclude='.git' \
-            --exclude='src' \
-            .next/ "$HOST:$REMOTE/.next/"
+            --exclude='uploads' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='.claude' \
+            --exclude='coverage' \
+            ./ "$DEPLOY_HOST:$RELEASE_DIR/"
 
-          rsync -az public/ "$HOST:$REMOTE/public/"
-          rsync -az --delete node_modules/ "$HOST:$REMOTE/node_modules/"
-          rsync -az drizzle/ "$HOST:$REMOTE/drizzle/"
-          rsync -az scripts/ "$HOST:$REMOTE/scripts/"
-          rsync -az package.json "$HOST:$REMOTE/package.json"
+      # Gated migration, then atomic swap, restart, and a /api/health smoke that
+      # rolls back on failure. Identical remote logic to deploy.sh, minus the
+      # build (already done on the runner).
+      - name: Migrate, swap, restart, smoke-check
+        run: |
+          ssh "$DEPLOY_HOST" \
+            "export RELEASE_DIR='$RELEASE_DIR' DEPLOY_PATH='$DEPLOY_PATH' \
+                    APP_SERVICE='$APP_SERVICE' WORKER_UNIT='$WORKER_UNIT' \
+                    UPLOADS_DIR='$UPLOADS_DIR' HEALTH_URL='$HEALTH_URL'; bash -euo pipefail -s" <<'REMOTE'
+          set -euo pipefail
+          corepack enable >/dev/null 2>&1 || true
+          SHARED_ENV="${DEPLOY_PATH}/shared/.env.production"
+          [ -f "${SHARED_ENV}" ] || { echo "✗ ${SHARED_ENV} missing"; exit 1; }
 
-          ssh "$HOST" "ln -sfn /var/lib/markaz-ijro/uploads $REMOTE/uploads 2>/dev/null; systemctl start markaz-ijro"
-          sleep 3
-          ssh "$HOST" "systemctl is-active markaz-ijro"
+          ln -sfn "${UPLOADS_DIR}" "${RELEASE_DIR}/uploads"
+          ln -sf  "${SHARED_ENV}"  "${RELEASE_DIR}/.env.production"
+          cd "${RELEASE_DIR}"
+
+          echo "→ db:migrate (gated; old release stays live on failure)"
+          set -a; . "${SHARED_ENV}"; set +a
+          pnpm db:migrate
+
+          PREV="$(readlink -f "${DEPLOY_PATH}/current" 2>/dev/null || true)"
+          ln -sfn "${RELEASE_DIR}" "${DEPLOY_PATH}/current"
+
+          echo "→ restart ${APP_SERVICE}"
+          sudo systemctl restart "${APP_SERVICE}"
+          if [ -n "${WORKER_UNIT}" ]; then
+            sudo systemctl restart "${WORKER_UNIT}.timer" 2>/dev/null \
+              || echo "(worker timer not installed yet)"
+          fi
+
+          echo "→ smoke: ${HEALTH_URL}"
+          code=000
+          for i in 1 2 3 4 5 6; do
+            code="$(curl -ksS -o /dev/null -w '%{http_code}' --max-time 10 "${HEALTH_URL}" || echo 000)"
+            [ "${code}" = "200" ] && break
+            sleep 3
+          done
+          if [ "${code}" != "200" ]; then
+            echo "✗ smoke failed (HTTP ${code}). Rolling back."
+            if [ -n "${PREV}" ] && [ -d "${PREV}" ]; then
+              ln -sfn "${PREV}" "${DEPLOY_PATH}/current"
+              sudo systemctl restart "${APP_SERVICE}"
+              echo "↩ rolled back to $(basename "${PREV}")"
+            fi
+            sudo journalctl -u "${APP_SERVICE}" -n 20 --no-pager || true
+            exit 1
+          fi
+          echo "✓ smoke OK"
+
+          cd "${DEPLOY_PATH}/releases" && ls -1t | tail -n +6 | xargs -r rm -rf
+          REMOTE
+
+      - name: Clean up SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519

@@ -31,10 +31,13 @@ Demo seed creates these accounts (password `Password123!`):
 | `pnpm db:migrate` | Apply pending migrations |
 | `pnpm db:push` | Push schema directly (dev only) |
 | `pnpm db:seed` | Seed demo data |
-| `pnpm tsx scripts/worker.ts` | Run cron worker (reminders, weekly PDF) |
+| `pnpm worker` | Run cron worker once (deadline reminders, weekly snapshot) |
+| `pnpm test` | Run the Vitest suite |
 
 ## Stack
 
-Next.js 16 (App Router) · TypeScript · PostgreSQL · Drizzle ORM · Auth.js v5 · Tailwind v4 · shadcn-style UI · next-intl (uz-latn/uz-cyrl/ru/en) · grammY · ExcelJS · @react-pdf/renderer · node-cron · recharts · dnd-kit.
+Next.js 16 (App Router) · TypeScript · PostgreSQL · Drizzle ORM · Auth.js v5 (next-auth) · Tailwind v4 · Radix UI (shadcn-style) · next-intl (uz-latn/uz-cyrl/oz/ru) · react-hook-form + Zod · ExcelJS · @react-pdf/renderer · recharts · nodemailer (email) · otplib + qrcode (2FA) · sharp.
 
-See [SETUP.md](./SETUP.md), [DATABASE.md](./DATABASE.md), [USERS.md](./USERS.md), [API.md](./API.md).
+The cron worker (`scripts/worker.ts`) is a single-pass `tsx` script scheduled by a systemd timer in production — see [DEPLOY.md](./DEPLOY.md).
+
+See [SETUP.md](./SETUP.md), [DATABASE.md](./DATABASE.md), [USERS.md](./USERS.md), [API.md](./API.md), [DEPLOY.md](./DEPLOY.md).
