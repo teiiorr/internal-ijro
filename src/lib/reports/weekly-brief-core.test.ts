@@ -91,8 +91,9 @@ describe("Tashkent calendar helpers", () => {
     expect(isoWeekLabel("2026-09-28")).toBe("2026-W40");
     expect(isoWeekLabel("2025-12-29")).toBe("2026-W01");
     expect(isoWeekLabel("2020-12-28")).toBe("2020-W53");
-    expect(weekRangeLabel("2026-09-28")).toBe("28.09–04.10");
-    expect(weekOptionLabel("2025-09-29")).toBe("2025-W40 (29.09–05.10)");
+    // BIIB polish pass 4bac23a lightened the label: " - " (not an en dash) and no ISO "W40" prefix.
+    expect(weekRangeLabel("2026-09-28")).toBe("28.09 - 04.10");
+    expect(weekOptionLabel("2025-09-29")).toBe("29.09 - 05.10");
   });
 
   it("builds the Tashkent window as UTC instants", () => {
