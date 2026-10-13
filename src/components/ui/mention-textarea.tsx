@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useCallback, useEffect, type KeyboardEvent, type ChangeEvent } from "react";
 import { cn } from "@/lib/utils";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 import { UserAvatar } from "./user-avatar";
 
 export type MentionUser = { id: string; fullName: string; avatarUrl?: string | null };
@@ -33,7 +34,7 @@ export function MentionTextarea({
   const [popupPos, setPopupPos] = useState<{ top: number; left: number } | null>(null);
 
   const filtered = query !== null
-    ? users.filter((u) => u.fullName.toLowerCase().includes(query.toLowerCase())).slice(0, 6)
+    ? users.filter((u) => query === "" || matchesLayoutQuery(u.fullName, query)).slice(0, 6)
     : [];
 
   const open = query !== null && filtered.length > 0;

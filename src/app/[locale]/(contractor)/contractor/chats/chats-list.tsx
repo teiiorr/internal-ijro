@@ -7,6 +7,7 @@ import { SmoothImage } from "@/components/ui/smooth-image";
 import { Card } from "@/components/ui-biib/Card";
 import { formatChatTime } from "@/lib/dates";
 import { shortName } from "@/lib/names";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 
 type Chat = {
   id: string;
@@ -23,9 +24,9 @@ export function ChatsList({ chats }: { chats: Chat[] }) {
   const [q, setQ] = useState("");
 
   const shown = useMemo(() => {
-    const term = q.trim().toLowerCase();
+    const term = q.trim();
     if (!term) return chats;
-    return chats.filter((c) => c.name.toLowerCase().includes(term) || (c.curator?.fullName ?? "").toLowerCase().includes(term));
+    return chats.filter((c) => matchesLayoutQuery(c.name, term) || matchesLayoutQuery(c.curator?.fullName ?? "", term));
   }, [q, chats]);
 
   return (

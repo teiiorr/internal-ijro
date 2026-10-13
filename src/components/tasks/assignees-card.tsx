@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatDateTime } from "@/lib/dates";
 import { shortName } from "@/lib/names";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 import { toast } from "sonner";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { NudgeDialog } from "@/components/staff/task-control/nudge-dialog";
@@ -67,9 +68,9 @@ export function AssigneesCard({
   const [feedback, setFeedback] = useState<Record<string, string>>({});
 
   const filtered = useMemo(() => {
-    const term = q.trim().toLowerCase();
+    const term = q.trim();
     return items.filter((i) => {
-      if (term && !i.fullName.toLowerCase().includes(term) && !(i.departmentName ?? "").toLowerCase().includes(term)) return false;
+      if (term && !matchesLayoutQuery(i.fullName, term) && !matchesLayoutQuery(i.departmentName ?? "", term)) return false;
       if (filter === "in_progress" && !["todo", "in_progress", "under_review", "rejected"].includes(i.status)) return false;
       if (filter === "completed" && i.status !== "completed") return false;
       return true;

@@ -6,6 +6,7 @@ import { IconSearch as Search, IconCheck as Check } from "@tabler/icons-react";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { setUserPermission } from "@/server/actions/permissions";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 import { cn } from "@/lib/utils";
 
 type Emp = {
@@ -33,9 +34,9 @@ export function PermissionsManager({
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = search.trim();
     if (!q) return employees;
-    return employees.filter((e) => e.fullName.toLowerCase().includes(q));
+    return employees.filter((e) => matchesLayoutQuery(e.fullName, q));
   }, [employees, search]);
 
   function toggle(userId: string, cap: string, on: boolean) {

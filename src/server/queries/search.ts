@@ -2,6 +2,7 @@ import "server-only";
 import { and, desc, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { projects, tasks, users, externalCompanies, contests } from "@/lib/db/schema";
+import { queryVariants } from "@/lib/search-layout";
 
 export type SearchHit = {
   id: string;
@@ -35,19 +36,25 @@ export async function globalSearch(q: string): Promise<SearchResults> {
   const term = normalizeTerm(q);
   const empty: SearchResults = { projects: [], tasks: [], employees: [], studios: [], contests: [] };
   if (term.length < 2) return empty;
-  const like = `%${term}%`;
+  // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variantlar uchun LIKE naqshlari.
+  const likes = queryVariants(term)
+    .map((v) => normalizeTerm(v))
+    .filter((v) => v.length >= 2)
+    .map((v) => `%${v}%`);
+  /** Ustun berilgan har qanday variantga mos kelsa (OR). */
+  const anyLike = (col: unknown) => sql.join(likes.map((l) => sql`${norm(col)} like ${l}`), sql` or `);
 
   const [prj, tsk, emp, std, cnt] = await Promise.all([
     db
       .select({ id: projects.id, label: projects.name, sub: projects.status })
       .from(projects)
-      .where(sql`${norm(projects.name)} like ${like}`)
+      .where(sql`(${anyLike(projects.name)})`)
       .orderBy(desc(projects.updatedAt))
       .limit(PER_GROUP),
     db
       .select({ id: tasks.id, label: tasks.title, sub: tasks.registrationNumber })
       .from(tasks)
-      .where(sql`(${norm(tasks.title)} like ${like} or ${norm(tasks.registrationNumber)} like ${like})`)
+      .where(sql`(${anyLike(tasks.title)} or ${anyLike(tasks.registrationNumber)})`)
       .orderBy(desc(tasks.updatedAt))
       .limit(PER_GROUP),
     db
@@ -57,7 +64,7 @@ export async function globalSearch(q: string): Promise<SearchResults> {
         and(
           sql`${users.position} <> 'kontragent'`,
           sql`${users.hidden} = false`,
-          sql`(${norm(users.fullName)} like ${like} or ${norm(users.email)} like ${like})`
+          sql`(${anyLike(users.fullName)} or ${anyLike(users.email)})`
         )
       )
       .orderBy(users.fullName)
@@ -65,13 +72,13 @@ export async function globalSearch(q: string): Promise<SearchResults> {
     db
       .select({ id: externalCompanies.id, label: externalCompanies.name, sub: externalCompanies.status })
       .from(externalCompanies)
-      .where(sql`${norm(externalCompanies.name)} like ${like}`)
+      .where(sql`(${anyLike(externalCompanies.name)})`)
       .orderBy(externalCompanies.name)
       .limit(PER_GROUP),
     db
       .select({ id: contests.id, label: contests.name })
       .from(contests)
-      .where(sql`${norm(contests.name)} like ${like}`)
+      .where(sql`(${anyLike(contests.name)})`)
       .orderBy(desc(contests.createdAt))
       .limit(PER_GROUP),
   ]);

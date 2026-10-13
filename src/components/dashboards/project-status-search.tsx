@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { IconSearch as Search, IconClipboardText as Board } from "@tabler/icons-react";
 import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import type { DerivedStatus } from "@/lib/projects/progress";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 
 export type ProjectStatusRow = {
   id: string;
@@ -23,12 +24,12 @@ const TONE: Record<DerivedStatus, StatusTone> = {
 export function ProjectStatusSearch({ projects }: { projects: ProjectStatusRow[] }) {
   const t = useTranslations();
   const [q, setQ] = useState("");
-  const term = q.trim().toLowerCase();
+  const term = q.trim();
 
   const rows = useMemo(() => {
     if (term) {
       return projects.filter(
-        (p) => p.name.toLowerCase().includes(term) || (p.currentStatus ?? "").toLowerCase().includes(term),
+        (p) => matchesLayoutQuery(p.name, term) || matchesLayoutQuery(p.currentStatus ?? "", term),
       );
     }
     // Standart köriniş: faqat joriy holat izohi mavjud loyihalar.

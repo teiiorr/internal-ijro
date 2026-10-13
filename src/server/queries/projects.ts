@@ -19,6 +19,7 @@ import {
 } from "@/lib/db/schema";
 import { stageTurn } from "@/lib/projects/progress";
 import { fetchCompanyStudioProjectIds } from "@/server/queries/studio";
+import { queryVariants } from "@/lib/search-layout";
 
 /**
  * Loyihaning barcha kuratorlari (avatar + ism), tartiblangan holda. Boğlovçi jadval
@@ -108,8 +109,11 @@ export async function listProjects(f: ProjectFilters, locale?: string) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const conds = [] as any[];
   if (f.search) {
-    const s = `%${f.search.toLowerCase()}%`;
-    conds.push(or(ilike(projects.name, s), ilike(projects.description, s)));
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant har bir ustunda.
+    const patterns = queryVariants(f.search).map((v) => `%${v}%`);
+    if (patterns.length) {
+      conds.push(or(...patterns.flatMap((s) => [ilike(projects.name, s), ilike(projects.description, s)])));
+    }
   }
   if (f.status) conds.push(eq(projects.status, f.status));
   if (f.type) conds.push(eq(projects.type, f.type));
@@ -429,8 +433,16 @@ export async function listProjectsForReport(f: ProjectFilters = {}): Promise<Pro
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const conds = [] as any[];
   if (f.search) {
-    const s = `%${f.search.toLowerCase()}%`;
-    conds.push(sql`(lower(p.name) like ${s} or lower(coalesce(p.description, '')) like ${s})`);
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant.
+    const patterns = queryVariants(f.search).map((v) => `%${v}%`);
+    if (patterns.length) {
+      conds.push(
+        sql`(${sql.join(
+          patterns.map((s) => sql`(lower(p.name) like ${s} or lower(coalesce(p.description, '')) like ${s})`),
+          sql` or `,
+        )})`,
+      );
+    }
   }
   if (f.type) conds.push(sql`p.type = ${f.type}`);
   if (f.projectTypeId) conds.push(sql`p.project_type_id = ${f.projectTypeId}`);

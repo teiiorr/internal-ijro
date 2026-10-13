@@ -1,6 +1,7 @@
 import "server-only";
 import { and, asc, desc, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
+import { queryVariants } from "@/lib/search-layout";
 import {
   users,
   departments,
@@ -40,11 +41,14 @@ export type EmployeeListRow = {
 export async function listEmployees(filters: EmployeeListFilters = {}): Promise<{ rows: EmployeeListRow[]; total: number }> {
   const where = [] as ReturnType<typeof eq>[];
   if (filters.search) {
-    const s = `%${filters.search.toLowerCase()}%`;
-    where.push(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      or(ilike(users.fullName, s), ilike(users.email, s), ilike(users.phone, s)) as any
-    );
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant har bir ustunda.
+    const patterns = queryVariants(filters.search).map((v) => `%${v}%`);
+    if (patterns.length) {
+      where.push(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        or(...patterns.flatMap((s) => [ilike(users.fullName, s), ilike(users.email, s), ilike(users.phone, s)])) as any
+      );
+    }
   }
   if (filters.departmentId) where.push(eq(users.departmentId, filters.departmentId));
   if (filters.position) where.push(eq(users.position, filters.position));

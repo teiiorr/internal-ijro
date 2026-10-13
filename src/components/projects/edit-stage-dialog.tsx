@@ -12,6 +12,7 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { updateStage } from "@/server/actions/stages";
 import { shortName } from "@/lib/names";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 
 type Person = { id: string; fullName: string; avatarUrl?: string | null };
 type Stage = {
@@ -42,9 +43,9 @@ export function EditStageDialog({ stage, users = [], currency = "UZS" }: { stage
 
   const selectedResp = useMemo(() => users.find((u) => u.id === responsibleId) ?? null, [users, responsibleId]);
   const respCandidates = useMemo(() => {
-    const q = respSearch.trim().toLowerCase();
+    const q = respSearch.trim();
     if (!q) return [] as Person[];
-    return users.filter((u) => u.id !== responsibleId && u.fullName.toLowerCase().includes(q)).slice(0, 6);
+    return users.filter((u) => u.id !== responsibleId && matchesLayoutQuery(u.fullName, q)).slice(0, 6);
   }, [users, responsibleId, respSearch]);
 
   function onSubmit(e: React.FormEvent) {

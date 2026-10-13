@@ -1,6 +1,7 @@
 import "server-only";
 import { and, asc, desc, eq, gte, ilike, inArray, isNull, lte, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
+import { queryVariants } from "@/lib/search-layout";
 import {
   tasks,
   taskAssignees,
@@ -31,9 +32,12 @@ export type TaskListFilters = {
 export async function listTasks(f: TaskListFilters) {
   const conds = [] as ReturnType<typeof eq>[];
   if (f.search) {
-    const s = `%${f.search.toLowerCase()}%`;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    conds.push(or(ilike(tasks.title, s), ilike(tasks.description, s)) as any);
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant har bir ustunda.
+    const patterns = queryVariants(f.search).map((v) => `%${v}%`);
+    if (patterns.length) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s)])) as any);
+    }
   }
   if (f.status) conds.push(eq(tasks.status, f.status));
   if (f.priority) conds.push(eq(tasks.priority, f.priority));
@@ -84,9 +88,12 @@ export async function listTasks(f: TaskListFilters) {
 export async function countTasks(f: Pick<TaskListFilters, "actorId" | "actorPosition" | "actorDepartmentId" | "scope" | "search">) {
   const conds = [] as ReturnType<typeof eq>[];
   if (f.search) {
-    const s = `%${f.search.toLowerCase()}%`;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    conds.push(or(ilike(tasks.title, s), ilike(tasks.description, s)) as any);
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant har bir ustunda.
+    const patterns = queryVariants(f.search).map((v) => `%${v}%`);
+    if (patterns.length) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s)])) as any);
+    }
   }
   if (f.scope === "mine") {
     conds.push(sql`EXISTS (SELECT 1 FROM task_assignees ta WHERE ta.task_id = ${tasks.id} AND ta.user_id = ${f.actorId})`);

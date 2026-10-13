@@ -14,6 +14,7 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 import { updateProject } from "@/server/actions/projects";
 import { PROJECT_GENRES } from "@/lib/projects/genres";
 import { shortName } from "@/lib/names";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 
 const NONE = "__none__";
 
@@ -81,8 +82,8 @@ export function EditProjectDialog({
     [curatorIds, curators],
   );
   const curatorCandidates = useMemo(() => {
-    const term = curatorSearch.trim().toLowerCase();
-    return curators.filter((c) => !curatorIds.includes(c.id) && (term === "" || c.fullName.toLowerCase().includes(term)));
+    const term = curatorSearch.trim();
+    return curators.filter((c) => !curatorIds.includes(c.id) && (term === "" || matchesLayoutQuery(c.fullName, term)));
   }, [curators, curatorIds, curatorSearch]);
   function toggleCurator(id: string) {
     setCuratorIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));

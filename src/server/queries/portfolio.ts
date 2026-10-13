@@ -13,6 +13,7 @@ import {
 } from "@/lib/db/schema";
 import { localizedTypeName } from "@/server/queries/stages";
 import { deriveStageBars, tashkentToday, type TLProject, type TLStage } from "@/lib/projects/timeline";
+import { queryVariants } from "@/lib/search-layout";
 
 export type PortfolioFilters = {
   search?: string | null;
@@ -100,7 +101,11 @@ export async function getPortfolioTimeline(
 
   const baseConds: SQL[] = [];
   if (!f.includeCompleted) baseConds.push(ne(projects.status, "completed"));
-  if (search) baseConds.push(ilike(projects.name, likePattern(search)));
+  if (search) {
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant.
+    const nameConds = queryVariants(search).map((v) => ilike(projects.name, likePattern(v)));
+    if (nameConds.length) baseConds.push(or(...nameConds) as SQL);
+  }
   if (typeId) baseConds.push(eq(projects.projectTypeId, typeId));
   if (studioId) baseConds.push(eq(projects.externalCompanyId, studioId));
   if (f.overdueOnly) {

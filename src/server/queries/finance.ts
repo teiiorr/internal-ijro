@@ -1,8 +1,9 @@
 import "server-only";
-import { and, asc, desc, eq, ilike, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { externalCompanies, projects, projectStages, stagePayments, users } from "@/lib/db/schema";
 import { monthKey, nextMonths, shiftMonth } from "@/lib/finance/forecast";
+import { queryVariants } from "@/lib/search-layout";
 
 // Moliya: toʻlovlar reestri, qarzdorlik, pul oqimi prognozi va anomaliyalar.
 // Faqat MAVJUD jadvallar (stage_payments / project_stages / projects / external_companies)
@@ -103,7 +104,11 @@ function registerWhere(f: RegisterFilters): SQL | undefined {
   if (f.typeId) conds.push(eq(projects.projectTypeId, f.typeId));
   if (f.from) conds.push(sql`${paymentDate} >= ${monthStartIso(f.from)}::timestamptz`);
   if (f.to) conds.push(sql`${paymentDate} < ${monthStartIso(shiftMonth(f.to, 1))}::timestamptz`);
-  if (f.contract) conds.push(ilike(projectStages.contractNumber, `%${escapeLike(f.contract)}%`));
+  if (f.contract) {
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant.
+    const contractConds = queryVariants(f.contract).map((v) => ilike(projectStages.contractNumber, `%${escapeLike(v)}%`));
+    if (contractConds.length) conds.push(or(...contractConds) as SQL);
+  }
   return conds.length ? and(...conds) : undefined;
 }
 

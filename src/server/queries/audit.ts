@@ -2,6 +2,7 @@ import "server-only";
 import { and, desc, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { activityLog, users } from "@/lib/db/schema";
+import { queryVariants } from "@/lib/search-layout";
 
 export type AuditFilters = {
   userId?: string | null;
@@ -21,9 +22,12 @@ export async function listAudit(f: AuditFilters, limit = 500) {
   if (f.from) conds.push(gte(activityLog.createdAt, new Date(f.from)));
   if (f.to) conds.push(lte(activityLog.createdAt, new Date(f.to)));
   if (f.search) {
-    const s = `%${f.search.toLowerCase()}%`;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    conds.push(or(ilike(activityLog.action, s), ilike(activityLog.entityType, s)) as any);
+    // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant har bir ustunda.
+    const patterns = queryVariants(f.search).map((v) => `%${v}%`);
+    if (patterns.length) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      conds.push(or(...patterns.flatMap((s) => [ilike(activityLog.action, s), ilike(activityLog.entityType, s)])) as any);
+    }
   }
   if (f.scope === "hr") {
     conds.push(sql`${activityLog.action} like 'employee.%' OR ${activityLog.action} like 'department.%' OR ${activityLog.action} like 'coordinator.%'`);

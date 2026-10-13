@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { coordinatorAssignments, departments, users, type Position } from "@/lib/db/schema";
 import { employeeContactCards } from "@/lib/db/tables/staff-directory";
 import { can } from "@/lib/permissions/capabilities";
+import { queryVariants } from "@/lib/search-layout";
 import type { SessionUser } from "@/lib/session";
 import {
   buildOrgTree,
@@ -83,11 +84,12 @@ async function queryDirectory(
     conds.push(sql`c.skills @> array[${f.skill}::text]`);
   }
   if (f.term) {
-    const like = `%${escapeLike(f.term)}%`;
+    // Klaviatura joylashuvini sezmaydi: asl va almashtirilgan (RU<->US) variantlarni ham qidiradi.
+    const likes = queryVariants(f.term).map((v) => `%${escapeLike(v)}%`);
     const cols: SQL[] = [sql`u.full_name`, sql`u.email`, sql`u.position_title`];
     if (withCard) cols.push(sql`c.work_phone`, sql`c.internal_ext`, sql`array_to_string(c.skills, ' ')`);
     conds.push(sql`(${sql.join(
-      cols.map((c) => sql`translate(lower(${c}), ${APOS}, '') like ${like}`),
+      likes.flatMap((like) => cols.map((c) => sql`translate(lower(${c}), ${APOS}, '') like ${like}`)),
       sql` or `
     )})`);
   }

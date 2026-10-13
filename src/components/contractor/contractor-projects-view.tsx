@@ -8,6 +8,7 @@ import { StatusTag, type StatusTone } from "@/components/ui/status-tag";
 import { Marquee } from "@/components/ui/marquee";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 import { cn } from "@/lib/utils";
 
 const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
@@ -73,9 +74,9 @@ export function ContractorProjectsView({ projects }: { projects: Proj[] }) {
   }), [decorated]);
 
   const shown = useMemo(() => {
-    const term = q.trim().toLowerCase();
+    const term = q.trim();
     return decorated.filter((p) => {
-      if (term && !p.name.toLowerCase().includes(term)) return false;
+      if (term && !matchesLayoutQuery(p.name, term)) return false;
       if (filter === "all") return true;
       if (filter === "at_risk") return p.atRisk;
       return p.derived === filter;

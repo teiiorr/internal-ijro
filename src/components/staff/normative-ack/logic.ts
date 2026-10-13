@@ -1,6 +1,7 @@
 // PURE helpers for the normative registry + acknowledgement sheet (staff: normative-ack).
-// No DB, no "server-only", no "@/" imports — shared by server queries/actions, the PDF,
-// client components and vitest.
+// No DB, no "server-only" — shared by server queries/actions, the PDF, client components
+// and vitest. The only "@/" import is the pure (dependency-free) keyboard-layout search util.
+import { queryVariants } from "@/lib/search-layout";
 
 // ---------------- registry vocabulary ----------------
 
@@ -218,7 +219,8 @@ export function matchesRegistryFilter(doc: FilterableDoc, f: RegistryFilter): bo
   const hay = normalizeSearch(
     [doc.fileName, doc.meta?.docNumber, doc.meta?.summary, doc.meta?.issuedBy].filter(Boolean).join(" \u0001 ")
   );
-  return q.split(" ").every((term) => hay.includes(term));
+  // Klaviatura joylashuvini sezmaydi: har bir soʻz asl yoki almashtirilgan joylashuvda mos kelsa — yetarli.
+  return q.split(" ").every((term) => queryVariants(term).some((v) => hay.includes(normalizeSearch(v))));
 }
 
 export function filterRegistry<T extends FilterableDoc>(docs: T[], f: RegistryFilter): T[] {

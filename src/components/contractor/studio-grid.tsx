@@ -9,6 +9,7 @@ import { SmoothImage } from "@/components/ui/smooth-image";
 import { Button } from "@/components/ui/button";
 
 import { approveContractor, rejectContractor } from "@/server/actions/projects";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 import { cn } from "@/lib/utils";
 
 type Proj = { id: string; name: string; status: string };
@@ -37,14 +38,14 @@ export function StudioGrid({ studios }: { studios: Studio[] }) {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim();
+    const q = query.trim();
     return studios
       .filter((s) => {
         if (!q) return true;
         return (
-          s.name.toLowerCase().includes(q) ||
-          s.contactPerson?.toLowerCase().includes(q) ||
-          s.projects.some((p) => p.name.toLowerCase().includes(q))
+          matchesLayoutQuery(s.name, q) ||
+          (s.contactPerson ? matchesLayoutQuery(s.contactPerson, q) : false) ||
+          s.projects.some((p) => matchesLayoutQuery(p.name, q))
         );
       })
       // Koʻrib chiqish kutayotgan studiyalar roʻyxatning tepasiga chiqadi.
