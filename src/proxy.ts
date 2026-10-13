@@ -13,6 +13,7 @@ const PUBLIC_PATHS = [
   "/reset-password",
   "/setup",
   "/invite",
+  "/texnik",
 ];
 
 function stripLocale(pathname: string): string {
