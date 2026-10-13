@@ -148,6 +148,7 @@
       "myWork": "Işlarim"
     },
     "allProjects": "Barça loyihalar",
+    "calendar": "Işlab çiqariş kalendari",
     "myProjects": "Loyihalarim",
     "taskControl": "Ijro nazorati",
     "menu": "Menyu"
@@ -1378,6 +1379,18 @@
     "pending": "Kutilmoqda",
     "prev": "Oldingi",
     "next": "Keyingi"
+  },
+  "calendar": {
+    "title": "Işlab çiqariş kalendari",
+    "today": "Bugun",
+    "empty": "Bu oyda hodisalar yöq",
+    "prevMonth": "Oldingi oy",
+    "nextMonth": "Keyingi oy",
+    "type": {
+      "stage": "Bosqiç",
+      "task": "Vazifa",
+      "meeting": "Majlis"
+    }
   },
   "review": {
     "turn": {

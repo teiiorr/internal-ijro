@@ -1,6 +1,6 @@
 import {
   IconLayoutDashboard, IconBriefcase, IconCalendarCheck, IconListCheck, IconChecklist,
-  IconLayoutKanban, IconLayoutGrid, IconCash, IconTrophy, IconHeartHandshake,
+  IconLayoutKanban, IconLayoutGrid, IconCalendar, IconCash, IconTrophy, IconHeartHandshake,
   IconBuildingBank, IconPresentation, IconCoins, IconUsersGroup,
   IconUsers, IconBuilding, IconInfoSquareRounded, IconSpeakerphone, IconFileCheck,
   IconShieldCog, IconReportAnalytics, IconHistory, IconShieldCheck, IconBell, IconSettings,
@@ -29,6 +29,7 @@ export const STAFF_NAV: NavConfig = {
 
     { key: "projects", labelKey: "nav.projects", icon: IconLayoutKanban, children: [
       { key: "allProjects", href: "/projects", labelKey: "nav.allProjects", shortLabelKey: "nav.projects", icon: IconLayoutGrid, rule: ALL },
+      { key: "calendar", href: "/calendar", labelKey: "nav.calendar", icon: IconCalendar, rule: ALL },
       { key: "payments", href: "/projects/payments", labelKey: "nav.payments", icon: IconCash, rule: { kind: "flag", flag: "money" } },
       { key: "tanlov", href: "/tanlov", labelKey: "nav.tanlov", icon: IconTrophy, rule: ALL },
       { key: "studios", href: "/contractors", labelKey: "nav.contractors", icon: IconHeartHandshake, badge: "reviewQueue",
