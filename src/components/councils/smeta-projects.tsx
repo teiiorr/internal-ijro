@@ -188,8 +188,17 @@ export function SmetaProjects({
     if (open) firstFieldRef.current?.focus();
   }, [open, mode]);
 
-  const taken = useMemo(() => new Set(items.map((i) => i.name.toLowerCase())), [items]);
-  const suggestions = useMemo(() => projects.filter((p) => !taken.has(p.name.toLowerCase())), [projects, taken]);
+  // Nishon son (forma ichidagi qiymat) — boʻsh boʻlsa «Hozir koʻrib chiqilayotgan» (null).
+  const targetSon = useMemo(() => {
+    const n = Number.parseInt(son, 10);
+    return son.trim() !== "" && Number.isInteger(n) && n >= 1 ? n : null;
+  }, [son]);
+  // Band nomlar — FAQAT nishon son ichida: bitta loyiha turli sonlarga qoʻshilishi mumkin.
+  const takenInSon = useMemo(
+    () => new Set(items.filter((i) => i.sessionNumber === targetSon).map((i) => i.name.toLowerCase())),
+    [items, targetSon],
+  );
+  const suggestions = useMemo(() => projects.filter((p) => !takenInSon.has(p.name.toLowerCase())), [projects, takenInSon]);
   const maxSon = useMemo(() => items.reduce((m, it) => (it.sessionNumber && it.sessionNumber > m ? it.sessionNumber : m), 0), [items]);
 
   // Tanlangan mavjud loyiha (nom aynan mos kelsa) — poster/maʼlumotni koʻrsatish uchun.
@@ -248,7 +257,7 @@ export function SmetaProjects({
 
     if (mode === "existing") {
       if (!picked) return setError(errorText("invalid"));
-      if (taken.has(picked.name.toLowerCase())) return setError(errorText("duplicate"));
+      if (takenInSon.has(picked.name.toLowerCase())) return setError(errorText("duplicate"));
       setError(null);
       start(async () => {
         const r = await addSmetaCommissionProject({
@@ -269,7 +278,7 @@ export function SmetaProjects({
     // scratch
     const v = name.trim().replace(/\s+/g, " ");
     if (v.length < 2) return setError(errorText("invalid"));
-    if (taken.has(v.toLowerCase())) return setError(errorText("duplicate"));
+    if (takenInSon.has(v.toLowerCase())) return setError(errorText("duplicate"));
     setError(null);
     start(async () => {
       const r = await addSmetaCommissionProject({

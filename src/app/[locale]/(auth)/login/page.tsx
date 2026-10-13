@@ -41,6 +41,10 @@ export default function LoginPage() {
       pref && (routing.locales as readonly string[]).includes(pref)
         ? (pref as (typeof routing.locales)[number])
         : routing.defaultLocale;
+    // Kukini ham shu tilga qoʻyamiz — middleware endi uni hamma yerda majburlaydi.
+    try {
+      document.cookie = `NEXT_LOCALE=${locale};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax${location.protocol === "https:" ? ";secure" : ""}`;
+    } catch {}
     router.push("/dashboard", { locale });
   }
 

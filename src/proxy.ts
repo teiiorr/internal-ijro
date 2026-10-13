@@ -23,6 +23,14 @@ function stripLocale(pathname: string): string {
   return pathname;
 }
 
+/** URL boshidagi til prefiksini qaytaradi (yoʻq boʻlsa — null). */
+function getUrlLocale(pathname: string): string | null {
+  for (const loc of routing.locales) {
+    if (pathname === `/${loc}` || pathname.startsWith(`/${loc}/`)) return loc;
+  }
+  return null;
+}
+
 function isPublic(pathname: string): boolean {
   const p = stripLocale(pathname);
   if (p === "/") return true;
@@ -79,6 +87,20 @@ export default async function proxy(req: NextRequest) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Tilni "eslab qolish": foydalanuvchi tanlagan til (NEXT_LOCALE kukisi) URL'dagi
+  // tildan farq qilsa — tanlangan tilga yoʻnaltiramiz. Shu bilan til bir marta
+  // tasdiqlangach, foydalanuvchi oʻzgartirmaguncha HAMMA yerda saqlanadi (standart
+  // uz-latn yoki boshqa havola uni buza olmaydi). Tanlov faqat til almaştirgiç orqali
+  // oʻzgaradi (u kukini sinxron yozadi, şu sabab bu yerda sakrab ketmaydi).
+  const prefCookie = req.cookies.get("NEXT_LOCALE")?.value;
+  const pref = prefCookie && (routing.locales as readonly string[]).includes(prefCookie) ? prefCookie : null;
+  const urlLocale = getUrlLocale(pathname);
+  if (pref && urlLocale && urlLocale !== pref) {
+    const rest = pathname.slice(1 + urlLocale.length); // "/dashboard" yoki ""
+    const url = new URL(`/${pref}${rest}${req.nextUrl.search}`, req.url);
+    return NextResponse.redirect(url);
   }
 
   return intlMiddleware(req);

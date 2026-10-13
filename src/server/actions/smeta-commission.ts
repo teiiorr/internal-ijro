@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
@@ -98,11 +98,19 @@ export async function addSmetaCommissionProject(input: AddSmetaProjectInput): Pr
       posterUrl = parsed.data.posterUrl && parsed.data.posterUrl.length > 0 ? parsed.data.posterUrl : null;
     }
 
-    // Takror tekshiruvi (nom boʻyicha) — mavjud xatti-harakat saqlanadi.
+    // Takror tekshiruvi — FAQAT aynan shu son ichida (bitta loyihani turli sonlarga
+    // ikki, uch marta qoʻshish mumkin; sonsiz "Hozir" roʻyxatida ham faqat bir marta).
     const [dup] = await db
       .select({ id: smetaCommissionProjects.id })
       .from(smetaCommissionProjects)
-      .where(sql`lower(${smetaCommissionProjects.name}) = lower(${name})`)
+      .where(
+        and(
+          sql`lower(${smetaCommissionProjects.name}) = lower(${name})`,
+          sessionNumber === null
+            ? isNull(smetaCommissionProjects.sessionNumber)
+            : eq(smetaCommissionProjects.sessionNumber, sessionNumber),
+        ),
+      )
       .limit(1);
     if (dup) return { ok: false, error: "duplicate" };
 
