@@ -16,25 +16,31 @@ const topKeys = (v: NavViewer) =>
 describe("resolveNav — guruhlar va ko'rinish", () => {
   it("bo'sh guruh yashiriladi, bitta bolali guruh havolaga aylanadi", () => {
     // mutaxassis: admin guruhi (reports/audit/owner) hammasi yopiq → yashirin;
-    // team guruhi faqat "directory" (tuzilma) qoladi → havolaga aylanadi.
+    // team guruhi (employees HR, departments admin) ham yopiq → yashirin.
     const r = resolveNav(STAFF_NAV, viewer("mutaxassis"));
     const adminEntry = r.find((e) => (e.type === "group" ? e.group.key : e.groupKey) === "admin");
     expect(adminEntry).toBeUndefined();
-    const team = r.find((e) => e.type === "link" && e.groupKey === "team");
-    expect(team && team.type === "link" && team.item.key).toBe("directory");
+    const teamEntry = r.find((e) => (e.type === "group" ? e.group.key : e.groupKey) === "team");
+    expect(teamEntry).toBeUndefined();
+    // hr: team guruhida faqat "employees" qoladi → havolaga aylanadi.
+    const rhr = resolveNav(STAFF_NAV, viewer("hr"));
+    const team = rhr.find((e) => e.type === "link" && e.groupKey === "team");
+    expect(team && team.type === "link" && team.item.key).toBe("employees");
   });
 
-  it("direktor: 7 ta yuqori daraja (barcha guruhlar)", () => {
+  it("direktor: 7 ta yuqori daraja (admin → reports havolasiga yigʻiladi)", () => {
     const keys = topKeys(viewer("direktor", false, { contractors: true, money: true, reports: true }));
-    expect(keys).toEqual(["dashboard", "work", "projects", "councils", "team", "info", "admin"]);
+    // auditLog/owner endi faqat egaga koʻrinadi → admin guruhida yolgʻiz "reports" qoladi va havolaga aylanadi.
+    expect(keys).toEqual(["dashboard", "work", "projects", "councils", "team", "info", "reports"]);
   });
 
-  it("mutaxassis: boshqaruv yo'q, team va admin yig'iladi", () => {
+  it("mutaxassis: boshqaruv yo'q, team va admin yashirin", () => {
     const keys = topKeys(viewer("mutaxassis"));
-    // dashboard, work, projects, councils, team(→directory link), info; admin yo'q
+    // dashboard, work, projects, councils, info; team va admin boʻsh → yashirin
     expect(keys).toContain("work");
     expect(keys).toContain("councils");
     expect(keys).not.toContain("admin");
+    expect(keys).not.toContain("team");
     expect(keys).toContain("info");
   });
 
@@ -65,13 +71,11 @@ describe("activeKey — eng uzun mos prefiks", () => {
   it("/projects/payments → payments", () => {
     expect(activeKey("/projects/payments", items, v)).toBe("payments");
   });
-  it("/projects/timeline va /projects/123 → allProjects", () => {
-    expect(activeKey("/projects/timeline", items, v)).toBe("allProjects");
+  it("/projects/123 → allProjects", () => {
     expect(activeKey("/projects/123", items, v)).toBe("allProjects");
   });
-  it("/contractors/requests → studios; /kengashlar/ijro → councilResolutions", () => {
+  it("/contractors/requests → studios", () => {
     expect(activeKey("/contractors/requests", items, v)).toBe("studios");
-    expect(activeKey("/kengashlar/ijro", items, v)).toBe("councilResolutions");
   });
   it("/reports/slippage → reports", () => {
     expect(activeKey("/reports/slippage", items, v)).toBe("reports");
@@ -82,13 +86,7 @@ describe("activeKey — eng uzun mos prefiks", () => {
 });
 
 describe("activeKey — fallbackMatch", () => {
-  it("non-HR xodim uchun /employees/123 → directory (tuzilma)", () => {
-    const v = viewer("mutaxassis");
-    const items = visibleItems(resolveNav(STAFF_NAV, v));
-    expect(items.some((i) => i.key === "employees")).toBe(false);
-    expect(activeKey("/employees/123", items, v)).toBe("directory");
-  });
-  it("HR uchun /employees/123 → employees (fallback emas)", () => {
+  it("HR uchun /employees/123 → employees", () => {
     const v = viewer("hr");
     const items = visibleItems(resolveNav(STAFF_NAV, v));
     expect(activeKey("/employees/123", items, v)).toBe("employees");

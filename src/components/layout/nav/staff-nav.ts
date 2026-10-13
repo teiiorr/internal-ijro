@@ -1,7 +1,7 @@
 import {
   IconLayoutDashboard, IconBriefcase, IconCalendarCheck, IconListCheck, IconChecklist,
   IconLayoutKanban, IconLayoutGrid, IconCash, IconTrophy, IconHeartHandshake,
-  IconBuildingBank, IconPresentation, IconCoins, IconGavel, IconUsersGroup, IconSitemap,
+  IconBuildingBank, IconPresentation, IconCoins, IconUsersGroup,
   IconUsers, IconBuilding, IconInfoSquareRounded, IconSpeakerphone, IconFileCheck,
   IconShieldCog, IconReportAnalytics, IconHistory, IconShieldCheck, IconBell, IconSettings,
 } from "@tabler/icons-react";
@@ -28,8 +28,7 @@ export const STAFF_NAV: NavConfig = {
     ] },
 
     { key: "projects", labelKey: "nav.projects", icon: IconLayoutKanban, children: [
-      { key: "allProjects", href: "/projects", labelKey: "nav.allProjects", shortLabelKey: "nav.projects", icon: IconLayoutGrid, rule: ALL,
-        views: [{ key: "timeline", href: "/projects/timeline", labelKey: "staffX.portfolioTimeline.title" }] },
+      { key: "allProjects", href: "/projects", labelKey: "nav.allProjects", shortLabelKey: "nav.projects", icon: IconLayoutGrid, rule: ALL },
       { key: "payments", href: "/projects/payments", labelKey: "nav.payments", icon: IconCash, rule: { kind: "flag", flag: "money" } },
       { key: "tanlov", href: "/tanlov", labelKey: "nav.tanlov", icon: IconTrophy, rule: ALL },
       { key: "studios", href: "/contractors", labelKey: "nav.contractors", icon: IconHeartHandshake, badge: "reviewQueue",
@@ -40,11 +39,9 @@ export const STAFF_NAV: NavConfig = {
     { key: "councils", labelKey: "nav.group.councils", icon: IconBuildingBank, children: [
       { key: "ekspert", href: "/kengashlar/ekspert", labelKey: "nav.ekspertKengash", icon: IconPresentation, rule: STAFF },
       { key: "smeta", href: "/kengashlar/smeta", labelKey: "nav.smetaKengash", icon: IconCoins, rule: STAFF },
-      { key: "councilResolutions", href: "/kengashlar/ijro", labelKey: "nav.councilResolutions", icon: IconGavel, rule: STAFF },
     ] },
 
     { key: "team", labelKey: "nav.group.team", icon: IconUsersGroup, children: [
-      { key: "directory", href: "/tuzilma", labelKey: "nav.directory", icon: IconSitemap, rule: ALL, fallbackMatch: ["/employees"] },
       { key: "employees", href: "/employees", labelKey: "nav.employees", icon: IconUsers, rule: HR_ROLES },
       { key: "departments", href: "/departments", labelKey: "nav.departments", icon: IconBuilding, rule: ADMIN },
     ] },
@@ -57,7 +54,7 @@ export const STAFF_NAV: NavConfig = {
     { key: "admin", labelKey: "nav.group.admin", icon: IconShieldCog, children: [
       { key: "reports", href: "/reports/weekly", labelKey: "nav.reports", icon: IconReportAnalytics, rule: { kind: "flag", flag: "reports" },
         views: [{ key: "slippage", href: "/reports/slippage", labelKey: "staffX.deadlineSlippage.title" }] },
-      { key: "auditLog", href: "/audit-log", labelKey: "nav.auditLog", icon: IconHistory, rule: pos("direktor", "orinbosar", "hr") },
+      { key: "auditLog", href: "/audit-log", labelKey: "nav.auditLog", icon: IconHistory, rule: { kind: "owner" } },
       { key: "owner", href: "/owner", labelKey: "nav.owner", icon: IconShieldCheck, rule: { kind: "owner" } },
     ] },
   ],

@@ -13,7 +13,7 @@ import { ProjectsFilters } from "@/components/projects/projects-filters";
 import { SmoothImage } from "@/components/ui/smooth-image";
 import { ScrollMemory } from "@/components/scroll-memory";
 import { Marquee } from "@/components/ui/marquee";
-import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle, IconTimeline as Timeline, IconLayoutGrid } from "@tabler/icons-react";
+import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertTriangle } from "@tabler/icons-react";
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors";
@@ -56,11 +56,6 @@ export default async function ProjectsPage({
   ]);
   const canCreate = canEditProjects(session.user.email);
   const canExport = canViewMoney(session.user.email); // hisobotda summalar bör → faqat allowlist uçun
-  // Xronologiya (Gant) — joriy qidiruv/tur filtrlari bilan ochiladi.
-  const tl = new URLSearchParams();
-  if (search) tl.set("search", search);
-  if (projectTypeId) tl.set("typeId", projectTypeId);
-  const tlQs = tl.toString() ? `?${tl.toString()}` : "";
   // Excel eksporti hozir qöllangan filtrlarni aynan takrorlaydi.
   const exportParams = new URLSearchParams();
   if (search) exportParams.set("search", search);
@@ -170,14 +165,6 @@ export default async function ProjectsPage({
               </Button>
             )}
           </>
-        }
-        tools={
-          <Segmented
-            items={[
-              { href: "/projects", label: t("tasks.view.list"), active: true, icon: <IconLayoutGrid className="size-4" /> },
-              { href: `/projects/timeline${tlQs}`, label: t("staffX.portfolioTimeline.title"), active: false, icon: <Timeline className="size-4" /> },
-            ]}
-          />
         }
       />
 

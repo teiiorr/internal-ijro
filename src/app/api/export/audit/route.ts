@@ -11,8 +11,7 @@ export async function GET(req: NextRequest) {
 
   const session = await auth();
   if (!session?.user) return new NextResponse("unauthorized", { status: 401 });
-  const owner = isOwner(session.user.email);
-  if (!owner && !["direktor", "orinbosar", "hr"].includes(session.user.position)) return new NextResponse("forbidden", { status: 403 });
+  if (!isOwner(session.user.email)) return new NextResponse("forbidden", { status: 403 });
 
   const sp = req.nextUrl.searchParams;
   // Owner/menejerlar töliq logni oladi; eksport sahifadagi 500 lik çeklov bilan çeklanmaydi.
@@ -24,7 +23,7 @@ export async function GET(req: NextRequest) {
       from: sp.get("from"),
       to: sp.get("to"),
       search: sp.get("q"),
-      scope: session.user.position === "hr" ? "hr" : "all",
+      scope: "all",
     },
     100000
   );

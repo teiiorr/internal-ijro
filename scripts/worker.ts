@@ -6,7 +6,6 @@ import * as schema from "@/lib/db/schema";
 import { deliverNotification } from "@/lib/notifications/deliver";
 import { OWNER_EMAILS } from "@/lib/permissions/owner";
 import { runTaskReminders } from "./jobs/task-reminders";
-import { runCouncilResolutionReminders } from "./jobs/council-resolutions";
 import { runNormativeAckReminders } from "./jobs/normative-ack-reminders";
 import { runWeeklySnapshot } from "./jobs/weekly-snapshot";
 
@@ -166,7 +165,6 @@ async function main() {
   const jobs: [string, () => Promise<unknown>][] = [
     ["stage-reminders", runStageReminders],
     ["task-reminders", () => runTaskReminders(db)],
-    ["council-resolutions", () => runCouncilResolutionReminders(db)],
     ["normative-ack", () => runNormativeAckReminders(db)],
     ["weekly-snapshot", () => runWeeklySnapshot(db)],
   ];

@@ -12,7 +12,6 @@ import { getNudgeStats } from "@/server/queries/task-control";
 import { EditTaskButton } from "@/components/staff/task-edit/edit-task-button";
 import { DeadlineRequestsCard } from "@/components/staff/task-edit/deadline-requests-card";
 import { TaskHistoryCard } from "@/components/staff/task-edit/task-history-card";
-import { CouncilResolutionBadge } from "@/components/staff/council-resolutions/council-resolution-badge";
 import { Card } from "@/components/ui-biib/Card";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -113,10 +112,6 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         }}
         projectName={data.project?.name ?? null}
       />
-
-      <Suspense fallback={null}>
-        <CouncilResolutionBadge taskId={id} />
-      </Suspense>
 
       {isAssignee && myAssignment && (
         <MyResponseCard

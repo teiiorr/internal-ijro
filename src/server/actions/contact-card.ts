@@ -73,7 +73,6 @@ export async function saveContactCard(input: ContactCardInput): Promise<SaveCont
     });
   }
 
-  revalidatePath("/tuzilma");
   revalidatePath("/settings");
   revalidatePath(`/employees/${target}`);
   return { ok: true };

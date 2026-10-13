@@ -3,6 +3,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import Link from "next/link";
 import { IconDownload } from "@tabler/icons-react";
 import { auth } from "@/lib/auth";
+import { isOwner } from "@/lib/permissions/owner";
 import { listAudit } from "@/server/queries/audit";
 import { formatDateTime } from "@/lib/dates";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
@@ -17,7 +18,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
   const t = await getTranslations();
   const locale = await getLocale();
   const me = session.user;
-  if (!["direktor", "orinbosar", "hr"].includes(me.position)) redirect("/dashboard");
+  if (!isOwner(me.email)) redirect("/dashboard");
 
   const sp = await searchParams;
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
@@ -29,7 +30,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
     from: get("from") ?? null,
     to: get("to") ?? null,
     search: get("q") ?? null,
-    scope: me.position === "hr" ? "hr" : "all",
+    scope: "all",
   });
 
   const exportQuery = new URLSearchParams(
