@@ -21,7 +21,7 @@ export async function EscalationsWidget() {
     .slice(0, 8);
 
   return (
-    <Section title={t("title")} meta={total}>
+    <Section title={t("title")}>
       <Card solid bare className="px-5 sm:px-6">
         <Rows>
           {items.map((it) => (

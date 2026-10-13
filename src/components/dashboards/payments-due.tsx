@@ -23,12 +23,9 @@ export async function PaymentsDueWidget() {
 
   const sorted = [...accepted].sort((a, b) => (b.daysSinceCompleted ?? 0) - (a.daysSinceCompleted ?? 0));
   const top = sorted.slice(0, 6);
-  const totals = new Map<string, number>();
-  for (const r of accepted) totals.set(r.currency, (totals.get(r.currency) ?? 0) + r.remaining);
-  const totalStr = Array.from(totals.entries()).map(([c, n]) => money(n, c)).join(", ");
 
   return (
-    <Section title={t("title")} meta={totalStr} seeAllHref="/projects/payments" seeAllLabel={t("all")}>
+    <Section title={t("title")} seeAllHref="/projects/payments" seeAllLabel={t("all")}>
       <Card solid bare className="px-5 sm:px-6">
         <Rows>
           {top.map((r) => (

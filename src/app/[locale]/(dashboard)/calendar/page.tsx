@@ -157,14 +157,17 @@ export default async function CalendarPage({ searchParams }: { searchParams: SP 
                         key={`${e.href}-${i}`}
                         href={e.href}
                         title={e.subtitle ? `${e.title} — ${e.subtitle}` : e.title}
-                        className="flex items-center gap-1 rounded-[var(--radius-s)] px-1.5 py-0.5 text-[11px] leading-tight text-[var(--ink)] transition-opacity [@media(hover:hover)]:hover:opacity-80"
+                        className="flex items-start gap-1 rounded-[var(--radius-s)] px-1.5 py-0.5 text-[11px] leading-tight text-[var(--ink)] transition-opacity [@media(hover:hover)]:hover:opacity-80"
                         style={{ backgroundColor: `color-mix(in oklab, ${TYPE_COLOR[e.type]} 16%, transparent)` }}
                       >
                         <span
-                          className="size-1.5 shrink-0 rounded-full"
+                          className="mt-1 size-1.5 shrink-0 rounded-full"
                           style={{ backgroundColor: TYPE_COLOR[e.type] }}
                         />
-                        <span className="truncate">{e.title}</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate font-medium">{e.title}</span>
+                          {e.subtitle && <span className="block truncate text-[var(--ink-3)]">{e.subtitle}</span>}
+                        </span>
                       </Link>
                     ))}
                     {extra > 0 && <p className="px-1 t-micro text-[var(--ink-3)]">+{extra}</p>}

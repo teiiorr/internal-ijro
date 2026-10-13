@@ -558,11 +558,6 @@
   }
 }
 
-/* Dashboard (Bosh sahifa) seksiya sarlavhalari markazda (foydalanuvchi soʻrovi).
-   Qatlamsiz + !important: Tailwind utilities (justify-between) qatlamidan ustun. */
-.dash-centered .section-header { justify-content: center !important; text-align: center; }
-.dash-centered .section-header > div:first-child { justify-content: center !important; flex-wrap: wrap; }
-
 /* Fakt jadvali — chegarali yacheykalar panjarasi (gridlines = 1px gap + line fon). */
 @layer components {
   .fact-table {

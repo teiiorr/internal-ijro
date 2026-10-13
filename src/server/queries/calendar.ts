@@ -79,9 +79,10 @@ export async function getCalendarEvents(fromISO: string, toISO: string): Promise
   const events: CalendarEvent[] = [
     ...stageRows.map((r) => ({
       date: r.date,
+      // Avval LOYIHA (title), soʻng QAYSI BOSQICH (subtitle) — ikki alohida qator.
       type: "stage" as const,
-      title: r.name,
-      subtitle: r.projectName,
+      title: r.projectName,
+      subtitle: r.name,
       href: `/projects/${r.projectId}/stages/${r.stageId}`,
     })),
     ...taskRows.map((r) => ({

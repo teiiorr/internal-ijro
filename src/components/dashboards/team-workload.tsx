@@ -21,7 +21,7 @@ export async function TeamWorkloadWidget() {
   const max = Math.max(1, ...rows.map((r) => r.active));
 
   return (
-    <Section title={t("title")} meta={rows.length > 0 ? rows.length : undefined}>
+    <Section title={t("title")}>
       {rows.length === 0 ? (
         <Card solid bare>
           <p className="py-8 text-center t-small text-[var(--ink-3)]">{t("empty")}</p>
