@@ -2147,7 +2147,39 @@
       "errors": {
         "forbidden": "Bu amal uchun ruxsat yoʻq",
         "weekNotFinished": "Hafta hali tugamagan — xulosani hafta yakunlangach yozing"
-      }
+      },
+      "tabMinistry": "Ministrlik hisoboti"
+    },
+    "ministryReport": {
+      "title": "Ministrlik uchun hisobot",
+      "subtitle": "Markaz davr ichida ishlab chiqargan kontent va byudjet boʻyicha jamlanma",
+      "period": "Davr",
+      "thisYear": "Shu yil",
+      "lastYear": "Oʻtgan yil",
+      "yearLabel": "{year}-yil",
+      "producedTotal": "Ishlab chiqarilgan (jami)",
+      "inProduction": "Ishlab chiqarishda",
+      "onTimePercent": "Muddatida topshirish",
+      "budgetPaid": "Toʻlangan byudjet",
+      "budgetPaidCurrency": "Toʻlangan ({currency})",
+      "producedTitle": "Tur boʻyicha ishlab chiqarish",
+      "producedHint": "Davr ichida yakunlangan loyihalar, ishlab chiqarish turi boʻyicha.",
+      "empty": "Bu davrda yakunlangan loyiha yoʻq.",
+      "typeHeader": "Ishlab chiqarish turi",
+      "countHeader": "Soni",
+      "totalRow": "Jami",
+      "budgetTitle": "Byudjet",
+      "budgetHint": "Davrda yakunlangan loyihalar boʻyicha reja, toʻlangan va qoldiq summalar (valyuta kesimida).",
+      "budgetEmpty": "Bu davr uchun byudjet maʼlumotlari yoʻq.",
+      "currencyHeader": "Valyuta",
+      "plannedHeader": "Rejadagi byudjet",
+      "paidHeader": "Toʻlangan",
+      "remainingHeader": "Qoldiq",
+      "studiosEngaged": "Jalb qilingan studiyalar: {count}",
+      "disciplineOnTime": "Muddatida topshirish",
+      "disciplineLate": "Kechikib yakunlangan",
+      "disciplineCompleted": "Yakunlangan bosqichlar",
+      "export": "Excelga yuklab olish"
     }
   }
 }

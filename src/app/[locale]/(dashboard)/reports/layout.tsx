@@ -17,7 +17,7 @@ export default async function ReportsLayout({ children }: { children: React.Reac
 
   return (
     <div className="flex flex-col gap-6">
-      <ReportsTabs labels={{ nav: tNav("reports"), weekly: t("tabWeekly"), slippage: t("tabSlippage") }} />
+      <ReportsTabs labels={{ nav: tNav("reports"), weekly: t("tabWeekly"), slippage: t("tabSlippage"), ministry: t("tabMinistry") }} />
       {children}
     </div>
   );

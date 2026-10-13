@@ -2147,7 +2147,39 @@
       "errors": {
         "forbidden": "Недостаточно прав для этого действия",
         "weekNotFinished": "Неделя ещё не завершилась — запишите итоги после её окончания"
-      }
+      },
+      "tabMinistry": "Отчёт для министерства"
+    },
+    "ministryReport": {
+      "title": "Отчёт для министерства",
+      "subtitle": "Сводка по контенту, произведённому центром за период, и бюджету",
+      "period": "Период",
+      "thisYear": "Этот год",
+      "lastYear": "Прошлый год",
+      "yearLabel": "{year} год",
+      "producedTotal": "Произведено (всего)",
+      "inProduction": "В производстве",
+      "onTimePercent": "Сдача в срок",
+      "budgetPaid": "Оплаченный бюджет",
+      "budgetPaidCurrency": "Оплачено ({currency})",
+      "producedTitle": "Производство по типам",
+      "producedHint": "Проекты, завершённые за период, в разбивке по типу производства.",
+      "empty": "За этот период нет завершённых проектов.",
+      "typeHeader": "Тип производства",
+      "countHeader": "Кол-во",
+      "totalRow": "Всего",
+      "budgetTitle": "Бюджет",
+      "budgetHint": "Плановые, оплаченные и остаточные суммы по завершённым за период проектам (в разрезе валют).",
+      "budgetEmpty": "Нет данных о бюджете за этот период.",
+      "currencyHeader": "Валюта",
+      "plannedHeader": "Плановый бюджет",
+      "paidHeader": "Оплачено",
+      "remainingHeader": "Остаток",
+      "studiosEngaged": "Задействовано студий: {count}",
+      "disciplineOnTime": "Сдача в срок",
+      "disciplineLate": "Завершено с опозданием",
+      "disciplineCompleted": "Завершённые этапы",
+      "export": "Скачать Excel"
     }
   }
 }

@@ -2147,7 +2147,39 @@
       "errors": {
         "forbidden": "Бу амал учун рухсат йўқ",
         "weekNotFinished": "Ҳафта ҳали тугамаган — хулосани ҳафта якунлангач ёзинг"
-      }
+      },
+      "tabMinistry": "Министрлик ҳисоботи"
+    },
+    "ministryReport": {
+      "title": "Министрлик учун ҳисобот",
+      "subtitle": "Марказ давр ичида ишлаб чиқарган контент ва бюджет бўйича жамланма",
+      "period": "Давр",
+      "thisYear": "Шу йил",
+      "lastYear": "Ўтган йил",
+      "yearLabel": "{year}-йил",
+      "producedTotal": "Ишлаб чиқарилган (жами)",
+      "inProduction": "Ишлаб чиқаришда",
+      "onTimePercent": "Муддатида топшириш",
+      "budgetPaid": "Тўланган бюджет",
+      "budgetPaidCurrency": "Тўланган ({currency})",
+      "producedTitle": "Тур бўйича ишлаб чиқариш",
+      "producedHint": "Давр ичида якунланган лойиҳалар, ишлаб чиқариш тури бўйича.",
+      "empty": "Бу даврда якунланган лойиҳа йўқ.",
+      "typeHeader": "Ишлаб чиқариш тури",
+      "countHeader": "Сони",
+      "totalRow": "Жами",
+      "budgetTitle": "Бюджет",
+      "budgetHint": "Даврда якунланган лойиҳалар бўйича режа, тўланган ва қолдиқ суммалар (валюта кесимида).",
+      "budgetEmpty": "Бу давр учун бюджет маълумотлари йўқ.",
+      "currencyHeader": "Валюта",
+      "plannedHeader": "Режадаги бюджет",
+      "paidHeader": "Тўланган",
+      "remainingHeader": "Қолдиқ",
+      "studiosEngaged": "Жалб қилинган студиялар: {count}",
+      "disciplineOnTime": "Муддатида топшириш",
+      "disciplineLate": "Кечикиб якунланган",
+      "disciplineCompleted": "Якунланган босқичлар",
+      "export": "Excelга юклаб олиш"
     }
   }
 }

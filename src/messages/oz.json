@@ -2147,7 +2147,39 @@
       "errors": {
         "forbidden": "Bu amal uçun ruxsat yöq",
         "weekNotFinished": "Hafta hali tugamagan — xulosani hafta yakunlangaç yozing"
-      }
+      },
+      "tabMinistry": "Ministrlik hisoboti"
+    },
+    "ministryReport": {
+      "title": "Ministrlik uçun hisobot",
+      "subtitle": "Markaz davr içida işlab çiqargan kontent va byudjet böyiça jamlanma",
+      "period": "Davr",
+      "thisYear": "Şu yil",
+      "lastYear": "Ötgan yil",
+      "yearLabel": "{year}-yil",
+      "producedTotal": "Işlab çiqarilgan (jami)",
+      "inProduction": "Işlab çiqarişda",
+      "onTimePercent": "Muddatida topşiriş",
+      "budgetPaid": "Tölangan byudjet",
+      "budgetPaidCurrency": "Tölangan ({currency})",
+      "producedTitle": "Tur böyiça işlab çiqariş",
+      "producedHint": "Davr içida yakunlangan loyihalar, işlab çiqariş turi böyiça.",
+      "empty": "Bu davrda yakunlangan loyiha yöq.",
+      "typeHeader": "Işlab çiqariş turi",
+      "countHeader": "Soni",
+      "totalRow": "Jami",
+      "budgetTitle": "Byudjet",
+      "budgetHint": "Davrda yakunlangan loyihalar böyiça reja, tölangan va qoldiq summalar (valyuta kesimida).",
+      "budgetEmpty": "Bu davr uçun byudjet maʼlumotlari yöq.",
+      "currencyHeader": "Valyuta",
+      "plannedHeader": "Rejadagi byudjet",
+      "paidHeader": "Tölangan",
+      "remainingHeader": "Qoldiq",
+      "studiosEngaged": "Jalb qilingan studiyalar: {count}",
+      "disciplineOnTime": "Muddatida topşiriş",
+      "disciplineLate": "Keçikib yakunlangan",
+      "disciplineCompleted": "Yakunlangan bosqiçlar",
+      "export": "Excelga yuklab oliş"
     }
   }
 }
