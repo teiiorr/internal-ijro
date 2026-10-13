@@ -26,10 +26,3 @@ export async function markAllAsRead(userId: string): Promise<void> {
     .set({ isRead: true, readAt: new Date() })
     .where(eq(notifications.userId, userId));
 }
-
-export async function markAsRead(id: string): Promise<void> {
-  await db
-    .update(notifications)
-    .set({ isRead: true, readAt: new Date() })
-    .where(eq(notifications.id, id));
-}

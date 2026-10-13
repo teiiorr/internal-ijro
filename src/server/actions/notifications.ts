@@ -1,13 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/session";
-import { markAllAsRead, markAsRead } from "@/lib/notifications";
-
-export async function markOneRead(id: string) {
-  await requireUser();
-  await markAsRead(id);
-  revalidatePath("/notifications");
-}
+import { markAllAsRead } from "@/lib/notifications";
 
 export async function markAllRead() {
   const me = await requireUser();

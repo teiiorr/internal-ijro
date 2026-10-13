@@ -26,7 +26,7 @@ type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_ho
 const STATUS_TONE: Record<DerivedStatus, StatusTone> = {
   completed: "success",
   in_progress: "warning",
-  on_hold: "warning",
+  on_hold: "neutral",
   not_started: "neutral",
 };
 

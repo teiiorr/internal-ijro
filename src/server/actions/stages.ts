@@ -160,10 +160,12 @@ export async function completeStage(stageId: string) {
     });
   }
 
-  // Xabar: STUDIYAga uning bosqiç işi qabul qilingani haqida (endi qabul qilinişi
-  // ular uçun körinmas bölib qolmaydi).
+  // Xabar: STUDIYAga uning bosqiç işi QABUL QILINGANI haqida — FAQAT studiya ishni
+  // haqiqatan topshirgan bölsa (reviewStatus "submitted" edi). Aks holda menejer
+  // bosqiçni tekşiruvsiz yopgan — studiyaga "qabul qilindi" deb yolg'on bildirişnoma
+  // yuborilmaydi (oldin har doim yuborilardi — mantiqsiz edi).
   const studioContactId = await resolveStudioContactId(result.stage.projectId);
-  if (studioContactId) {
+  if (studioContactId && result.stage.reviewStatus === "submitted") {
     await notify({
       userIds: [studioContactId],
       type: "stage.accepted",

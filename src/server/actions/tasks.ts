@@ -9,7 +9,6 @@ import {
   taskChecklistItems,
   taskComments,
   taskAttachments,
-  taskDependencies,
   users,
   projects,
   externalCompanies,
@@ -20,7 +19,7 @@ import { canAssignTaskTo, type ActorContext } from "@/lib/permissions";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
 import { postProjectMessage } from "@/server/actions/projects";
-import { TASK_PRIORITIES, TASK_STATUSES, canTransition } from "@/lib/permissions/tasks";
+import { TASK_PRIORITIES } from "@/lib/permissions/tasks";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
@@ -248,68 +247,6 @@ export async function shareTaskToChat(taskId: string) {
     content: lines.join("\n"),
   });
   return { ok: true };
-}
-
-export async function changeTaskStatus(taskId: string, nextStatus: (typeof TASK_STATUSES)[number], rejectionReason?: string) {
-  const me = await requireUser();
-  const row = await db.select().from(tasks).where(eq(tasks.id, taskId)).limit(1);
-  if (row.length === 0) throw new Error("not_found");
-  const t = row[0];
-  const isCreator = t.createdByUserId === me.id;
-  const isAssignee = t.assignedToUserId === me.id;
-
-  if (!canTransition(t.status as (typeof TASK_STATUSES)[number], nextStatus, { id: me.id, position: me.position, isCreator, isAssignee })) {
-    throw new Error("forbidden_transition");
-  }
-
-  // Oçiq boğliqliklar bölsa, boşlaşni bloklaymiz
-  if (nextStatus === "in_progress" && t.status === "todo") {
-    const deps = await db
-      .select({ status: tasks.status })
-      .from(taskDependencies)
-      .innerJoin(tasks, eq(tasks.id, taskDependencies.dependsOnTaskId))
-      .where(eq(taskDependencies.taskId, taskId));
-    const blockers = deps.filter((d) => d.status !== "completed");
-    if (blockers.length > 0) throw new Error("blocked_by_dependencies");
-  }
-
-  await db
-    .update(tasks)
-    .set({
-      status: nextStatus,
-      rejectionReason: nextStatus === "rejected" ? rejectionReason ?? null : null,
-      completedAt: nextStatus === "completed" ? new Date() : null,
-      updatedAt: new Date(),
-    })
-    .where(eq(tasks.id, taskId));
-  if (nextStatus === "completed") await cancelPendingDeadlineRequests(taskId, me.id);
-
-  await logActivity({
-    userId: me.id,
-    action: "task.status_changed",
-    entityType: "task",
-    entityId: taskId,
-    oldValue: { status: t.status },
-    newValue: { status: nextStatus },
-  });
-
-  const recipients = new Set<string>();
-  recipients.add(t.createdByUserId);
-  recipients.add(t.assignedToUserId);
-  recipients.delete(me.id);
-
-  await notify({
-    userIds: Array.from(recipients),
-    type: "task.status_changed",
-    title: `Task: ${t.title}`,
-    message: `Status changed to ${nextStatus}`,
-    link: `/tasks/${taskId}`,
-    entityType: "task",
-    entityId: taskId,
-  });
-
-  revalidatePath(`/tasks/${taskId}`);
-  revalidatePath("/tasks");
 }
 
 const commentSchema = z.object({

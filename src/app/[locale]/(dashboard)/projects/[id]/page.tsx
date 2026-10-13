@@ -44,7 +44,7 @@ const money = (n: number, c: string) => `${n.toLocaleString("ru-RU")} ${c}`;
 
 // Hisoblangan statusni BIIB toniga xaritalaymiz (manager donut bilan bir xil).
 const statusToneOf = (s: DerivedStatus): StatusTone =>
-  s === "completed" ? "success" : s === "in_progress" ? "info" : s === "on_hold" ? "warning" : "neutral";
+  s === "completed" ? "success" : s === "in_progress" ? "warning" : "neutral";
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
