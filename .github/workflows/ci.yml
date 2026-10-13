@@ -1,0 +1,42 @@
+name: CI
+
+# Quality gate for every pull request and for pushes to the long-lived branches.
+# Hard gate: typecheck + tests must pass. Lint is advisory for now (see below).
+on:
+  pull_request:
+  push:
+    branches: [redesign-biib, main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm must be installed before setup-node so `cache: pnpm` can find it.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # --- HARD GATE: these must stay green or the PR is blocked. ---
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      # --- ADVISORY: `pnpm lint` currently reports ~25 pre-existing eslint errors
+      # (react-hooks rules) that are unrelated to CI. Keep this step non-blocking
+      # (|| true) until that backlog is burned down, then drop the `|| true` to
+      # make lint a hard gate. `next build` does not run eslint, so this is the
+      # only place lint runs in CI. ---
+      - name: Lint (advisory, non-blocking)
+        run: pnpm lint || true
