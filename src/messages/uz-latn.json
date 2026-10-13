@@ -827,7 +827,16 @@
       "submitted": "yuborildi",
       "count": "ta koʻrib chiqish"
     },
-    "inReview": "Koʻrib chiqish"
+    "inReview": "Koʻrib chiqish",
+    "scorecard": {
+      "title": "Samaradorlik",
+      "onTime": "Muddatida",
+      "completedStages": "Yakunlangan bosqich",
+      "avgDuration": "Oʻrtacha bosqich",
+      "days": "{n} kun",
+      "revisions": "Qaytarishlar",
+      "projects": "Loyihalar"
+    }
   },
   "reports": {
     "standupTitle": "Kunlik standup",

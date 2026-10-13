@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, desc, eq, inArray, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
+  activityLog,
   externalCompanies,
   projects,
   projectStages,
@@ -71,6 +72,61 @@ export async function isCompanyStudioOfProject(
   } catch {
     return false;
   }
+}
+
+// ---------------- Studiya samaradorligi (scorecard) ----------------
+
+export type StudioScorecard = {
+  completedStages: number;
+  onTimePct: number | null; // null — muddatli yakunlangan bosqiç yoʻq
+  avgDurationDays: number | null;
+  revisions: number; // "qayta koʻrib chiqish soʻraldi" soni
+  projectCount: number;
+  completedProjects: number;
+};
+
+/**
+ * Studiya samaradorligi — uning loyiha bosqichlaridan hisoblanadi: muddatida
+ * topshirish %, yakunlangan bosqichlar, oʻrtacha bosqich davomiyligi (kun),
+ * doʻkonga qaytarilgan (changes_requested) soni. Reyting = muddat intizomi.
+ */
+export async function getStudioScorecard(companyId: string): Promise<StudioScorecard> {
+  const extraIds = await fetchCompanyStudioProjectIds(companyId);
+  const prjRows = await db
+    .select({ id: projects.id, status: projects.status })
+    .from(projects)
+    .where(or(eq(projects.externalCompanyId, companyId), extraIds.length ? inArray(projects.id, extraIds) : sql`false`));
+  const projectIds = prjRows.map((p) => p.id);
+  const projectCount = prjRows.length;
+  const completedProjects = prjRows.filter((p) => p.status === "completed").length;
+  if (projectIds.length === 0) {
+    return { completedStages: 0, onTimePct: null, avgDurationDays: null, revisions: 0, projectCount, completedProjects };
+  }
+
+  const [agg] = await db
+    .select({
+      completed: sql<number>`count(*) filter (where ${projectStages.status} = 'completed')::int`,
+      onTime: sql<number>`count(*) filter (where ${projectStages.status} = 'completed' and ${projectStages.plannedDeadline} is not null and ${projectStages.completedAt}::date <= ${projectStages.plannedDeadline})::int`,
+      withDeadline: sql<number>`count(*) filter (where ${projectStages.status} = 'completed' and ${projectStages.plannedDeadline} is not null)::int`,
+      avgDays: sql<number | null>`avg(extract(epoch from (${projectStages.completedAt} - ${projectStages.startedAt})) / 86400.0) filter (where ${projectStages.status} = 'completed' and ${projectStages.startedAt} is not null and ${projectStages.completedAt} is not null)`,
+    })
+    .from(projectStages)
+    .where(inArray(projectStages.projectId, projectIds));
+
+  const [rev] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(activityLog)
+    .innerJoin(projectStages, eq(projectStages.id, activityLog.entityId))
+    .where(and(eq(activityLog.action, "stage.changes_requested"), inArray(projectStages.projectId, projectIds)));
+
+  return {
+    completedStages: agg?.completed ?? 0,
+    onTimePct: agg && agg.withDeadline > 0 ? Math.round((agg.onTime / agg.withDeadline) * 100) : null,
+    avgDurationDays: agg?.avgDays != null ? Math.round(Number(agg.avgDays)) : null,
+    revisions: rev?.n ?? 0,
+    projectCount,
+    completedProjects,
+  };
 }
 
 // ---------------- Joriy holat ----------------

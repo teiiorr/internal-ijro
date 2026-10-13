@@ -18,6 +18,7 @@ import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
 import { canViewContractorChats, isContractorManager } from "@/lib/permissions/contractors";
 import { StudioDetailTabs } from "@/components/contractor/studio-detail-tabs";
+import { StudioScorecard } from "@/components/contractor/studio-scorecard";
 import { StudioInfoCard } from "@/components/contractor/studio-info-card";
 import { StudioProjectsList } from "@/components/contractor/studio-projects-list";
 import { StudioDocumentsFull } from "@/components/contractor/studio-documents-full";
@@ -99,6 +100,8 @@ export default async function ContractorDetailPage({
           )}
         </div>
       </Card>
+
+      <StudioScorecard companyId={company.id} />
 
       <StudioDetailTabs
         counts={{ projects: prjs.length, chat: chatTotal, docs: docs.length, gallery: gallery.length }}

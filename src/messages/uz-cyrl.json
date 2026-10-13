@@ -827,7 +827,16 @@
       "submitted": "юборилди",
       "count": "та кўриб чиқиш"
     },
-    "inReview": "Кўриб чиқиш"
+    "inReview": "Кўриб чиқиш",
+    "scorecard": {
+      "title": "Самарадорлик",
+      "onTime": "Муддатида",
+      "completedStages": "Якунланган босқич",
+      "avgDuration": "Ўртача босқич",
+      "days": "{n} кун",
+      "revisions": "Қайтаришлар",
+      "projects": "Лойиҳалар"
+    }
   },
   "reports": {
     "standupTitle": "Кунлик стендап",

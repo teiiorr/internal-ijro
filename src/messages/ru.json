@@ -827,7 +827,16 @@
       "submitted": "отправлено",
       "count": "на проверке"
     },
-    "inReview": "На проверке"
+    "inReview": "На проверке",
+    "scorecard": {
+      "title": "Эффективность",
+      "onTime": "В срок",
+      "completedStages": "Этапов завершено",
+      "avgDuration": "Ср. этап",
+      "days": "{n} дн.",
+      "revisions": "Возвраты",
+      "projects": "Проекты"
+    }
   },
   "reports": {
     "standupTitle": "Ежедневный standup",
