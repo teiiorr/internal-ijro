@@ -137,23 +137,27 @@ export function SmetaDocs({
                 </h4>
                 <ul className="divide-y divide-[var(--line)]">
                   {sonProjects.map((p) => (
-                    <li key={p.id} className="flex items-center gap-3 py-3">
-                      {(p.posterUrl || p.projectId) && (
-                        <div className="w-10 shrink-0 sm:w-12">
-                          <Poster url={p.posterUrl} name={p.name} />
-                        </div>
-                      )}
-                      <div className="min-w-0 flex-1">
-                        {p.projectId ? (
-                          <Link href={`/projects/${p.projectId}`} className="break-words text-sm font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
-                            {p.name}
-                          </Link>
-                        ) : (
-                          <p className="break-words text-sm font-semibold leading-snug text-[var(--ink)]">{p.name}</p>
+                    <li key={p.id} className="flex flex-col gap-2.5 py-3 sm:flex-row sm:items-center sm:gap-3">
+                      <div className="flex min-w-0 flex-1 items-start gap-3">
+                        {(p.posterUrl || p.projectId) && (
+                          <div className="w-10 shrink-0 sm:w-12">
+                            <Poster url={p.posterUrl} name={p.name} />
+                          </div>
                         )}
-                        {p.info && <p className="mt-0.5 break-words t-small leading-snug text-[var(--ink-2)]">{p.info}</p>}
+                        <div className="min-w-0 flex-1">
+                          {p.projectId ? (
+                            <Link href={`/projects/${p.projectId}`} className="break-words text-sm font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
+                              {p.name}
+                            </Link>
+                          ) : (
+                            <p className="break-words text-sm font-semibold leading-snug text-[var(--ink)]">{p.name}</p>
+                          )}
+                          {p.info && <p className="mt-0.5 break-words t-small leading-snug text-[var(--ink-2)]">{p.info}</p>}
+                        </div>
                       </div>
-                      <SmetaStatusControl id={p.id} status={p.status} canManage={canManage} />
+                      <div className="shrink-0 self-end sm:self-center">
+                        <SmetaStatusControl id={p.id} status={p.status} canManage={canManage} />
+                      </div>
                     </li>
                   ))}
                 </ul>

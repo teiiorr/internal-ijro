@@ -1181,7 +1181,7 @@
       "add": "Qoʻshish",
       "hint": "Tizimdagi loyihani tanlang yoki nomini qoʻlda yozing",
       "sessionTitle": "{n} sonida koʻrib chiqilgan loyihalar",
-      "noSession": "Son belgilanmagan loyihalar",
+      "noSession": "Hozir koʻrib chiqilayotgan loyihalar",
       "sessionLabel": "Son",
       "fromExisting": "Mavjud loyihadan",
       "fromScratch": "Yangi",

@@ -427,8 +427,6 @@ export function SmetaProjects({
 
   return (
     <Section
-      title={t("title")}
-      meta={items.length > 0 ? items.length : undefined}
       action={
         canAdd ? (
           <Button
@@ -471,7 +469,6 @@ export function SmetaProjects({
               key={g.sessionNumber ?? "none"}
               headingLevel={3}
               title={g.sessionNumber != null ? t("sessionTitle", { n: g.sessionNumber }) : t("noSession")}
-              meta={g.items.length}
               action={
                 canAdd && g.sessionNumber != null ? (
                   <Button variant="ghost" size="sm" onClick={() => openForm(g.sessionNumber!)}>
@@ -485,39 +482,45 @@ export function SmetaProjects({
                 <Rows>
                   {g.items.map((it, i) => (
                     <Row key={it.id}>
-                      <span className="shrink-0 text-sm font-bold tabular-nums text-[var(--ink-3)]">{i + 1}</span>
-                      {(it.posterUrl || it.projectId) && (
-                        <div className="w-12 shrink-0 sm:w-14">
-                          <Poster url={it.posterUrl} name={it.name} />
+                      <div className="flex w-full min-w-0 flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+                        <div className="flex min-w-0 flex-1 items-start gap-3">
+                          <span className="shrink-0 pt-0.5 text-sm font-bold tabular-nums text-[var(--ink-3)]">{i + 1}</span>
+                          {(it.posterUrl || it.projectId) && (
+                            <div className="w-12 shrink-0 sm:w-14">
+                              <Poster url={it.posterUrl} name={it.name} />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            {it.projectId ? (
+                              <Link href={`/projects/${it.projectId}`} className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
+                                {it.name}
+                              </Link>
+                            ) : (
+                              <p className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)]">{it.name}</p>
+                            )}
+                            {it.info && <p className="mt-0.5 break-words t-small leading-snug text-[var(--ink-2)]">{it.info}</p>}
+                            <p className="mt-0.5 t-micro text-[var(--ink-3)]">
+                              {formatDate(it.createdAt, locale)}
+                              {it.createdByName && `, ${localizeName(it.createdByName, locale)}`}
+                            </p>
+                          </div>
                         </div>
-                      )}
-                      <div className="min-w-0 flex-1">
-                        {it.projectId ? (
-                          <Link href={`/projects/${it.projectId}`} className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
-                            {it.name}
-                          </Link>
-                        ) : (
-                          <p className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)]">{it.name}</p>
-                        )}
-                        {it.info && <p className="mt-0.5 break-words t-small leading-snug text-[var(--ink-2)]">{it.info}</p>}
-                        <p className="mt-0.5 t-micro text-[var(--ink-3)]">
-                          {formatDate(it.createdAt, locale)}
-                          {it.createdByName && `, ${localizeName(it.createdByName, locale)}`}
-                        </p>
+                        <div className="flex shrink-0 items-center gap-1 self-end sm:self-center">
+                          <SmetaStatusControl id={it.id} status={it.status} canManage={canManage} />
+                          {canManage && (
+                            <button
+                              type="button"
+                              onClick={() => remove(it)}
+                              disabled={pending}
+                              aria-label={t("remove")}
+                              title={t("remove")}
+                              className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--danger)] active:scale-95 disabled:opacity-50"
+                            >
+                              <X className="size-4" />
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <SmetaStatusControl id={it.id} status={it.status} canManage={canManage} />
-                      {canManage && (
-                        <button
-                          type="button"
-                          onClick={() => remove(it)}
-                          disabled={pending}
-                          aria-label={t("remove")}
-                          title={t("remove")}
-                          className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--danger)] active:scale-95 disabled:opacity-50"
-                        >
-                          <X className="size-4" />
-                        </button>
-                      )}
                     </Row>
                   ))}
                 </Rows>
