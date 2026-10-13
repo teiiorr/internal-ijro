@@ -259,7 +259,6 @@ body::before {
   pointer-events: none;
   background:
     radial-gradient(75% 60% at 8% -8%, color-mix(in oklab, var(--tint) var(--amb, 0%), transparent), transparent 70%),
-    radial-gradient(65% 55% at 108% 2%, color-mix(in oklab, #f2a85f var(--amb, 0%), transparent), transparent 72%),
     radial-gradient(80% 65% at 90% 112%, color-mix(in oklab, #9a7cf0 var(--amb, 0%), transparent), transparent 72%),
     radial-gradient(90% 75% at 45% 50%, color-mix(in oklab, var(--tint) calc(var(--amb, 0%) * 0.55), transparent), transparent 75%);
 }

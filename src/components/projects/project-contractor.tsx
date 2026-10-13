@@ -5,28 +5,33 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { IconHeartHandshake as Handshake, IconPencil as Pencil, IconCheck as Check, IconPhone as Phone, IconUser as User, IconTrash as Trash2 } from "@tabler/icons-react";
-import { createContractor, setProjectContractor } from "@/server/actions/projects";
+import { IconHeartHandshake as Handshake, IconPhone as Phone, IconUser as User, IconTrash as Trash2, IconPlus as Plus } from "@tabler/icons-react";
+import { createContractor, addProjectStudio, removeProjectStudio } from "@/server/actions/projects";
 
 type Contractor = { id: string; name: string; contactPerson: string | null; contactPhone: string | null; logoUrl?: string | null };
+type Studio = { id: string; name: string; logoUrl?: string | null };
 type Option = { id: string; name: string };
 
 export function ProjectContractor({
   projectId,
   company,
+  studios,
   contractors,
   canManage,
 }: {
   projectId: string;
+  /** Asosiy studiya (external_company_id). Aloqa maʼlumotlari faqat şu studiya uçun körsatiladi. */
   company: Contractor | null;
+  /** Loyihaga biriktirilgan barcha studiyalar (asosiysi ham şu röyxatda). */
+  studios: Studio[];
   contractors: Option[];
   canManage: boolean;
 }) {
   const t = useTranslations();
   const router = useRouter();
   const [pending, start] = useTransition();
-  const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(company?.name ?? "");
+  const [adding, setAdding] = useState(false);
+  const [name, setName] = useState("");
   const [person, setPerson] = useState("");
   const [phone, setPhone] = useState("");
 
@@ -35,9 +40,21 @@ export function ProjectContractor({
 
   const matchesExisting = (v: string) => contractors.some((c) => c.name.trim().toLowerCase() === v.trim().toLowerCase());
 
-  function save() {
+  function resetForm() {
+    setAdding(false);
+    setName("");
+    setPerson("");
+    setPhone("");
+  }
+
+  function add() {
     const nm = name.trim();
     if (!nm) return;
+    // Allaqaçon biriktirilgan bölsa — qaytmaymiz (server ham onConflictDoNothing bilan himoyalangan).
+    if (studios.some((s) => s.name.trim().toLowerCase() === nm.toLowerCase())) {
+      resetForm();
+      return;
+    }
     const existing = contractors.find((c) => c.name.trim().toLowerCase() === nm.toLowerCase());
     start(async () => {
       try {
@@ -46,11 +63,9 @@ export function ProjectContractor({
           const created = await createContractor({ name: nm, contactPerson: person.trim() || null, contactPhone: phone.trim() || null });
           companyId = created.id;
         }
-        await setProjectContractor(projectId, companyId);
+        await addProjectStudio(projectId, companyId);
         toast.success(t("projects.contractor.saved"));
-        setEditing(false);
-        setPerson("");
-        setPhone("");
+        resetForm();
         router.refresh();
       } catch (e) {
         toast.error((e as Error).message);
@@ -58,13 +73,11 @@ export function ProjectContractor({
     });
   }
 
-  function remove() {
+  function remove(companyId: string) {
     start(async () => {
       try {
-        await setProjectContractor(projectId, null);
+        await removeProjectStudio(projectId, companyId);
         toast.success(t("projects.contractor.removed"));
-        setName("");
-        setEditing(false);
         router.refresh();
       } catch (e) {
         toast.error((e as Error).message);
@@ -79,47 +92,60 @@ export function ProjectContractor({
           <Handshake className="size-4 text-[var(--muted)]" />
           {t("projects.contractorLabel")}
         </h3>
-        {canManage && !editing && (
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => {
-              setName(company?.name ?? "");
-              setEditing(true);
-            }}
-            aria-label={t("common.edit")}
-          >
-            <Pencil className="size-4" />
+        {canManage && !adding && (
+          <Button variant="ghost" size="icon-sm" onClick={() => setAdding(true)} aria-label={t("common.add")}>
+            <Plus className="size-4" />
           </Button>
         )}
       </div>
 
-      {!editing ? (
-        company ? (
-          <div className="space-y-1">
-            {company.logoUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={company.logoUrl} alt="" loading="lazy" decoding="async" className="mb-2 h-16 w-auto max-w-[160px] rounded-lg border border-[var(--border)] object-contain bg-[var(--surface-2)] p-1" />
-            )}
-            <p className="font-semibold">{company.name}</p>
-            {company.contactPerson && (
-              <p className="flex items-center gap-1.5 text-sm text-[var(--muted)]">
-                <User className="size-3.5 shrink-0" />
-                {company.contactPerson}
-              </p>
-            )}
-            {company.contactPhone && (
-              <p className="flex items-center gap-1.5 text-sm text-[var(--muted)]">
-                <Phone className="size-3.5 shrink-0" />
-                {company.contactPhone}
-              </p>
-            )}
-          </div>
-        ) : (
-          <p className="text-sm text-[var(--muted)]">{t("projects.contractor.none")}</p>
-        )
+      {studios.length > 0 ? (
+        <ul className="space-y-3">
+          {studios.map((s) => {
+            const isPrimary = company?.id === s.id;
+            return (
+              <li key={s.id} className="flex items-start justify-between gap-2">
+                <div className="min-w-0 space-y-1">
+                  {s.logoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={s.logoUrl} alt="" loading="lazy" decoding="async" className="mb-1.5 h-12 w-auto max-w-[140px] rounded-lg border border-[var(--border)] object-contain bg-[var(--surface-2)] p-1" />
+                  )}
+                  <p className="break-words font-semibold">{s.name}</p>
+                  {isPrimary && company?.contactPerson && (
+                    <p className="flex items-center gap-1.5 text-sm text-[var(--muted)]">
+                      <User className="size-3.5 shrink-0" />
+                      {company.contactPerson}
+                    </p>
+                  )}
+                  {isPrimary && company?.contactPhone && (
+                    <p className="flex items-center gap-1.5 text-sm text-[var(--muted)]">
+                      <Phone className="size-3.5 shrink-0" />
+                      {company.contactPhone}
+                    </p>
+                  )}
+                </div>
+                {canManage && (
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => remove(s.id)}
+                    disabled={pending}
+                    aria-label={t("projects.contractor.remove")}
+                    className="shrink-0 text-[var(--danger)]"
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       ) : (
-        <div className="space-y-2">
+        !adding && <p className="text-sm text-[var(--muted)]">{t("projects.contractor.none")}</p>
+      )}
+
+      {adding && (
+        <div className="space-y-2 border-t border-[var(--line)] pt-3">
           <input
             list={`contractors-${projectId}`}
             className={field}
@@ -140,19 +166,13 @@ export function ProjectContractor({
             </>
           )}
           <div className="flex flex-wrap items-center gap-2">
-            <Button onClick={save} disabled={pending || !name.trim()} size="sm">
-              <Check className="size-4" />
-              {t("common.save")}
+            <Button onClick={add} disabled={pending || !name.trim()} size="sm">
+              <Plus className="size-4" />
+              {t("common.add")}
             </Button>
-            <Button onClick={() => setEditing(false)} variant="ghost" size="sm" disabled={pending}>
+            <Button onClick={resetForm} variant="ghost" size="sm" disabled={pending}>
               {t("common.cancel")}
             </Button>
-            {company && (
-              <Button onClick={remove} variant="ghost" size="sm" disabled={pending} className="ml-auto text-[var(--danger)]">
-                <Trash2 className="size-4" />
-                {t("projects.contractor.remove")}
-              </Button>
-            )}
           </div>
           <p className="text-xs text-[var(--muted)]">{t("projects.contractor.hint")}</p>
         </div>

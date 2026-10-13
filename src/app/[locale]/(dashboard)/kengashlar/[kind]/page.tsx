@@ -41,7 +41,8 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
   const isSmeta = kind === "smeta";
   const [{ upcoming, agenda, meetings, agendaByMeeting }, projectOpts, smetaList] = await Promise.all([
     getCouncilPage(kind),
-    db.select({ id: projects.id, name: projects.name }).from(projects).orderBy(projects.name),
+    // posterUrl/genre — Smeta "mavjud loyihadan" tanlagich posterni koʻrsatib, maʼlumotni oldindan toʻldirishi uchun.
+    db.select({ id: projects.id, name: projects.name, posterUrl: projects.posterUrl, genre: projects.genre }).from(projects).orderBy(projects.name),
     isSmeta ? listSmetaCommissionProjects() : Promise.resolve(null),
   ]);
 

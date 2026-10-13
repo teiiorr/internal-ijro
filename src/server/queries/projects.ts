@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import {
   projects,
   projectCurators,
+  projectStudios,
   projectTypes,
   projectStages,
   stageDocuments,
@@ -43,6 +44,37 @@ export async function fetchProjectCurators(
       .select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl })
       .from(users)
       .where(eq(users.id, fallbackCuratorUserId))
+      .limit(1);
+  }
+  return [];
+}
+
+/**
+ * Loyihaning barcha studiyalari (nomi + logotip), tartiblangan holda. `fetchProjectCurators`
+ * namunasining aynan nusxasi: boğlovçi jadval böş bölganda YOKI hali migratsiya qilinmaganda
+ * eski yagona `external_company_id` ustuniga qaytadi — şu tufayli 0034 maqsadli DB ga
+ * qöllanmasdan oldin ham ilova heç qaçon işdan çiqmaydi.
+ */
+export async function fetchProjectStudios(
+  projectId: string,
+  fallbackCompanyId: string | null,
+): Promise<Array<{ id: string; name: string; logoUrl: string | null }>> {
+  try {
+    const rows = await db
+      .select({ id: externalCompanies.id, name: externalCompanies.name, logoUrl: externalCompanies.logoUrl })
+      .from(projectStudios)
+      .innerJoin(externalCompanies, eq(externalCompanies.id, projectStudios.companyId))
+      .where(eq(projectStudios.projectId, projectId))
+      .orderBy(asc(projectStudios.orderIndex), asc(externalCompanies.name));
+    if (rows.length > 0) return rows;
+  } catch {
+    /* project_studios hali migratsiya qilinmagan — yagona studiya ustuniga ötamiz */
+  }
+  if (fallbackCompanyId) {
+    return db
+      .select({ id: externalCompanies.id, name: externalCompanies.name, logoUrl: externalCompanies.logoUrl })
+      .from(externalCompanies)
+      .where(eq(externalCompanies.id, fallbackCompanyId))
       .limit(1);
   }
   return [];
@@ -127,7 +159,7 @@ export async function listProjects(f: ProjectFilters, locale?: string) {
 export async function getProject(id: string) {
   const p = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
   if (p.length === 0) return null;
-  const [company, curator, curators, mls, dlvs, msgs, prjTasks, rt] = await Promise.all([
+  const [company, curator, curators, studios, mls, dlvs, msgs, prjTasks, rt] = await Promise.all([
     p[0].externalCompanyId
       ? db.select().from(externalCompanies).where(eq(externalCompanies.id, p[0].externalCompanyId)).limit(1)
       : Promise.resolve([]),
@@ -135,6 +167,7 @@ export async function getProject(id: string) {
       ? db.select({ id: users.id, fullName: users.fullName, avatarUrl: users.avatarUrl }).from(users).where(eq(users.id, p[0].curatorUserId)).limit(1)
       : Promise.resolve([]),
     fetchProjectCurators(id, p[0].curatorUserId),
+    fetchProjectStudios(id, p[0].externalCompanyId),
     db.select().from(milestones).where(eq(milestones.projectId, id)).orderBy(asc(milestones.orderIndex)),
     db
       .select()
@@ -169,6 +202,7 @@ export async function getProject(id: string) {
     company: company[0] ?? null,
     curator: curator[0] ?? null,
     curators,
+    studios,
     milestones: mls,
     deliverables: dlvs,
     messages: msgs,

@@ -6,12 +6,23 @@ import { useTransition, useEffect, useRef, useState } from "react";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { IconCheck as Check } from "@tabler/icons-react";
 import { updateProfilePreferences } from "@/server/actions/settings";
+import { Button } from "@/components/ui-biib/Button";
+import { Status } from "@/components/ui-biib/Status";
+import type { ReactNode } from "react";
 
-const LANG: Record<string, { flag: string; label: string }> = {
+const LANG: Record<string, { flag: string; label: ReactNode }> = {
   "uz-latn": { flag: "🇺🇿", label: "Lotin" },
   "uz-cyrl": { flag: "🇺🇿", label: "Кирилл" },
-  oz:        { flag: "🇺🇿", label: "Öz" },
-  ru:        { flag: "🇷🇺", label: "Русский" },
+  oz: {
+    flag: "🇺🇿",
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        Özbekça
+        <Status tone="info" className="px-2 py-0.5 text-[9px]">Yangi</Status>
+      </span>
+    ),
+  },
+  ru: { flag: "🇷🇺", label: "Русский" },
 };
 
 /**
@@ -72,7 +83,7 @@ export function LanguageSwitcher() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 mt-2 w-52 rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-1.5 shadow-[var(--shadow-overlay)] z-[100]"
+          className="absolute right-0 mt-2 w-60 rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] p-1.5 shadow-[var(--shadow-overlay)] z-[100]"
         >
           {routing.locales.map((l) => {
             const lang = LANG[l] ?? { flag: "🌐", label: l };
@@ -92,22 +103,13 @@ export function LanguageSwitcher() {
               </button>
             );
           })}
-          <div className="mt-1.5 flex gap-2 border-t border-[var(--line)] px-1.5 pt-2">
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="flex-1 rounded-[var(--radius-control)] px-3 py-2 text-sm font-semibold text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)]"
-            >
+          <div className="mt-1.5 flex items-center justify-end gap-2 border-t border-[var(--line)] px-1 pt-2">
+            <Button variant="ghost" size="40" onClick={() => setOpen(false)}>
               {t("common.cancel")}
-            </button>
-            <button
-              type="button"
-              onClick={confirm}
-              disabled={selected === locale || isPending}
-              className="flex-1 rounded-[var(--radius-control)] bg-[var(--tint)] px-3 py-2 text-sm font-semibold text-[var(--on-tint)] transition-opacity disabled:opacity-50"
-            >
+            </Button>
+            <Button variant="primary" size="40" onClick={confirm} disabled={selected === locale || isPending}>
               {t("common.confirm")}
-            </button>
+            </Button>
           </div>
         </div>
       )}

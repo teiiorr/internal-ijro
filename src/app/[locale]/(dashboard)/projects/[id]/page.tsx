@@ -91,8 +91,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     if (!sp) notFound();
 
     // Studiya bilan hamkorlik: joriy holat muallifi, faol bosqich progressi, so'rovlar.
+    // Bir loyihada bir neça studiya bölişi mumkin — toʻliq roʻyxat getProject'dan (data.studios).
     const activeStage = sp.stages.find((st) => st.status === "active") ?? null;
-    const hasStudio = !!sp.project.externalCompanyId;
+    const studios = data.studios;
+    const hasStudio = studios.length > 0;
     const [statusUpdates, progressMap, studioRequests] = await Promise.all([
       getLatestStatusUpdates([id]),
       getLatestStageProgress(activeStage ? [activeStage.id] : []),
@@ -125,13 +127,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         term: t("projects.curatorLabel"),
         value: sp.curators.length > 0 ? <CuratorList curators={sp.curators} locale={locale} /> : t("common.emptyValue"),
       },
-      ...(hasStudio && sp.company
+      ...(hasStudio
         ? [{
             term: t("projects.contractorLabel"),
             value: (
-              <Link href={`/contractors/${sp.project.externalCompanyId}`} className="font-semibold text-[var(--tint)] hover:underline">
-                {sp.company.name}
-              </Link>
+              <span className="inline-flex flex-wrap items-center gap-x-4 gap-y-1">
+                {studios.map((s) => (
+                  <Link key={s.id} href={`/contractors/${s.id}`} className="font-semibold text-[var(--tint)] hover:underline">
+                    {s.name}
+                  </Link>
+                ))}
+              </span>
             ),
           } satisfies Fact]
         : []),
@@ -164,11 +170,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                   <Link href={`/projects/${id}/stages/${activeStage.id}`}>{t("projects.stagePath.currentStage")}</Link>
                 </Button>
               )}
-              {hasStudio && sp.project.externalCompanyId && (
-                <Button asChild variant="glass" size="40" icon={MessageCircle}>
-                  <Link href={`/contractors/${sp.project.externalCompanyId}/chat/${id}`}>{t("projects.tabs.chat")}</Link>
+              {studios.map((s) => (
+                <Button key={s.id} asChild variant="glass" size="40" icon={MessageCircle}>
+                  <Link href={`/contractors/${s.id}/chat/${id}`}>{studios.length > 1 ? s.name : t("projects.tabs.chat")}</Link>
                 </Button>
-              )}
+              ))}
               {(canManage || canDeleteProject) && (
                 <ProjectActionsMenu
                   project={editProject}
@@ -224,11 +230,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 />
               </Card>
 
-              {hasStudio && (
+              {(hasStudio || canManageContractor) && (
                 <Card>
                   <ProjectContractor
                     projectId={sp.project.id}
-                    company={sp.company}
+                    company={data.company}
+                    studios={studios}
                     contractors={contractors.map((c) => ({ id: c.id, name: c.name }))}
                     canManage={canManageContractor}
                   />
@@ -298,13 +305,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     ...(data.curators.length > 0
       ? [{ term: t("projects.curatorLabel"), value: <CuratorList curators={data.curators} locale={locale} /> } satisfies Fact]
       : []),
-    ...(data.company
+    ...(data.studios.length > 0
       ? [{
           term: t("projects.contractorLabel"),
           value: (
-            <Link href={`/contractors/${data.company.id}`} className="font-semibold text-[var(--tint)] hover:underline">
-              {data.company.name}
-            </Link>
+            <span className="inline-flex flex-wrap items-center gap-x-4 gap-y-1">
+              {data.studios.map((s) => (
+                <Link key={s.id} href={`/contractors/${s.id}`} className="font-semibold text-[var(--tint)] hover:underline">
+                  {s.name}
+                </Link>
+              ))}
+            </span>
           ),
         } satisfies Fact]
       : []),

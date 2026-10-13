@@ -1,11 +1,12 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { and, eq, sql } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import {
   projects,
   projectCurators,
+  projectStudios,
   milestones,
   deliverables,
   projectMessages,
@@ -129,6 +130,19 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
 
     return { projectId: pid, firstStage: first };
   });
+
+  // Köpga-köp studiyalar jadvaliga ham asosiy studiyani yozamiz (himoyalangan — jadval
+  // hali migratsiya qilinmagan bölişi mumkin; external_company_id baribir yozilgan).
+  if (parsed.externalCompanyId) {
+    try {
+      await db
+        .insert(projectStudios)
+        .values({ projectId, companyId: parsed.externalCompanyId, orderIndex: 0 })
+        .onConflictDoNothing();
+    } catch {
+      /* project_studios hali migratsiya qilinmagan — e'tiborsiz qoldiramiz */
+    }
+  }
 
   await logActivity({
     userId: me.id,
@@ -759,7 +773,7 @@ export async function createContractor(input: z.infer<typeof contractorSchema>) 
   return ins[0];
 }
 
-// Loyihadagi kontragentni tayinlaydi, özgartiradi yoki oçiradi (rahbarlar yoki kurator).
+// Loyihadagi kontragentni (ASOSIY studiyani) tayinlaydi, özgartiradi yoki oçiradi (rahbarlar yoki kurator).
 export async function setProjectContractor(projectId: string, companyId: string | null) {
   const me = await requireUser();
   const [prj] = await db.select({ id: projects.id, curatorUserId: projects.curatorUserId }).from(projects).where(eq(projects.id, projectId)).limit(1);
@@ -767,7 +781,79 @@ export async function setProjectContractor(projectId: string, companyId: string 
   const isManager = (MANAGERS as readonly string[]).includes(me.position);
   if (!isManager && prj.curatorUserId !== me.id) throw new Error("forbidden");
   await db.update(projects).set({ externalCompanyId: companyId, updatedAt: new Date() }).where(eq(projects.id, projectId));
+  // Köpga-köp studiyalar jadvaliga ham qöşamiz (himoyalangan). Mavjud boşqa studiyalarni
+  // öçirmaymiz — bu amal faqat ASOSIY studiyani belgilaydi.
+  if (companyId) {
+    try {
+      await db.insert(projectStudios).values({ projectId, companyId, orderIndex: 0 }).onConflictDoNothing();
+    } catch {
+      /* project_studios hali migratsiya qilinmagan — e'tiborsiz qoldiramiz */
+    }
+  }
   await logActivity({ userId: me.id, action: "project.contractor_changed", entityType: "project", entityId: projectId, newValue: { externalCompanyId: companyId } });
+  revalidatePath(`/projects/${projectId}`);
+}
+
+/**
+ * Loyihaga yana bitta studiya biriktiradi (köpga-köp). Agar loyihaning asosiy studiyasi
+ * (external_company_id) hali bölmasa, qöşilgan birinçi studiyani asosiy qilib belgilaymiz —
+ * şunda portal/auth/chat oqimlari (external_company_id'ga tayanadigan) uzilmaydi.
+ * Himoyalangan: project_studios jadvali hali migratsiya qilinmagan bölişi mumkin.
+ */
+export async function addProjectStudio(projectId: string, companyId: string) {
+  const me = await requireProjectEditor();
+  const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (!prj) throw new Error("not_found");
+  try {
+    const [row] = await db
+      .select({ max: sql<number>`coalesce(max(${projectStudios.orderIndex}), -1)` })
+      .from(projectStudios)
+      .where(eq(projectStudios.projectId, projectId));
+    const nextIdx = Number(row?.max ?? -1) + 1;
+    await db.insert(projectStudios).values({ projectId, companyId, orderIndex: nextIdx }).onConflictDoNothing();
+  } catch {
+    /* project_studios hali migratsiya qilinmagan — yagona studiya ustuniga tayanamiz */
+  }
+  // Asosiy studiya hali yöq bölsa — şu studiyani asosiy qilamiz.
+  if (!prj.ec) {
+    await db.update(projects).set({ externalCompanyId: companyId, updatedAt: new Date() }).where(eq(projects.id, projectId));
+  }
+  await logActivity({ userId: me.id, action: "project.studio_added", entityType: "project", entityId: projectId, newValue: { companyId } });
+  revalidatePath(`/projects/${projectId}`);
+}
+
+/**
+ * Loyihadan studiyani olib taşlaydi (köpga-köp). Agar olib taşlangan studiya ASOSIY bölgan
+ * bölsa, external_company_id'ni qolgan studiyalardan biriga köçiramiz (yöq bölsa null) —
+ * mavjud portal/auth/chat oqimlari uzilmasligi uçun.
+ * Himoyalangan: project_studios jadvali hali migratsiya qilinmagan bölişi mumkin.
+ */
+export async function removeProjectStudio(projectId: string, companyId: string) {
+  const me = await requireProjectEditor();
+  const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
+  if (!prj) throw new Error("not_found");
+  try {
+    await db.delete(projectStudios).where(and(eq(projectStudios.projectId, projectId), eq(projectStudios.companyId, companyId)));
+  } catch {
+    /* project_studios hali migratsiya qilinmagan — faqat asosiy ustunni yangilaymiz */
+  }
+  // Olib taşlangan studiya asosiy bölgan bölsa — asosiyni qolgan studiyaga köçiramiz.
+  if (prj.ec === companyId) {
+    let nextPrimary: string | null = null;
+    try {
+      const [row] = await db
+        .select({ id: projectStudios.companyId })
+        .from(projectStudios)
+        .where(eq(projectStudios.projectId, projectId))
+        .orderBy(asc(projectStudios.orderIndex))
+        .limit(1);
+      nextPrimary = row?.id ?? null;
+    } catch {
+      nextPrimary = null;
+    }
+    await db.update(projects).set({ externalCompanyId: nextPrimary, updatedAt: new Date() }).where(eq(projects.id, projectId));
+  }
+  await logActivity({ userId: me.id, action: "project.studio_removed", entityType: "project", entityId: projectId, newValue: { companyId } });
   revalidatePath(`/projects/${projectId}`);
 }
 

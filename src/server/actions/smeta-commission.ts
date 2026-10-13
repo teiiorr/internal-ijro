@@ -14,7 +14,29 @@ const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bos
 export type SmetaProjectError = "invalid" | "duplicate" | "unavailable";
 export type SmetaProjectResult = { ok: true } | { ok: false; error: SmetaProjectError };
 
-const nameSchema = z.string().trim().min(2).max(300);
+/** Loyiha "son"ga ikki yoʻl bilan qoʻshiladi: mavjud loyihadan (poster+maʼlumot koʻchiriladi) yoki yangidan. */
+export type AddSmetaProjectInput = {
+  mode: "existing" | "scratch";
+  /** Qaysi "son"da koʻrib chiqilmoqda (ixtiyoriy). */
+  sessionNumber?: number | null;
+  /** mode === "existing" — tanlangan tizim loyihasi. */
+  projectId?: string | null;
+  /** mode === "scratch" — erkin nom. */
+  name?: string | null;
+  /** Qisqa maʼlumot/izoh (ikkala rejimda ham). */
+  info?: string | null;
+  /** mode === "scratch" — ixtiyoriy poster havolasi. */
+  posterUrl?: string | null;
+};
+
+const addSchema = z.object({
+  mode: z.enum(["existing", "scratch"]),
+  sessionNumber: z.coerce.number().int().min(1).max(100000).optional().nullable(),
+  projectId: z.string().uuid().optional().nullable(),
+  name: z.string().trim().min(2).max(300).optional().nullable(),
+  info: z.string().trim().max(4000).optional().nullable(),
+  posterUrl: z.string().trim().max(2000).optional().nullable(),
+});
 
 /** Postgres "undefined_table" (42P01) — 0032 migratsiyasi hali qoʻllanmagan. */
 function isMissingTable(e: unknown): boolean {
@@ -22,13 +44,56 @@ function isMissingTable(e: unknown): boolean {
   return err?.code === "42P01" || err?.cause?.code === "42P01";
 }
 
-export async function addSmetaCommissionProject(rawName: string): Promise<SmetaProjectResult> {
+/** Postgres "undefined_column" (42703) — 0035 migratsiyasi hali qoʻllanmagan. */
+function isMissingColumn(e: unknown): boolean {
+  const err = e as { code?: string; cause?: { code?: string } } | null;
+  return err?.code === "42703" || err?.cause?.code === "42703";
+}
+
+export async function addSmetaCommissionProject(input: AddSmetaProjectInput): Promise<SmetaProjectResult> {
   const me = await requirePosition([...MANAGERS]);
-  const parsed = nameSchema.safeParse(rawName);
+  const parsed = addSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
-  let name = parsed.data.replace(/\s+/g, " ");
+
+  const { mode } = parsed.data;
+  const sessionNumber = parsed.data.sessionNumber ?? null;
+  // info — erkin matn, satr koʻchirishlari saqlanadi (faqat boʻsh boʻlsa null).
+  let info: string | null = parsed.data.info && parsed.data.info.length > 0 ? parsed.data.info : null;
+
+  let name: string;
+  let projectId: string | null = null;
+  let posterUrl: string | null = null;
 
   try {
+    if (mode === "existing") {
+      // Tanlangan tizim loyihasini yuklab, nom + poster (+ maʼlumot)ni koʻchiramiz.
+      if (!parsed.data.projectId) return { ok: false, error: "invalid" };
+      const [proj] = await db
+        .select({
+          id: projects.id,
+          name: projects.name,
+          posterUrl: projects.posterUrl,
+          description: projects.description,
+          genre: projects.genre,
+          budget: projects.budget,
+        })
+        .from(projects)
+        .where(eq(projects.id, parsed.data.projectId))
+        .limit(1);
+      if (!proj) return { ok: false, error: "invalid" };
+      name = proj.name;
+      projectId = proj.id;
+      posterUrl = proj.posterUrl ?? null;
+      // Forma maʼlumot bermagan boʻlsa — loyiha tavsifini olib qoʻyamiz.
+      if (!info) info = proj.description?.trim() || null;
+    } else {
+      // Yangidan — erkin nom, ixtiyoriy poster havolasi.
+      if (!parsed.data.name) return { ok: false, error: "invalid" };
+      name = parsed.data.name.replace(/\s+/g, " ");
+      posterUrl = parsed.data.posterUrl && parsed.data.posterUrl.length > 0 ? parsed.data.posterUrl : null;
+    }
+
+    // Takror tekshiruvi (nom boʻyicha) — mavjud xatti-harakat saqlanadi.
     const [dup] = await db
       .select({ id: smetaCommissionProjects.id })
       .from(smetaCommissionProjects)
@@ -36,21 +101,25 @@ export async function addSmetaCommissionProject(rawName: string): Promise<SmetaP
       .limit(1);
     if (dup) return { ok: false, error: "duplicate" };
 
-    // Tizimdagi loyiha nomiga aynan mos kelsa, bogʻlab qoʻyamiz (roʻyxatda sahifasiga havola boʻladi)
-    // va nomni loyihadagi asl yozilishida saqlaymiz.
-    const match = await db
-      .select({ id: projects.id, name: projects.name })
-      .from(projects)
-      .where(sql`lower(${projects.name}) = lower(${name})`)
-      .limit(2);
-    const projectId = match.length === 1 ? match[0].id : null;
-    if (match.length === 1) name = match[0].name;
+    // Yangi ustunlar (son/poster/maʼlumot) bilan yozishga urinamiz; 0035 hali
+    // qoʻllanmagan boʻlsa (42703), faqat nom + projectId bilan yozamiz.
+    let rowId: string;
+    try {
+      const [row] = await db
+        .insert(smetaCommissionProjects)
+        .values({ name, projectId, createdByUserId: me.id, sessionNumber, posterUrl, info })
+        .returning({ id: smetaCommissionProjects.id });
+      rowId = row.id;
+    } catch (e) {
+      if (!isMissingColumn(e)) throw e;
+      const [row] = await db
+        .insert(smetaCommissionProjects)
+        .values({ name, projectId, createdByUserId: me.id })
+        .returning({ id: smetaCommissionProjects.id });
+      rowId = row.id;
+    }
 
-    const [row] = await db
-      .insert(smetaCommissionProjects)
-      .values({ name, projectId, createdByUserId: me.id })
-      .returning({ id: smetaCommissionProjects.id });
-    await logActivity({ userId: me.id, action: "smeta.project_added", entityType: "smeta_commission_project", entityId: row.id, newValue: { name } });
+    await logActivity({ userId: me.id, action: "smeta.project_added", entityType: "smeta_commission_project", entityId: rowId, newValue: { name, sessionNumber, mode } });
   } catch (e) {
     if (isMissingTable(e)) return { ok: false, error: "unavailable" };
     throw e;

@@ -288,6 +288,28 @@ export const projectCurators = pgTable(
   })
 );
 
+// ---------- 5.8c loyiha studiyalari (many-to-many) ----------
+// Bir loyihaga bir neça taşqi studiya biriktirilişi mumkin. `projects.external_company_id`
+// eskisiga moslik uçun "asosiy" studiya sifatida saqlanadi (portal/auth/chat şu ustunga tayanadi);
+// bu jadval esa töliq röyxatni tutadi. projectCurators bilan aynan bir xil namuna.
+export const projectStudios = pgTable(
+  "project_studios",
+  {
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    companyId: uuid("company_id")
+      .notNull()
+      .references(() => externalCompanies.id, { onDelete: "cascade" }),
+    orderIndex: integer("order_index").default(0).notNull(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.projectId, t.companyId] }),
+    projectIdx: index("project_studios_project_idx").on(t.projectId),
+    companyIdx: index("project_studios_company_idx").on(t.companyId),
+  })
+);
+
 // ---------- 5.9 milestones (bosqiçlar) ----------
 export const milestones = pgTable("milestones", {
   id: uuid("id").primaryKey().defaultRandom(),
