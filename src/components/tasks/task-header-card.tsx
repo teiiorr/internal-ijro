@@ -1,6 +1,6 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { eq } from "drizzle-orm";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui-biib/Card";
 import { TaskStatusBadge, TaskPriorityBadge } from "@/components/tasks/task-status-badge";
 import { CopyRegistration } from "@/components/copy-registration";
 import { deadlineRelative, formatDate } from "@/lib/dates";
@@ -50,38 +50,42 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
   const relIsSameAsDate = rel.text === formattedDeadline;
 
   return (
-    <Card className="overflow-hidden">
-      <div className="px-5 sm:px-6 py-4 flex items-center gap-3 flex-wrap">
+    <Card bare solid className="overflow-hidden">
+      {/* Meta satri — holat, ustuvorlik, loyiha, muddat (kompakt) */}
+      <div className="flex flex-wrap items-center gap-2 px-4 py-3 sm:px-5">
         {task.registrationNumber && <CopyRegistration regNum={task.registrationNumber} />}
         <TaskStatusBadge status={task.status} />
         <TaskPriorityBadge priority={task.priority} />
         {projectName && (
-          <span className="text-xs font-medium text-[var(--muted)]">
-            <span className="text-[var(--subtle)]">{t("common.project")}:</span> {projectName}
+          <span className="t-small text-[var(--ink-2)]">
+            <span className="text-[var(--ink-3)]">{t("common.project")}:</span> {projectName}
           </span>
         )}
         {task.deadline && (
-          <span className={`ml-auto text-xs font-semibold ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--muted)]"}`}>
+          <span className={`ml-auto t-small font-semibold tabular-nums ${overdue ? "text-[var(--danger)]" : soon ? "text-[var(--warning)]" : "text-[var(--ink-2)]"}`}>
             {formattedDeadline}{relIsSameAsDate ? "" : `, ${rel.text}`}
           </span>
         )}
       </div>
 
-      <div className="border-t border-[var(--border)] px-5 sm:px-6 py-4 flex items-center gap-3">
-        <UserAvatar name={shortName(creator?.fullName) || "—"} avatarUrl={creatorAvatar} size="md" department={creatorDept} position={creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : undefined} />
+      {/* Topshiriq beruvchi — ixcham qator */}
+      <div className="flex items-center gap-2.5 border-t border-[var(--line)] px-4 py-2.5 sm:px-5">
+        <UserAvatar name={shortName(creator?.fullName) || "—"} avatarUrl={creatorAvatar} size="sm" department={creatorDept} position={creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : undefined} />
         <div className="min-w-0 flex-1">
-          <p className="text-[14px] font-semibold truncate">{shortName(creator?.fullName) || "—"}</p>
-          <p className="text-xs text-[var(--muted)] truncate">
-            {creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : ""}
-            {creatorDept ? <span>, {creatorDept}</span> : null}
-          </p>
+          <p className="truncate t-small font-semibold text-[var(--ink)]">{shortName(creator?.fullName) || "—"}</p>
+          {(creatorPosition || creatorDept) && (
+            <p className="truncate t-micro text-[var(--ink-3)]">
+              {creatorPosition ? t(`positions.${creatorPosition}` as `positions.direktor`) : ""}
+              {creatorDept ? (creatorPosition ? `, ${creatorDept}` : creatorDept) : ""}
+            </p>
+          )}
         </div>
-        <span className="text-xs text-[var(--muted)] tabular shrink-0">{formatDate(task.createdAt, locale)}</span>
+        <span className="shrink-0 t-micro tabular-nums text-[var(--ink-3)]">{formatDate(task.createdAt, locale)}</span>
       </div>
 
       {task.description && (
-        <div className="border-t border-[var(--border)] px-5 sm:px-6 py-4">
-          <p className="text-[14px] leading-relaxed whitespace-pre-wrap text-pretty">{task.description}</p>
+        <div className="border-t border-[var(--line)] px-4 py-3.5 sm:px-5">
+          <p className="whitespace-pre-wrap text-pretty text-[14px] leading-relaxed text-[var(--ink)]">{task.description}</p>
         </div>
       )}
     </Card>

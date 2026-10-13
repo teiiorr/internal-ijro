@@ -1,7 +1,8 @@
 "use client";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
-import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder } from "@tabler/icons-react";
+import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder, IconCalendarEvent } from "@tabler/icons-react";
+import { toBcp47 } from "@/i18n/bcp47";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui-biib/Card";
 import { Link } from "@/i18n/navigation";
@@ -36,7 +37,9 @@ function RowSignal({ row, t }: { row: T; t: ReturnType<typeof useTranslations> }
 
 export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; hrefBase?: string }) {
   const t = useTranslations();
+  const locale = useLocale();
   const [view, setView] = useState<"list" | "calendar">("list");
+  const dueFmt = new Intl.DateTimeFormat(toBcp47(locale), { day: "2-digit", month: "short" });
 
   return (
     <div className="space-y-4">
@@ -87,6 +90,12 @@ export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; 
                         <span className="inline-flex min-w-0 items-center gap-1">
                           <Folder className="size-3.5 shrink-0" aria-hidden />
                           <span className="truncate">{row.projectName}</span>
+                        </span>
+                      )}
+                      {row.deadline && (
+                        <span className="inline-flex shrink-0 items-center gap-1 tabular-nums">
+                          <IconCalendarEvent className="size-3.5 shrink-0" aria-hidden />
+                          {dueFmt.format(new Date(row.deadline))}
                         </span>
                       )}
                     </div>
