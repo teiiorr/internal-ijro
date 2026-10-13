@@ -1208,7 +1208,11 @@
         "invalid": "Loyiha nomini kiriting (kamida 2 ta belgi)",
         "duplicate": "Bu loyiha roʻyxatda allaqachon bor",
         "unavailable": "Roʻyxat maʼlumotlar bazasi yangilangach ishga tushadi"
-      }
+      },
+      "search": "Loyiha qidirish",
+      "notFound": "Loyiha topilmadi",
+      "sonShort": "{n}-son",
+      "hozirTag": "Hozir"
     },
     "smetaDocs": {
       "title": "Smeta komissiyasi sonlari arxivi",

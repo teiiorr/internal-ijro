@@ -3,7 +3,7 @@ import { useEffect, useId, useMemo, useRef, useState, useTransition } from "reac
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { IconPlus as Plus, IconX as X, IconFileInvoice as FileInvoice, IconChevronDown as ChevronDown, IconCheck as Check } from "@tabler/icons-react";
+import { IconPlus as Plus, IconX as X, IconFileInvoice as FileInvoice, IconChevronDown as ChevronDown, IconCheck as Check, IconSearch as Search } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
 import { Section } from "@/components/ui-biib/Section";
 import { Card } from "@/components/ui-biib/Card";
@@ -16,6 +16,7 @@ import { EmptyState } from "@/components/empty-state";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
+import { matchesLayoutQuery } from "@/lib/search-layout";
 import { addSmetaCommissionProject, removeSmetaCommissionProject, setSmetaProjectStatus, type SmetaProjectError } from "@/server/actions/smeta-commission";
 import type { SmetaCommissionProject, SmetaStatus } from "@/server/queries/smeta-commission";
 
@@ -180,6 +181,7 @@ export function SmetaProjects({
   const [info, setInfo] = useState("");
   const [posterUrl, setPosterUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   const canAdd = canManage && ready;
 
@@ -199,7 +201,6 @@ export function SmetaProjects({
     [items, targetSon],
   );
   const suggestions = useMemo(() => projects.filter((p) => !takenInSon.has(p.name.toLowerCase())), [projects, takenInSon]);
-  const maxSon = useMemo(() => items.reduce((m, it) => (it.sessionNumber && it.sessionNumber > m ? it.sessionNumber : m), 0), [items]);
 
   // Tanlangan mavjud loyiha (nom aynan mos kelsa) — poster/maʼlumotni koʻrsatish uchun.
   const picked = useMemo(() => {
@@ -207,18 +208,14 @@ export function SmetaProjects({
     return key ? projects.find((p) => p.name.toLowerCase() === key) ?? null : null;
   }, [name, projects]);
 
-  // Son boʻyicha guruhlash — NULL son'lar oxirida.
-  const groups = useMemo(() => {
-    const map = new Map<number | null, SmetaCommissionProject[]>();
-    for (const it of items) {
-      const key = it.sessionNumber ?? null;
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(it);
-    }
-    return Array.from(map.entries())
-      .sort((a, b) => (a[0] === null ? 1 : b[0] === null ? -1 : a[0] - b[0]))
-      .map(([sessionNumber, list]) => ({ sessionNumber, items: list }));
-  }, [items]);
+  // Sonsiz loyihalar — standart koʻrinish («Hozir koʻrib chiqilayotgan»).
+  const noSonItems = useMemo(() => items.filter((it) => it.sessionNumber === null), [items]);
+  // Real vaqtli qidiruv — barcha sonlardan nom boʻyicha (klaviatura joylashuvini sezmaydi).
+  const matches = useMemo(() => {
+    const q = query.trim();
+    if (!q) return [];
+    return items.filter((it) => matchesLayoutQuery(it.name, q));
+  }, [query, items]);
 
   const errorText = (e: SmetaProjectError) => t(`errors.${e}`);
 
@@ -230,8 +227,8 @@ export function SmetaProjects({
   }
 
   function openForm(prefillSon?: number | null) {
-    // null — «Hozir koʻrib chiqilayotgan» (sonsiz); undefined — standart (oxirgi son yoki 1).
-    setSon(prefillSon === null ? "" : String(prefillSon ?? (maxSon || 1)));
+    // Boʻsh son — «Hozir koʻrib chiqilayotgan» (sonsiz). Raqam berilsa — oʻsha son.
+    setSon(prefillSon == null ? "" : String(prefillSon));
     resetFields();
     setOpen(true);
   }
@@ -436,94 +433,119 @@ export function SmetaProjects({
     </Card>
   );
 
+  const renderRow = (it: SmetaCommissionProject, showSon: boolean) => (
+    <Row key={it.id}>
+      <div className="flex w-full min-w-0 flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          {(it.posterUrl || it.projectId) && (
+            <div className="w-12 shrink-0 sm:w-14">
+              <Poster url={it.posterUrl} name={it.name} />
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            {it.projectId ? (
+              <Link href={`/projects/${it.projectId}`} className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
+                {it.name}
+              </Link>
+            ) : (
+              <p className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)]">{it.name}</p>
+            )}
+            {it.info && <p className="mt-0.5 break-words t-small leading-snug text-[var(--ink-2)]">{it.info}</p>}
+            <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 t-micro text-[var(--ink-3)]">
+              {showSon && (
+                <Status tone="neutral">{it.sessionNumber != null ? t("sonShort", { n: it.sessionNumber }) : t("hozirTag")}</Status>
+              )}
+              <span>
+                {formatDate(it.createdAt, locale)}
+                {it.createdByName && `, ${localizeName(it.createdByName, locale)}`}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex shrink-0 items-center gap-1 self-end sm:self-center">
+          <SmetaStatusControl id={it.id} status={it.status} canManage={canManage} />
+          {canManage && (
+            <button
+              type="button"
+              onClick={() => remove(it)}
+              disabled={pending}
+              aria-label={t("remove")}
+              title={t("remove")}
+              className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--danger)] active:scale-95 disabled:opacity-50"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </div>
+      </div>
+    </Row>
+  );
+
   return (
-    <div className="flex min-w-0 flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-5">
       {canAdd && open && addForm}
 
-        {canManage && !ready && (
-          <p className="rounded-[var(--radius-m)] bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--ink-2)]">{t("errors.unavailable")}</p>
-        )}
+      {canManage && !ready && (
+        <p className="rounded-[var(--radius-m)] bg-[var(--surface-2)] px-4 py-3 text-sm text-[var(--ink-2)]">{t("errors.unavailable")}</p>
+      )}
 
-        {items.length === 0 ? (
+      {/* Real vaqtli qidiruv — barcha sonlardan: qaysi sonda va qachon koʻrilgani topiladi */}
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--ink-3)]" aria-hidden />
+        <Input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t("search")}
+          aria-label={t("search")}
+          className="pl-9"
+        />
+      </div>
+
+      {query.trim() ? (
+        matches.length === 0 ? (
           <Card solid bare>
-            <EmptyState
-              icon={FileInvoice}
-              title={t("empty")}
-              action={
-                canAdd && !open ? (
-                  <Button variant="outline" size="sm" onClick={() => openForm()}>
-                    <Plus className="size-4" />
-                    {t("addProject")}
-                  </Button>
-                ) : undefined
-              }
-            />
+            <p className="py-8 text-center t-small text-[var(--ink-3)]">{t("notFound")}</p>
           </Card>
         ) : (
-          groups.map((g) => (
-            <Section
-              key={g.sessionNumber ?? "none"}
-              headingLevel={3}
-              title={g.sessionNumber != null ? t("sessionTitle", { n: g.sessionNumber }) : t("noSession")}
-              action={
-                canAdd ? (
-                  <Button variant="ghost" size="sm" onClick={() => openForm(g.sessionNumber)}>
-                    <Plus className="size-4" />
-                    {t("addProject")}
-                  </Button>
-                ) : undefined
-              }
-            >
-              <Card solid bare className="px-5 sm:px-6">
-                <Rows>
-                  {g.items.map((it, i) => (
-                    <Row key={it.id}>
-                      <div className="flex w-full min-w-0 flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
-                        <div className="flex min-w-0 flex-1 items-start gap-3">
-                          <span className="shrink-0 pt-0.5 text-sm font-bold tabular-nums text-[var(--ink-3)]">{i + 1}</span>
-                          {(it.posterUrl || it.projectId) && (
-                            <div className="w-12 shrink-0 sm:w-14">
-                              <Poster url={it.posterUrl} name={it.name} />
-                            </div>
-                          )}
-                          <div className="min-w-0 flex-1">
-                            {it.projectId ? (
-                              <Link href={`/projects/${it.projectId}`} className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
-                                {it.name}
-                              </Link>
-                            ) : (
-                              <p className="break-words text-[15px] font-semibold leading-snug text-[var(--ink)]">{it.name}</p>
-                            )}
-                            {it.info && <p className="mt-0.5 break-words t-small leading-snug text-[var(--ink-2)]">{it.info}</p>}
-                            <p className="mt-0.5 t-micro text-[var(--ink-3)]">
-                              {formatDate(it.createdAt, locale)}
-                              {it.createdByName && `, ${localizeName(it.createdByName, locale)}`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-1 self-end sm:self-center">
-                          <SmetaStatusControl id={it.id} status={it.status} canManage={canManage} />
-                          {canManage && (
-                            <button
-                              type="button"
-                              onClick={() => remove(it)}
-                              disabled={pending}
-                              aria-label={t("remove")}
-                              title={t("remove")}
-                              className="grid size-9 shrink-0 place-items-center rounded-[var(--radius-control)] text-[var(--ink-3)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--danger)] active:scale-95 disabled:opacity-50"
-                            >
-                              <X className="size-4" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </Row>
-                  ))}
-                </Rows>
-              </Card>
-            </Section>
-          ))
-        )}
+          <Card solid bare className="px-5 sm:px-6">
+            <Rows>{matches.map((it) => renderRow(it, true))}</Rows>
+          </Card>
+        )
+      ) : (
+        <Section
+          title={t("noSession")}
+          action={
+            canAdd ? (
+              <Button variant={open ? "ghost" : "default"} size="sm" onClick={() => (open ? close() : openForm(null))} aria-expanded={open}>
+                {open ? <X className="size-4" /> : <Plus className="size-4" />}
+                {open ? t("close") : t("addProject")}
+              </Button>
+            ) : undefined
+          }
+        >
+          {noSonItems.length === 0 ? (
+            <Card solid bare>
+              <EmptyState
+                icon={FileInvoice}
+                title={t("empty")}
+                action={
+                  canAdd && !open ? (
+                    <Button variant="outline" size="sm" onClick={() => openForm(null)}>
+                      <Plus className="size-4" />
+                      {t("addProject")}
+                    </Button>
+                  ) : undefined
+                }
+              />
+            </Card>
+          ) : (
+            <Card solid bare className="px-5 sm:px-6">
+              <Rows>{noSonItems.map((it) => renderRow(it, false))}</Rows>
+            </Card>
+          )}
+        </Section>
+      )}
     </div>
   );
 }
