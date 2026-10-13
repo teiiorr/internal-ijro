@@ -1,8 +1,9 @@
 import "server-only";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   tasks,
+  taskAssignees,
   users,
   projects,
   externalCompanies,
@@ -249,6 +250,41 @@ export async function getProjectStatusBreakdown() {
   const out: Record<DerivedStatus, number> = { not_started: 0, in_progress: 0, completed: 0, on_hold: 0 };
   for (const r of rows) out[derivedStatus(r.progressPercentage, r.statusOverride)] += 1;
   return out;
+}
+
+export type WorkloadRow = {
+  userId: string;
+  fullName: string;
+  avatarUrl: string | null;
+  positionTitle: string | null;
+  active: number;
+  inReview: number;
+};
+
+/**
+ * Jamoa yuklamasi — har bir faol xodimdagi FAOL topshiriqlar soni (taskAssignees:
+ * todo/in_progress/under_review). Menejer kimni ortiqcha yuklamaslikni koʻradi.
+ */
+export async function getTeamWorkload(): Promise<WorkloadRow[]> {
+  return db
+    .select({
+      userId: taskAssignees.userId,
+      fullName: users.fullName,
+      avatarUrl: users.avatarUrl,
+      positionTitle: users.positionTitle,
+      active: sql<number>`count(*)::int`,
+      inReview: sql<number>`(count(*) filter (where ${taskAssignees.status} = 'under_review'))::int`,
+    })
+    .from(taskAssignees)
+    .innerJoin(users, eq(users.id, taskAssignees.userId))
+    .where(
+      and(
+        inArray(taskAssignees.status, ["todo", "in_progress", "under_review"]),
+        sql`${users.position} <> 'kontragent' AND ${users.status} = 'active' AND ${users.hidden} = false`,
+      ),
+    )
+    .groupBy(taskAssignees.userId, users.fullName, users.avatarUrl, users.positionTitle)
+    .orderBy(desc(sql`count(*)`), asc(users.fullName));
 }
 
 /** Işlab çiqariş turi böyiça loyihalar soni — gorizontal ustunni ta'minlaydi. */

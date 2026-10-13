@@ -1089,6 +1089,11 @@
       "empty": "Hali joriy holat kiritilmagan",
       "notSet": "Holat kiritilmagan",
       "count": "{n} ta loyiha"
+    },
+    "workload": {
+      "title": "Jamoa yuklamasi",
+      "empty": "Faol vazifalar yoʻq",
+      "inReview": "{n} tekshiruvda"
     }
   },
   "commandPalette": {
