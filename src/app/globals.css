@@ -1150,10 +1150,11 @@ html {
 .tag-plate {
   --ch: 6px;
   position: relative;
-  color: #ffffff;
-  background: color-mix(in oklab, var(--tone, #64748b) 88%, transparent);
-  text-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.4);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  /* Matn rangi tus bo'yicha (WCAG AA): yorug' tuslar (amber) uchun qora, qolganlari uchun oq.
+     To'yiq (solid) fon — shaffoflik/sheen kontrastni pasaytirmasligi uchun olib tashlandi. */
+  color: var(--tone-ink, #ffffff);
+  background: var(--tone, #475569);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   clip-path: polygon(
     var(--ch) 0, 100% 0,
     100% calc(100% - var(--ch)), calc(100% - var(--ch)) 100%,
@@ -1161,13 +1162,5 @@ html {
   );
   backdrop-filter: blur(4px) saturate(1.5);
   -webkit-backdrop-filter: blur(4px) saturate(1.5);
-}
-/* Yuqoridan yaltirash — oynaga xos sirt (shakl ota clip-path bilan qirqiladi). */
-.tag-plate::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(158deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 44%);
-  pointer-events: none;
 }
 .tag-plate > * { position: relative; }

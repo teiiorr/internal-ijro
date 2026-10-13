@@ -3,12 +3,20 @@ import * as React from "react";
 export type StatusTone = "green" | "amber" | "red" | "muted";
 export type StatusSize = "sm" | "md" | "lg";
 
-// Burchakli "signal flag" Liquid Glass plashka (.tag-plate): toʻyingan tus, oq yorliq.
+// Burchakli "signal flag" plashka (.tag-plate). Fon WCAG AA uchun chuqurlashtirilgan.
 const TONE: Record<StatusTone, string> = {
-  green: "#16a34a",
+  green: "#15803d",
   amber: "#e08c10",
-  red: "#e02424",
-  muted: "#64748b",
+  red: "#c81e1e",
+  muted: "#475569",
+};
+
+// Matn rangi: amber yorug' bo'lgani uchun qora matn, qolganlarida oq.
+const TONE_INK: Record<StatusTone, string> = {
+  green: "#ffffff",
+  amber: "#1c1917",
+  red: "#ffffff",
+  muted: "#ffffff",
 };
 
 const SIZE: Record<StatusSize, { box: string; ch: string }> = {
@@ -34,7 +42,7 @@ export function StatusTag({
   const s = SIZE[size];
   return (
     <span
-      style={{ ["--tone"]: TONE[tone], ["--ch"]: s.ch } as React.CSSProperties}
+      style={{ ["--tone"]: TONE[tone], ["--tone-ink"]: TONE_INK[tone], ["--ch"]: s.ch } as React.CSSProperties}
       className={`tag-plate inline-flex items-center justify-center font-bold uppercase leading-none whitespace-nowrap ${s.box} ${className}`}
     >
       <span className="text-trim">{children}</span>

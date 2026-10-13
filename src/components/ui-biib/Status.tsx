@@ -3,13 +3,22 @@ import { cn } from "@/lib/utils";
 
 export type StatusTone = "success" | "warning" | "danger" | "info" | "neutral";
 
-// Toʻyingan ranglar: oq yorliq ikkala mavzuda ham oʻqiladi (eski "signal flag" uslubi).
+// Fon tuslari — WCAG AA uchun chuqurlashtirilgan (oq matn ≥4.5:1).
 const TONE: Record<StatusTone, string> = {
-  success: "#16a34a",
+  success: "#15803d",
   warning: "#e08c10",
-  danger: "#e02424",
+  danger: "#c81e1e",
   info: "#2563eb",
-  neutral: "#64748b",
+  neutral: "#475569",
+};
+
+// Matn rangi: amber yorug' bo'lgani uchun unda qora matn (oq amberda AA'dan o'tmaydi).
+const TONE_INK: Record<StatusTone, string> = {
+  success: "#ffffff",
+  warning: "#1c1917",
+  danger: "#ffffff",
+  info: "#ffffff",
+  neutral: "#ffffff",
 };
 
 /**
@@ -30,7 +39,7 @@ export function Status({
 }) {
   return (
     <span
-      style={{ ["--tone"]: TONE[tone], ["--ch"]: "6px" } as CSSProperties}
+      style={{ ["--tone"]: TONE[tone], ["--tone-ink"]: TONE_INK[tone], ["--ch"]: "6px" } as CSSProperties}
       className={cn(
         "tag-plate inline-flex items-center justify-center whitespace-nowrap px-2.5 py-1 text-[11px] font-bold uppercase leading-none tracking-[0.04em]",
         className,
