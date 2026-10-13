@@ -15,6 +15,13 @@ export const routing = defineRouting({
   // lotin ("O'zbek") tiliga tuşadi. Tilni faqat ilova içida (tizimga kirgandan
   // söng) almaştirish mumkin. "/" -> "/uz-latn".
   defaultLocale: "uz-latn",
+  // Tanlangan tilni 1 yil eslab qoladi (sessiya emas): brauzer qayta ochilsa ham saqlanadi.
+  localeCookie: {
+    name: "NEXT_LOCALE",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  },
 });
 
 export type AppLocale = (typeof routing.locales)[number];
