@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { toast } from "sonner";
 import { IconPencil, IconTrash, IconLoader2 } from "@tabler/icons-react";
 import { useRouter } from "@/i18n/navigation";
@@ -149,9 +150,10 @@ export function DeleteAnnouncementButton({ id }: { id: string }) {
   const t = useTranslations("staffX.announcements");
   const router = useRouter();
   const [pending, start] = useTransition();
+  const confirm = useConfirm();
 
-  function onClick() {
-    if (!window.confirm(t("deleteConfirm"))) return;
+  async function onClick() {
+    if (!(await confirm({ description: t("deleteConfirm"), tone: "danger" }))) return;
     start(async () => {
       try {
         const res = await deleteAnnouncement(id);

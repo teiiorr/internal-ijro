@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { IconAlertTriangle } from "@tabler/icons-react";
@@ -14,10 +15,11 @@ export function MaintenanceToggle({ initialOn }: { initialOn: boolean }) {
   const router = useRouter();
   const [on, setOn] = useState(initialOn);
   const [pending, start] = useTransition();
+  const confirm = useConfirm();
 
-  function toggle() {
+  async function toggle() {
     const next = !on;
-    if (next && !window.confirm(t("confirmOn"))) return;
+    if (next && !(await confirm({ description: t("confirmOn") }))) return;
     setOn(next);
     start(async () => {
       try {

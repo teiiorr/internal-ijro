@@ -2,6 +2,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { toast } from "sonner";
 import { IconPencil, IconUserPlus, IconX, IconLock } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,7 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
   const [picks, setPicks] = useState<string[]>([]);
   const [showPicker, setShowPicker] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const confirm = useConfirm();
   const [saving, startSave] = useTransition();
   const [removing, startRemove] = useTransition();
 
@@ -116,8 +118,8 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
     });
   }
 
-  function onRemove(userId: string) {
-    if (!window.confirm(t("removeConfirm"))) return;
+  async function onRemove(userId: string) {
+    if (!(await confirm({ description: t("removeConfirm"), tone: "danger" }))) return;
     setRemovingId(userId);
     startRemove(async () => {
       try {

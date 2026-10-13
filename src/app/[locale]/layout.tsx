@@ -1,9 +1,11 @@
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { toBcp47 } from "@/i18n/bcp47";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 import { TapSound } from "@/components/tap-sound";
+import { ConfirmProvider } from "@/components/ui/confirm-dialog";
 
 // Shriftlar: Manrope UZ (matn/UI) va Unbounded UZ (gold sarlavhalar) — oʻzbek harflari
 // (ʻ ʼ Қ Ғ Ҳ) qoʻshilган patch-build'lar, self-hosted (src/styles/fonts.css, public/fonts).
@@ -25,7 +27,7 @@ export default async function LocaleLayout({
 
   return (
     <html
-      lang={locale}
+      lang={toBcp47(locale)}
       data-locale={locale}
       suppressHydrationWarning
     >
@@ -41,7 +43,9 @@ export default async function LocaleLayout({
       </head>
       <body>
         <ThemeProvider initial="system">
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <NextIntlClientProvider>
+            <ConfirmProvider>{children}</ConfirmProvider>
+          </NextIntlClientProvider>
           <TapSound />
           <Toaster
             position="bottom-right"

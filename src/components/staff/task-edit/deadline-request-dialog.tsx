@@ -2,6 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { toast } from "sonner";
 import { IconCalendarPlus, IconClockHour4 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ export type DeadlineRequestDialogProps = {
 export function DeadlineRequestDialog({ taskId, currentDeadlineDate, pending }: DeadlineRequestDialogProps) {
   const t = useTranslations("staffX.taskEdit");
   const tr = useTranslations();
+  const confirm = useConfirm();
   const locale = useLocale();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -60,8 +62,8 @@ export function DeadlineRequestDialog({ taskId, currentDeadlineDate, pending }: 
     });
   }
 
-  function cancel(id: string) {
-    if (!window.confirm(t("cancelConfirm"))) return;
+  async function cancel(id: string) {
+    if (!(await confirm({ description: t("cancelConfirm"), tone: "danger" }))) return;
     start(async () => {
       try {
         const res = await cancelDeadlineRequest(id);

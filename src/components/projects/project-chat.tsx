@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations, useLocale } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useEffect, useRef, useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { postProjectMessage, editProjectMessage, deleteProjectMessage } from "@/server/actions/projects";
@@ -242,6 +243,7 @@ export function ProjectChat({
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
+  const confirm = useConfirm();
   const [, start] = useTransition();
   const [text, setText] = useState("");
   const [staged, setStaged] = useState<Staged | null>(null);
@@ -347,7 +349,7 @@ export function ProjectChat({
 
   async function doDelete(m: Msg) {
     setMenuFor(null);
-    if (!window.confirm(t("projects.chat.deletePrompt"))) return;
+    if (!(await confirm({ description: t("projects.chat.deletePrompt"), tone: "danger" }))) return;
     try { await deleteProjectMessage(m.id); router.refresh(); }
     catch { toast.error(t("projects.chat.sendError")); }
   }

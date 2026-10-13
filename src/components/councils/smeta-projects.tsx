@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useId, useMemo, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { IconPlus as Plus, IconX as X, IconFileInvoice as FileInvoice, IconChevronDown as ChevronDown, IconCheck as Check, IconSearch as Search } from "@tabler/icons-react";
@@ -170,6 +171,7 @@ export function SmetaProjects({
   const t = useTranslations("kengash.smetaProjects");
   const locale = useLocale();
   const router = useRouter();
+  const confirm = useConfirm();
   const listId = useId();
   const firstFieldRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
@@ -293,8 +295,8 @@ export function SmetaProjects({
     });
   }
 
-  function remove(it: SmetaCommissionProject) {
-    if (!window.confirm(t("confirmRemove", { name: it.name }))) return;
+  async function remove(it: SmetaCommissionProject) {
+    if (!(await confirm({ description: t("confirmRemove", { name: it.name }), tone: "danger" }))) return;
     start(async () => {
       const r = await removeSmetaCommissionProject(it.id);
       if (!r.ok) return void toast.error(errorText(r.error));

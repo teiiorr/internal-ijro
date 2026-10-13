@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations, useLocale } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,7 @@ const TYPES = [
 
 export function DocumentsTab({ userId, documents, canEdit }: { userId: string; documents: Doc[]; canEdit: boolean }) {
   const t = useTranslations();
+  const confirm = useConfirm();
   const locale = useLocale();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, start] = useTransition();
@@ -43,8 +45,8 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
     });
   }
 
-  function onDelete(id: string) {
-    if (!confirm(t("common.confirmDelete"))) return;
+  async function onDelete(id: string) {
+    if (!(await confirm({ description: t("common.confirmDelete"), tone: "danger" }))) return;
     start(async () => { await deleteEmployeeDocument(id); });
   }
 

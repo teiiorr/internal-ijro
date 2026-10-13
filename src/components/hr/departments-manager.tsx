@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
+import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useState, useTransition } from "react";
 import { Card } from "@/components/ui-biib/Card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ type Manager = { id: string; fullName: string };
 
 export function DepartmentsManager({ departments, managers }: { departments: Dept[]; managers: Manager[] }) {
   const t = useTranslations();
+  const confirm = useConfirm();
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState<string | "new" | null>(null);
 
@@ -47,8 +49,8 @@ export function DepartmentsManager({ departments, managers }: { departments: Dep
     });
   }
 
-  function onDelete(id: string) {
-    if (!confirm(t("common.confirmDelete"))) return;
+  async function onDelete(id: string) {
+    if (!(await confirm({ description: t("common.confirmDelete"), tone: "danger" }))) return;
     start(async () => { await deleteDepartment(id); });
   }
 
