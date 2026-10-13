@@ -1109,6 +1109,12 @@
       "title": "Платежи к оплате",
       "all": "Все",
       "daysWaiting": "{n} дн. ожидает"
+    },
+    "escalations": {
+      "title": "Требуют внимания",
+      "stage": "Этап",
+      "task": "Задача",
+      "daysOverdue": "просрочено {n} дн."
     }
   },
   "commandPalette": {

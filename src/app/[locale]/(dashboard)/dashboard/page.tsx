@@ -11,6 +11,7 @@ import { HrWidgets } from "@/components/dashboards/hr-widgets";
 import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { TeamWorkloadWidget } from "@/components/dashboards/team-workload";
 import { PaymentsDueWidget } from "@/components/dashboards/payments-due";
+import { EscalationsWidget } from "@/components/dashboards/escalations";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
 import { ProjectStatusBoard } from "@/components/dashboards/project-status-board";
 import { PinnedAnnouncementsBanner } from "@/components/staff/announcements/pinned-banner";
@@ -73,6 +74,12 @@ export default async function DashboardPage() {
       <Suspense fallback={null}>
         <AckWidget userId={user.id} />
       </Suspense>
+
+      {isManager && (
+        <Suspense fallback={<SectionSkeleton />}>
+          <EscalationsWidget />
+        </Suspense>
+      )}
 
       <Suspense fallback={<SectionSkeleton />}>
         <ManagerWidgets showPayments={showPayments} />

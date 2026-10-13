@@ -1109,6 +1109,12 @@
       "title": "Toʻlanadigan toʻlovlar",
       "all": "Barchasi",
       "daysWaiting": "{n} kun kutmoqda"
+    },
+    "escalations": {
+      "title": "Diqqat talab qiladi",
+      "stage": "Bosqich",
+      "task": "Vazifa",
+      "daysOverdue": "{n} kun kechikdi"
     }
   },
   "commandPalette": {

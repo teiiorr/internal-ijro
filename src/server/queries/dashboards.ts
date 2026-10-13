@@ -287,6 +287,63 @@ export async function getTeamWorkload(): Promise<WorkloadRow[]> {
     .orderBy(desc(sql`count(*)`), asc(users.fullName));
 }
 
+export type EscalationItem = { id: string; title: string; subtitle: string | null; href: string; daysOverdue: number };
+
+/**
+ * Eskalatsiya — muddати oʻtib ketgan, hali yopilmagan bosqich va vazifalar.
+ * Menejer/rahbar darhol koʻradi (dashboardda yuqorida). Tashkent kuni boʻyicha.
+ */
+export async function getEscalations(): Promise<{ stages: EscalationItem[]; tasks: EscalationItem[] }> {
+  const stageRows = await db
+    .select({
+      id: projectStages.id,
+      name: projectStages.name,
+      projectId: projects.id,
+      projectName: projects.name,
+      days: sql<number>`((now() at time zone 'Asia/Tashkent')::date - ${projectStages.plannedDeadline})::int`,
+    })
+    .from(projectStages)
+    .innerJoin(projects, eq(projects.id, projectStages.projectId))
+    .where(
+      and(
+        eq(projectStages.status, "active"),
+        sql`${projectStages.plannedDeadline} is not null and ${projectStages.plannedDeadline} < (now() at time zone 'Asia/Tashkent')::date`,
+      ),
+    )
+    .orderBy(asc(projectStages.plannedDeadline))
+    .limit(20);
+
+  const taskRows = await db
+    .select({
+      id: tasks.id,
+      title: tasks.title,
+      projectName: projects.name,
+      days: sql<number>`((now() at time zone 'Asia/Tashkent')::date - (${tasks.deadline} at time zone 'Asia/Tashkent')::date)::int`,
+    })
+    .from(tasks)
+    .leftJoin(projects, eq(projects.id, tasks.projectId))
+    .where(sql`${tasks.deadline} is not null and ${tasks.deadline} < now() and ${tasks.status} not in ('completed','rejected')`)
+    .orderBy(asc(tasks.deadline))
+    .limit(20);
+
+  return {
+    stages: stageRows.map((r) => ({
+      id: r.id,
+      title: r.name,
+      subtitle: r.projectName,
+      href: `/projects/${r.projectId}/stages/${r.id}`,
+      daysOverdue: Math.max(0, Number(r.days)),
+    })),
+    tasks: taskRows.map((r) => ({
+      id: r.id,
+      title: r.title,
+      subtitle: r.projectName ?? null,
+      href: `/tasks/${r.id}`,
+      daysOverdue: Math.max(0, Number(r.days)),
+    })),
+  };
+}
+
 /** Işlab çiqariş turi böyiça loyihalar soni — gorizontal ustunni ta'minlaydi. */
 export async function getProjectTypeBreakdown(locale: string) {
   const rows = await db

@@ -1109,6 +1109,12 @@
       "title": "Тўланадиган тўловлар",
       "all": "Барчаси",
       "daysWaiting": "{n} кун кутмоқда"
+    },
+    "escalations": {
+      "title": "Диққат талаб қилади",
+      "stage": "Босқич",
+      "task": "Вазифа",
+      "daysOverdue": "{n} кун кечикди"
     }
   },
   "commandPalette": {

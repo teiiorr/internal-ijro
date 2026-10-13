@@ -1109,6 +1109,12 @@
       "title": "Tölanadigan tölovlar",
       "all": "Barçasi",
       "daysWaiting": "{n} kun kutmoqda"
+    },
+    "escalations": {
+      "title": "Diqqat talab qiladi",
+      "stage": "Bosqiç",
+      "task": "Vazifa",
+      "daysOverdue": "{n} kun keçikdi"
     }
   },
   "commandPalette": {
