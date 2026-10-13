@@ -18,6 +18,7 @@ import {
   tasks,
 } from "@/lib/db/schema";
 import { stageTurn } from "@/lib/projects/progress";
+import { fetchCompanyStudioProjectIds } from "@/server/queries/studio";
 
 /**
  * Loyihaning barcha kuratorlari (avatar + ism), tartiblangan holda. Boğlovçi jadval
@@ -268,10 +269,12 @@ export async function getContractorChatProjects(contractorUserId: string) {
     .limit(1);
   if (!company) return { company: null, chats: [] as const };
 
+  // Asosiy studiya YOKI project_studios a'zoligi (0034).
+  const studioProjectIds = await fetchCompanyStudioProjectIds(company.id);
   const prjs = await db
     .select({ id: projects.id, name: projects.name, posterUrl: projects.posterUrl, curatorUserId: projects.curatorUserId })
     .from(projects)
-    .where(eq(projects.externalCompanyId, company.id))
+    .where(or(eq(projects.externalCompanyId, company.id), studioProjectIds.length ? inArray(projects.id, studioProjectIds) : sql`false`))
     .orderBy(desc(projects.createdAt));
 
   const ids = prjs.map((p) => p.id);
@@ -320,11 +323,13 @@ export async function getContractorUnreadCount(contractorUserId: string): Promis
   if (!me) return 0;
   const [company] = await db.select({ id: externalCompanies.id }).from(externalCompanies).where(eq(externalCompanies.contactEmail, me.email)).limit(1);
   if (!company) return 0;
+  // Asosiy studiya YOKI project_studios a'zoligi (0034).
+  const studioProjectIds = await fetchCompanyStudioProjectIds(company.id);
   const [r] = await db
     .select({ c: sql<number>`count(*)::int` })
     .from(projectMessages)
     .innerJoin(projects, eq(projects.id, projectMessages.projectId))
-    .where(and(eq(projects.externalCompanyId, company.id), sql`${projectMessages.userId} <> ${contractorUserId}`, sql`${projectMessages.readByContractorAt} is null`));
+    .where(and(or(eq(projects.externalCompanyId, company.id), studioProjectIds.length ? inArray(projects.id, studioProjectIds) : sql`false`), sql`${projectMessages.userId} <> ${contractorUserId}`, sql`${projectMessages.readByContractorAt} is null`));
   return Number(r?.c ?? 0);
 }
 
@@ -338,6 +343,8 @@ export async function listProjectsForContractor(contractorUserId: string, locale
     .where(eq(externalCompanies.contactEmail, me[0].email))
     .limit(1);
   if (company.length === 0) return { company: null, projects: [] };
+  // Asosiy studiya YOKI project_studios a'zoligi (0034).
+  const studioProjectIds = await fetchCompanyStudioProjectIds(company[0].id);
   const prjs = await db
     .select({
       id: projects.id,
@@ -355,7 +362,7 @@ export async function listProjectsForContractor(contractorUserId: string, locale
     })
     .from(projects)
     .leftJoin(projectTypes, eq(projectTypes.id, projects.projectTypeId))
-    .where(eq(projects.externalCompanyId, company[0].id))
+    .where(or(eq(projects.externalCompanyId, company[0].id), studioProjectIds.length ? inArray(projects.id, studioProjectIds) : sql`false`))
     .orderBy(desc(projects.createdAt));
 
   // Faol bosqiç nomi + "N tadan X-bosqiç" bilan boyitamiz — "men qayerdaman" signali.

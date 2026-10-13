@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { getProject, getProjectChannels } from "@/server/queries/projects";
+import { isCompanyStudioOfProject } from "@/server/queries/studio";
 import { ConversationScreen } from "@/components/projects/conversation-screen";
 import { canViewContractorChats, isContractorManager, canModerateContractorChats } from "@/lib/permissions/contractors";
 
@@ -16,8 +17,8 @@ export default async function StudioConversationPage({ params }: { params: Promi
   const t = await getTranslations();
   const { id, projectId } = await params;
   const data = await getProject(projectId);
-  // Faqat haqiqatan ham şu studiyaga tegişli loyiha.
-  if (!data || data.project.externalCompanyId !== id) notFound();
+  // Faqat haqiqatan ham şu studiyaga tegişli loyiha: asosiy studiya YOKI project_studios a'zoligi (0034).
+  if (!data || !(await isCompanyStudioOfProject(projectId, id, data.project.externalCompanyId))) notFound();
 
   const ch = await getProjectChannels(projectId);
   const channels = [

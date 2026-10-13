@@ -23,7 +23,7 @@ import { eq } from "drizzle-orm";
 import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { StageProgressReporter } from "@/components/studio/stage-progress";
 import { StageRequestButtons, StageRequestsList } from "@/components/studio/stage-requests";
-import { getLatestStageProgress, listStageRequests } from "@/server/queries/studio";
+import { getLatestStageProgress, isCompanyStudioOfProject, listStageRequests } from "@/server/queries/studio";
 
 export default async function ContractorStageDetailPage({ params }: { params: Promise<{ id: string; stageId: string }> }) {
   const session = await auth();
@@ -44,7 +44,8 @@ export default async function ContractorStageDetailPage({ params }: { params: Pr
     .from(projects)
     .where(eq(projects.id, id))
     .limit(1);
-  if (!projectRow || projectRow.externalCompanyId !== myCompany.id) notFound();
+  // Asosiy studiya YOKI project_studios a'zoligi (0034) — faqat şu ikkisi.
+  if (!projectRow || !(await isCompanyStudioOfProject(id, myCompany.id, projectRow.externalCompanyId))) notFound();
 
   const data = await getStage(stageId, locale);
   if (!data || data.stage.projectId !== id) notFound();

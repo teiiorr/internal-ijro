@@ -980,7 +980,12 @@
       "appearance": "Köriniş",
       "theme": "Mavzu",
       "language": "Til",
-      "nda": "NDA"
+      "nda": "NDA",
+      "about": "Kompaniya maʼlumotlari",
+      "address": "Manzil",
+      "website": "Veb-sayt",
+      "memberSince": "Röyxatdan ötgan sana",
+      "registration": "Röyxat maʼlumotlari"
     },
     "portalLabel": "Studiya portali",
     "budget": {
@@ -1192,6 +1197,13 @@
       "confirmRemove": "«{name}» röyxatdan olib taşlansinmi?",
       "added": "Loyiha röyxatga qöşildi",
       "removed": "Loyiha röyxatdan olib taşlandi",
+      "status": {
+        "label": "Holat",
+        "jarayonda": "Jarayonda",
+        "xulosaBerildi": "Xulosa berildi",
+        "qaytarildi": "Qaytarildi",
+        "updated": "Holat yangilandi"
+      },
       "errors": {
         "invalid": "Loyiha nomini kiriting (kamida 2 ta belgi)",
         "duplicate": "Bu loyiha röyxatda allaqaçon bor",
@@ -1205,6 +1217,8 @@
       "filesCount": "{n} ta hujjat",
       "filesShort": "{n} hujjat",
       "numberTitle": "{n}-son hujjatlari",
+      "projectsHeading": "Loyihalar",
+      "docsHeading": "Hujjatlar",
       "close": "Yopiş",
       "open": "Oçiş",
       "openWord": "Word'da oçiş",

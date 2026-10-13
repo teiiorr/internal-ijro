@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { projects, projectStages, stageDocuments, externalCompanies } from "@/lib/db/schema";
 import { storeStream, isForbiddenExt } from "@/lib/upload";
 import { logActivity } from "@/lib/audit";
+import { isCompanyStudioOfProject } from "@/server/queries/studio";
 
 export const runtime = "nodejs";
 
@@ -54,13 +55,14 @@ export async function POST(req: NextRequest) {
     .limit(1);
   if (!company) return NextResponse.json({ error: "no_company" }, { status: 403 });
 
-  // Loyiha aynan ŞU studiyaga tegişli bölişi kerak.
+  // Loyiha aynan ŞU studiyaga tegişli bölişi kerak: asosiy studiya YOKI project_studios a'zoligi (0034).
   const [project] = await db
     .select({ id: projects.id, ec: projects.externalCompanyId })
     .from(projects)
     .where(eq(projects.id, projectId))
     .limit(1);
-  if (!project || project.ec !== company.id) return NextResponse.json({ error: "not_found" }, { status: 404 });
+  if (!project || !(await isCompanyStudioOfProject(projectId, company.id, project.ec)))
+    return NextResponse.json({ error: "not_found" }, { status: 404 });
 
   // Aniq bosqich berilgan bölsa öşani olamiz (loyihaga tegişli ekani tekşirilgan),
   // aks holda faol bosqichga, u ham bölmasa birinçi bosqichga qaytamiz.

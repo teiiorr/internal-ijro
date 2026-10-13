@@ -13,6 +13,10 @@ import { projects, users } from "../schema";
  * `session_number` / `poster_url` / `info` — 0035 migratsiyasi bilan qoʻshiladi
  * (son boʻyicha guruhlash + poster/maʼlumot). Ular hali qoʻllanmagan boʻlishi mumkin,
  * shuning uchun bu ustunlarni oʻqish/yozish 42703 (undefined_column) uchun himoyalangan.
+ *
+ * `status` — 0036 migratsiyasi bilan qoʻshiladi (komissiya qarori: jarayonda /
+ * xulosa_berildi / qaytarildi). Hali qoʻllanmagan boʻlsa (42703), oʻqishda 'jarayonda'
+ * standart qiymat qaytariladi, yozish esa himoyalangan.
  */
 export const smetaCommissionProjects = pgTable(
   "smeta_commission_projects",
@@ -28,6 +32,8 @@ export const smetaCommissionProjects = pgTable(
     posterUrl: text("poster_url"),
     /** Qisqa maʼlumot/izoh (0035). */
     info: text("info"),
+    /** Komissiya qarori holati: jarayonda | xulosa_berildi | qaytarildi (0036). */
+    status: varchar("status", { length: 20 }).notNull().default("jarayonda"),
   },
   (t) => [
     index("smeta_commission_projects_created_idx").on(t.createdAt),

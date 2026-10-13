@@ -16,9 +16,9 @@ const LANG: Record<string, { flag: string; label: ReactNode }> = {
   oz: {
     flag: "🇺🇿",
     label: (
-      <span className="inline-flex items-center gap-1.5">
+      <span className="inline-flex w-full items-center gap-2">
         Özbekça
-        <Status tone="info" className="px-2 py-0.5 text-[9px]">Yangi</Status>
+        <Status tone="info" className="ml-auto">Yangi</Status>
       </span>
     ),
   },

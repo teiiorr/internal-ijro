@@ -28,7 +28,7 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CurrentStatusEditor } from "@/components/studio/current-status-editor";
 import { StageRequestsList } from "@/components/studio/stage-requests";
-import { getLatestStatusUpdates, listStageRequests } from "@/server/queries/studio";
+import { getLatestStatusUpdates, isCompanyStudioOfProject, listStageRequests } from "@/server/queries/studio";
 import { desc, eq } from "drizzle-orm";
 
 const STATUS_TONE: Record<string, StatusTone> = {
@@ -53,7 +53,8 @@ export default async function ContractorProjectPage({ params }: { params: Promis
   if (!myCompany) notFound();
 
   const data = await getProject(id);
-  if (!data || data.project.externalCompanyId !== myCompany.id) notFound();
+  // Asosiy studiya YOKI project_studios a'zoligi (0034) — faqat şu ikkisi.
+  if (!data || !(await isCompanyStudioOfProject(id, myCompany.id, data.project.externalCompanyId))) notFound();
 
   const maxBytes = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
   const typed = !!data.project.projectTypeId;

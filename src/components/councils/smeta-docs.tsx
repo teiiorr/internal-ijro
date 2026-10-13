@@ -15,8 +15,11 @@ import { Section } from "@/components/ui-biib/Section";
 import { Card } from "@/components/ui-biib/Card";
 import { Status } from "@/components/ui-biib/Status";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import manifest from "@/data/smeta-docs.json";
+import { Poster, SmetaStatusControl } from "@/components/councils/smeta-projects";
+import type { SmetaCommissionProject } from "@/server/queries/smeta-commission";
 
 type Kind = "pdf" | "word" | "image" | "other";
 type DocFile = { id: string; name: string; kind: Kind; size: number; sealed: boolean };
@@ -42,15 +45,24 @@ const KIND_TONE: Record<Kind, string> = {
 
 /**
  * Smeta komissiyasi sonlari arxivi: 1 dan oxirgigacha har bir son bitta oyna-kartadagi
- * raqamli katakda; fayllar yashirin turadi, sonni bosganda oʻsha sonning fayllari oʻsha
- * kartaning ichida ajratuvchi qatorlar boʻlib ochiladi (quti ichida quti emas).
+ * raqamli katakda; fayllar yashirin turadi, sonni bosganda oʻsha sonning ichida AVVAL shu
+ * sonda koʻrib chiqilgan loyihalar (poster + nom + maʼlumot + holat), SOʻNG hujjatlari
+ * ajratuvchi qatorlar boʻlib ochiladi (quti ichida quti emas).
  */
-export function SmetaDocs() {
+export function SmetaDocs({
+  projectsByNumber = {},
+  canManage = false,
+}: {
+  /** Son raqami boʻyicha komissiya loyihalari (kengash sahifasidan). */
+  projectsByNumber?: Record<number, SmetaCommissionProject[]>;
+  canManage?: boolean;
+}) {
   const t = useTranslations("kengash.smetaDocs");
   const [active, setActive] = useState<number | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const items = DATA.items;
   const current = items.find((i) => i.n === active) ?? null;
+  const sonProjects = current ? projectsByNumber[current.n] ?? [] : [];
 
   // Son ochilganda fayllar paneli koʻrinishga keltiriladi.
   useEffect(() => {
@@ -99,10 +111,10 @@ export function SmetaDocs() {
           })}
         </div>
 
-        {/* Bosilgan sonning fayllari — bir xil karta ichida, ajratuvchi chiziq bilan */}
-        {current && current.files.length > 0 && (
+        {/* Bosilgan son — bir xil karta ichida, ajratuvchi chiziq bilan: avval loyihalar, soʻng hujjatlar */}
+        {current && (current.files.length > 0 || sonProjects.length > 0) && (
           <div ref={panelRef} className="mt-5 scroll-mt-24 border-t border-[var(--line)] pt-4">
-            <div className="mb-2 flex items-center justify-between gap-3">
+            <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">
                 {t("numberTitle", { n: current.n })}
                 {current.dateLabel && <span className="ml-2 t-small font-medium text-[var(--ink-3)]">, {current.dateLabel}</span>}
@@ -117,8 +129,45 @@ export function SmetaDocs() {
               </button>
             </div>
 
-            <ul className="divide-y divide-[var(--line)]">
-              {current.files.map((f) => {
+            {/* Loyihalar — shu sonda koʻrib chiqilgan */}
+            {sonProjects.length > 0 && (
+              <div className="mb-5">
+                <h4 className="mb-1.5 font-[family-name:var(--font-ui)] text-[0.9375rem] font-bold tracking-tight text-[var(--ink)]">
+                  {t("projectsHeading")}
+                </h4>
+                <ul className="divide-y divide-[var(--line)]">
+                  {sonProjects.map((p) => (
+                    <li key={p.id} className="flex items-center gap-3 py-3">
+                      {(p.posterUrl || p.projectId) && (
+                        <div className="w-10 shrink-0 sm:w-12">
+                          <Poster url={p.posterUrl} name={p.name} />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        {p.projectId ? (
+                          <Link href={`/projects/${p.projectId}`} className="break-words text-sm font-semibold leading-snug text-[var(--ink)] hover:text-[var(--tint)] hover:underline">
+                            {p.name}
+                          </Link>
+                        ) : (
+                          <p className="break-words text-sm font-semibold leading-snug text-[var(--ink)]">{p.name}</p>
+                        )}
+                        {p.info && <p className="mt-0.5 break-words t-small leading-snug text-[var(--ink-2)]">{p.info}</p>}
+                      </div>
+                      <SmetaStatusControl id={p.id} status={p.status} canManage={canManage} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Hujjatlar */}
+            {current.files.length > 0 && (
+              <>
+                <h4 className="mb-1.5 font-[family-name:var(--font-ui)] text-[0.9375rem] font-bold tracking-tight text-[var(--ink)]">
+                  {t("docsHeading")}
+                </h4>
+                <ul className="divide-y divide-[var(--line)]">
+                  {current.files.map((f) => {
                 const Icon = KIND_ICON[f.kind];
                 const isWord = f.kind === "word";
                 return (
@@ -154,7 +203,9 @@ export function SmetaDocs() {
                   </li>
                 );
               })}
-            </ul>
+                </ul>
+              </>
+            )}
           </div>
         )}
       </Card>

@@ -7,6 +7,7 @@ import { projects } from "@/lib/db/schema";
 import { smetaCommissionProjects } from "@/lib/db/tables/smeta-commission";
 import { requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
+import type { SmetaStatus } from "@/server/queries/smeta-commission";
 
 // "Majlis qoʻshish" bilan bir xil doira: kontragentdan boshqa barcha xodimlar.
 const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
@@ -44,11 +45,15 @@ function isMissingTable(e: unknown): boolean {
   return err?.code === "42P01" || err?.cause?.code === "42P01";
 }
 
-/** Postgres "undefined_column" (42703) — 0035 migratsiyasi hali qoʻllanmagan. */
+/** Postgres "undefined_column" (42703) — 0035/0036 migratsiyasi hali qoʻllanmagan. */
 function isMissingColumn(e: unknown): boolean {
   const err = e as { code?: string; cause?: { code?: string } } | null;
   return err?.code === "42703" || err?.cause?.code === "42703";
 }
+
+/** Komissiya qarori holati (0036). */
+const STATUS_VALUES = ["jarayonda", "xulosa_berildi", "qaytarildi"] as const;
+const statusSchema = z.enum(STATUS_VALUES);
 
 export async function addSmetaCommissionProject(input: AddSmetaProjectInput): Promise<SmetaProjectResult> {
   const me = await requirePosition([...MANAGERS]);
@@ -122,6 +127,38 @@ export async function addSmetaCommissionProject(input: AddSmetaProjectInput): Pr
     await logActivity({ userId: me.id, action: "smeta.project_added", entityType: "smeta_commission_project", entityId: rowId, newValue: { name, sessionNumber, mode } });
   } catch (e) {
     if (isMissingTable(e)) return { ok: false, error: "unavailable" };
+    throw e;
+  }
+
+  revalidatePath("/kengashlar/smeta");
+  return { ok: true };
+}
+
+/** Komissiya qarorini oʻzgartirish: jarayonda | xulosa_berildi | qaytarildi. */
+export async function setSmetaProjectStatus(id: string, status: SmetaStatus): Promise<SmetaProjectResult> {
+  const me = await requirePosition([...MANAGERS]);
+  if (!z.string().uuid().safeParse(id).success) return { ok: false, error: "invalid" };
+  const parsed = statusSchema.safeParse(status);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  try {
+    // status ustuni 0036 bilan qoʻshiladi — hali qoʻllanmagan boʻlsa (42703), yangilanmaydi.
+    const [row] = await db
+      .update(smetaCommissionProjects)
+      .set({ status: parsed.data })
+      .where(eq(smetaCommissionProjects.id, id))
+      .returning({ name: smetaCommissionProjects.name });
+    if (row) {
+      await logActivity({
+        userId: me.id,
+        action: "smeta.project_status_changed",
+        entityType: "smeta_commission_project",
+        entityId: id,
+        newValue: { name: row.name, status: parsed.data },
+      });
+    }
+  } catch (e) {
+    if (isMissingTable(e) || isMissingColumn(e)) return { ok: false, error: "unavailable" };
     throw e;
   }
 

@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { projects, externalCompanies } from "@/lib/db/schema";
 import { storeStream, isForbiddenExt } from "@/lib/upload";
+import { isCompanyStudioOfProject } from "@/server/queries/studio";
 
 export const runtime = "nodejs";
 
@@ -41,7 +42,8 @@ export async function POST(req: NextRequest) {
       .from(externalCompanies)
       .where(eq(externalCompanies.contactEmail, session.user.email))
       .limit(1);
-    if (!company || project.ec !== company.id)
+    // Asosiy studiya YOKI project_studios a'zoligi (0034) — faqat şu ikkisi.
+    if (!company || !(await isCompanyStudioOfProject(projectId, company.id, project.ec)))
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
 

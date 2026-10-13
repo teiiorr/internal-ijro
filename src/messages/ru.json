@@ -980,7 +980,12 @@
       "appearance": "Оформление",
       "theme": "Тема",
       "language": "Язык",
-      "nda": "NDA"
+      "nda": "NDA",
+      "about": "Данные компании",
+      "address": "Адрес",
+      "website": "Веб-сайт",
+      "memberSince": "Дата регистрации",
+      "registration": "Регистрационные данные"
     },
     "portalLabel": "Портал студии",
     "budget": {
@@ -1192,6 +1197,13 @@
       "confirmRemove": "Убрать «{name}» из списка?",
       "added": "Проект добавлен в список",
       "removed": "Проект убран из списка",
+      "status": {
+        "label": "Статус",
+        "jarayonda": "В процессе",
+        "xulosaBerildi": "Заключение дано",
+        "qaytarildi": "Возвращён",
+        "updated": "Статус обновлён"
+      },
       "errors": {
         "invalid": "Введите название проекта (минимум 2 символа)",
         "duplicate": "Этот проект уже есть в списке",
@@ -1205,6 +1217,8 @@
       "filesCount": "{n} документов",
       "filesShort": "{n} файл.",
       "numberTitle": "Документы №{n}",
+      "projectsHeading": "Проекты",
+      "docsHeading": "Документы",
       "close": "Закрыть",
       "open": "Открыть",
       "openWord": "Открыть в Word",

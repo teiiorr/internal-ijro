@@ -14,7 +14,7 @@ import { CouncilMeetingDialog } from "@/components/councils/council-meeting-dial
 import { CouncilTabs } from "@/components/councils/council-tabs";
 import { SmetaProjects } from "@/components/councils/smeta-projects";
 import { SmetaDocs } from "@/components/councils/smeta-docs";
-import { listSmetaCommissionProjects } from "@/server/queries/smeta-commission";
+import { listSmetaCommissionProjects, type SmetaCommissionProject } from "@/server/queries/smeta-commission";
 import { formatDateMaybeTime } from "@/lib/dates";
 import { listAssignableUsers } from "@/server/queries/tasks";
 import { isResolutionEditor, listOpenResolutions, listResolutionsForMeetings } from "@/server/queries/council-resolutions";
@@ -45,6 +45,13 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
     db.select({ id: projects.id, name: projects.name, posterUrl: projects.posterUrl, genre: projects.genre }).from(projects).orderBy(projects.name),
     isSmeta ? listSmetaCommissionProjects() : Promise.resolve(null),
   ]);
+
+  // Son raqami boʻyicha komissiya loyihalari — SmetaDocs oʻsha sonda koʻrilgan loyihalarni koʻrsatadi.
+  // Son belgilanmagan loyihalar bu yerga kirmaydi (ular yuqoridagi SmetaProjects roʻyxatida qoladi).
+  const smetaByNumber: Record<number, SmetaCommissionProject[]> = {};
+  for (const it of smetaList?.items ?? []) {
+    if (it.sessionNumber != null) (smetaByNumber[it.sessionNumber] ??= []).push(it);
+  }
 
   const pastMeetings = meetings.filter((m) => !upcoming || m.id !== upcoming.id);
 
@@ -79,8 +86,8 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
         <SmetaProjects items={smetaList.items} projects={projectOpts} canManage={canManage} ready={smetaList.ready} />
       )}
 
-      {/* Smeta komissiyasi sonlari arxivi: qadab qoʻyilgan sonlar, bosilganda fayllari ochiladi. */}
-      {isSmeta && <SmetaDocs />}
+      {/* Smeta komissiyasi sonlari arxivi: qadab qoʻyilgan sonlar, bosilganda loyihalar + fayllari ochiladi. */}
+      {isSmeta && <SmetaDocs projectsByNumber={smetaByNumber} canManage={canManage} />}
 
       {/* Yaqinlashayotgan majlis va uning kun tartibi (Smeta'da faqat mavjud boʻlsa) */}
       {upcoming ? (

@@ -980,7 +980,12 @@
       "appearance": "Кўриниш",
       "theme": "Мавзу",
       "language": "Тил",
-      "nda": "NDA"
+      "nda": "NDA",
+      "about": "Компания маълумотлари",
+      "address": "Манзил",
+      "website": "Веб-сайт",
+      "memberSince": "Рўйхатдан ўтган сана",
+      "registration": "Рўйхат маълумотлари"
     },
     "portalLabel": "Студия портали",
     "budget": {
@@ -1192,6 +1197,13 @@
       "confirmRemove": "«{name}» рўйхатдан олиб ташлансинми?",
       "added": "Лойиҳа рўйхатга қўшилди",
       "removed": "Лойиҳа рўйхатдан олиб ташланди",
+      "status": {
+        "label": "Ҳолат",
+        "jarayonda": "Жараёнда",
+        "xulosaBerildi": "Хулоса берилди",
+        "qaytarildi": "Қайтарилди",
+        "updated": "Ҳолат янгиланди"
+      },
       "errors": {
         "invalid": "Лойиҳа номини киритинг (камида 2 та белги)",
         "duplicate": "Бу лойиҳа рўйхатда аллақачон бор",
@@ -1205,6 +1217,8 @@
       "filesCount": "{n} та ҳужжат",
       "filesShort": "{n} ҳужжат",
       "numberTitle": "{n}-сон ҳужжатлари",
+      "projectsHeading": "Лойиҳалар",
+      "docsHeading": "Ҳужжатлар",
       "close": "Ёпиш",
       "open": "Очиш",
       "openWord": "Word'да очиш",

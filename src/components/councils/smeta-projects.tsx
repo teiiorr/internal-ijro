@@ -3,12 +3,12 @@ import { useEffect, useId, useMemo, useRef, useState, useTransition } from "reac
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { IconPlus as Plus, IconX as X, IconFileInvoice as FileInvoice } from "@tabler/icons-react";
+import { IconPlus as Plus, IconX as X, IconFileInvoice as FileInvoice, IconChevronDown as ChevronDown, IconCheck as Check } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
 import { Section } from "@/components/ui-biib/Section";
 import { Card } from "@/components/ui-biib/Card";
 import { Rows, Row } from "@/components/ui-biib/Rows";
-import { Status } from "@/components/ui-biib/Status";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,14 +16,120 @@ import { EmptyState } from "@/components/empty-state";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/dates";
 import { localizeName } from "@/lib/names";
-import { addSmetaCommissionProject, removeSmetaCommissionProject, type SmetaProjectError } from "@/server/actions/smeta-commission";
-import type { SmetaCommissionProject } from "@/server/queries/smeta-commission";
+import { addSmetaCommissionProject, removeSmetaCommissionProject, setSmetaProjectStatus, type SmetaProjectError } from "@/server/actions/smeta-commission";
+import type { SmetaCommissionProject, SmetaStatus } from "@/server/queries/smeta-commission";
 
 type ProjectOption = { id: string; name: string; posterUrl: string | null; genre: string | null };
 type Mode = "existing" | "scratch";
 
+/** Holat tuslari — burchakli plashka (Status) va tanlagich uchun. */
+const STATUS_TONE: Record<SmetaStatus, StatusTone> = { jarayonda: "warning", xulosa_berildi: "success", qaytarildi: "danger" };
+const STATUS_KEY: Record<SmetaStatus, "jarayonda" | "xulosaBerildi" | "qaytarildi"> = { jarayonda: "jarayonda", xulosa_berildi: "xulosaBerildi", qaytarildi: "qaytarildi" };
+const STATUS_ALL: readonly SmetaStatus[] = ["jarayonda", "xulosa_berildi", "qaytarildi"] as const;
+
+/**
+ * Komissiya qarori holati — burchakli rangli plashka (sariq/yashil/qizil). Boshqaruvchilarга
+ * (canManage) uchligi bir ghost ochiluvchi menyuda oʻzgartiriladi; boshqalarга faqat plashka.
+ * Pilula/dumaloq yoʻq — burchakli plashka (tag-plate). i18n: kengash.smetaProjects.status.
+ */
+export function SmetaStatusControl({
+  id,
+  status,
+  canManage,
+  align = "end",
+}: {
+  id: string;
+  status: SmetaStatus;
+  canManage: boolean;
+  align?: "start" | "end";
+}) {
+  const t = useTranslations("kengash.smetaProjects");
+  const router = useRouter();
+  const [pending, start] = useTransition();
+  const [value, setValue] = useState<SmetaStatus>(status);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Server qiymati yangilansa (router.refresh), mahalliy holatni moslaymiz.
+  useEffect(() => setValue(status), [status]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, [open]);
+
+  const plate = (s: SmetaStatus) => <Status tone={STATUS_TONE[s]}>{t(`status.${STATUS_KEY[s]}`)}</Status>;
+
+  if (!canManage) return <span className="shrink-0">{plate(value)}</span>;
+
+  function change(next: SmetaStatus) {
+    setOpen(false);
+    if (next === value || pending) return;
+    const prev = value;
+    setValue(next); // optimistik
+    start(async () => {
+      const r = await setSmetaProjectStatus(id, next);
+      if (!r.ok) {
+        setValue(prev);
+        toast.error(t(`errors.${r.error}`));
+        return;
+      }
+      toast.success(t("status.updated"));
+      router.refresh();
+    });
+  }
+
+  return (
+    <div ref={ref} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        disabled={pending}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={t("status.label")}
+        title={t("status.label")}
+        className="inline-flex items-center gap-1 rounded-[var(--radius-control)] p-0.5 transition-colors hover:bg-[var(--surface-2)] disabled:opacity-60"
+      >
+        {plate(value)}
+        <ChevronDown className={cn("size-3.5 text-[var(--ink-3)] transition-transform", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className={cn(
+            "absolute top-[calc(100%+4px)] z-20 min-w-[11rem] rounded-[var(--radius-m)] border border-[var(--line)] bg-[var(--surface)] p-1 shadow-[var(--shadow-2)]",
+            align === "end" ? "right-0" : "left-0",
+          )}
+        >
+          {STATUS_ALL.map((s) => (
+            <button
+              key={s}
+              type="button"
+              role="menuitemradio"
+              aria-checked={s === value}
+              onClick={() => change(s)}
+              className={cn(
+                "flex w-full items-center gap-2 rounded-[var(--radius-control)] px-2 py-1.5 text-left transition-colors hover:bg-[var(--surface-2)]",
+                s === value && "bg-[var(--surface-2)]",
+              )}
+            >
+              {plate(s)}
+              {s === value && <Check className="ml-auto size-4 shrink-0 text-[var(--tint)]" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Kichik kvadrat poster (nisbati saqlanadi); poster yoʻq boʻlsa — nom bosh harfi. */
-function Poster({ url, name, className }: { url: string | null; name: string; className?: string }) {
+export function Poster({ url, name, className }: { url: string | null; name: string; className?: string }) {
   if (url) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
@@ -399,7 +505,7 @@ export function SmetaProjects({
                           {it.createdByName && `, ${localizeName(it.createdByName, locale)}`}
                         </p>
                       </div>
-                      <Status tone="info" className="shrink-0">{t("inProcess")}</Status>
+                      <SmetaStatusControl id={it.id} status={it.status} canManage={canManage} />
                       {canManage && (
                         <button
                           type="button"

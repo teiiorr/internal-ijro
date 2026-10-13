@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { externalCompanies } from "@/lib/db/schema";
 import { getProject, getProjectChannels } from "@/server/queries/projects";
+import { isCompanyStudioOfProject } from "@/server/queries/studio";
 import { ConversationScreen } from "@/components/projects/conversation-screen";
 import { eq } from "drizzle-orm";
 
@@ -21,7 +22,8 @@ export default async function ContractorChatPage({ params }: { params: Promise<{
   if (!myCompany) notFound();
 
   const data = await getProject(id);
-  if (!data || data.project.externalCompanyId !== myCompany.id) notFound();
+  // Asosiy studiya YOKI project_studios a'zoligi (0034) — faqat şu ikkisi.
+  if (!data || !(await isCompanyStudioOfProject(id, myCompany.id, data.project.externalCompanyId))) notFound();
 
   const ch = await getProjectChannels(id);
   const channels = [

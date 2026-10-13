@@ -1,10 +1,11 @@
 import "server-only";
-import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   externalCompanies,
   projects,
   projectStages,
+  projectStudios,
   stagePayments,
   projectStatusUpdates,
   stageProgressReports,
@@ -27,6 +28,49 @@ export async function getStudioCompany(email: string | null | undefined): Promis
     .where(sql`lower(${externalCompanies.contactEmail}) = ${email.toLowerCase()}`)
     .limit(1);
   return c ?? null;
+}
+
+// ---------------- Studiya a'zoligi (0034) ----------------
+// Bitta loyihada bir neçta studiya bölişi mumkin: `projects.external_company_id` —
+// ASOSIY studiya, `project_studios` esa qöşimça (ikkinçi, uçinçi …) studiyalar.
+// Kompaniya loyihani faqat ASOSIY studiya bölgani YOKI şu loyiha uçun
+// `project_studios` da aniq qator bölgani uçun köradi/boşqaradi — boşqa heç nima.
+
+/** Kompaniya (studiya) a'zo bölgan loyihalar id'lari (project_studios jadvalidan).
+ * Jadval hali böʻlmasa (42P01 — 0034 migratsiyasi qöllanmagan) xavfsiz tarzda [] qaytaradi,
+ * şunda çaqiruvçi faqat asosiy external_company_id böyiça filtrlaşga qaytadi. */
+export async function fetchCompanyStudioProjectIds(companyId: string): Promise<string[]> {
+  try {
+    const rows = await db
+      .select({ projectId: projectStudios.projectId })
+      .from(projectStudios)
+      .where(eq(projectStudios.companyId, companyId));
+    return rows.map((r) => r.projectId);
+  } catch {
+    // project_studios hali yöq (0034 qöllanmagan) — asosiy-studiya rejimiga tuşamiz.
+    return [];
+  }
+}
+
+/** Kompaniya şu loyihaning studiyasimi: ASOSIY (primaryCompanyId === companyId) YOKI
+ * `project_studios` da (projectId, companyId) qatori mavjud. Yakka loyiha avtorizatsiyasi uçun.
+ * Jadval böʻlmasa yoki xatolikda — hiçbir holatda ruxsat bermaydi (false). */
+export async function isCompanyStudioOfProject(
+  projectId: string,
+  companyId: string,
+  primaryCompanyId: string | null,
+): Promise<boolean> {
+  if (primaryCompanyId === companyId) return true;
+  try {
+    const [row] = await db
+      .select({ projectId: projectStudios.projectId })
+      .from(projectStudios)
+      .where(and(eq(projectStudios.projectId, projectId), eq(projectStudios.companyId, companyId)))
+      .limit(1);
+    return !!row;
+  } catch {
+    return false;
+  }
 }
 
 // ---------------- Joriy holat ----------------
@@ -113,7 +157,11 @@ export async function listStageRequests(filter: {
     const conds = [];
     if (filter.projectId) conds.push(eq(stageRequests.projectId, filter.projectId));
     if (filter.stageId) conds.push(eq(stageRequests.stageId, filter.stageId));
-    if (filter.companyId) conds.push(eq(projects.externalCompanyId, filter.companyId));
+    if (filter.companyId) {
+      // Asosiy studiya YOKI project_studios a'zoligi (0034).
+      const ids = await fetchCompanyStudioProjectIds(filter.companyId);
+      conds.push(or(eq(projects.externalCompanyId, filter.companyId), ids.length ? inArray(projects.id, ids) : sql`false`));
+    }
     if (filter.status) conds.push(eq(stageRequests.status, filter.status));
     const rows = await db
       .select({
@@ -151,11 +199,17 @@ export async function listStageRequests(filter: {
 
 export async function countPendingRequests(companyId?: string): Promise<number> {
   try {
+    // Asosiy studiya YOKI project_studios a'zoligi (0034).
+    let companyMatch;
+    if (companyId) {
+      const ids = await fetchCompanyStudioProjectIds(companyId);
+      companyMatch = or(eq(projects.externalCompanyId, companyId), ids.length ? inArray(projects.id, ids) : sql`false`);
+    }
     const [r] = await db
       .select({ c: sql<number>`count(*)::int` })
       .from(stageRequests)
       .innerJoin(projects, eq(projects.id, stageRequests.projectId))
-      .where(companyId ? and(eq(stageRequests.status, "pending"), eq(projects.externalCompanyId, companyId)) : eq(stageRequests.status, "pending"));
+      .where(companyMatch ? and(eq(stageRequests.status, "pending"), companyMatch) : eq(stageRequests.status, "pending"));
     return Number(r?.c ?? 0);
   } catch {
     return 0;
@@ -179,6 +233,8 @@ export type StudioPayment = {
 };
 
 export async function getStudioPayments(companyId: string) {
+  // Asosiy studiya YOKI project_studios a'zoligi (0034).
+  const ids = await fetchCompanyStudioProjectIds(companyId);
   const rows = await db
     .select({
       id: stagePayments.id,
@@ -196,7 +252,7 @@ export async function getStudioPayments(companyId: string) {
     .from(stagePayments)
     .innerJoin(projectStages, eq(projectStages.id, stagePayments.stageId))
     .innerJoin(projects, eq(projects.id, projectStages.projectId))
-    .where(eq(projects.externalCompanyId, companyId))
+    .where(or(eq(projects.externalCompanyId, companyId), ids.length ? inArray(projects.id, ids) : sql`false`))
     .orderBy(desc(stagePayments.createdAt));
 
   const items: StudioPayment[] = rows.map((r) => ({
@@ -231,6 +287,8 @@ export type StudioDeadline = {
 
 /** Studiya loyihalaridagi yakunlanmagan bosqichlarning muddatlari (eng yaqini birinchi). */
 export async function getStudioDeadlines(companyId: string, limit = 100): Promise<StudioDeadline[]> {
+  // Asosiy studiya YOKI project_studios a'zoligi (0034).
+  const ids = await fetchCompanyStudioProjectIds(companyId);
   const rows = await db
     .select({
       stageId: projectStages.id,
@@ -245,7 +303,7 @@ export async function getStudioDeadlines(companyId: string, limit = 100): Promis
     .from(projectStages)
     .innerJoin(projects, eq(projects.id, projectStages.projectId))
     .where(and(
-      eq(projects.externalCompanyId, companyId),
+      or(eq(projects.externalCompanyId, companyId), ids.length ? inArray(projects.id, ids) : sql`false`),
       sql`${projectStages.plannedDeadline} is not null`,
       sql`${projectStages.status} <> 'completed'`,
     ))
@@ -257,6 +315,10 @@ export async function getStudioDeadlines(companyId: string, limit = 100): Promis
 // ---------------- Studiya bosh sahifasi ----------------
 
 export async function getStudioDashboard(companyId: string) {
+  // Asosiy studiya YOKI project_studios a'zoligi (0034) — barcha studiya loyihalari.
+  const studioIds = await fetchCompanyStudioProjectIds(companyId);
+  const companyMatch = or(eq(projects.externalCompanyId, companyId), studioIds.length ? inArray(projects.id, studioIds) : sql`false`);
+
   const [stageAgg] = await db
     .select({
       activeProjects: sql<number>`count(distinct ${projects.id}) filter (where ${projects.status} not in ('completed','cancelled'))::int`,
@@ -267,7 +329,7 @@ export async function getStudioDashboard(companyId: string) {
     })
     .from(projects)
     .leftJoin(projectStages, eq(projectStages.projectId, projects.id))
-    .where(eq(projects.externalCompanyId, companyId));
+    .where(companyMatch);
 
   // Studiyaning navbati bo'lgan faol bosqichlar — "Sizdan kutilmoqda" ro'yxati.
   const actionStages = await db
@@ -283,7 +345,7 @@ export async function getStudioDashboard(companyId: string) {
     .from(projectStages)
     .innerJoin(projects, eq(projects.id, projectStages.projectId))
     .where(and(
-      eq(projects.externalCompanyId, companyId),
+      companyMatch,
       eq(projectStages.status, "active"),
       inArray(projectStages.reviewStatus, ["in_progress", "changes_requested"]),
     ))
