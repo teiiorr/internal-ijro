@@ -22,21 +22,10 @@ import {
   tashkentIsoWeekday,
   weekOptionLabel,
 } from "./reports/weekly-brief-core";
-import {
-  addDaysIso,
-  countByStatus,
-  dueReminderMessage,
-  effectiveStatus,
-  emptyCounters,
-  overdueReminderMessage,
-  parseResolutionFilters,
-  sortResolutions,
-} from "./councils/resolution-status";
-
 /**
  * Smoke test for the PURE job cores that scripts/worker.ts drives through its
- * four daily jobs (task-reminders, council-resolutions, normative-ack,
- * weekly-snapshot). The worker boots its own DB pool, which we never touch here;
+ * daily jobs (task-reminders, normative-ack, weekly-snapshot). The worker boots
+ * its own DB pool, which we never touch here;
  * this file only asserts that the no-DB logic each job relies on survives the
  * degenerate inputs a real run hits — an empty pass, zero counts, missing dates,
  * a blank query string — without throwing and with the documented empty result.
@@ -92,32 +81,5 @@ describe("weekly-snapshot core survives an empty/edge pass", () => {
     expect(ws).toBe("2026-09-28");
     expect(parseWeekParam(undefined, monday)).toBe(ws);
     expect(weekOptionLabel(ws)).toBe("28.09 - 04.10");
-  });
-});
-
-describe("council-resolutions core survives an empty/edge pass", () => {
-  it("counts an empty resolution set as all-zero", () => {
-    expect(countByStatus([])).toEqual(emptyCounters());
-    expect(sortResolutions([])).toEqual([]);
-  });
-
-  it("treats an undated open point as open and shifts dates cleanly", () => {
-    expect(effectiveStatus({ status: "open", dueDate: null, taskStatus: null }, "2026-10-05")).toBe("open");
-    expect(addDaysIso("2026-10-05", 0)).toBe("2026-10-05");
-  });
-
-  it("builds reminder messages without throwing on degenerate inputs", () => {
-    expect(dueReminderMessage(0)).toContain("№0");
-    expect(overdueReminderMessage(0, "")).toContain("№0");
-  });
-
-  it("defaults the ?mine filter from position when the query string is blank", () => {
-    const none = (_key: string): string | null => null;
-    const f = parseResolutionFilters(none, "mutaxassis");
-    expect(f.mine).toBe(true);
-    expect(f.kind).toBeUndefined();
-    expect(f.status).toBeUndefined();
-    expect(f.responsibleId).toBeUndefined();
-    expect(f.departmentId).toBeUndefined();
   });
 });
