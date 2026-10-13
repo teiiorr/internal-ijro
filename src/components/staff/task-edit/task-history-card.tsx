@@ -14,7 +14,7 @@ import {
   IconPaperclip,
   IconPencil,
   IconSend,
-  IconSparkles,
+  IconCirclePlus,
   IconUserMinus,
   IconUserPlus,
   type Icon,
@@ -41,7 +41,7 @@ const VISIBLE = 15;
 const TASK_STATUS_KEYS = new Set<string>(TASK_STATUSES);
 
 const KIND_STYLE: Record<HistoryKind, { icon: Icon; tone: string }> = {
-  created: { icon: IconSparkles, tone: "text-[var(--primary)] bg-[var(--primary-soft)]" },
+  created: { icon: IconCirclePlus, tone: "text-[var(--primary)] bg-[var(--primary-soft)]" },
   updated: { icon: IconPencil, tone: "text-[var(--primary)] bg-[var(--primary-soft)]" },
   status_changed: { icon: IconArrowsExchange, tone: "text-[var(--muted)] bg-[var(--surface-2)]" },
   response_submitted: { icon: IconSend, tone: "text-[var(--primary)] bg-[var(--primary-soft)]" },

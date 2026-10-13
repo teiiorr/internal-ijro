@@ -4,7 +4,7 @@ import {
   IconAlarm as Alarm,
   IconArrowsShuffle as ArrowsShuffle,
   IconCash as Cash,
-  IconSparkles as Sparkles,
+  IconFolderPlus as Sparkles,
   IconMessageCircle as MessageCircle,
 } from "@tabler/icons-react";
 import { Section } from "@/components/ui-biib/Section";
