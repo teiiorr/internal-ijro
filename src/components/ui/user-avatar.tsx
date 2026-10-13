@@ -1,5 +1,7 @@
 "use client";
 import { useState, useCallback, useRef, useEffect } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { useTranslations } from "next-intl";
 import { IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +41,7 @@ interface UserAvatarProps {
 }
 
 export function UserAvatar({ name, avatarUrl, size = "md", className, clickable = true, department, position }: UserAvatarProps) {
+  const t = useTranslations("common");
   const [lightbox, setLightbox] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -68,7 +71,7 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
         role={clickable && hasPhoto ? "button" : undefined}
         tabIndex={clickable && hasPhoto ? 0 : undefined}
         onClick={handleClick}
-        onKeyDown={(e) => { if (e.key === "Enter") handleClick(); }}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } }}
         className={cn(
           "rounded-full shrink-0 flex items-center justify-center font-semibold overflow-hidden relative",
           hasPhoto ? "" : "bg-[color-mix(in_oklab,var(--tint)_14%,transparent)] text-[var(--tint)]",
@@ -99,34 +102,38 @@ export function UserAvatar({ name, avatarUrl, size = "md", className, clickable 
         )}
       </div>
 
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
-          onClick={() => setLightbox(false)}
-        >
-          <button
+      <Dialog.Root open={lightbox} onOpenChange={setLightbox}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:duration-200" />
+          <Dialog.Content
+            aria-describedby={undefined}
+            className="fixed inset-0 z-[200] flex flex-col items-center justify-center p-4 focus:outline-none"
             onClick={() => setLightbox(false)}
-            className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
-            aria-label="Close"
           >
-            <IconX className="size-7" />
-          </button>
-          <img
-            src={avatarUrl!}
-            alt={name}
-            className="max-w-[85vw] max-h-[70vh] rounded-[var(--radius-media)] object-contain shadow-2xl animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <div className="mt-4 text-center text-white animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <p className="text-lg font-bold">{name}</p>
-            {(department || position) && (
-              <p className="text-sm text-white/70 mt-1">
-                {[position, department].filter(Boolean).join(", ")}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+            <Dialog.Close
+              className="absolute top-4 right-4 grid size-11 place-items-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+              aria-label={t("close")}
+            >
+              <IconX className="size-7" />
+            </Dialog.Close>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={avatarUrl ?? ""}
+              alt={name}
+              className="max-w-[85vw] max-h-[70vh] rounded-[var(--radius-media)] object-contain shadow-2xl data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=open]:duration-200"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div className="mt-4 text-center text-white">
+              <Dialog.Title className="text-lg font-bold">{name}</Dialog.Title>
+              {(department || position) && (
+                <Dialog.Description className="text-sm text-white/70 mt-1">
+                  {[position, department].filter(Boolean).join(", ")}
+                </Dialog.Description>
+              )}
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </>
   );
 }

@@ -107,7 +107,8 @@
 		"chooseFile": "Faylni tanlang",
 		"orDropHere": "yoki bu yerga olib keling",
 		"replaceFile": "Boşqasini tanlaş",
-		"confirmTitle": "Tasdiqlaysizmi?"
+		"confirmTitle": "Tasdiqlaysizmi?",
+		"skipToContent": "Asosiy mazmunga oʻtish"
 	},
 	"nav": {
 		"dashboard": "Boş sahifa",

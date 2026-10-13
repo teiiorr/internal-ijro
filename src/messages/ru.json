@@ -107,7 +107,8 @@
 		"chooseFile": "Выбрать файл",
 		"orDropHere": "или перетащите сюда",
 		"replaceFile": "Выбрать другой",
-		"confirmTitle": "Подтвердите действие"
+		"confirmTitle": "Подтвердите действие",
+		"skipToContent": "Перейти к содержимому"
 	},
 	"nav": {
 		"dashboard": "Главная",

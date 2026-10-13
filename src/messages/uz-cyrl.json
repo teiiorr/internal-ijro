@@ -107,7 +107,8 @@
 		"chooseFile": "Файлни танланг",
 		"orDropHere": "ёки бу ерга олиб келинг",
 		"replaceFile": "Бошқасини танлаш",
-		"confirmTitle": "Тасдиқлайсизми?"
+		"confirmTitle": "Тасдиқлайсизми?",
+		"skipToContent": "Асосий мазмунга ўтиш"
 	},
 	"nav": {
 		"dashboard": "Бош саҳифа",

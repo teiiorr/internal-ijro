@@ -341,6 +341,14 @@ input:not([type]), select, textarea {
   outline-offset: 2px;
 }
 
+/* A11y: ko'plab form boshqaruvlari `focus:outline-none` bilan global fokus halqasini
+   o'chiradi (utility selektori yuqori spetsifiklikka ega). Klaviatura fokusi doim
+   ko'rinib turishi uchun form boshqaruvlarida halqani majburan qaytaramiz. */
+:is(input, select, textarea, [role="combobox"]):focus-visible {
+  outline: 2px solid var(--ring) !important;
+  outline-offset: 1px;
+}
+
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {

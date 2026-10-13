@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import {
   IconX as X,
   IconChevronLeft as ChevronLeft,
@@ -8,6 +9,11 @@ import {
 
 type LightboxImage = { url: string; name: string; date?: string };
 
+/**
+ * To'liq ekran rasm ko'ruvchi — Radix Dialog ustida (role=dialog, aria-modal, fokus
+ * tutqichi, Escape va fokusni triggerga qaytarish bepul keladi). Chap/o'ng strelkalar —
+ * navigatsiya; Escape va fon bosilishi — yopish.
+ */
 export function ImageLightbox({
   images,
   index,
@@ -24,93 +30,97 @@ export function ImageLightbox({
   const hasNext = index < images.length - 1;
   const [loaded, setLoaded] = useState(false);
 
-  // Rasm almashganda — qayta "yuklanmoqda" holatiga qaytamiz (toʻliq yuklangach koʻrsatiladi).
+  // Rasm almashganda — qayta "yuklanmoqda" holatiga qaytamiz.
   useEffect(() => {
     setLoaded(false);
   }, [img?.url]);
 
+  // Strelkalar bilan navigatsiya (Escape'ni Radix o'zi hal qiladi).
   const onKey = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
       if (e.key === "ArrowLeft" && hasPrev) onNavigate(index - 1);
       if (e.key === "ArrowRight" && hasNext) onNavigate(index + 1);
     },
-    [onClose, onNavigate, index, hasPrev, hasNext],
+    [onNavigate, index, hasPrev, hasNext],
   );
 
   useEffect(() => {
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [onKey]);
 
   if (!img) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[60] grid place-items-center bg-black/90 p-4 backdrop-blur-md sm:p-6"
-      onClick={onClose}
-    >
-      {/* Yopish — yuqori oʻng burchak */}
-      <button
-        onClick={onClose}
-        aria-label="Yopish"
-        className="absolute right-3 top-3 z-20 grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
-      >
-        <X className="size-5" />
-      </button>
-
-      {/* Nomi — yuqori chap */}
-      <p className="pointer-events-none absolute left-4 top-5 z-10 max-w-[68vw] truncate text-sm font-medium text-white/75">
-        {img.name}
-      </p>
-
-      {hasPrev && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onNavigate(index - 1); }}
-          aria-label="Oldingi"
-          className="absolute left-2 z-10 grid size-11 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:left-4 sm:size-12"
+    <Dialog.Root open onOpenChange={(o) => { if (!o) onClose(); }}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md" />
+        <Dialog.Content
+          aria-describedby={undefined}
+          className="fixed inset-0 z-[60] grid place-items-center p-4 focus:outline-none sm:p-6"
+          onClick={onClose}
         >
-          <ChevronLeft className="size-6" />
-        </button>
-      )}
-      {hasNext && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onNavigate(index + 1); }}
-          aria-label="Keyingi"
-          className="absolute right-2 z-10 grid size-11 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:right-4 sm:size-12"
-        >
-          <ChevronRight className="size-6" />
-        </button>
-      )}
+          {/* Nomi — yuqori chap; shu bilan birga dialogning ovozli sarlavhasi */}
+          <Dialog.Title className="pointer-events-none absolute left-4 top-5 z-10 max-w-[68vw] truncate text-sm font-medium text-white/75">
+            {img.name}
+          </Dialog.Title>
 
-      {/* Rasm — markazda, toʻliq yuklangach koʻrsatiladi (qismlarga boʻlinib chizilmaydi) */}
-      <div className="relative flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-        {!loaded && (
-          <div className="absolute inset-0 grid place-items-center">
-            <span className="size-8 animate-spin rounded-full border-2 border-white/25 border-t-white/80" />
+          {/* Yopish — yuqori o'ng burchak */}
+          <Dialog.Close
+            aria-label="Yopish"
+            className="absolute right-3 top-3 z-20 grid size-11 place-items-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
+          >
+            <X className="size-5" />
+          </Dialog.Close>
+
+          {hasPrev && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onNavigate(index - 1); }}
+              aria-label="Oldingi"
+              className="absolute left-2 z-10 grid size-11 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:left-4 sm:size-12"
+            >
+              <ChevronLeft className="size-6" />
+            </button>
+          )}
+          {hasNext && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onNavigate(index + 1); }}
+              aria-label="Keyingi"
+              className="absolute right-2 z-10 grid size-11 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:right-4 sm:size-12"
+            >
+              <ChevronRight className="size-6" />
+            </button>
+          )}
+
+          {/* Rasm — markazda, to'liq yuklangach ko'rsatiladi (qismlarga bo'linmaydi) */}
+          <div className="relative flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+            {!loaded && (
+              <div className="absolute inset-0 grid place-items-center">
+                <span className="size-8 animate-spin rounded-full border-2 border-white/25 border-t-white/80" />
+              </div>
+            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={img.url}
+              src={img.url}
+              alt={img.name}
+              loading="eager"
+              decoding="async"
+              onLoad={() => setLoaded(true)}
+              onError={() => setLoaded(true)}
+              className={`max-h-[82dvh] max-w-full rounded-[var(--radius-media)] object-contain transition-opacity duration-200 ${loaded ? "opacity-100" : "opacity-0"}`}
+            />
           </div>
-        )}
-        <img
-          key={img.url}
-          src={img.url}
-          alt={img.name}
-          loading="eager"
-          decoding="async"
-          onLoad={() => setLoaded(true)}
-          onError={() => setLoaded(true)}
-          className={`max-h-[82dvh] max-w-full rounded-[var(--radius-media)] object-contain transition-opacity duration-200 ${loaded ? "opacity-100" : "opacity-0"}`}
-        />
-      </div>
 
-      {/* Hisoblagich — pastda */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-4 text-center text-xs text-white/50">
-        {index + 1} / {images.length}
-        {img.date && <span className="ml-2">{img.date}</span>}
-      </div>
-    </div>
+          {/* Hisoblagich — pastda */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 text-center text-xs text-white/50">
+            {index + 1} / {images.length}
+            {img.date && <span className="ml-2">{img.date}</span>}
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

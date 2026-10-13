@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { isOwner } from "@/lib/permissions/owner";
@@ -39,9 +40,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
     flags: { contractors: showContractors, money, reports: canViewWeeklyBrief(session.user.position, owner) },
   };
   const initialOpen = ((await cookies()).get("ijro_nav_open")?.value ?? "").split(",").filter(Boolean);
+  const t = await getTranslations("common");
 
   return (
     <SessionProvider>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[var(--radius-control)] focus:bg-[var(--tint)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-on-tint"
+      >
+        {t("skipToContent")}
+      </a>
       <RouteProgress />
       {/* overflow-x-clip: hujjat kengligi ekrandan oshmaydi (iOS'da body clip yetarli emas), sticky buzilmaydi. */}
       <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative overflow-x-clip">
@@ -49,7 +57,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <NavProvider portal="staff" viewer={viewer} badges={{ reviewQueue: reviewCount }} initialOpen={initialOpen}>
           <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
             <Sidebar />
-            <main className="flex-1 px-3 sm:px-4 md:px-6 lg:px-8 py-5 sm:py-6 md:py-8 min-w-0 flex flex-col">
+            <main id="main" tabIndex={-1} className="flex-1 px-3 sm:px-4 md:px-6 lg:px-8 py-5 sm:py-6 md:py-8 min-w-0 flex flex-col focus:outline-none">
               <div className="flex-1">{children}</div>
               <AppFooter />
             </main>
