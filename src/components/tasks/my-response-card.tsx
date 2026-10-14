@@ -38,7 +38,13 @@ export function MyResponseCard({ taskId, myStatus, responseText, responseFileUrl
     const file = fileRef.current?.files?.[0] ?? null;
     start(async () => {
       try {
-        await submitTaskResponse({ taskId, responseText: text }, file);
+        const res = await submitTaskResponse({ taskId, responseText: text }, file);
+        if (!res.ok) {
+          toast.error(t("tasks.response.error"), {
+            description: t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"),
+          });
+          return;
+        }
         toast.success(t("tasks.response.submitted"), { description: t("tasks.response.submittedDescription") });
         setText("");
         setEditing(false);

@@ -78,7 +78,13 @@ export function ResponseReviewDrawer({
     setBusyId(userId);
     start(async () => {
       try {
-        await reviewAssigneeResponse(taskId, userId, decision, decision === "rejected" ? text : undefined);
+        const res = await reviewAssigneeResponse(taskId, userId, decision, decision === "rejected" ? text : undefined);
+        if (!res.ok) {
+          toast.error(t("tasks.review.errorToast"), {
+            description: t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"),
+          });
+          return;
+        }
         toast.success(decision === "completed" ? t("tasks.review.approvedToast") : t("tasks.review.rejectedToast"));
         const nextDone = new Set(done);
         nextDone.add(userId);

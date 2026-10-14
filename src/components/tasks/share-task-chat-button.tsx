@@ -22,7 +22,11 @@ export function ShareTaskChatButton({ taskId }: { taskId: string }) {
       onClick={() =>
         start(async () => {
           try {
-            await shareTaskToChat(taskId);
+            const res = await shareTaskToChat(taskId);
+            if (!res.ok) {
+              toast.error(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
+              return;
+            }
             toast.success(t("contractor.tasks.sharedToChat"));
             router.refresh();
           } catch {

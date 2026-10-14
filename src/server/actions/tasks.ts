@@ -25,6 +25,7 @@ import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
 import { nextRegistrationNumber } from "@/lib/tasks/registration-number";
 import { taskDeadlineRequests } from "@/lib/db/tables/task-edit";
+import { ok, err, type ActionResult } from "@/lib/action-result";
 
 /** Topshiriq yakunlanganda uning ochiq muddat soʻrovlari maʼnosiz — ularni bekor qilamiz (0031'gacha xavfsiz). */
 async function cancelPendingDeadlineRequests(taskId: string, byUserId: string) {
@@ -50,7 +51,7 @@ const createSchema = z.object({
   deadline: z.string().datetime().nullable().optional(),
 });
 
-export async function createTask(input: z.infer<typeof createSchema>): Promise<{ id: string }> {
+export async function createTask(input: z.infer<typeof createSchema>): Promise<ActionResult<{ id: string }>> {
   const me = await requireUser();
   const parsed = createSchema.parse(input);
 
@@ -65,9 +66,11 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
   const assigneeById = new Map(assigneeRows.map((u) => [u.id, u]));
   for (const uid of allAssigneeIds) {
     const u = assigneeById.get(uid);
-    if (!u) throw new Error("assignee_not_found");
+    if (!u) return err("assignee_not_found");
     const b: ActorContext = { id: u.id, position: u.position, departmentId: u.departmentId };
-    if (!(await canAssignTaskTo(a, b))) throw new Error(`forbidden_assign:${u.fullName}`);
+    // `forbidden_assign` carries a name and has no `common.actionErrors` key — the
+    // client cannot localize it, so we surface the generic `forbidden` code instead.
+    if (!(await canAssignTaskTo(a, b))) return err("forbidden");
   }
 
   const regNum = await nextRegistrationNumber();
@@ -116,7 +119,7 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<{
   const inserted = { id: insertedId };
 
   revalidatePath("/tasks");
-  return { id: inserted.id };
+  return ok({ id: inserted.id });
 }
 
 const studioTaskSchema = z.object({
@@ -136,13 +139,13 @@ const studioTaskSchema = z.object({
  * bosqichiga bog'lanishi mumkin (ixtiyoriy; standart — joriy bosqich, uni mijoz
  * tanlaydi). Mavjud ichki vazifa mantig'iga tegilmaydi.
  */
-export async function createStudioTask(input: z.infer<typeof studioTaskSchema>): Promise<{ id: string }> {
+export async function createStudioTask(input: z.infer<typeof studioTaskSchema>): Promise<ActionResult<{ id: string }>> {
   const me = await requireUser();
   const parsed = studioTaskSchema.parse(input);
 
   // Faqat loyiha muharrirlari studiyaga vazifa bera oladi (Studiyalar sahifasidagi isEditor bilan bir xil).
   const isEditor = canEditProjects(me.email) || (await hasGrant(me.id, "projects.edit"));
-  if (!isEditor) throw new Error("forbidden");
+  if (!isEditor) return err("forbidden");
 
   // Loyiha → studiya (external_companies) → kontragent foydalanuvçini aniqlaymiz.
   const [prj] = await db
@@ -150,19 +153,19 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
     .from(projects)
     .where(eq(projects.id, parsed.projectId))
     .limit(1);
-  if (!prj || !prj.externalCompanyId) throw new Error("not_a_studio_project");
+  if (!prj || !prj.externalCompanyId) return err("not_a_studio_project");
   const [company] = await db
     .select({ email: externalCompanies.contactEmail })
     .from(externalCompanies)
     .where(eq(externalCompanies.id, prj.externalCompanyId))
     .limit(1);
-  if (!company?.email) throw new Error("studio_has_no_login");
+  if (!company?.email) return err("studio_has_no_login");
   const [studioUser] = await db
     .select({ id: users.id })
     .from(users)
     .where(and(eq(users.email, company.email), eq(users.position, "kontragent")))
     .limit(1);
-  if (!studioUser) throw new Error("studio_has_no_login");
+  if (!studioUser) return err("studio_has_no_login");
 
   // Bosqiç berilgan bölsa — u ayni şu loyihaga tegişli ekanini tekşiramiz.
   let stageId: string | null = null;
@@ -172,7 +175,7 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
       .from(projectStages)
       .where(and(eq(projectStages.id, parsed.stageId), eq(projectStages.projectId, parsed.projectId)))
       .limit(1);
-    if (!st) throw new Error("stage_not_in_project");
+    if (!st) return err("stage_not_in_project");
     stageId = st.id;
   }
 
@@ -218,7 +221,7 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
 
   revalidatePath(`/contractor/tasks`);
   revalidatePath("/contractors");
-  return { id: insertedId };
+  return ok({ id: insertedId });
 }
 
 /**
@@ -228,14 +231,14 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
  * boşqaradi (studiya faqat öz loyihasiga; xodimlar erkin) va ikkinçi tomonni
  * xabardor qiladi ("eslatma").
  */
-export async function shareTaskToChat(taskId: string) {
+export async function shareTaskToChat(taskId: string): Promise<ActionResult> {
   await requireUser();
   const [task] = await db
     .select({ id: tasks.id, title: tasks.title, projectId: tasks.projectId, stageId: tasks.stageId, deadline: tasks.deadline, description: tasks.description })
     .from(tasks)
     .where(eq(tasks.id, taskId))
     .limit(1);
-  if (!task || !task.projectId) throw new Error("not_found");
+  if (!task || !task.projectId) return err("not_found");
 
   const lines = [`📋 Vazifa: «${task.title}»`];
   if (task.deadline) lines.push(`🗓 ${new Date(task.deadline).toISOString().slice(0, 10)}`);
@@ -246,7 +249,7 @@ export async function shareTaskToChat(taskId: string) {
     ...(task.stageId ? { stageId: task.stageId } : {}),
     content: lines.join("\n"),
   });
-  return { ok: true };
+  return ok();
 }
 
 const commentSchema = z.object({
@@ -363,7 +366,7 @@ const responseSchema = z.object({
   responseText: z.string().min(1).max(5000),
 });
 
-export async function submitTaskResponse(input: z.infer<typeof responseSchema>, file?: File | null) {
+export async function submitTaskResponse(input: z.infer<typeof responseSchema>, file?: File | null): Promise<ActionResult> {
   const me = await requireUser();
   const parsed = responseSchema.parse(input);
 
@@ -373,7 +376,7 @@ export async function submitTaskResponse(input: z.infer<typeof responseSchema>, 
     .from(taskAssignees)
     .where(and(eq(taskAssignees.taskId, parsed.taskId), eq(taskAssignees.userId, me.id)))
     .limit(1);
-  if (a.length === 0) throw new Error("not_an_assignee");
+  if (a.length === 0) return err("not_an_assignee");
 
   let fileUrl: string | null = null;
   let fileName: string | null = null;
@@ -424,6 +427,7 @@ export async function submitTaskResponse(input: z.infer<typeof responseSchema>, 
     });
   }
   revalidatePath(`/tasks/${parsed.taskId}`);
+  return ok();
 }
 
 // Yaratuvçi ayrim ijroçining javobini tasdiqlaydi / rad etadi
@@ -432,12 +436,12 @@ export async function reviewAssigneeResponse(
   assigneeUserId: string,
   decision: "completed" | "rejected",
   feedback?: string
-) {
+): Promise<ActionResult> {
   const me = await requireUser();
   const t = await db.select().from(tasks).where(eq(tasks.id, taskId)).limit(1);
-  if (t.length === 0) throw new Error("not_found");
+  if (t.length === 0) return err("not_found");
   const isCreator = t[0].createdByUserId === me.id || ["direktor", "orinbosar"].includes(me.position);
-  if (!isCreator) throw new Error("forbidden");
+  if (!isCreator) return err("forbidden");
 
   await db
     .update(taskAssignees)
@@ -497,6 +501,7 @@ export async function reviewAssigneeResponse(
   });
   revalidatePath(`/tasks/${taskId}`);
   revalidatePath(`/contractor/tasks/${taskId}`);
+  return ok();
 }
 
 // Ijroçi özini "in_progress" (boşladi) deb belgilaydi

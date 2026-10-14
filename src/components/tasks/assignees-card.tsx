@@ -81,7 +81,13 @@ export function AssigneesCard({
 
   async function review(userId: string, decision: "completed" | "rejected") {
     try {
-      await reviewAssigneeResponse(taskId, userId, decision, feedback[userId]);
+      const res = await reviewAssigneeResponse(taskId, userId, decision, feedback[userId]);
+      if (!res.ok) {
+        toast.error(t("tasks.review.errorToast"), {
+          description: t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"),
+        });
+        return;
+      }
       toast.success(decision === "completed" ? t("tasks.review.approvedToast") : t("tasks.review.rejectedToast"));
     } catch (err) {
       toast.error(t("tasks.review.errorToast"), { description: (err as Error).message });
