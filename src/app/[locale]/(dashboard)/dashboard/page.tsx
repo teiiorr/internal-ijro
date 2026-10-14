@@ -10,6 +10,7 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 import { HrWidgets } from "@/components/dashboards/hr-widgets";
 import { ManagerWidgets } from "@/components/dashboards/manager-widgets";
 import { TeamWorkloadWidget } from "@/components/dashboards/team-workload";
+import { StandupWidget } from "@/components/dashboards/standup-widget";
 import { PaymentsDueWidget } from "@/components/dashboards/payments-due";
 import { EscalationsWidget } from "@/components/dashboards/escalations";
 import { SpecialistWidgets } from "@/components/dashboards/specialist-widgets";
@@ -73,6 +74,11 @@ export default async function DashboardPage() {
 
       <Suspense fallback={null}>
         <AckWidget userId={user.id} />
+      </Suspense>
+
+      {/* Kunlik hisobot (standup) — har bir ichki xodim bugungi hisobotini toʻldiradi */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <StandupWidget userId={user.id} />
       </Suspense>
 
       {isManager && (

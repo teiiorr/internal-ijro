@@ -1158,6 +1158,19 @@
 			"stage": "Bosqich",
 			"task": "Vazifa",
 			"daysOverdue": "{n} kun kechikdi"
+		},
+		"standup": {
+			"title": "Kunlik hisobot",
+			"doneYesterday": "Kecha nima qildim",
+			"plannedToday": "Bugun nima qilaman",
+			"blockers": "Toʻsiqlar",
+			"donePlaceholder": "Kechagi natijalar...",
+			"todayPlaceholder": "Bugungi reja...",
+			"blockersPlaceholder": "Nima xalaqit beryapti? (ixtiyoriy)",
+			"submit": "Topshirish",
+			"update": "Yangilash",
+			"saved": "Saqlandi",
+			"submittedToday": "Bugungi hisobot topshirildi"
 		}
 	},
 	"commandPalette": {
@@ -2208,7 +2221,8 @@
 				"forbidden": "Bu amal uchun ruxsat yoʻq",
 				"weekNotFinished": "Hafta hali tugamagan — xulosani hafta yakunlangach yozing"
 			},
-			"tabMinistry": "Ministrlik hisoboti"
+			"tabMinistry": "Ministrlik hisoboti",
+			"tabStandup": "Kunlik hisobot"
 		},
 		"ministryReport": {
 			"title": "Ministrlik uchun hisobot",
@@ -2240,6 +2254,15 @@
 			"disciplineLate": "Kechikib yakunlangan",
 			"disciplineCompleted": "Yakunlangan bosqichlar",
 			"export": "Excelga yuklab olish"
+		},
+		"standupTeam": {
+			"title": "Jamoaning kunlik hisobotlari",
+			"submittedCount": "{done}/{total} topshirdi",
+			"empty": "Bugun hali hech kim hisobot topshirmagan",
+			"doneYesterday": "Kecha",
+			"plannedToday": "Bugun",
+			"blockers": "Toʻsiqlar",
+			"notSubmittedYet": "Hali topshirmaganlar"
 		}
 	},
 	"errorPage": {

@@ -1158,6 +1158,19 @@
 			"stage": "Босқич",
 			"task": "Вазифа",
 			"daysOverdue": "{n} кун кечикди"
+		},
+		"standup": {
+			"title": "Кунлик ҳисобот",
+			"doneYesterday": "Кеча нима қилдим",
+			"plannedToday": "Бугун нима қиламан",
+			"blockers": "Тўсиқлар",
+			"donePlaceholder": "Кечаги натижалар...",
+			"todayPlaceholder": "Бугунги режа...",
+			"blockersPlaceholder": "Нима халақит беряпти? (ихтиёрий)",
+			"submit": "Топшириш",
+			"update": "Янгилаш",
+			"saved": "Сақланди",
+			"submittedToday": "Бугунги ҳисобот топширилди"
 		}
 	},
 	"commandPalette": {
@@ -2208,7 +2221,8 @@
 				"forbidden": "Бу амал учун рухсат йўқ",
 				"weekNotFinished": "Ҳафта ҳали тугамаган — хулосани ҳафта якунлангач ёзинг"
 			},
-			"tabMinistry": "Министрлик ҳисоботи"
+			"tabMinistry": "Министрлик ҳисоботи",
+			"tabStandup": "Кунлик ҳисобот"
 		},
 		"ministryReport": {
 			"title": "Министрлик учун ҳисобот",
@@ -2240,6 +2254,15 @@
 			"disciplineLate": "Кечикиб якунланган",
 			"disciplineCompleted": "Якунланган босқичлар",
 			"export": "Excelга юклаб олиш"
+		},
+		"standupTeam": {
+			"title": "Жамоанинг кунлик ҳисоботлари",
+			"submittedCount": "{done}/{total} топширди",
+			"empty": "Бугун ҳали ҳеч ким ҳисобот топширмаган",
+			"doneYesterday": "Кеча",
+			"plannedToday": "Бугун",
+			"blockers": "Тўсиқлар",
+			"notSubmittedYet": "Ҳали топширмаганлар"
 		}
 	},
 	"errorPage": {

@@ -1158,6 +1158,19 @@
 			"stage": "Этап",
 			"task": "Задача",
 			"daysOverdue": "просрочено {n} дн."
+		},
+		"standup": {
+			"title": "Ежедневный отчёт",
+			"doneYesterday": "Что сделал вчера",
+			"plannedToday": "Что сделаю сегодня",
+			"blockers": "Препятствия",
+			"donePlaceholder": "Вчерашние результаты...",
+			"todayPlaceholder": "План на сегодня...",
+			"blockersPlaceholder": "Что мешает? (необязательно)",
+			"submit": "Отправить",
+			"update": "Обновить",
+			"saved": "Сохранено",
+			"submittedToday": "Отчёт за сегодня отправлен"
 		}
 	},
 	"commandPalette": {
@@ -2208,7 +2221,8 @@
 				"forbidden": "Недостаточно прав для этого действия",
 				"weekNotFinished": "Неделя ещё не завершилась — запишите итоги после её окончания"
 			},
-			"tabMinistry": "Отчёт для министерства"
+			"tabMinistry": "Отчёт для министерства",
+			"tabStandup": "Ежедневный отчёт"
 		},
 		"ministryReport": {
 			"title": "Отчёт для министерства",
@@ -2240,6 +2254,15 @@
 			"disciplineLate": "Завершено с опозданием",
 			"disciplineCompleted": "Завершённые этапы",
 			"export": "Скачать Excel"
+		},
+		"standupTeam": {
+			"title": "Ежедневные отчёты команды",
+			"submittedCount": "{done}/{total} отправили",
+			"empty": "Сегодня ещё никто не отправил отчёт",
+			"doneYesterday": "Вчера",
+			"plannedToday": "Сегодня",
+			"blockers": "Препятствия",
+			"notSubmittedYet": "Ещё не отправили"
 		}
 	},
 	"errorPage": {
