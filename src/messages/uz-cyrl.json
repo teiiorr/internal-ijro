@@ -1231,6 +1231,19 @@
 		"requestedBy": "Сўради:"
 	},
 	"kengash": {
+		"protocol": {
+			"decision": "Қарор",
+			"download": "Баённомани юклаб олиш",
+			"setDecision": "Қарор белгилаш",
+			"decisionPlaceholder": "Қарор матни (ихтиёрий)",
+			"decisionSaved": "Қарор сақланди"
+		},
+		"decision": {
+			"pending": "Кутилмоқда",
+			"approved": "Маъқулланди",
+			"rejected": "Рад этилди",
+			"deferred": "Кейинга қолдирилди"
+		},
 		"ekspertHeading": "Келаётган Экспертлар Кенгашининг кун тартиби",
 		"smetaHeading": "Келаётган Смета Комиссиясининг кун тартиби",
 		"archiveButton": "Архив",

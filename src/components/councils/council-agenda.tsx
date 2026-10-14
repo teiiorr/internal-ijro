@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IconTrash as Trash2, IconPlus as Plus } from "@tabler/icons-react";
 import { addAgendaItem, deleteAgendaItem } from "@/server/actions/councils";
+import { CouncilDecision } from "./council-decision";
 
 type AgendaRow = {
   id: string;
   topic: string;
   projectName: string | null;
   studioName: string | null;
+  decisionStatus: string;
+  decision: string | null;
 };
 type Option = { id: string; name: string };
 
@@ -67,6 +70,7 @@ export function CouncilAgenda({
               <th className="py-2.5 pr-3 font-semibold">{t("kengash.topic")}</th>
               <th className="py-2.5 pr-3 font-semibold">{t("kengash.project")}</th>
               <th className="py-2.5 pr-3 font-semibold">{t("kengash.studio")}</th>
+              <th className="py-2.5 pr-3 font-semibold">{t("kengash.protocol.decision")}</th>
               {canManage && <th className="w-10 py-2.5" />}
             </tr>
           </thead>
@@ -77,6 +81,9 @@ export function CouncilAgenda({
                 <td className="py-3 pr-3 font-medium text-[var(--ink)]">{row.topic}</td>
                 <td className="py-3 pr-3 text-[var(--ink-2)]">{row.projectName ?? "—"}</td>
                 <td className="py-3 pr-3 text-[var(--ink-2)]">{row.studioName ?? "—"}</td>
+                <td className="py-3 pr-3">
+                  <CouncilDecision itemId={row.id} status={row.decisionStatus} decision={row.decision} canManage={canManage} />
+                </td>
                 {canManage && (
                   <td className="py-2 text-right">
                     <Button variant="ghost" size="icon-sm" disabled={pending} aria-label={t("common.delete")} onClick={() => start(async () => { await deleteAgendaItem(row.id); })}>
@@ -87,7 +94,7 @@ export function CouncilAgenda({
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={canManage ? 5 : 4} className="py-8 text-center text-[var(--ink-3)]">{t("kengash.noItems")}</td></tr>
+              <tr><td colSpan={canManage ? 6 : 5} className="py-8 text-center text-[var(--ink-3)]">{t("kengash.noItems")}</td></tr>
             )}
           </tbody>
         </table>
@@ -114,6 +121,12 @@ export function CouncilAgenda({
               <div className="flex gap-2">
                 <dt className="w-24 shrink-0 text-[var(--ink-3)]">{t("kengash.studio")}</dt>
                 <dd className="font-medium text-[var(--ink)]">{row.studioName ?? "—"}</dd>
+              </div>
+              <div className="flex gap-2">
+                <dt className="w-24 shrink-0 pt-1 text-[var(--ink-3)]">{t("kengash.protocol.decision")}</dt>
+                <dd className="min-w-0 flex-1">
+                  <CouncilDecision itemId={row.id} status={row.decisionStatus} decision={row.decision} canManage={canManage} />
+                </dd>
               </div>
             </dl>
           </div>
