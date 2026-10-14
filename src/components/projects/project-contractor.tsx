@@ -63,7 +63,8 @@ export function ProjectContractor({
           const created = await createContractor({ name: nm, contactPerson: person.trim() || null, contactPhone: phone.trim() || null });
           companyId = created.id;
         }
-        await addProjectStudio(projectId, companyId);
+        const r = await addProjectStudio(projectId, companyId);
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("projects.contractor.saved"));
         resetForm();
         router.refresh();
@@ -76,7 +77,8 @@ export function ProjectContractor({
   function remove(companyId: string) {
     start(async () => {
       try {
-        await removeProjectStudio(projectId, companyId);
+        const r = await removeProjectStudio(projectId, companyId);
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("projects.contractor.removed"));
         router.refresh();
       } catch (e) {

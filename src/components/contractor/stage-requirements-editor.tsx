@@ -19,12 +19,13 @@ export function StageRequirementsEditor({ stageId, initial }: { stageId: string;
   function save() {
     start(async () => {
       try {
-        await setStageRequirements(stageId, val);
+        const r = await setStageRequirements(stageId, val);
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("common.saved"));
         setEditing(false);
         router.refresh();
-      } catch (e) {
-        toast.error((e as Error).message);
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }

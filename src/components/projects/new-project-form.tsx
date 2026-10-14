@@ -66,6 +66,7 @@ export function NewProjectForm({
           budget: fd.get("budget") ? Number(fd.get("budget")) : null,
           budgetCurrency: String(fd.get("budgetCurrency") ?? "UZS"),
         });
+        if (!res.ok) { setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found")); return; }
         router.push(`/projects/${res.id}`);
       } catch (e) { setError((e as Error).message); }
     });

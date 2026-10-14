@@ -27,6 +27,7 @@ import {
 
 export function CreateStudioButton() {
   const t = useTranslations("contractors");
+  const tr = useTranslations();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
@@ -45,15 +46,14 @@ export function CreateStudioButton() {
   function submit() {
     start(async () => {
       try {
-        await createStudioWithLogin(form);
+        const r = await createStudioWithLogin(form);
+        if (!r.ok) { toast.error(tr(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("studioCreated"));
         setOpen(false);
         reset();
         router.refresh();
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "error";
-        if (msg === "email_taken") toast.error(t("emailTaken"));
-        else toast.error(msg);
+      } catch {
+        toast.error(tr("common.error"));
       }
     });
   }
@@ -109,6 +109,7 @@ export function CreateStudioButton() {
 
 export function RenameStudioButton({ companyId, currentName }: { companyId: string; currentName: string }) {
   const t = useTranslations("contractors");
+  const tr = useTranslations();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
@@ -117,12 +118,13 @@ export function RenameStudioButton({ companyId, currentName }: { companyId: stri
   function submit() {
     start(async () => {
       try {
-        await renameContractor(companyId, name);
+        const r = await renameContractor(companyId, name);
+        if (!r.ok) { toast.error(tr(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("studioRenamed"));
         setOpen(false);
         router.refresh();
       } catch {
-        toast.error("Xatolik");
+        toast.error(tr("common.error"));
       }
     });
   }
@@ -159,6 +161,7 @@ export function RenameStudioButton({ companyId, currentName }: { companyId: stri
 
 export function DeleteStudioButton({ companyId, studioName, hasProjects }: { companyId: string; studioName: string; hasProjects: boolean }) {
   const t = useTranslations("contractors");
+  const tr = useTranslations();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
@@ -166,14 +169,13 @@ export function DeleteStudioButton({ companyId, studioName, hasProjects }: { com
   function submit() {
     start(async () => {
       try {
-        await deleteContractor(companyId);
+        const r = await deleteContractor(companyId);
+        if (!r.ok) { toast.error(tr(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("studioDeleted"));
         setOpen(false);
         router.refresh();
-      } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : "error";
-        if (msg === "has_projects") toast.error(t("cannotDeleteHasProjects"));
-        else toast.error("Xatolik");
+      } catch {
+        toast.error(tr("common.error"));
       }
     });
   }

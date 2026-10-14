@@ -11,6 +11,7 @@ import { notify } from "@/lib/notifications";
 import { deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
 import { recordDeadlineChange } from "@/lib/projects/deadline-log";
+import { type ActionResult } from "@/lib/action-result";
 
 function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/projects/${projectId}`);
@@ -45,14 +46,14 @@ async function directorIds(): Promise<string[]> {
  * Joriy faol bosqiçni yakunlaydi va keyingisini oçadi.
  * Qat'iy ketma-ket holat maşinasi: faqat 'active' bosqiçni yakunlaş mumkin.
  */
-export async function completeStage(stageId: string) {
+export async function completeStage(stageId: string): Promise<ActionResult<{ projectCompleted: boolean; nextStageId: string | null }>> {
   const me = await requireProjectEditor();
 
   const result = await db.transaction(async (tx) => {
     const rows = await tx.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-    if (rows.length === 0) throw new Error("not_found");
+    if (rows.length === 0) return { ok: false as const, error: "not_found" };
     const stage = rows[0];
-    if (stage.status !== "active") throw new Error("stage_not_active");
+    if (stage.status !== "active") return { ok: false as const, error: "stage_not_active" };
     const now = new Date();
 
     await tx
@@ -131,8 +132,10 @@ export async function completeStage(stageId: string) {
         .where(eq(projects.id, stage.projectId));
     }
 
-    return { stage, next, projectCompleted };
+    return { ok: true as const, stage, next, projectCompleted };
   });
+
+  if (!result.ok) return { ok: false, error: result.error };
 
   await recalcProjectProgress(result.stage.projectId);
 
@@ -208,7 +211,7 @@ export async function completeStage(stageId: string) {
   }
 
   stageLinks(result.stage.projectId, stageId);
-  return { projectCompleted: result.projectCompleted, nextStageId: result.next?.id ?? null };
+  return { ok: true, projectCompleted: result.projectCompleted, nextStageId: result.next?.id ?? null };
 }
 
 /**
@@ -217,14 +220,14 @@ export async function completeStage(stageId: string) {
  * saqlaydi: bu bosqiçni yana faol qiladi va uning yakunlanişi bilan oçilgan
  * bosqiçni qaytadan qulflangan holatga tuşiradi.
  */
-export async function reopenStage(stageId: string) {
+export async function reopenStage(stageId: string): Promise<ActionResult> {
   const me = await requireProjectEditor();
 
-  const { projectId, startStageId } = await db.transaction(async (tx) => {
+  const result = await db.transaction(async (tx) => {
     const rows = await tx.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-    if (rows.length === 0) throw new Error("not_found");
+    if (rows.length === 0) return { ok: false as const, error: "not_found" };
     const stage = rows[0];
-    if (stage.status !== "completed") throw new Error("stage_not_completed");
+    if (stage.status !== "completed") return { ok: false as const, error: "stage_not_completed" };
 
     const all = await tx
       .select({ id: projectStages.id, orderIndex: projectStages.orderIndex, status: projectStages.status, mergeWithNext: projectStages.mergeWithNext })
@@ -235,7 +238,7 @@ export async function reopenStage(stageId: string) {
     // Faqat oxirgi yakunlangan bosqiçni qayta oçiş mumkin (joriy faol bosqiçdan bevosita oldingisi,
     // yoki yakunlangan loyihaning eng sönggi bosqiçi).
     const lastCompleted = [...all].reverse().find((s) => s.status === "completed");
-    if (!lastCompleted || lastCompleted.id !== stageId) throw new Error("not_last_completed");
+    if (!lastCompleted || lastCompleted.id !== stageId) return { ok: false as const, error: "not_last_completed" };
 
     const now = new Date();
 
@@ -278,8 +281,11 @@ export async function reopenStage(stageId: string) {
       .set({ status: "planning", completedAt: null, updatedAt: now })
       .where(and(eq(projects.id, stage.projectId), eq(projects.status, "completed")));
 
-    return { projectId: stage.projectId, startStageId: start.id };
+    return { ok: true as const, projectId: stage.projectId, startStageId: start.id };
   });
+
+  if (!result.ok) return { ok: false, error: result.error };
+  const { projectId, startStageId } = result;
 
   await recalcProjectProgress(projectId);
   await logActivity({ userId: me.id, action: "stage.reopened", entityType: "project_stage", entityId: stageId });
@@ -300,6 +306,7 @@ export async function reopenStage(stageId: string) {
   }
 
   stageLinks(projectId, stageId);
+  return { ok: true };
 }
 
 // ---------- tekşiruv yordamçi maşinasi (studiya ↔ xodim aylanmasi) ----------
@@ -308,12 +315,12 @@ export async function reopenStage(stageId: string) {
  * STUDIYA faol bosqiç işini BKRMga tekşiruvga topşiradi. Bu fayl yuklaşdan
  * alohida, ataylab qilinadigan amal (fayl yuklaş oddiy biriktiriş bölib qolaveradi).
  */
-export async function submitStageWork(stageId: string) {
+export async function submitStageWork(stageId: string): Promise<ActionResult> {
   const me = await requireUser();
   const [stage] = await db.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-  if (!stage) throw new Error("not_found");
-  if (stage.status !== "active") throw new Error("stage_not_active");
-  if (stage.reviewStatus !== "in_progress" && stage.reviewStatus !== "changes_requested") throw new Error("already_submitted");
+  if (!stage) return { ok: false, error: "not_found" };
+  if (stage.status !== "active") return { ok: false, error: "stage_not_active" };
+  if (stage.reviewStatus !== "in_progress" && stage.reviewStatus !== "changes_requested") return { ok: false, error: "already_submitted" };
 
   // Kontragent faqat öz loyihasining bosqiçini topşira oladi.
   if (me.position === "kontragent") {
@@ -321,12 +328,12 @@ export async function submitStageWork(stageId: string) {
     const owned = prj?.ec
       ? await db.select({ id: externalCompanies.id }).from(externalCompanies).where(and(eq(externalCompanies.id, prj.ec), eq(externalCompanies.contactEmail, me.email))).limit(1)
       : [];
-    if (owned.length === 0) throw new Error("forbidden");
+    if (owned.length === 0) return { ok: false, error: "forbidden" };
   }
 
   // Topşiriş uçun aqalli bir narsa bölişi kerak.
   const [cnt] = await db.select({ c: sql<number>`count(*)::int` }).from(stageDocuments).where(eq(stageDocuments.stageId, stageId));
-  if (!cnt || cnt.c === 0) throw new Error("nothing_to_submit");
+  if (!cnt || cnt.c === 0) return { ok: false, error: "nothing_to_submit" };
 
   const now = new Date();
   await db.update(projectStages).set({ reviewStatus: "submitted", submittedAt: now, submittedByUserId: me.id, updatedAt: now }).where(eq(projectStages.id, stageId));
@@ -354,19 +361,20 @@ export async function submitStageWork(stageId: string) {
     });
   }
   stageLinks(stage.projectId, stageId);
+  return { ok: true };
 }
 
 /**
  * XODIM topşirilgan işni izoh bilan qaytaradi. Bosqiç 'active' bölib qoladi; faqat
  * tekşiruv yordamçi maşinasi özgaradi. Izoh tarix uçun bosqiç çatiga ham yozib qöyiladi.
  */
-export async function requestStageChanges(stageId: string, note: string) {
+export async function requestStageChanges(stageId: string, note: string): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const text = (note ?? "").trim();
-  if (text.length < 2) throw new Error("note_required");
+  if (text.length < 2) return { ok: false, error: "note_required" };
   const [stage] = await db.select().from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-  if (!stage) throw new Error("not_found");
-  if (stage.status !== "active") throw new Error("stage_not_active");
+  if (!stage) return { ok: false, error: "not_found" };
+  if (stage.status !== "active") return { ok: false, error: "stage_not_active" };
 
   const now = new Date();
   await db.update(projectStages).set({ reviewStatus: "changes_requested", reviewNote: text, reviewedByUserId: me.id, reviewedAt: now, updatedAt: now }).where(eq(projectStages.id, stageId));
@@ -388,29 +396,31 @@ export async function requestStageChanges(stageId: string, note: string) {
     });
   }
   stageLinks(stage.projectId, stageId);
+  return { ok: true };
 }
 
 /**
  * XODIM topşirilgan işni qabul qiladi → zanjir oldinga suriladi. completeStage
  * ustidagi yupqa örоvçi (u endi studiyaga qabul qilinişi haqida ham xabar beradi).
  */
-export async function acceptStage(stageId: string) {
+export async function acceptStage(stageId: string): Promise<ActionResult<{ projectCompleted: boolean; nextStageId: string | null }>> {
   return completeStage(stageId);
 }
 
 /** XODIM studiya bu bosqiçda nima topşirişi kerakligini belgilaydi (studiya uçun faqat öqiş). */
-export async function setStageRequirements(stageId: string, requirements: string | null) {
+export async function setStageRequirements(stageId: string, requirements: string | null): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const [row] = await db.select({ projectId: projectStages.projectId }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-  if (!row) throw new Error("not_found");
+  if (!row) return { ok: false, error: "not_found" };
   await db.update(projectStages).set({ requirements: requirements?.trim() || null, updatedAt: new Date() }).where(eq(projectStages.id, stageId));
   await logActivity({ userId: me.id, action: "stage.requirements_set", entityType: "project_stage", entityId: stageId });
   stageLinks(row.projectId, stageId);
+  return { ok: true };
 }
 
 // ---------- maydon yangilagiçlar ----------
 
-export async function setStageDeadline(stageId: string, date: string | null, reason?: string | null) {
+export async function setStageDeadline(stageId: string, date: string | null, reason?: string | null): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const why = z.string().nullish().parse(reason);
   const [row] = await db
@@ -418,7 +428,7 @@ export async function setStageDeadline(stageId: string, date: string | null, rea
     .from(projectStages)
     .where(eq(projectStages.id, stageId))
     .limit(1);
-  if (!row) throw new Error("not_found");
+  if (!row) return { ok: false, error: "not_found" };
   await db
     .update(projectStages)
     .set({ plannedDeadline: date, updatedAt: new Date(), reminderApproachingSentAt: null, reminderOverdueSentAt: null })
@@ -442,6 +452,7 @@ export async function setStageDeadline(stageId: string, date: string | null, rea
     newValue: { plannedDeadline: date },
   });
   stageLinks(row.projectId, stageId);
+  return { ok: true };
 }
 
 // Bosqiçning asosiy maydonlarini (nom + boşlaniş/tugaş sanalari + byudjet) bitta
@@ -456,7 +467,7 @@ const updateStageSchema = z.object({
   responsibleUserId: z.string().uuid().nullable().optional(),
   deadlineChangeReason: z.string().max(1000).nullable().optional(),
 });
-export async function updateStage(stageId: string, input: z.infer<typeof updateStageSchema>) {
+export async function updateStage(stageId: string, input: z.infer<typeof updateStageSchema>): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const parsed = updateStageSchema.parse(input);
   const [row] = await db
@@ -464,7 +475,7 @@ export async function updateStage(stageId: string, input: z.infer<typeof updateS
     .from(projectStages)
     .where(eq(projectStages.id, stageId))
     .limit(1);
-  if (!row) throw new Error("not_found");
+  if (!row) return { ok: false, error: "not_found" };
   await db
     .update(projectStages)
     .set({
@@ -494,6 +505,7 @@ export async function updateStage(stageId: string, input: z.infer<typeof updateS
   }
   await logActivity({ userId: me.id, action: "stage.updated", entityType: "project_stage", entityId: stageId, newValue: { name: parsed.name } });
   stageLinks(row.projectId, stageId);
+  return { ok: true };
 }
 
 // ---------- hujjatlar ----------

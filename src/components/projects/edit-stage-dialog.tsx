@@ -55,7 +55,7 @@ export function EditStageDialog({ stage, users = [], currency = "UZS" }: { stage
     if (deadline && startDate && deadline < startDate) { setError(t("projects.editStage.dateOrder")); return; }
     start(async () => {
       try {
-        await updateStage(stage.id, {
+        const res = await updateStage(stage.id, {
           name: name.trim(),
           plannedStartDate: startDate || null,
           plannedDeadline: deadline || null,
@@ -64,6 +64,7 @@ export function EditStageDialog({ stage, users = [], currency = "UZS" }: { stage
           responsibleUserId: responsibleId,
           deadlineChangeReason: deadlineReason.trim() || null,
         });
+        if (!res.ok) { setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found")); return; }
         setDeadlineReason("");
         setOpen(false);
         router.refresh();

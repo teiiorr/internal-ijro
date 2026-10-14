@@ -20,19 +20,20 @@ import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
 import { isOwner } from "@/lib/permissions/owner";
 import { recordDeadlineChange } from "@/lib/projects/deadline-log";
+import { type ActionResult } from "@/lib/action-result";
 
 // ---------------- yordamchilar ----------------
 
-/** Kontragent faqat o'z studiyasiga biriktirilgan loyiha bilan ishlay oladi. */
-async function assertStudioOwnsProject(me: SessionUser, projectId: string) {
+/** Kontragent faqat o'z studiyasiga biriktirilgan loyiha bilan ishlay oladimi. */
+async function studioOwnsProject(me: SessionUser, projectId: string): Promise<boolean> {
   const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
-  if (!prj?.ec) throw new Error("forbidden");
+  if (!prj?.ec) return false;
   const [own] = await db
     .select({ id: externalCompanies.id })
     .from(externalCompanies)
     .where(and(eq(externalCompanies.id, prj.ec), sql`lower(${externalCompanies.contactEmail}) = ${me.email.toLowerCase()}`))
     .limit(1);
-  if (!own) throw new Error("forbidden");
+  return !!own;
 }
 
 /** Loyiha kuratorlari (asosiy + qo'shimcha). */
@@ -91,12 +92,13 @@ const statusSchema = z.object({
   text: z.string().trim().max(2000),
 });
 
-export async function updateProjectCurrentStatus(input: { projectId: string; text: string }) {
+export async function updateProjectCurrentStatus(input: { projectId: string; text: string }): Promise<ActionResult> {
   const me = await requireUser();
   const { projectId, text } = statusSchema.parse(input);
 
-  if (me.position === "kontragent") await assertStudioOwnsProject(me, projectId);
-  else if (!(await canDecide(me, projectId))) throw new Error("forbidden");
+  if (me.position === "kontragent") {
+    if (!(await studioOwnsProject(me, projectId))) return { ok: false, error: "forbidden" };
+  } else if (!(await canDecide(me, projectId))) return { ok: false, error: "forbidden" };
 
   await db.update(projects).set({ currentStatus: text || null, updatedAt: new Date() }).where(eq(projects.id, projectId));
   if (text) {
@@ -122,6 +124,7 @@ export async function updateProjectCurrentStatus(input: { projectId: string; tex
     }
   }
   revalidateProject(projectId);
+  return { ok: true };
 }
 
 // ---------------- 3. Bosqich progressi ----------------
@@ -132,15 +135,15 @@ const progressSchema = z.object({
   note: z.string().trim().max(1000).optional(),
 });
 
-export async function reportStageProgress(input: { stageId: string; progress: number; note?: string }) {
+export async function reportStageProgress(input: { stageId: string; progress: number; note?: string }): Promise<ActionResult> {
   const me = await requireUser();
-  if (me.position !== "kontragent") throw new Error("forbidden");
+  if (me.position !== "kontragent") return { ok: false, error: "forbidden" };
   const { stageId, progress, note } = progressSchema.parse(input);
 
   const [stage] = await db.select({ projectId: projectStages.projectId, name: projectStages.name, status: projectStages.status }).from(projectStages).where(eq(projectStages.id, stageId)).limit(1);
-  if (!stage) throw new Error("not_found");
-  if (stage.status !== "active") throw new Error("stage_not_active");
-  await assertStudioOwnsProject(me, stage.projectId);
+  if (!stage) return { ok: false, error: "not_found" };
+  if (stage.status !== "active") return { ok: false, error: "stage_not_active" };
+  if (!(await studioOwnsProject(me, stage.projectId))) return { ok: false, error: "forbidden" };
 
   await db.insert(stageProgressReports).values({ stageId, projectId: stage.projectId, progress, note: note || null, reportedByUserId: me.id });
   await logActivity({ userId: me.id, action: "stage.progress_reported", entityType: "project_stage", entityId: stageId, newValue: { progress, note } });
@@ -159,6 +162,7 @@ export async function reportStageProgress(input: { stageId: string; progress: nu
     });
   }
   revalidateProject(stage.projectId, stageId);
+  return { ok: true };
 }
 
 // ---------------- 4–5. Studiya so'rovlari ----------------
@@ -172,9 +176,9 @@ const requestSchema = z
   })
   .refine((v) => v.type !== "deadline" || !!v.requestedDeadline, { message: "deadline_required", path: ["requestedDeadline"] });
 
-export async function createStageRequest(input: { stageId: string; type: "deadline" | "blocker"; message: string; requestedDeadline?: string }) {
+export async function createStageRequest(input: { stageId: string; type: "deadline" | "blocker"; message: string; requestedDeadline?: string }): Promise<ActionResult> {
   const me = await requireUser();
-  if (me.position !== "kontragent") throw new Error("forbidden");
+  if (me.position !== "kontragent") return { ok: false, error: "forbidden" };
   const v = requestSchema.parse(input);
 
   const [stage] = await db
@@ -182,14 +186,14 @@ export async function createStageRequest(input: { stageId: string; type: "deadli
     .from(projectStages)
     .where(eq(projectStages.id, v.stageId))
     .limit(1);
-  if (!stage) throw new Error("not_found");
-  if (stage.status === "completed") throw new Error("stage_completed");
-  await assertStudioOwnsProject(me, stage.projectId);
+  if (!stage) return { ok: false, error: "not_found" };
+  if (stage.status === "completed") return { ok: false, error: "stage_completed" };
+  if (!(await studioOwnsProject(me, stage.projectId))) return { ok: false, error: "forbidden" };
 
   if (v.type === "deadline") {
     const today = new Date().toISOString().slice(0, 10);
-    if (v.requestedDeadline! < today) throw new Error("deadline_in_past");
-    if (stage.deadline && v.requestedDeadline! <= stage.deadline) throw new Error("deadline_not_later");
+    if (v.requestedDeadline! < today) return { ok: false, error: "deadline_in_past" };
+    if (stage.deadline && v.requestedDeadline! <= stage.deadline) return { ok: false, error: "deadline_not_later" };
   }
 
   // Bir bosqichda bir turdagi faqat bitta ochiq so'rov.
@@ -198,7 +202,7 @@ export async function createStageRequest(input: { stageId: string; type: "deadli
     .from(stageRequests)
     .where(and(eq(stageRequests.stageId, v.stageId), eq(stageRequests.type, v.type), eq(stageRequests.status, "pending")))
     .limit(1);
-  if (dup) throw new Error("already_pending");
+  if (dup) return { ok: false, error: "already_pending" };
 
   const [row] = await db
     .insert(stageRequests)
@@ -231,6 +235,7 @@ export async function createStageRequest(input: { stageId: string; type: "deadli
     });
   }
   revalidateProject(stage.projectId, v.stageId);
+  return { ok: true };
 }
 
 const decideSchema = z.object({
@@ -239,17 +244,17 @@ const decideSchema = z.object({
   note: z.string().trim().max(1000).optional(),
 });
 
-export async function decideStageRequest(input: { requestId: string; decision: "approved" | "rejected" | "resolved"; note?: string }) {
+export async function decideStageRequest(input: { requestId: string; decision: "approved" | "rejected" | "resolved"; note?: string }): Promise<ActionResult> {
   const me = await requireUser();
   const v = decideSchema.parse(input);
 
   const [req] = await db.select().from(stageRequests).where(eq(stageRequests.id, v.requestId)).limit(1);
-  if (!req) throw new Error("not_found");
-  if (req.status !== "pending") throw new Error("already_decided");
-  if (!(await canDecide(me, req.projectId))) throw new Error("forbidden");
+  if (!req) return { ok: false, error: "not_found" };
+  if (req.status !== "pending") return { ok: false, error: "already_decided" };
+  if (!(await canDecide(me, req.projectId))) return { ok: false, error: "forbidden" };
   // Muddat so'rovi: tasdiqlash/rad etish. Muammo: hal qilindi/rad etish.
-  if (req.type === "deadline" && v.decision === "resolved") throw new Error("bad_decision");
-  if (req.type === "blocker" && v.decision === "approved") throw new Error("bad_decision");
+  if (req.type === "deadline" && v.decision === "resolved") return { ok: false, error: "bad_decision" };
+  if (req.type === "blocker" && v.decision === "approved") return { ok: false, error: "bad_decision" };
 
   const now = new Date();
   await db.transaction(async (tx) => {
@@ -298,4 +303,5 @@ export async function decideStageRequest(input: { requestId: string; decision: "
     });
   }
   revalidateProject(req.projectId, req.stageId);
+  return { ok: true };
 }

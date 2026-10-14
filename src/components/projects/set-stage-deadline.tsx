@@ -33,7 +33,8 @@ export function SetStageDeadline({
   function persist(next: string | null) {
     start(async () => {
       try {
-        await setStageDeadline(stageId, next);
+        const r = await setStageDeadline(stageId, next);
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("projects.stageDeadline.saved"));
         router.refresh();
       } catch (e) {

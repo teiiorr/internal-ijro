@@ -41,12 +41,12 @@ export function StageSubmitButton({
   function onClick() {
     start(async () => {
       try {
-        await submitStageWork(stageId);
+        const r = await submitStageWork(stageId);
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("review.submitSuccess"));
         router.refresh();
-      } catch (e) {
-        const msg = (e as Error).message;
-        toast.error(msg === "nothing_to_submit" ? t("review.nothingToSubmit") : msg);
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }
