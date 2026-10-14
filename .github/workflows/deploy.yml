@@ -11,7 +11,13 @@ name: Deploy to Production
 #   `redesign-biib` from the list below and deploy from `main` alone.
 on:
   push:
-    branches: [main, redesign-biib]
+    # NOTE: auto-deploy is `main`-only for now. `redesign-biib` is currently
+    # deployed via the safe ssh flow (build on the droplet / ship .next) because
+    # the live box still uses the /opt/markaz-ijro/app layout, NOT the
+    # releases/current + shared/.env.production + passwordless-sudo layout this
+    # workflow assumes. Re-add `redesign-biib` here AFTER provisioning the droplet
+    # for that layout (see DEPLOY.md), otherwise the remote step exits early.
+    branches: [main]
     paths-ignore:
       - '**.md'
       - '.github/workflows/android-apk.yml'
