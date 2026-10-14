@@ -101,7 +101,7 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
           <TasksSearch />
         </div>
 
-        <TasksViewSwitcher tasks={filtered} />
+        <TasksViewSwitcher tasks={filtered} selectable />
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
 "use client";
 import { useTranslations, useLocale } from "next-intl";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder, IconCalendarEvent } from "@tabler/icons-react";
 import { toBcp47 } from "@/i18n/bcp47";
 import { cn } from "@/lib/utils";
+import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui-biib/Card";
 import { Link } from "@/i18n/navigation";
 import { Status } from "@/components/ui-biib/Status";
@@ -11,6 +13,8 @@ import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { CalendarView } from "./calendar-view";
 import { EmptyState } from "@/components/empty-state";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { bulkSetTaskPriority } from "@/server/actions/tasks";
+import { TASK_PRIORITIES } from "@/lib/permissions/tasks";
 
 type T = {
   id: string;
@@ -35,11 +39,45 @@ function RowSignal({ row, t }: { row: T; t: ReturnType<typeof useTranslations> }
   return <DeadlineCountdown deadline={row.deadline} completed={false} />;
 }
 
-export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; hrefBase?: string }) {
+export function TasksViewSwitcher({
+  tasks,
+  hrefBase = "/tasks",
+  selectable = false,
+}: {
+  tasks: T[];
+  hrefBase?: string;
+  /** Ommaviy amallar (bir nechta vazifani tanlab ustuvorlik belgilash) — faqat ichki /tasks. */
+  selectable?: boolean;
+}) {
   const t = useTranslations();
   const locale = useLocale();
+  const router = useRouter();
   const [view, setView] = useState<"list" | "calendar">("list");
+  const [sel, setSel] = useState<Set<string>>(new Set());
+  const [pending, start] = useTransition();
   const dueFmt = new Intl.DateTimeFormat(toBcp47(locale), { day: "2-digit", month: "short" });
+
+  function toggle(id: string) {
+    setSel((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function apply(priority: (typeof TASK_PRIORITIES)[number]) {
+    start(async () => {
+      const r = await bulkSetTaskPriority([...sel], priority);
+      if (!r.ok) {
+        toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.invalid"));
+        return;
+      }
+      toast.success(t("tasks.bulk.applied", { n: r.affected }));
+      setSel(new Set());
+      router.refresh();
+    });
+  }
 
   return (
     <div className="space-y-4">
@@ -75,41 +113,77 @@ export function TasksViewSwitcher({ tasks, hrefBase = "/tasks" }: { tasks: T[]; 
         ) : (
           <div className="flex flex-col gap-3">
             {tasks.map((row) => (
-              <Link key={row.id} href={`${hrefBase}/${row.id}`} className="block">
-                <Card bare interactive className="flex items-center gap-3 p-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{row.title}</p>
-                    <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 t-small text-[var(--ink-3)]">
-                      {row.assignedToName && (
-                        <span className="inline-flex min-w-0 items-center gap-1.5">
-                          <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />
-                          <span className="truncate">{row.assignedToName}</span>
-                        </span>
-                      )}
-                      {row.projectName && (
-                        <span className="inline-flex min-w-0 items-center gap-1">
-                          <Folder className="size-3.5 shrink-0" aria-hidden />
-                          <span className="truncate">{row.projectName}</span>
-                        </span>
-                      )}
-                      {row.deadline && (
-                        <span className="inline-flex shrink-0 items-center gap-1 tabular-nums">
-                          <IconCalendarEvent className="size-3.5 shrink-0" aria-hidden />
-                          {dueFmt.format(new Date(row.deadline))}
-                        </span>
-                      )}
+              <div key={row.id} className="flex items-center gap-2.5">
+                {selectable && (
+                  <input
+                    type="checkbox"
+                    checked={sel.has(row.id)}
+                    onChange={() => toggle(row.id)}
+                    aria-label={t("tasks.bulk.select")}
+                    className="size-4 shrink-0 cursor-pointer accent-[var(--tint)]"
+                  />
+                )}
+                <Link href={`${hrefBase}/${row.id}`} className="block min-w-0 flex-1">
+                  <Card bare interactive className="flex items-center gap-3 p-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[0.9375rem] font-medium text-[var(--ink)]">{row.title}</p>
+                      <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 t-small text-[var(--ink-3)]">
+                        {row.assignedToName && (
+                          <span className="inline-flex min-w-0 items-center gap-1.5">
+                            <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />
+                            <span className="truncate">{row.assignedToName}</span>
+                          </span>
+                        )}
+                        {row.projectName && (
+                          <span className="inline-flex min-w-0 items-center gap-1">
+                            <Folder className="size-3.5 shrink-0" aria-hidden />
+                            <span className="truncate">{row.projectName}</span>
+                          </span>
+                        )}
+                        {row.deadline && (
+                          <span className="inline-flex shrink-0 items-center gap-1 tabular-nums">
+                            <IconCalendarEvent className="size-3.5 shrink-0" aria-hidden />
+                            {dueFmt.format(new Date(row.deadline))}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="shrink-0">
-                    <RowSignal row={row} t={t} />
-                  </div>
-                </Card>
-              </Link>
+                    <div className="shrink-0">
+                      <RowSignal row={row} t={t} />
+                    </div>
+                  </Card>
+                </Link>
+              </div>
             ))}
           </div>
         )
       ) : (
         <CalendarView tasks={tasks} hrefBase={hrefBase} />
+      )}
+
+      {selectable && view === "list" && sel.size > 0 && (
+        <div className="sticky bottom-4 z-30 mx-auto flex w-fit max-w-full flex-wrap items-center gap-2 rounded-[var(--radius-card)] border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 shadow-[var(--shadow-2)]">
+          <span className="t-small font-semibold text-[var(--ink)]">{t("tasks.bulk.selected", { n: sel.size })}</span>
+          <span className="t-small text-[var(--ink-3)]">{t("tasks.bulk.setPriority")}:</span>
+          {TASK_PRIORITIES.map((p) => (
+            <button
+              key={p}
+              type="button"
+              disabled={pending}
+              onClick={() => apply(p)}
+              className="rounded-[var(--radius-control)] border border-[var(--line)] px-2.5 py-1 t-small font-medium text-[var(--ink-2)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)] disabled:opacity-50"
+            >
+              {t(`tasks.priority.${p}` as "tasks.priority.low")}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setSel(new Set())}
+            className="ml-1 t-small text-[var(--ink-3)] transition-colors hover:text-[var(--ink)]"
+          >
+            {t("tasks.bulk.clear")}
+          </button>
+        </div>
       )}
     </div>
   );

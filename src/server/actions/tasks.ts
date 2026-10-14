@@ -504,5 +504,36 @@ export async function reviewAssigneeResponse(
   return ok();
 }
 
+/**
+ * Ommaviy (bulk) amal: tanlangan vazifalarga ustuvorlikni belgilaydi. Har bir vazifa
+ * boʻyicha huquq tekshiriladi (yaratuvchi yoki direktor/oʻrinbosar); ruxsat yoʻqlari
+ * jimgina tashlab ketiladi. affected — haqiqatda oʻzgartirilgan vazifalar soni.
+ */
+export async function bulkSetTaskPriority(
+  ids: string[],
+  priority: (typeof TASK_PRIORITIES)[number],
+): Promise<ActionResult<{ affected: number }>> {
+  const me = await requireUser();
+  if (!Array.isArray(ids) || ids.length === 0) return err("invalid");
+  if (!TASK_PRIORITIES.includes(priority)) return err("invalid");
+  const isManager = ["direktor", "orinbosar"].includes(me.position);
+  const rows = await db
+    .select({ id: tasks.id, createdBy: tasks.createdByUserId })
+    .from(tasks)
+    .where(inArray(tasks.id, ids));
+  const allowed = rows.filter((r) => isManager || r.createdBy === me.id).map((r) => r.id);
+  if (allowed.length === 0) return err("forbidden");
+  await db.update(tasks).set({ priority }).where(inArray(tasks.id, allowed));
+  await logActivity({
+    userId: me.id,
+    action: "task.bulk_priority",
+    entityType: "task",
+    entityId: allowed[0],
+    newValue: { priority, count: allowed.length },
+  });
+  revalidatePath("/tasks");
+  return ok({ affected: allowed.length });
+}
+
 // Ijroçi özini "in_progress" (boşladi) deb belgilaydi
 

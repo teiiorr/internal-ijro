@@ -389,6 +389,13 @@
 			"stageHint": "Standart — loyihaning joriy bosqiçi",
 			"titleRequired": "Vazifa nomini kiriting",
 			"created": "Vazifa berildi"
+		},
+		"bulk": {
+			"select": "Tanlash",
+			"selected": "{n} tanlandi",
+			"setPriority": "Ustuvorlik",
+			"applied": "{n} ta vazifa yangilandi",
+			"clear": "Bekor"
 		}
 	},
 	"projects": {
