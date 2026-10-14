@@ -50,7 +50,7 @@ export function NewStudioTaskDialog({
     if (title.length < 2) { setError(t("tasks.studioTask.titleRequired")); return; }
     start(async () => {
       try {
-        await createStudioTask({
+        const res = await createStudioTask({
           projectId,
           stageId: stageId || null,
           title,
@@ -58,6 +58,10 @@ export function NewStudioTaskDialog({
           priority: priority as (typeof PRIORITIES)[number],
           deadline: deadlineStr ? new Date(deadlineStr).toISOString() : null,
         });
+        if (!res.ok) {
+          setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
+          return;
+        }
         toast.success(t("tasks.studioTask.created"));
         setOpen(false);
         router.refresh();

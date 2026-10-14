@@ -7,6 +7,7 @@ import { projects, taskAssignees, tasks } from "@/lib/db/schema";
 import { personalTodos } from "@/lib/db/tables/my-work";
 import { requireUser, type SessionUser } from "@/lib/session";
 import { isIsoDate } from "@/lib/my-work/buckets";
+import { ok, err, type ActionResult } from "@/lib/action-result";
 
 // Shaxsiy eslatmalar — faqat egasi uchun. Har bir amal user_id = men sharti bilan
 // cheklanadi (begona id kelsa hech narsa oʻzgarmaydi → "not_found").
@@ -109,7 +110,7 @@ export async function updateTodo(input: {
   title?: string;
   note?: string | null;
   dueDate?: string | null;
-}): Promise<void> {
+}): Promise<ActionResult> {
   const me = await requireStaff();
   const p = updateSchema.parse(input);
 
@@ -123,13 +124,14 @@ export async function updateTodo(input: {
     .set(patch)
     .where(and(eq(personalTodos.id, p.id), eq(personalTodos.userId, me.id)))
     .returning({ id: personalTodos.id });
-  if (rows.length === 0) throw new Error("not_found");
+  if (rows.length === 0) return err("not_found");
   revalidate();
+  return ok();
 }
 
 // ---------------- bajarildi / qayta ochish ----------------
 
-export async function toggleTodo(id: string, done: boolean): Promise<void> {
+export async function toggleTodo(id: string, done: boolean): Promise<ActionResult> {
   const me = await requireStaff();
   const todoId = idSchema.parse(id);
   const isDone = z.boolean().parse(done);
@@ -139,13 +141,14 @@ export async function toggleTodo(id: string, done: boolean): Promise<void> {
     .set({ doneAt: isDone ? new Date() : null, updatedAt: new Date() })
     .where(and(eq(personalTodos.id, todoId), eq(personalTodos.userId, me.id)))
     .returning({ id: personalTodos.id });
-  if (rows.length === 0) throw new Error("not_found");
+  if (rows.length === 0) return err("not_found");
   revalidate();
+  return ok();
 }
 
 // ---------------- oʻchirish ----------------
 
-export async function deleteTodo(id: string): Promise<void> {
+export async function deleteTodo(id: string): Promise<ActionResult> {
   const me = await requireStaff();
   const todoId = idSchema.parse(id);
 
@@ -153,8 +156,9 @@ export async function deleteTodo(id: string): Promise<void> {
     .delete(personalTodos)
     .where(and(eq(personalTodos.id, todoId), eq(personalTodos.userId, me.id)))
     .returning({ id: personalTodos.id });
-  if (rows.length === 0) throw new Error("not_found");
+  if (rows.length === 0) return err("not_found");
   revalidate();
+  return ok();
 }
 
 // ---------------- tartiblash ----------------

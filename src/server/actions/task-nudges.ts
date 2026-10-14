@@ -8,6 +8,7 @@ import { taskNudges } from "@/lib/db/tables/task-control";
 import { requireUser } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
+import { ok, err, type ActionResult } from "@/lib/action-result";
 
 const OPEN_STATUSES = ["todo", "in_progress", "rejected"];
 const DEFAULT_MESSAGE = "Topshiriq boʻyicha javobingiz kutilmoqda / Ожидается ваш ответ по поручению";
@@ -37,9 +38,9 @@ export async function nudgeAssignees(input: {
   taskId: string;
   userIds: string[];
   message?: string | null;
-}): Promise<{ sent: string[]; throttled: string[] }> {
+}): Promise<ActionResult<{ sent: string[]; throttled: string[] }>> {
   const me = await requireUser();
-  if (me.position === "kontragent") throw new Error("forbidden");
+  if (me.position === "kontragent") return err("forbidden");
   const { taskId, userIds, message } = nudgeSchema.parse(input);
   const text = message?.trim() ? message.trim() : null;
 
@@ -48,9 +49,9 @@ export async function nudgeAssignees(input: {
     .from(tasks)
     .where(eq(tasks.id, taskId))
     .limit(1);
-  if (!task) throw new Error("not_found");
+  if (!task) return err("not_found");
   const canManage = task.createdBy === me.id || me.position === "direktor" || me.position === "orinbosar";
-  if (!canManage) throw new Error("forbidden");
+  if (!canManage) return err("forbidden");
 
   const requested = Array.from(new Set(userIds));
   const eligible = await db
@@ -66,7 +67,7 @@ export async function nudgeAssignees(input: {
       )
     );
   const eligibleIds = eligible.map((r) => r.userId);
-  if (eligibleIds.length === 0) return { sent: [], throttled: [] };
+  if (eligibleIds.length === 0) return ok({ sent: [], throttled: [] });
 
   let sent: string[] = [];
   let throttled: string[] = [];
@@ -94,7 +95,7 @@ export async function nudgeAssignees(input: {
     }));
   } catch (e) {
     // task_nudges jadvali hali yaratilmagan (0031 migratsiyasi qo'llanmagan) — cheklovsiz yuborib bo'lmaydi.
-    if (isMissingTable(e)) throw new Error("nudge_unavailable");
+    if (isMissingTable(e)) return err("nudge_unavailable");
     throw e;
   }
 
@@ -119,5 +120,5 @@ export async function nudgeAssignees(input: {
 
   revalidatePath("/tasks/control");
   revalidatePath(`/tasks/${taskId}`);
-  return { sent, throttled };
+  return ok({ sent, throttled });
 }

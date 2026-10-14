@@ -49,6 +49,10 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
           priority: (fd.get("priority") as any) ?? "medium",
           deadline: deadlineStr ? new Date(deadlineStr).toISOString() : null,
         });
+        if (!res.ok) {
+          setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
+          return;
+        }
         router.push(`/tasks/${res.id}`);
       } catch (err) {
         setError((err as Error).message);

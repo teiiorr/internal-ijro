@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { deleteTodo, toggleTodo, updateTodo } from "@/server/actions/personal-todos";
+import { type ActionResult } from "@/lib/action-result";
 import { KindChip, shortDate } from "./kind-meta";
 
 export type TodoRowItem = {
@@ -28,6 +29,7 @@ export type TodoRowItem = {
 export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
   const t = useTranslations("staffX.myWork");
   const tc = useTranslations("common");
+  const tr = useTranslations();
   const locale = useLocale();
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -41,10 +43,14 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
 
   const overdue = !done && !!item.date && item.date < today;
 
-  function run(fn: () => Promise<void>, onOk?: () => void) {
+  function run(fn: () => Promise<ActionResult>, onOk?: () => void) {
     start(async () => {
       try {
-        await fn();
+        const res = await fn();
+        if (!res.ok) {
+          toast.error(tr(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
+          return;
+        }
         onOk?.();
         router.refresh();
       } catch {
@@ -58,7 +64,11 @@ export function TodoRow({ item, today }: { item: TodoRowItem; today: string }) {
     start(async () => {
       setDoneOptimistic(next);
       try {
-        await toggleTodo(item.id, next);
+        const res = await toggleTodo(item.id, next);
+        if (!res.ok) {
+          toast.error(tr(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
+          return;
+        }
         router.refresh();
       } catch {
         toast.error(tc("error"));

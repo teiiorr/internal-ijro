@@ -76,14 +76,17 @@ export function NudgeDialog({
     start(async () => {
       try {
         const res = await nudgeAssignees({ taskId, userIds, message: message.trim() || null });
+        if (!res.ok) {
+          toast.error(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
+          return;
+        }
         if (res.sent.length > 0) toast.success(tc("nudgeSent", { count: res.sent.length }));
         if (res.throttled.length > 0) toast.info(tc("nudgeThrottledToast", { count: res.throttled.length }));
         if (res.sent.length === 0 && res.throttled.length === 0) toast.info(tc("nudgeNobody"));
         setOpen(false);
         router.refresh();
-      } catch (e) {
-        const msg = (e as Error).message;
-        toast.error(msg === "nudge_unavailable" ? tc("nudgeUnavailable") : t("common.error"));
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }
