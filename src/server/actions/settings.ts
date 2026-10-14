@@ -7,6 +7,7 @@ import { notificationSettings, users } from "@/lib/db/schema";
 import { requireUser } from "@/lib/session";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { generateTwoFactorSecret, buildOtpAuthQr, verifyTotp } from "@/lib/auth/twofa";
+import { type ActionResult } from "@/lib/action-result";
 
 export async function setNotificationFlags(flags: {
   inAppEnabled?: boolean;
@@ -48,14 +49,15 @@ export async function updateProfilePreferences(input: {
   revalidatePath("/settings");
 }
 
-export async function changePasswordSelf(currentPassword: string, newPassword: string) {
+export async function changePasswordSelf(currentPassword: string, newPassword: string): Promise<ActionResult> {
   const me = await requireUser();
   const row = await db.select().from(users).where(eq(users.id, me.id)).limit(1);
-  if (row.length === 0) throw new Error("not_found");
-  const ok = await verifyPassword(currentPassword, row[0].passwordHash);
-  if (!ok) throw new Error("wrong_password");
-  if (newPassword.length < 8) throw new Error("too_short");
+  if (row.length === 0) return { ok: false, error: "not_found" };
+  const valid = await verifyPassword(currentPassword, row[0].passwordHash);
+  if (!valid) return { ok: false, error: "wrong_password" };
+  if (newPassword.length < 8) return { ok: false, error: "too_short" };
   await db.update(users).set({ passwordHash: await hashPassword(newPassword) }).where(eq(users.id, me.id));
+  return { ok: true };
 }
 
 export async function start2faSetup(): Promise<{ qr: string; secret: string }> {
@@ -66,25 +68,27 @@ export async function start2faSetup(): Promise<{ qr: string; secret: string }> {
   return { qr, secret };
 }
 
-export async function confirm2fa(token: string) {
+export async function confirm2fa(token: string): Promise<ActionResult> {
   const me = await requireUser();
   const row = await db.select().from(users).where(eq(users.id, me.id)).limit(1);
-  if (row.length === 0 || !row[0].twoFactorSecret) throw new Error("not_setup");
-  if (!verifyTotp(token, row[0].twoFactorSecret)) throw new Error("invalid_code");
+  if (row.length === 0 || !row[0].twoFactorSecret) return { ok: false, error: "not_setup" };
+  if (!verifyTotp(token, row[0].twoFactorSecret)) return { ok: false, error: "invalid_code" };
   await db.update(users).set({ twoFactorEnabled: true }).where(eq(users.id, me.id));
   revalidatePath("/settings");
+  return { ok: true };
 }
 
-export async function disable2fa(token: string) {
+export async function disable2fa(token: string): Promise<ActionResult> {
   const me = await requireUser();
   const row = await db.select().from(users).where(eq(users.id, me.id)).limit(1);
-  if (row.length === 0) return;
+  if (row.length === 0) return { ok: true };
   if (row[0].twoFactorEnabled && row[0].twoFactorSecret) {
-    if (!verifyTotp(token, row[0].twoFactorSecret)) throw new Error("invalid_code");
+    if (!verifyTotp(token, row[0].twoFactorSecret)) return { ok: false, error: "invalid_code" };
   }
   await db
     .update(users)
     .set({ twoFactorEnabled: false, twoFactorSecret: null })
     .where(eq(users.id, me.id));
   revalidatePath("/settings");
+  return { ok: true };
 }

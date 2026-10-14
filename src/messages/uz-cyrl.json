@@ -931,6 +931,13 @@
 				"passwordChanged": "Парол ўзгартирилди",
 				"twoFaEnabled": "2FA ёқилди",
 				"twoFaDisabled": "2FA ўчирилди"
+			},
+			"errors": {
+				"not_found": "Фойдаланувчи топилмади",
+				"wrong_password": "Жорий парол нотўғри",
+				"too_short": "Янги парол камида 8 белгидан иборат бўлсин",
+				"not_setup": "Аввал 2FA созланг",
+				"invalid_code": "Код нотўғри"
 			}
 		},
 		"telegram": {

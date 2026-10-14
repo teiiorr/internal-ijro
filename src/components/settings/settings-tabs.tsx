@@ -82,10 +82,11 @@ export function SettingsTabs({ init }: { init: Init }) {
               const fd = new FormData(form);
               start(async () => {
                 try {
-                  await changePasswordSelf(String(fd.get("current") ?? ""), String(fd.get("next") ?? ""));
+                  const r = await changePasswordSelf(String(fd.get("current") ?? ""), String(fd.get("next") ?? ""));
+                  if (!r.ok) { toast.error(t(`settings.security.errors.${r.error}` as "settings.security.errors.invalid_code")); return; }
                   toast.success(t("settings.security.messages.passwordChanged"));
                   form.reset();
-                } catch (err) { toast.error((err as Error).message); }
+                } catch { toast.error(t("common.error")); }
               });
             }}
           >
@@ -113,7 +114,7 @@ export function SettingsTabs({ init }: { init: Init }) {
                 onSubmit={(e) => {
                   e.preventDefault();
                   const code = (e.currentTarget.elements.namedItem("token") as HTMLInputElement).value;
-                  start(async () => { try { await disable2fa(code); toast.success(t("settings.security.messages.twoFaDisabled")); } catch (err) { toast.error((err as Error).message); } });
+                  start(async () => { try { const r = await disable2fa(code); if (!r.ok) { toast.error(t(`settings.security.errors.${r.error}` as "settings.security.errors.invalid_code")); return; } toast.success(t("settings.security.messages.twoFaDisabled")); } catch { toast.error(t("common.error")); } });
                 }}
               >
                 <Input name="token" placeholder={t("settings.security.disablePlaceholder")} aria-label={t("settings.security.disablePlaceholder")} />
@@ -135,7 +136,7 @@ export function SettingsTabs({ init }: { init: Init }) {
                 onSubmit={(e) => {
                   e.preventDefault();
                   const code = (e.currentTarget.elements.namedItem("token") as HTMLInputElement).value;
-                  start(async () => { try { await confirm2fa(code); toast.success(t("settings.security.messages.twoFaEnabled")); } catch (err) { toast.error((err as Error).message); } });
+                  start(async () => { try { const r = await confirm2fa(code); if (!r.ok) { toast.error(t(`settings.security.errors.${r.error}` as "settings.security.errors.invalid_code")); return; } toast.success(t("settings.security.messages.twoFaEnabled")); } catch { toast.error(t("common.error")); } });
                 }}
               >
                 <Input name="token" placeholder={t("settings.security.codePlaceholder")} maxLength={6} required aria-label={t("settings.security.codePlaceholder")} />

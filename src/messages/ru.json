@@ -931,6 +931,13 @@
 				"passwordChanged": "Пароль изменён",
 				"twoFaEnabled": "2FA включена",
 				"twoFaDisabled": "2FA отключена"
+			},
+			"errors": {
+				"not_found": "Пользователь не найден",
+				"wrong_password": "Текущий пароль неверный",
+				"too_short": "Новый пароль — не менее 8 символов",
+				"not_setup": "Сначала настройте 2FA",
+				"invalid_code": "Неверный код"
 			}
 		},
 		"telegram": {

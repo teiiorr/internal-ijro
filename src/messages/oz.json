@@ -931,6 +931,13 @@
 				"passwordChanged": "Parol özgartirildi",
 				"twoFaEnabled": "2FA yoqildi",
 				"twoFaDisabled": "2FA öçirildi"
+			},
+			"errors": {
+				"not_found": "Foydalanuvchi topilmadi",
+				"wrong_password": "Joriy parol notoʻgʻri",
+				"too_short": "Yangi parol kamida 8 belgidan iborat boʻlsin",
+				"not_setup": "Avval 2FA sozlang",
+				"invalid_code": "Kod notoʻgʻri"
 			}
 		},
 		"telegram": {
