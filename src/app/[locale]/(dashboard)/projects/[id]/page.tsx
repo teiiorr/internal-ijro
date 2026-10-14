@@ -8,6 +8,8 @@ import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { auth } from "@/lib/auth";
 import { getProject, listContractors } from "@/server/queries/projects";
 import { getStageProject } from "@/server/queries/stages";
+import { getProjectSmeta } from "@/server/queries/smeta";
+import { SmetaSection } from "@/components/projects/smeta-section";
 import { ProjectContractor } from "@/components/projects/project-contractor";
 import { Card } from "@/components/ui-biib/Card";
 import { Section } from "@/components/ui-biib/Section";
@@ -84,6 +86,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   // Byudjet va tölov summalarini faqat "money" allowlistidagilar YOKI huquq berilgan foydalanuvçilar köradi.
   const showMoney = canViewMoney(me.email) || (await hasGrant(me.id, "money.view"));
   const canUpload = canUploadProjectDocs(me.email) || editor || (await hasGrant(me.id, "projects.upload_docs"));
+  // Loyiha smetasi — faqat pulni ko'ra oladiganlar uchun (tahrir — muharrir allowlist/grant).
+  const smeta = showMoney ? await getProjectSmeta(id) : null;
 
   // ---- Turi belgilangan (şablon asosidagi) loyiha → ilonsimon bosqiç körinişi ----
   if (data.project.projectTypeId) {
@@ -269,6 +273,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
 
+          {/* Loyiha smetasi — toʻliq kenglikda, faqat pulni koʻra oladiganlarga */}
+          {showMoney && smeta && (
+            <Section title={t("projects.smeta.title")}>
+              <SmetaSection projectId={id} smeta={smeta} defaultCurrency={currency} canEdit={editor} />
+            </Section>
+          )}
+
           {/* Loyiha darajasidagi hujjatlar — toʻliq kenglikda, ikki panel uchun joy yetarli */}
           <Section title={t("projects.documents.title")}>
             <ProjectDocsPanels
@@ -369,6 +380,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         {data.project.description && (
           <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--ink-2)]">{data.project.description}</p>
+        )}
+
+        {showMoney && smeta && (
+          <Section title={t("projects.smeta.title")}>
+            <SmetaSection projectId={data.project.id} smeta={smeta} defaultCurrency={data.project.budgetCurrency} canEdit={editor} />
+          </Section>
         )}
 
         <Section title={t("projects.documents.title")}>

@@ -613,6 +613,21 @@
 			"addFile": "Файл қўшиш",
 			"hide": "Яшириш"
 		},
+		"smeta": {
+			"title": "Лойиҳа сметаси",
+			"category": "Модда",
+			"description": "Изоҳ",
+			"planned": "Режа",
+			"actual": "Факт",
+			"variance": "Фарқ",
+			"currency": "Валюта",
+			"total": "Жами ({currency})",
+			"empty": "Смета моддалари ҳали киритилмаган",
+			"add": "Модда қўшиш",
+			"categoryRequired": "Модда номини киритинг",
+			"confirmDelete": "«{name}» моддасини ўчирасизми?",
+			"actualOptional": "Ихтиёрий"
+		},
 		"stagePayments": {
 			"title": "Тўловлар",
 			"projectTotal": "Лойиҳа бўйича тўловлар",

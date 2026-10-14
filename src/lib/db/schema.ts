@@ -1087,6 +1087,34 @@ export const stageRequests = pgTable(
   })
 );
 
+// ---------- 5.31 project_smeta_items (Loyiha smetasi — reja/fakt harajat moddalari) ----------
+// Loyiha bo'yicha batafsil smeta: har bir harajat moddasi uchun reja (planned) va fakt
+// (actual) summa. `stage_payments` kabi pul ustunlari decimal(15,2) + currency bilan.
+// Loyiha o'chirilsa — moddalari ham o'chadi (cascade).
+export const projectSmetaItems = pgTable(
+  "project_smeta_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    /** Modda nomi / toifasi, masalan "Rejissyor xizmati", "Texnika ijarasi". */
+    category: varchar("category", { length: 120 }).notNull(),
+    description: text("description"),
+    /** Rejadagi (byudjet) summa. */
+    plannedAmount: decimal("planned_amount", { precision: 15, scale: 2 }).default("0").notNull(),
+    /** Haqiqiy (fakt) sarflangan summa — hali ma'lum bo'lmasa null. */
+    actualAmount: decimal("actual_amount", { precision: 15, scale: 2 }),
+    currency: varchar("currency", { length: 10 }).default("UZS").notNull(),
+    orderIndex: integer("order_index").default(0).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({
+    projectIdx: index("project_smeta_items_project_idx").on(t.projectId),
+  })
+);
+
 // Qulaylik uçun aniqlangan tiplarni qayta eksport qilamiz
 /** Tizim sozlamalari (kalit-qiymat). Masalan "maintenance_mode" = "on" | "off". */
 export const appSettings = pgTable("app_settings", {
@@ -1108,3 +1136,4 @@ export type ProjectStage = typeof projectStages.$inferSelect;
 export type NewProjectStage = typeof projectStages.$inferInsert;
 export type StageDocument = typeof stageDocuments.$inferSelect;
 export type StagePayment = typeof stagePayments.$inferSelect;
+export type ProjectSmetaItem = typeof projectSmetaItems.$inferSelect;

@@ -613,6 +613,21 @@
 			"addFile": "Fayl qöşiş",
 			"hide": "Yaşiriş"
 		},
+		"smeta": {
+			"title": "Loyiha smetasi",
+			"category": "Modda",
+			"description": "Izoh",
+			"planned": "Reja",
+			"actual": "Fakt",
+			"variance": "Farq",
+			"currency": "Valyuta",
+			"total": "Jami ({currency})",
+			"empty": "Smeta moddalari hali kiritilmagan",
+			"add": "Modda qöşiş",
+			"categoryRequired": "Modda nomini kiriting",
+			"confirmDelete": "«{name}» moddasini öçirasizmi?",
+			"actualOptional": "Ixtiyoriy"
+		},
 		"stagePayments": {
 			"title": "Tölovlar",
 			"projectTotal": "Loyiha böyiça tölovlar",
