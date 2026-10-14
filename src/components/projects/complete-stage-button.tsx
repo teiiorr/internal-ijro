@@ -16,11 +16,11 @@ export function CompleteStageButton({ stageId }: { stageId: string }) {
     start(async () => {
       try {
         const res = await completeStage(stageId);
+        if (!res.ok) { toast.error(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found")); return; }
         toast.success(res.projectCompleted ? t("projects.stageActions.projectCompleted") : t("projects.stageActions.completed"));
         router.refresh();
-      } catch (e) {
-        const msg = (e as Error).message;
-        toast.error(msg === "stage_not_active" ? t("projects.stageActions.notActive") : msg);
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }

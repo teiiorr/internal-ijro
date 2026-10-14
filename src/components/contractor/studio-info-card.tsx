@@ -39,6 +39,7 @@ type Company = {
 
 export function StudioInfoCard({ company, canManage = true }: { company: Company; canManage?: boolean }) {
   const t = useTranslations("contractors.detail");
+  const tr = useTranslations();
   const router = useRouter();
   const [notes, setNotes] = useState(company.notes ?? "");
   const [saved, setSaved] = useState(true);
@@ -48,7 +49,8 @@ export function StudioInfoCard({ company, canManage = true }: { company: Company
 
   function saveNotes() {
     start(async () => {
-      await updateContractorNotes(company.id, notes);
+      const r = await updateContractorNotes(company.id, notes);
+      if (!r.ok) { toast.error(tr(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
       setSaved(true);
       toast.success(t("notesSaved"));
     });

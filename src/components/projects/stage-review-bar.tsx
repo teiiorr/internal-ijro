@@ -24,11 +24,11 @@ export function StageReviewBar({ stageId, reviewStatus }: { stageId: string; rev
     start(async () => {
       try {
         const res = await (submitted ? acceptStage(stageId) : completeStage(stageId));
+        if (!res.ok) { toast.error(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found")); return; }
         toast.success(res.projectCompleted ? t("projects.stageActions.projectCompleted") : t("projects.stageActions.completed"));
         router.refresh();
-      } catch (e) {
-        const msg = (e as Error).message;
-        toast.error(msg === "stage_not_active" ? t("projects.stageActions.notActive") : msg);
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }
@@ -37,13 +37,14 @@ export function StageReviewBar({ stageId, reviewStatus }: { stageId: string; rev
     if (note.trim().length < 2) { toast.error(t("review.notePlaceholder")); return; }
     start(async () => {
       try {
-        await requestStageChanges(stageId, note.trim());
+        const r = await requestStageChanges(stageId, note.trim());
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("review.changesSent"));
         setNote("");
         setNoteOpen(false);
         router.refresh();
-      } catch (e) {
-        toast.error((e as Error).message);
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }

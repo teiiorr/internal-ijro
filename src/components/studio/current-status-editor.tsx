@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { timeAgo } from "@/lib/dates";
 import { updateProjectCurrentStatus } from "@/server/actions/studio";
-import { studioErrorKey } from "./errors";
 
 export type LastStatusUpdate = { byName: string | null; at: Date | string; byStudio: boolean } | null;
 
@@ -38,12 +37,13 @@ export function CurrentStatusEditor({
   function save() {
     start(async () => {
       try {
-        await updateProjectCurrentStatus({ projectId, text: value });
+        const r = await updateProjectCurrentStatus({ projectId, text: value });
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("studio.currentStatus.saved"));
         setEditing(false);
         router.refresh();
-      } catch (e) {
-        toast.error(t(studioErrorKey(e)));
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }

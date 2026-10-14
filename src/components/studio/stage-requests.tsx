@@ -18,7 +18,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { formatDate, timeAgo } from "@/lib/dates";
 import { createStageRequest, decideStageRequest } from "@/server/actions/studio";
-import { studioErrorKey } from "./errors";
 
 type ReqType = "deadline" | "blocker";
 
@@ -48,12 +47,13 @@ export function StageRequestButtons({ stageId, currentDeadline }: { stageId: str
     if (!open) return;
     start(async () => {
       try {
-        await createStageRequest({ stageId, type: open, message, requestedDeadline: open === "deadline" ? date : undefined });
+        const r = await createStageRequest({ stageId, type: open, message, requestedDeadline: open === "deadline" ? date : undefined });
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("studio.requests.sent"));
         close();
         router.refresh();
-      } catch (e) {
-        toast.error(t(studioErrorKey(e)));
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }
@@ -218,11 +218,12 @@ function DecisionControls({ request }: { request: RequestItem }) {
   function decide(decision: "approved" | "rejected" | "resolved") {
     start(async () => {
       try {
-        await decideStageRequest({ requestId: request.id, decision, note: note.trim() || undefined });
+        const r = await decideStageRequest({ requestId: request.id, decision, note: note.trim() || undefined });
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("studio.requests.decided"));
         router.refresh();
-      } catch (e) {
-        toast.error(t(studioErrorKey(e)));
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }

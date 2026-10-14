@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { timeAgo } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { reportStageProgress } from "@/server/actions/studio";
-import { studioErrorKey } from "./errors";
 
 export type StageProgressData = { progress: number; note: string | null; at: Date | string; byName?: string | null } | null;
 
@@ -53,12 +52,13 @@ export function StageProgressReporter({ stageId, latest }: { stageId: string; la
   function submit() {
     start(async () => {
       try {
-        await reportStageProgress({ stageId, progress: value, note: note.trim() || undefined });
+        const r = await reportStageProgress({ stageId, progress: value, note: note.trim() || undefined });
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("studio.progress.saved"));
         setNote("");
         router.refresh();
-      } catch (e) {
-        toast.error(t(studioErrorKey(e)));
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }

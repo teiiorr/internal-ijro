@@ -95,7 +95,7 @@ export function EditProjectDialog({
     if (name.trim().length < 2) { setError(t("projects.fields.nameRequired")); return; }
     start(async () => {
       try {
-        await updateProject(project.id, {
+        const res = await updateProject(project.id, {
           name: name.trim(),
           description: description.trim() || null,
           type: type as "internal" | "external",
@@ -107,6 +107,7 @@ export function EditProjectDialog({
           budgetCurrency: currency.trim() || "UZS",
           currentStatus: currentStatus.trim() || null,
         });
+        if (!res.ok) { setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found")); return; }
         setOpen(false);
         router.refresh();
       } catch (err) {

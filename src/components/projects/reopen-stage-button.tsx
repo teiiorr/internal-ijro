@@ -18,16 +18,12 @@ export function ReopenStageButton({ stageId }: { stageId: string }) {
   function onReopen() {
     start(async () => {
       try {
-        await reopenStage(stageId);
+        const r = await reopenStage(stageId);
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("projects.stageActions.reopened"));
         router.refresh();
-      } catch (e) {
-        const msg = (e as Error).message;
-        toast.error(
-          msg === "not_last_completed" ? t("projects.stageActions.reopenNotLast")
-          : msg === "stage_not_completed" ? t("projects.stageActions.reopenNotCompleted")
-          : msg
-        );
+      } catch {
+        toast.error(t("common.error"));
       }
     });
   }

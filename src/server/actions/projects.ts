@@ -30,6 +30,7 @@ import { hashPassword } from "@/lib/auth/password";
 import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
+import { type ActionResult } from "@/lib/action-result";
 
 const projectSchema = z.object({
   name: z.string().min(2).max(255),
@@ -48,10 +49,23 @@ const projectSchema = z.object({
   budgetCurrency: z.string().default("UZS"),
 });
 
-export async function createProject(input: z.infer<typeof projectSchema>) {
+export async function createProject(input: z.infer<typeof projectSchema>): Promise<ActionResult<{ id: string }>> {
   const me = await requireProjectEditor();
   const parsed = projectSchema.parse(input);
-  if (parsed.type === "external" && !parsed.externalCompanyId) throw new Error("company_required");
+  if (parsed.type === "external" && !parsed.externalCompanyId) return { ok: false, error: "company_required" };
+
+  // Tur şablonini TRANZAKSIYADAN OLDIN tekşiramiz — şunda noto'g'ri turda yarim yozilgan
+  // loyiha commit bo'lib qolmaydi (ilgari throw tranzaksiya içida edi, insert'dan keyin).
+  let stageTemplateId: string | null = null;
+  if (parsed.projectTypeId) {
+    const type = await db
+      .select({ stageTemplateId: projectTypes.stageTemplateId })
+      .from(projectTypes)
+      .where(eq(projectTypes.id, parsed.projectTypeId))
+      .limit(1);
+    if (type.length === 0) return { ok: false, error: "invalid_project_type" };
+    stageTemplateId = type[0].stageTemplateId;
+  }
 
   const { projectId, firstStage } = await db.transaction(async (tx) => {
     const inserted = await tx
@@ -77,18 +91,11 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
     let first: { id: string; name: string; responsibleUserId: string | null } | null = null;
 
     // Tur şablonidan tartiblangan bosqiçlar zanjirini avtomatik quramiz.
-    if (parsed.projectTypeId) {
-      const type = await tx
-        .select({ stageTemplateId: projectTypes.stageTemplateId })
-        .from(projectTypes)
-        .where(eq(projectTypes.id, parsed.projectTypeId))
-        .limit(1);
-      if (type.length === 0) throw new Error("invalid_project_type");
-
+    if (parsed.projectTypeId && stageTemplateId) {
       const items = await tx
         .select()
         .from(stageTemplateItems)
-        .where(eq(stageTemplateItems.templateId, type[0].stageTemplateId))
+        .where(eq(stageTemplateItems.templateId, stageTemplateId))
         .orderBy(stageTemplateItems.orderIndex);
 
       const responsible = parsed.responsibleUserId ?? parsed.curatorUserId ?? me.id;
@@ -165,7 +172,7 @@ export async function createProject(input: z.infer<typeof projectSchema>) {
   }
 
   revalidatePath("/projects");
-  return { id: projectId };
+  return { ok: true, id: projectId };
 }
 
 const milestoneSchema = z.object({
@@ -683,11 +690,11 @@ const updateProjectSchema = z.object({
   genre: z.string().max(40).nullable().optional(),
   currentStatus: z.string().max(5000).nullable().optional(),
 });
-export async function updateProject(id: string, input: z.infer<typeof updateProjectSchema>) {
+export async function updateProject(id: string, input: z.infer<typeof updateProjectSchema>): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const parsed = updateProjectSchema.parse(input);
   const [existing] = await db.select({ id: projects.id }).from(projects).where(eq(projects.id, id)).limit(1);
-  if (!existing) throw new Error("not_found");
+  if (!existing) return { ok: false, error: "not_found" };
 
   // Kurator töplamini aniqlaymiz. Birinçisi eski moslik uçun projects.curator_user_id'da
   // "asosiy" sifatida qoladi; butun töplam esa boğlovçi jadvalga yoziladi.
@@ -733,6 +740,7 @@ export async function updateProject(id: string, input: z.infer<typeof updateProj
   await logActivity({ userId: me.id, action: "project.updated", entityType: "project", entityId: id, newValue: { name: parsed.name } });
   revalidatePath(`/projects/${id}`);
   revalidatePath("/projects");
+  return { ok: true };
 }
 
 // Kontragentni bevosita yaratadi (özi röyxatdan ötmasdan / akkauntsiz) va avtomatik tasdiqlaydi.
@@ -765,12 +773,12 @@ export async function createContractor(input: z.infer<typeof contractorSchema>) 
 }
 
 // Loyihadagi kontragentni (ASOSIY studiyani) tayinlaydi, özgartiradi yoki oçiradi (rahbarlar yoki kurator).
-export async function setProjectContractor(projectId: string, companyId: string | null) {
+export async function setProjectContractor(projectId: string, companyId: string | null): Promise<ActionResult> {
   const me = await requireUser();
   const [prj] = await db.select({ id: projects.id, curatorUserId: projects.curatorUserId }).from(projects).where(eq(projects.id, projectId)).limit(1);
-  if (!prj) throw new Error("not_found");
+  if (!prj) return { ok: false, error: "not_found" };
   const isManager = (MANAGERS as readonly string[]).includes(me.position);
-  if (!isManager && prj.curatorUserId !== me.id) throw new Error("forbidden");
+  if (!isManager && prj.curatorUserId !== me.id) return { ok: false, error: "forbidden" };
   await db.update(projects).set({ externalCompanyId: companyId, updatedAt: new Date() }).where(eq(projects.id, projectId));
   // Köpga-köp studiyalar jadvaliga ham qöşamiz (himoyalangan). Mavjud boşqa studiyalarni
   // öçirmaymiz — bu amal faqat ASOSIY studiyani belgilaydi.
@@ -783,6 +791,7 @@ export async function setProjectContractor(projectId: string, companyId: string 
   }
   await logActivity({ userId: me.id, action: "project.contractor_changed", entityType: "project", entityId: projectId, newValue: { externalCompanyId: companyId } });
   revalidatePath(`/projects/${projectId}`);
+  return { ok: true };
 }
 
 /**
@@ -791,10 +800,10 @@ export async function setProjectContractor(projectId: string, companyId: string 
  * şunda portal/auth/chat oqimlari (external_company_id'ga tayanadigan) uzilmaydi.
  * Himoyalangan: project_studios jadvali hali migratsiya qilinmagan bölişi mumkin.
  */
-export async function addProjectStudio(projectId: string, companyId: string) {
+export async function addProjectStudio(projectId: string, companyId: string): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
-  if (!prj) throw new Error("not_found");
+  if (!prj) return { ok: false, error: "not_found" };
   try {
     const [row] = await db
       .select({ max: sql<number>`coalesce(max(${projectStudios.orderIndex}), -1)` })
@@ -811,6 +820,7 @@ export async function addProjectStudio(projectId: string, companyId: string) {
   }
   await logActivity({ userId: me.id, action: "project.studio_added", entityType: "project", entityId: projectId, newValue: { companyId } });
   revalidatePath(`/projects/${projectId}`);
+  return { ok: true };
 }
 
 /**
@@ -819,10 +829,10 @@ export async function addProjectStudio(projectId: string, companyId: string) {
  * mavjud portal/auth/chat oqimlari uzilmasligi uçun.
  * Himoyalangan: project_studios jadvali hali migratsiya qilinmagan bölişi mumkin.
  */
-export async function removeProjectStudio(projectId: string, companyId: string) {
+export async function removeProjectStudio(projectId: string, companyId: string): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
-  if (!prj) throw new Error("not_found");
+  if (!prj) return { ok: false, error: "not_found" };
   try {
     await db.delete(projectStudios).where(and(eq(projectStudios.projectId, projectId), eq(projectStudios.companyId, companyId)));
   } catch {
@@ -846,6 +856,7 @@ export async function removeProjectStudio(projectId: string, companyId: string) 
   }
   await logActivity({ userId: me.id, action: "project.studio_removed", entityType: "project", entityId: projectId, newValue: { companyId } });
   revalidatePath(`/projects/${projectId}`);
+  return { ok: true };
 }
 
 // Kontragentni tasdiqlaydi/rad etadi (external_companies + foydalanuvçini faollaştiriş)
@@ -967,38 +978,41 @@ export async function setProjectDocumentFolder(documentId: string, folder: strin
   revalidatePath(`/projects/${doc.projectId}`);
 }
 
-export async function updateContractorNotes(companyId: string, notes: string) {
+export async function updateContractorNotes(companyId: string, notes: string): Promise<ActionResult> {
   const me = await requireUser();
   // Izohlarni faqat Studiyalar bölimini boşqaruvçilar tahrirlaydi (faqat-öqiş xodimlar emas).
-  if (!isContractorManager(me)) throw new Error("forbidden");
+  if (!isContractorManager(me)) return { ok: false, error: "forbidden" };
   await db.update(externalCompanies).set({ notes: notes.trim() || null }).where(eq(externalCompanies.id, companyId));
   revalidatePath(`/contractors/${companyId}`);
+  return { ok: true };
 }
 
 // --- Studiya CRUD ---
 
-export async function renameContractor(companyId: string, name: string) {
+export async function renameContractor(companyId: string, name: string): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const trimmed = name.trim();
-  if (trimmed.length < 2) throw new Error("name_too_short");
+  if (trimmed.length < 2) return { ok: false, error: "name_too_short" };
   await db.update(externalCompanies).set({ name: trimmed }).where(eq(externalCompanies.id, companyId));
   await logActivity({ userId: me.id, action: "contractor.renamed", entityType: "external_company", entityId: companyId, newValue: { name: trimmed } });
   revalidatePath("/contractors");
   revalidatePath(`/contractors/${companyId}`);
+  return { ok: true };
 }
 
-export async function deleteContractor(companyId: string) {
+export async function deleteContractor(companyId: string): Promise<ActionResult> {
   const me = await requireProjectEditor();
   const linked = await db.select({ id: projects.id }).from(projects).where(eq(projects.externalCompanyId, companyId)).limit(1);
-  if (linked.length > 0) throw new Error("has_projects");
+  if (linked.length > 0) return { ok: false, error: "has_projects" };
   const company = await db.select().from(externalCompanies).where(eq(externalCompanies.id, companyId)).limit(1);
-  if (company.length === 0) return;
+  if (company.length === 0) return { ok: true };
   if (company[0].contactEmail) {
     await db.delete(users).where(and(eq(users.email, company[0].contactEmail), eq(users.position, "kontragent")));
   }
   await db.delete(externalCompanies).where(eq(externalCompanies.id, companyId));
   await logActivity({ userId: me.id, action: "contractor.deleted", entityType: "external_company", entityId: companyId, newValue: { name: company[0].name } });
   revalidatePath("/contractors");
+  return { ok: true };
 }
 
 const createStudioSchema = z.object({
@@ -1009,13 +1023,13 @@ const createStudioSchema = z.object({
   contactPhone: z.string().max(50).optional().or(z.literal("")),
 });
 
-export async function createStudioWithLogin(input: z.infer<typeof createStudioSchema>) {
+export async function createStudioWithLogin(input: z.infer<typeof createStudioSchema>): Promise<ActionResult<{ id: string }>> {
   const me = await requireProjectEditor();
   const parsed = createStudioSchema.parse(input);
   const email = parsed.contactEmail.toLowerCase().trim();
 
   const existing = await db.select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
-  if (existing.length > 0) throw new Error("email_taken");
+  if (existing.length > 0) return { ok: false, error: "email_taken" };
 
   const result = await db.transaction(async (tx) => {
     const company = await tx
@@ -1049,5 +1063,5 @@ export async function createStudioWithLogin(input: z.infer<typeof createStudioSc
 
   await logActivity({ userId: me.id, action: "contractor.created_with_login", entityType: "external_company", entityId: result.id, newValue: { name: parsed.name, email } });
   revalidatePath("/contractors");
-  return result;
+  return { ok: true, id: result.id };
 }
