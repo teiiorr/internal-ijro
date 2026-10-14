@@ -51,6 +51,9 @@ export function SmetaStatusControl({
   const [value, setValue] = useState<SmetaStatus>(status);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
 
   // Server qiymati yangilansa (router.refresh), mahalliy holatni moslaymiz.
   useEffect(() => setValue(status), [status]);
@@ -63,6 +66,28 @@ export function SmetaStatusControl({
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
   }, [open]);
+
+  // Menyu ochilganda joriy (belgilangan) bandga fokus — klaviatura bilan boshqarish uchun.
+  useEffect(() => {
+    if (!open) return;
+    const items = menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]');
+    if (!items?.length) return;
+    const checked = Array.from(items).findIndex((el) => el.getAttribute("aria-checked") === "true");
+    items[checked >= 0 ? checked : 0].focus();
+  }, [open]);
+
+  // Oʻq tugmalari bilan bandlar orasida harakat; Escape — yopish va triggerga qaytish.
+  function onMenuKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    const items = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]') ?? []);
+    if (!items.length) return;
+    const idx = items.indexOf(document.activeElement as HTMLButtonElement);
+    if (e.key === "ArrowDown") { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+    else if (e.key === "Home") { e.preventDefault(); items[0].focus(); }
+    else if (e.key === "End") { e.preventDefault(); items[items.length - 1].focus(); }
+    else if (e.key === "Escape") { e.preventDefault(); setOpen(false); triggerRef.current?.focus(); }
+    else if (e.key === "Tab") { setOpen(false); }
+  }
 
   const plate = (s: SmetaStatus) => <Status tone={STATUS_TONE[s]}>{t(`status.${STATUS_KEY[s]}`)}</Status>;
 
@@ -88,11 +113,13 @@ export function SmetaStatusControl({
   return (
     <div ref={ref} className="relative shrink-0">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         disabled={pending}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-controls={open ? menuId : undefined}
         aria-label={t("status.label")}
         title={t("status.label")}
         className="inline-flex items-center gap-1 rounded-[var(--radius-control)] p-0.5 transition-colors hover:bg-[var(--surface-2)] disabled:opacity-60"
@@ -102,7 +129,12 @@ export function SmetaStatusControl({
       </button>
       {open && (
         <div
+          ref={menuRef}
+          id={menuId}
           role="menu"
+          aria-orientation="vertical"
+          aria-label={t("status.label")}
+          onKeyDown={onMenuKeyDown}
           className={cn(
             "absolute top-[calc(100%+4px)] z-20 min-w-[11rem] rounded-[var(--radius-m)] border border-[var(--line)] bg-[var(--surface)] p-1 shadow-[var(--shadow-2)]",
             align === "end" ? "right-0" : "left-0",
@@ -114,6 +146,7 @@ export function SmetaStatusControl({
               type="button"
               role="menuitemradio"
               aria-checked={s === value}
+              tabIndex={-1}
               onClick={() => change(s)}
               className={cn(
                 "flex w-full items-center gap-2 rounded-[var(--radius-control)] px-2 py-1.5 text-left transition-colors hover:bg-[var(--surface-2)]",

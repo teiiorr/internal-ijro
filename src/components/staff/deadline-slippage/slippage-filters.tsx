@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { IconChevronDown as ChevronDown, IconLoader2 as Loader2, IconX as X } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
+import { LiveRegion } from "@/components/ui/live-region";
 
 type Opt = { id: string; name: string };
 
@@ -36,6 +37,7 @@ function Sel({ label, value, onChange, children }: { label: string; value: strin
 /** Tur / studiya / kurator filtrlari — har bir oʻzgarish URL'ni yangilaydi, server sahifani qayta hisoblaydi. */
 export function SlippageFilters({ types, studios, curators }: { types: Opt[]; studios: Opt[]; curators: Opt[] }) {
   const t = useTranslations("staffX.deadlineSlippage.filters");
+  const tc = useTranslations("common");
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -101,6 +103,8 @@ export function SlippageFilters({ types, studios, curators }: { types: Opt[]; st
           {t("reset")}
         </button>
       )}
+      {/* Filtr oʻzgargach server sahifani qayta hisoblaydi — ekran oʻquvchisiga eʼlon. */}
+      <LiveRegion>{pending ? tc("loading") : ""}</LiveRegion>
     </div>
   );
 }

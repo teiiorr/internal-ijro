@@ -574,7 +574,8 @@
 			"created": "Sana boʻyicha",
 			"name": "Nom boʻyicha",
 			"deadline": "Muddati boʻyicha",
-			"progress": "Bajarilish boʻyicha"
+			"progress": "Bajarilish boʻyicha",
+				"label": "Saralash"
 		},
 		"stagePath": {
 			"title": "Bosqichlar",

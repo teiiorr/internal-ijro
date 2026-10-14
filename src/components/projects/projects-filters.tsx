@@ -1,7 +1,7 @@
 "use client";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState, useEffect, useTransition } from "react";
+import { useId, useState, useEffect, useTransition } from "react";
 import { IconChevronDown as ChevronDown, IconSearch as Search, IconFilter as Filter } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
@@ -14,17 +14,20 @@ function Sel({
   onChange,
   disabled,
   title,
+  label,
   children,
 }: {
   value: string;
   onChange: (v: string) => void;
   disabled?: boolean;
   title?: string;
+  label: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="relative" title={title}>
       <select
+        aria-label={label}
         value={value}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
@@ -65,6 +68,7 @@ export function ProjectsFilters({
   const [search, setSearch] = useState(searchParam);
   // Mobil'da barcha filtrlar bitta "Filtrlar" tugmasi ostiga yiğiladi.
   const [open, setOpen] = useState(false);
+  const panelId = useId();
   const activeCount = [typeId, stage, payment, overdue ? "1" : "", sort && sort !== "created" ? sort : ""].filter(Boolean).length;
 
   function push(patch: Record<string, string | null>) {
@@ -104,6 +108,8 @@ export function ProjectsFilters({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-controls={panelId}
         className={`${FIELD} flex items-center justify-between sm:hidden`}
       >
         <span className="inline-flex items-center gap-2">
@@ -117,9 +123,9 @@ export function ProjectsFilters({
       </button>
 
       {/* Selektlar: mobil'da yopiq bo'lsa yashiringan; sm+ da doim ko'rinadi (tör) */}
-      <div className={cn("grid grid-cols-1 gap-2 sm:grid-cols-3", !open && "hidden sm:grid")}>
+      <div id={panelId} className={cn("grid grid-cols-1 gap-2 sm:grid-cols-3", !open && "hidden sm:grid")}>
         {/* Tur tanlanganda bosqiç ham tozalanadi (variantlar turga boğliq). */}
-        <Sel value={typeId} onChange={(v) => push({ typeId: v || null, stage: null })}>
+        <Sel label={t("projects.filters.type")} value={typeId} onChange={(v) => push({ typeId: v || null, stage: null })}>
         <option value="">{t("projects.filters.allTypes")}</option>
         {types.map((pt) => (
           <option key={pt.id} value={pt.id}>{pt.name}</option>
@@ -127,6 +133,7 @@ export function ProjectsFilters({
       </Sel>
 
       <Sel
+        label={t("projects.filters.stage")}
         value={stage}
         disabled={!typeId}
         title={!typeId ? t("projects.filters.selectTypeFirst") : undefined}
@@ -138,13 +145,13 @@ export function ProjectsFilters({
         ))}
       </Sel>
 
-      <Sel value={payment} onChange={(v) => push({ payment: v || null })}>
+      <Sel label={t("projects.filters.payment")} value={payment} onChange={(v) => push({ payment: v || null })}>
         <option value="">{t("projects.filters.payment")}</option>
         <option value="paid">{t("projects.filters.paid")}</option>
         <option value="unpaid">{t("projects.filters.unpaid")}</option>
       </Sel>
 
-      <Sel value={sort} onChange={(v) => push({ sort: v })}>
+      <Sel label={t("projects.sort.label")} value={sort} onChange={(v) => push({ sort: v })}>
         <option value="created">{t("projects.sort.created")}</option>
         <option value="name">{t("projects.sort.name")}</option>
         <option value="deadline">{t("projects.sort.deadline")}</option>

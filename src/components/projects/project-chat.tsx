@@ -22,6 +22,7 @@ import {
 import { compressImage } from "@/lib/images/compress";
 import { toast } from "sonner";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { LiveRegion } from "@/components/ui/live-region";
 
 type Attachment = { url: string; name: string; size: number; mimeType: string };
 type Msg = {
@@ -465,25 +466,66 @@ export function ProjectChat({
 
       {/* Xabar amallari menyusi (pastki panel) */}
       {menuFor && (
-        <>
-          <div className="fixed inset-0 z-[60] bg-black/40" onClick={() => setMenuFor(null)} aria-hidden />
-          <div className="fixed inset-x-0 bottom-0 z-[60] rounded-t-[var(--radius-panel)] glass-strong p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-            <div className="mx-auto max-w-md space-y-1">
-              {!readOnly && (
-                <MenuItem icon={<Reply className="size-5" />} label={t("projects.chat.reply")} onClick={() => startReply(menuFor)} />
-              )}
-              <MenuItem icon={<Copy className="size-5" />} label={t("projects.chat.copy")} onClick={() => doCopy(menuFor)} />
-              {!readOnly && menuFor.userId === currentUserId && (
-                <MenuItem icon={<Pencil className="size-5" />} label={t("projects.chat.edit")} onClick={() => startEdit(menuFor)} />
-              )}
-              {!readOnly && (menuFor.userId === currentUserId || canModerate) && (
-                <MenuItem icon={<Trash className="size-5" />} label={t("projects.chat.delete")} danger onClick={() => doDelete(menuFor)} />
-              )}
-            </div>
-          </div>
-        </>
+        <ActionSheet label={t("common.actions")} onClose={() => setMenuFor(null)}>
+          {!readOnly && (
+            <MenuItem icon={<Reply className="size-5" />} label={t("projects.chat.reply")} onClick={() => startReply(menuFor)} />
+          )}
+          <MenuItem icon={<Copy className="size-5" />} label={t("projects.chat.copy")} onClick={() => doCopy(menuFor)} />
+          {!readOnly && menuFor.userId === currentUserId && (
+            <MenuItem icon={<Pencil className="size-5" />} label={t("projects.chat.edit")} onClick={() => startEdit(menuFor)} />
+          )}
+          {!readOnly && (menuFor.userId === currentUserId || canModerate) && (
+            <MenuItem icon={<Trash className="size-5" />} label={t("projects.chat.delete")} danger onClick={() => doDelete(menuFor)} />
+          )}
+        </ActionSheet>
       )}
+
+      {/* Fayl yuklanayotganini ekran oʻquvchisiga eʼlon qilamiz (spinner faqat vizual). */}
+      <LiveRegion>{uploading ? t("common.loading") : ""}</LiveRegion>
     </div>
+  );
+}
+
+/**
+ * Pastki varaq koʻrinishidagi amallar menyusi — uzoq bosish / oʻng tugma bilan ochiladi.
+ * To'liq klaviatura + ekran oʻquvchisi: role="menu", fokus boshqaruvi (ochilganda birinchi
+ * bandga, yopilganda avvalgi elementga qaytadi), Escape, oʻq tugmalari va Tab tuzogʻi.
+ */
+function ActionSheet({ label, onClose, children }: { label: string; onClose: () => void; children: React.ReactNode }) {
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const prev = document.activeElement as HTMLElement | null;
+    const items = sheetRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]');
+    items?.[0]?.focus();
+    return () => { prev?.focus?.(); };
+  }, []);
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    const items = Array.from(sheetRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []);
+    if (!items.length) return;
+    const idx = items.indexOf(document.activeElement as HTMLElement);
+    if (e.key === "Escape") { e.preventDefault(); onClose(); }
+    else if (e.key === "ArrowDown" || (e.key === "Tab" && !e.shiftKey)) { e.preventDefault(); items[(idx + 1) % items.length].focus(); }
+    else if (e.key === "ArrowUp" || (e.key === "Tab" && e.shiftKey)) { e.preventDefault(); items[(idx - 1 + items.length) % items.length].focus(); }
+    else if (e.key === "Home") { e.preventDefault(); items[0].focus(); }
+    else if (e.key === "End") { e.preventDefault(); items[items.length - 1].focus(); }
+  }
+
+  return (
+    <>
+      <div className="fixed inset-0 z-[60] bg-black/40" onClick={onClose} aria-hidden />
+      <div
+        ref={sheetRef}
+        role="menu"
+        aria-label={label}
+        aria-orientation="vertical"
+        onKeyDown={onKeyDown}
+        className="fixed inset-x-0 bottom-0 z-[60] rounded-t-[var(--radius-panel)] glass-strong p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+      >
+        <div className="mx-auto max-w-md space-y-1">{children}</div>
+      </div>
+    </>
   );
 }
 
@@ -491,6 +533,8 @@ function MenuItem({ icon, label, onClick, danger }: { icon: React.ReactNode; lab
   return (
     <button
       type="button"
+      role="menuitem"
+      tabIndex={-1}
       onClick={onClick}
       className={`flex w-full items-center gap-3 rounded-[var(--radius-control)] px-4 py-3 text-[0.9375rem] font-semibold transition-colors active:scale-[0.99] ${danger ? "text-[var(--danger)] hover:bg-[var(--danger-soft)]" : "text-[var(--ink)] hover:bg-[var(--surface-2)]"}`}
     >
