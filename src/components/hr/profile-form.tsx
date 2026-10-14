@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { upsertEmployeeProfile } from "@/server/actions/employees";
 
 type ProfileLike = {
@@ -23,6 +24,17 @@ type ProfileLike = {
   notesHr?: string | null;
 };
 
+// maxLength — DB ustunlari (employee_profiles) va server sxemasi bilan bir xil.
+// Render tashqarisida: ichkarida e'lon qilinsa, har qayta chizishda maydonlar qayta montaj qilinadi.
+function F({ name, label, defaultValue, type = "text", maxLength }: { name: string; label: string; defaultValue?: string | null; type?: string; maxLength?: number }) {
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={name}>{label}</Label>
+      <Input id={name} name={name} type={type} maxLength={maxLength} defaultValue={defaultValue ?? ""} />
+    </div>
+  );
+}
+
 export function ProfileForm({ userId, profile }: { userId: string; profile: ProfileLike | null }) {
   const t = useTranslations();
   const [pending, start] = useTransition();
@@ -34,7 +46,8 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
     setOk(false);
     const fd = new FormData(e.currentTarget);
     start(async () => {
-      await upsertEmployeeProfile({
+      try {
+        const r = await upsertEmployeeProfile({
         userId,
         birthDate: (fd.get("birthDate") as string) || null,
         passportSerial: (fd.get("passportSerial") as string) || null,
@@ -48,32 +61,30 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
         emergencyContactRelation: (fd.get("emergencyContactRelation") as string) || null,
         maritalStatus: (fd.get("maritalStatus") as string) || null,
         education: (fd.get("education") as string) || null,
+        // HR qaydlari formada bor — joriy qiymat qaytib yuboriladi, shuning uçun öçib ketmaydi.
         notesHr: (fd.get("notesHr") as string) || null,
-      });
-      setOk(true);
+        });
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
+        setOk(true);
+      } catch {
+        toast.error(t("common.error"));
+      }
     });
   }
-
-  const F = ({ name, label, defaultValue, type = "text" }: { name: string; label: string; defaultValue?: string | null; type?: string }) => (
-    <div className="space-y-1.5">
-      <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} type={type} defaultValue={defaultValue ?? ""} />
-    </div>
-  );
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <F name="birthDate" label={t("employees.profile.birthDate")} type="date" defaultValue={p.birthDate} />
-        <F name="maritalStatus" label={t("employees.profile.maritalStatus")} defaultValue={p.maritalStatus} />
-        <F name="passportSerial" label={t("employees.profile.passportSerial")} defaultValue={p.passportSerial} />
-        <F name="passportNumber" label={t("employees.profile.passportNumber")} defaultValue={p.passportNumber} />
+        <F name="maritalStatus" label={t("employees.profile.maritalStatus")} defaultValue={p.maritalStatus} maxLength={20} />
+        <F name="passportSerial" label={t("employees.profile.passportSerial")} defaultValue={p.passportSerial} maxLength={20} />
+        <F name="passportNumber" label={t("employees.profile.passportNumber")} defaultValue={p.passportNumber} maxLength={20} />
         <F name="passportIssuedDate" label={t("employees.profile.passportIssuedDate")} type="date" defaultValue={p.passportIssuedDate} />
         <F name="passportIssuedBy" label={t("employees.profile.passportIssuedBy")} defaultValue={p.passportIssuedBy} />
-        <F name="inn" label={t("employees.profile.inn")} defaultValue={p.inn} />
-        <F name="emergencyContactName" label={t("employees.profile.emergencyContactName")} defaultValue={p.emergencyContactName} />
-        <F name="emergencyContactPhone" label={t("employees.profile.emergencyContactPhone")} defaultValue={p.emergencyContactPhone} />
-        <F name="emergencyContactRelation" label={t("employees.profile.emergencyContactRelation")} defaultValue={p.emergencyContactRelation} />
+        <F name="inn" label={t("employees.profile.inn")} defaultValue={p.inn} maxLength={20} />
+        <F name="emergencyContactName" label={t("employees.profile.emergencyContactName")} defaultValue={p.emergencyContactName} maxLength={255} />
+        <F name="emergencyContactPhone" label={t("employees.profile.emergencyContactPhone")} defaultValue={p.emergencyContactPhone} maxLength={50} />
+        <F name="emergencyContactRelation" label={t("employees.profile.emergencyContactRelation")} defaultValue={p.emergencyContactRelation} maxLength={100} />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="address">{t("employees.profile.address")}</Label>
@@ -82,6 +93,10 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
       <div className="space-y-1.5">
         <Label htmlFor="education">{t("employees.profile.education")}</Label>
         <Textarea id="education" name="education" rows={2} defaultValue={p.education ?? ""} />
+      </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="notesHr">{t("employees.profile.hr_notes")}</Label>
+        <Textarea id="notesHr" name="notesHr" rows={3} defaultValue={p.notesHr ?? ""} />
       </div>
       <div className="flex items-center justify-end gap-3 pt-2">
         {ok && <span className="text-sm text-[var(--success)]">{t("common.saved")}</span>}

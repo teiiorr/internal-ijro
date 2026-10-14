@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   users,
@@ -164,10 +164,18 @@ const profileSchema = z.object({
   notesHr: z.string().nullable().optional(),
 });
 
-export async function upsertEmployeeProfile(input: z.infer<typeof profileSchema>) {
+export async function upsertEmployeeProfile(input: z.infer<typeof profileSchema>): Promise<ActionResult> {
   const me = await requirePosition(["direktor", "orinbosar", "hr"]);
-  const parsed = profileSchema.parse(input);
-  const values = { ...parsed, updatedAt: new Date() };
+  const res = profileSchema.safeParse(input);
+  if (!res.success) return { ok: false, error: "invalid" };
+  const parsed = res.data;
+  // Faqat yuborilgan maydonlar yoziladi: undefined — tegilmaydi (masalan, forma notesHr
+  // yubormasa, HR qaydlari öçib ketmaydi).
+  const { userId, ...fields } = parsed;
+  const patch = Object.fromEntries(
+    Object.entries(fields).filter(([, v]) => v !== undefined),
+  ) as Partial<typeof employeeProfiles.$inferInsert>;
+  const values = { ...patch, userId, updatedAt: new Date() };
   const existing = await db
     .select({ userId: employeeProfiles.userId })
     .from(employeeProfiles)
@@ -185,6 +193,7 @@ export async function upsertEmployeeProfile(input: z.infer<typeof profileSchema>
     entityId: parsed.userId,
   });
   revalidatePath(`/employees/${parsed.userId}`);
+  return { ok: true };
 }
 
 // --- Xodim hujjatini yuklaş ---
@@ -230,8 +239,6 @@ export async function deleteEmployeeDocument(documentId: string) {
   revalidatePath(`/employees/${row[0].userId}`);
 }
 
-// --- Taklifnomani qayta yuboriş (kutilayotgan foydalanuvçilar uçun) ---
-// auth-flow.createInvitation funksiyasi qayta işlatilib amalga oşirilgan.
-export const _internal_marker = true as const;
-void _internal_marker;
-void and;
+// DIQQAT: "use server" faylidan faqat async funksiyalar eksport qilinadi. Boşqa qiymat
+// (const, boolean, obyekt) eksporti butun modulni prod'da yiqitadi va BU fayldagi barça
+// amallar ("Xatolik yuz berdi") işlamay qoladi. use-server-exports.test.ts buni tekşiradi.
