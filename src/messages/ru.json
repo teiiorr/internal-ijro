@@ -2222,7 +2222,27 @@
 				"weekNotFinished": "Неделя ещё не завершилась — запишите итоги после её окончания"
 			},
 			"tabMinistry": "Отчёт для министерства",
-			"tabStandup": "Ежедневный отчёт"
+			"tabStandup": "Ежедневный отчёт",
+			"pdf": {
+				"reportTitle": "Еженедельный управленческий брифинг",
+				"org": "Центр развития детского контента",
+				"metrics": "Показатели",
+				"thisWeek": "За эту неделю",
+				"attention": "Требует внимания",
+				"summaryTitle": "Итоги недели",
+				"generatedAt": "Сформирован",
+				"completedStages": "Завершённые этапы",
+				"newProjects": "Новые проекты",
+				"payments": "Платежи",
+				"tasksCompleted": "Завершённые задачи",
+				"silentProjects": "Молчащие проекты",
+				"waitingReview": "Ожидают проверки",
+				"overrunning": "Превышен срок",
+				"noSummary": "Итоги не заполнены",
+				"value": "Значение",
+				"indicator": "Показатель",
+				"exportPdf": "Скачать PDF"
+			}
 		},
 		"ministryReport": {
 			"title": "Отчёт для министерства",

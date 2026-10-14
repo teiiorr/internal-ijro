@@ -15,6 +15,8 @@ import {
 import { getWeeklyBrief } from "@/server/queries/weekly-brief";
 import { WeekPicker } from "@/components/staff/weekly-brief/week-picker";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
+import { Button } from "@/components/ui-biib/Button";
+import { IconDownload } from "@tabler/icons-react";
 import { KpiDeltaStrip } from "@/components/staff/weekly-brief/kpi-delta-strip";
 import { WeekEvents } from "@/components/staff/weekly-brief/week-events";
 import { AttentionList } from "@/components/staff/weekly-brief/attention-list";
@@ -57,7 +59,16 @@ export default async function WeeklyBriefPage({ searchParams }: { searchParams: 
       <PageHeader
         title={t("title")}
         subtitle={<>{t("week")}: <span className="font-semibold tabular-nums text-[var(--ink)]">{weekOptionLabel(week)}</span></>}
-        actions={<WeekPicker week={week} options={options} prevWeek={prevWeek} nextWeek={nextWeek} />}
+        actions={
+          <div className="flex items-center gap-2">
+            <Button asChild variant="ghost" size="40" icon={IconDownload}>
+              <a href={`/api/export/weekly-report?week=${week}&locale=${locale}`} target="_blank" rel="noopener noreferrer">
+                {t("pdf.exportPdf")}
+              </a>
+            </Button>
+            <WeekPicker week={week} options={options} prevWeek={prevWeek} nextWeek={nextWeek} />
+          </div>
+        }
       />
 
       <div className="flex min-w-0 flex-col gap-8 lg:gap-12">

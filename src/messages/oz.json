@@ -2222,7 +2222,27 @@
 				"weekNotFinished": "Hafta hali tugamagan — xulosani hafta yakunlangaç yozing"
 			},
 			"tabMinistry": "Ministrlik hisoboti",
-			"tabStandup": "Kunlik hisobot"
+			"tabStandup": "Kunlik hisobot",
+			"pdf": {
+				"reportTitle": "Haftalik rahbar brifingi",
+				"org": "Bolalar kontentini rivojlantirish markazi",
+				"metrics": "Koʻrsatkichlar",
+				"thisWeek": "Bu hafta",
+				"attention": "Eʼtibor talab qiladi",
+				"summaryTitle": "Hafta xulosasi",
+				"generatedAt": "Shakllantirildi",
+				"completedStages": "Yakunlangan bosqichlar",
+				"newProjects": "Yangi loyihalar",
+				"payments": "Toʻlovlar",
+				"tasksCompleted": "Yakunlangan vazifalar",
+				"silentProjects": "Jim loyihalar",
+				"waitingReview": "Koʻrik kutmoqda",
+				"overrunning": "Muddatdan oshgan",
+				"noSummary": "Xulosa kiritilmagan",
+				"value": "Qiymat",
+				"indicator": "Koʻrsatkich",
+				"exportPdf": "PDF yuklab olish"
+			}
 		},
 		"ministryReport": {
 			"title": "Ministrlik uçun hisobot",

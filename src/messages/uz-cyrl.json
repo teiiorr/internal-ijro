@@ -2222,7 +2222,27 @@
 				"weekNotFinished": "Ҳафта ҳали тугамаган — хулосани ҳафта якунлангач ёзинг"
 			},
 			"tabMinistry": "Министрлик ҳисоботи",
-			"tabStandup": "Кунлик ҳисобот"
+			"tabStandup": "Кунлик ҳисобот",
+			"pdf": {
+				"reportTitle": "Ҳафталик раҳбар брифинги",
+				"org": "Болалар контентини ривожлантириш маркази",
+				"metrics": "Кўрсаткичлар",
+				"thisWeek": "Бу ҳафта",
+				"attention": "Эътибор талаб қилади",
+				"summaryTitle": "Ҳафта хулосаси",
+				"generatedAt": "Шакллантирилди",
+				"completedStages": "Якунланган босқичлар",
+				"newProjects": "Янги лойиҳалар",
+				"payments": "Тўловлар",
+				"tasksCompleted": "Якунланган вазифалар",
+				"silentProjects": "Жим лойиҳалар",
+				"waitingReview": "Кўрик кутмоқда",
+				"overrunning": "Муддатдан ошган",
+				"noSummary": "Хулоса киритилмаган",
+				"value": "Қиймат",
+				"indicator": "Кўрсаткич",
+				"exportPdf": "PDF юклаб олиш"
+			}
 		},
 		"ministryReport": {
 			"title": "Министрлик учун ҳисобот",
