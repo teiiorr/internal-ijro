@@ -618,6 +618,8 @@ export const activityLog = pgTable("activity_log", {
 }, (t) => ({
   createdIdx: index("activity_log_created_idx").on(t.createdAt),
   userIdx: index("activity_log_user_idx").on(t.userId),
+  // Sa'na tarixi (bitta obyektning barcha o'zgarishlari) uchun — seq scan o'rniga.
+  entityIdx: index("activity_log_entity_idx").on(t.entityType, t.entityId),
 }));
 
 // ---------- 5.18 project_messages, ratings ----------
@@ -881,6 +883,9 @@ export const stagePayments = pgTable(
   },
   (t) => ({
     stageIdx: index("stage_payments_stage_idx").on(t.stageId),
+    // Global to'lovlar reestri filtrlari (holat / to'langan sana) uchun.
+    statusIdx: index("stage_payments_status_idx").on(t.status),
+    paidIdx: index("stage_payments_paid_idx").on(t.paidAt),
   })
 );
 
