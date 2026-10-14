@@ -613,6 +613,21 @@
 			"addFile": "Добавить файл",
 			"hide": "Скрыть"
 		},
+		"smeta": {
+			"title": "Смета проекта",
+			"category": "Статья",
+			"description": "Примечание",
+			"planned": "План",
+			"actual": "Факт",
+			"variance": "Отклонение",
+			"currency": "Валюта",
+			"total": "Итого ({currency})",
+			"empty": "Статьи сметы ещё не добавлены",
+			"add": "Добавить статью",
+			"categoryRequired": "Укажите название статьи",
+			"confirmDelete": "Удалить статью «{name}»?",
+			"actualOptional": "Необязательно"
+		},
 		"stagePayments": {
 			"title": "Оплаты",
 			"projectTotal": "Оплаты по проекту",
