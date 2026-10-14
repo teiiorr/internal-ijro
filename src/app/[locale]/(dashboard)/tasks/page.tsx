@@ -10,6 +10,7 @@ import { TasksViewSwitcher } from "@/components/tasks/tasks-view-switcher";
 import { TasksSearch } from "@/components/tasks/tasks-search";
 import { TasksOverflowMenu } from "@/components/tasks/tasks-overflow-menu";
 import { IconPlus as Plus } from "@tabler/icons-react";
+import { parseTake, sliceWindow, loadMoreHref } from "@/lib/pagination";
 
 type Scope = "mine" | "given";
 type StatusTab = "all" | "in_progress" | "under_review" | "completed";
@@ -30,11 +31,14 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   const q = get("q");
 
   const base = { actorId: me.id, actorPosition: me.position, actorDepartmentId: me.departmentId, search: q };
-  const [scopedTasks, givenCount, mineCount] = await Promise.all([
-    listTasks({ ...base, scope }),
+  // Load-more oynasi: bitta ortiq qator soʻrab, "yana bormi" ni aniqlaymiz.
+  const take = parseTake(sp.take);
+  const [rawScoped, givenCount, mineCount] = await Promise.all([
+    listTasks({ ...base, scope, take: take + 1 }),
     countTasks({ ...base, scope: "given" }),
     countTasks({ ...base, scope: "mine" }),
   ]);
+  const { items: scopedTasks, hasMore } = sliceWindow(rawScoped, take);
 
   const filtered =
     tab === "all"
@@ -102,6 +106,14 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
         </div>
 
         <TasksViewSwitcher tasks={filtered} selectable />
+
+        {hasMore && (
+          <div className="flex justify-center pt-1">
+            <Button asChild variant="glass" size="40">
+              <a href={loadMoreHref(sp, take)}>{t("common.loadMore")}</a>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

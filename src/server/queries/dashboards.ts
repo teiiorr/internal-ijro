@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
@@ -243,14 +244,17 @@ export async function getProjectStageKpis() {
 }
 
 /** Hosilaviy holat böyiça loyihalar soni (jarayoni + "töxtatib turiş" holati) — halqa diagrammani ta'minlaydi. */
-export async function getProjectStatusBreakdown() {
+// Soʻrov ichida keşlanadi (React cache): argumentsiz, shaxsga bogʻliq boʻlmagan
+// org-aggregat — barcha loyihalar boʻylab skan. Bitta renderda bir necha joy soʻrasa
+// ham DB faqat bir marta uriladi; keşlash doim xavfsiz (foydalanuvchi konteksti yoʻq).
+export const getProjectStatusBreakdown = cache(async () => {
   const rows = await db
     .select({ progressPercentage: projects.progressPercentage, statusOverride: projects.statusOverride })
     .from(projects);
   const out: Record<DerivedStatus, number> = { not_started: 0, in_progress: 0, completed: 0, on_hold: 0 };
   for (const r of rows) out[derivedStatus(r.progressPercentage, r.statusOverride)] += 1;
   return out;
-}
+});
 
 export type WorkloadRow = {
   userId: string;
@@ -395,7 +399,9 @@ export async function getStageDeadlineBoard(locale: string, limit = 8) {
 }
 
 /** Barça bosqiçlar böyiça pul jamlanmasi: rejadagi maqsad, tölangan va kutilayotgan summalar. */
-export async function getProjectPaymentsSummary() {
+// Soʻrov ichida keşlanadi (React cache): argumentsiz, shaxsga bogʻliq boʻlmagan
+// moliya aggregati (reja/toʻlangan/qolgan jami). Keşlash doim xavfsiz.
+export const getProjectPaymentsSummary = cache(async () => {
   const [plannedRow, payRow] = await Promise.all([
     db.select({ s: sql<string>`coalesce(sum(${projectStages.plannedAmount}),0)` }).from(projectStages),
     db
@@ -410,7 +416,7 @@ export async function getProjectPaymentsSummary() {
     paid: Number(payRow[0]?.paid ?? 0),
     pending: Number(payRow[0]?.pending ?? 0),
   };
-}
+});
 
 void and; void asc;
 type _ = Position;

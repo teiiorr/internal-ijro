@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { createRequire } from "node:module";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
@@ -57,4 +58,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+const withIntl = withNextIntl(nextConfig);
+
+// @next/bundle-analyzer faqat `ANALYZE=true` boʻlganda ulanadi — standart build
+// (va `tsc`) oʻzgarmaydi. Paket aynan şu holatdagina `createRequire` orqali
+// yuklanadi, şuning uçun u oʻrnatilmagan boʻlsa ham oddiy build buzilmaydi.
+function withBundleAnalyzer(config: NextConfig): NextConfig {
+  if (process.env.ANALYZE !== "true") return config;
+  const req = createRequire(import.meta.url);
+  return req("@next/bundle-analyzer")({ enabled: true })(config);
+}
+
+export default withBundleAnalyzer(withIntl);

@@ -11,6 +11,7 @@ import { Card } from "@/components/ui-biib/Card";
 import { Rows, Row } from "@/components/ui-biib/Rows";
 import { Button } from "@/components/ui-biib/Button";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { parseTake, sliceWindow, loadMoreHref } from "@/lib/pagination";
 
 export default async function AuditLogPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const session = await auth();
@@ -23,15 +24,23 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
   const sp = await searchParams;
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
 
-  const rows = await listAudit({
-    userId: get("userId") ?? null,
-    action: get("action") ?? null,
-    entityType: get("entityType") ?? null,
-    from: get("from") ?? null,
-    to: get("to") ?? null,
-    search: get("q") ?? null,
-    scope: "all",
-  });
+  // Load-more oynasi: bitta ortiq qator soʻrab, "yana bormi" ni aniqlaymiz.
+  const take = parseTake(sp.take);
+  const { items: rows, hasMore } = sliceWindow(
+    await listAudit(
+      {
+        userId: get("userId") ?? null,
+        action: get("action") ?? null,
+        entityType: get("entityType") ?? null,
+        from: get("from") ?? null,
+        to: get("to") ?? null,
+        search: get("q") ?? null,
+        scope: "all",
+      },
+      take + 1,
+    ),
+    take,
+  );
 
   const exportQuery = new URLSearchParams(
     Object.fromEntries(Object.entries(sp).filter(([, v]) => typeof v === "string") as [string, string][]),
@@ -78,6 +87,14 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
           </Rows>
         )}
       </Card>
+
+      {hasMore && (
+        <div className="flex justify-center pt-4">
+          <Button asChild variant="glass" size="40">
+            <a href={loadMoreHref(sp, take)}>{t("common.loadMore")}</a>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -105,7 +105,7 @@ function typeLabel(row: { typeUz: string | null; typeCy: string | null; typeRu: 
   return row.typeUz;
 }
 
-export async function listProjects(f: ProjectFilters, locale?: string) {
+export async function listProjects(f: ProjectFilters, locale?: string, take = 200) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const conds = [] as any[];
   conds.push(isNull(projects.deletedAt)); // arxivlangan (soft-deleted) loyihalarni yashiramiz
@@ -158,7 +158,7 @@ export async function listProjects(f: ProjectFilters, locale?: string) {
     .leftJoin(projectTypes, eq(projectTypes.id, projects.projectTypeId))
     .where(where)
     .orderBy(desc(projects.createdAt))
-    .limit(200);
+    .limit(take);
   return rows.map((r) => ({ ...r, projectTypeName: typeLabel(r, locale) }));
 }
 

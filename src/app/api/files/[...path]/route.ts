@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createReadStream } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { Readable } from "node:stream";
-import { posix } from "node:path";
+import { posix, join } from "node:path";
+import { createHash, randomUUID } from "node:crypto";
 import { auth } from "@/lib/auth";
 import { statFileForDownload } from "@/lib/upload";
 import { canAccessFile } from "@/lib/permissions/file-access";
 
 export const runtime = "nodejs";
+
+// Miniatura disk keşi — yuklamalar ildizi içidagi `.thumbs` papkasi. `canAccessFile`
+// noma'lum turni kontragentga bermaydi, şuning uçun keş papkasi faqat içki xodimga
+// körinadi (va keş baribir GET'dagi avtorizatsiyadan KEYIN öqiladi/yoziladi).
+const UPLOAD_DIR = process.env.UPLOAD_DIR ?? "./uploads";
+const THUMB_DIR = join(UPLOAD_DIR, ".thumbs");
 
 const MIME: Record<string, string> = {
   jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp",
@@ -30,17 +37,42 @@ const RESIZE_WIDTHS = new Set([64, 96, 128, 256]);
  * himoyalangan: har qanday xatolik (sharp yöq, dekod xatosi, ölçab bölmaydigan tur)
  * quyidagi oddiy töliq-fayl oqimiga ötadi, şunda rasm uzatish hech qaçon buzilmaydi.
  */
-async function tryResize(filePath: string, mime: string, width: number): Promise<NextResponse | null> {
+async function tryResize(filePath: string, mime: string, width: number, size: number): Promise<NextResponse | null> {
   if (!RESIZE_WIDTHS.has(width)) return null;
   if (!/^image\/(jpe?g|png|webp)$/.test(mime)) return null; // svg/gif/bmp/video ni ötkazib yuboramiz
   try {
-    const { default: sharp } = await import("sharp");
-    const input = await readFile(filePath);
-    const out = await sharp(input)
-      .rotate() // EXIF orientatsiyasini hisobga olamiz
-      .resize(width, width, { fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 78 })
-      .toBuffer();
+    // Disk keşi: aynan bir manba + ölçam uçun qayta-qayta sharp işga tuşirmaymiz.
+    // Kalit manba yöli + hajmi + ölçamdan — fayl özgarsa (boşqa hajm) kalit ham özgaradi.
+    const key = createHash("sha1").update(`${filePath}:${size}:${width}`).digest("hex");
+    const cachePath = join(THUMB_DIR, `${key}-${width}.webp`);
+
+    let out: Buffer | null = null;
+    try {
+      out = await readFile(cachePath); // keşdan
+    } catch {
+      out = null; // keşda yöq — quyida yaratamiz
+    }
+
+    if (!out) {
+      const { default: sharp } = await import("sharp");
+      const input = await readFile(filePath);
+      out = await sharp(input)
+        .rotate() // EXIF orientatsiyasini hisobga olamiz
+        .resize(width, width, { fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 78 })
+        .toBuffer();
+      // Keşga atomik yozamiz (tmp + rename) — yarim yozilgan fayl heç qaçon öqilmaydi.
+      // Yozib bölmasa (disk/ruxsat), e'tibor bermaymiz: javob baribir qaytadi.
+      try {
+        await mkdir(THUMB_DIR, { recursive: true });
+        const tmp = join(THUMB_DIR, `.${key}-${width}.${randomUUID()}.tmp`);
+        await writeFile(tmp, out);
+        await rename(tmp, cachePath);
+      } catch {
+        /* keş yozilmadi — muhim emas */
+      }
+    }
+
     const headers = new Headers();
     headers.set("Content-Type", "image/webp");
     headers.set("Content-Length", String(out.length));
@@ -84,7 +116,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   // Ixtiyoriy ölçamlangan miniatura (avatarlar va h.k.). Hech qaçon halokatli emas — null → töliq oqim.
   const width = Number(req.nextUrl.searchParams.get("w"));
   if (width) {
-    const resized = await tryResize(f.path, mime, width);
+    const resized = await tryResize(f.path, mime, width, f.size);
     if (resized) {
       // Maxfiy (kirish nazoratidagi) fayllar umumiy (proxy/CDN) keshida saqlanmasligi kerak.
       if (isSensitive) resized.headers.set("Cache-Control", "private, no-store");

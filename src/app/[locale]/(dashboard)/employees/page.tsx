@@ -15,6 +15,7 @@ import { EmptyState } from "@/components/empty-state";
 import { IconPlus as Plus, IconUsers } from "@tabler/icons-react";
 import { shortName } from "@/lib/names";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { parseTake, loadMoreHref } from "@/lib/pagination";
 
 type SP = Record<string, string | string[] | undefined>;
 
@@ -35,6 +36,9 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
   const sp = await searchParams;
   const get = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
 
+  // Load-more oynasi: `total` toʻliq soni berib turadi, shuning uchun qator
+  // soni emas, `total > take` boʻyicha "yana bor"ligini aniqlaymiz.
+  const take = parseTake(sp.take);
   const [{ rows, total }, departments] = await Promise.all([
     listEmployees({
       search: get("q"),
@@ -43,10 +47,11 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
       position: (get("position") as any) ?? null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       status: (get("status") as any) ?? null,
-      limit: 100,
+      limit: take,
     }),
     listDepartments(),
   ]);
+  const hasMore = total > take;
 
   const canAdd = ["direktor", "orinbosar", "hr"].includes(session.user.position);
   const statusLabel = (s: string) => t(`status.${s}` as "status.active");
@@ -128,6 +133,14 @@ export default async function EmployeesPage({ searchParams }: { searchParams: Pr
               </Table>
             </Card>
           </>
+        )}
+
+        {hasMore && (
+          <div className="flex justify-center">
+            <Button asChild variant="glass" size="40">
+              <a href={loadMoreHref(sp, take)}>{t("common.loadMore")}</a>
+            </Button>
+          </div>
         )}
       </div>
     </div>
