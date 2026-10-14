@@ -8,6 +8,7 @@ import { OWNER_EMAILS } from "@/lib/permissions/owner";
 import { runTaskReminders } from "./jobs/task-reminders";
 import { runNormativeAckReminders } from "./jobs/normative-ack-reminders";
 import { runWeeklySnapshot } from "./jobs/weekly-snapshot";
+import { runLogRetention } from "./jobs/log-retention";
 
 const { projectStages, projects, users } = schema;
 
@@ -167,6 +168,7 @@ async function main() {
     ["task-reminders", () => runTaskReminders(db)],
     ["normative-ack", () => runNormativeAckReminders(db)],
     ["weekly-snapshot", () => runWeeklySnapshot(db)],
+    ["log-retention", () => runLogRetention(db)],
   ];
   for (const [name, run] of jobs) {
     try {
