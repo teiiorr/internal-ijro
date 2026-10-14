@@ -260,11 +260,17 @@ export const projects = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     completedAt: timestamp("completed_at", { withTimezone: true }),
+    /** Yumshoq o'chirish (soft-delete): to'ldirilgan bo'lsa — loyiha arxivlangan, UI'da
+     *  ko'rinmaydi, lekin to'lovlar reestri va boshqa yozuvlar saqlanadi (hard-delete
+     *  ularni kaskad bilan yo'q qilardi). */
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (t) => ({
     statusIdx: index("projects_status_idx").on(t.status),
     curatorIdx: index("projects_curator_idx").on(t.curatorUserId),
     companyIdx: index("projects_company_idx").on(t.externalCompanyId),
+    // Faol loyihalar bo'yicha qidiruv deleted_at IS NULL filtrini tez-tez ishlatadi.
+    notDeletedIdx: index("projects_not_deleted_idx").on(t.deletedAt),
   })
 );
 

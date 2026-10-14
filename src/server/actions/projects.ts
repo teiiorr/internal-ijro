@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import {
@@ -15,7 +15,6 @@ import {
   users,
   projectTypes,
   projectStages,
-  stageDocuments,
   projectDocuments,
   stageTemplateItems,
   notificationSettings,
@@ -651,26 +650,18 @@ export async function deleteProject(projectId: string) {
   const me = await requireProjectEditor();
   if (!["direktor", "orinbosar", "koordinator"].includes(me.position)) redirect("/projects");
   const [prj] = await db
-    .select({ id: projects.id, name: projects.name, posterUrl: projects.posterUrl })
+    .select({ id: projects.id, name: projects.name })
     .from(projects)
-    .where(eq(projects.id, projectId))
+    .where(and(eq(projects.id, projectId), isNull(projects.deletedAt)))
     .limit(1);
   if (!prj) return;
 
-  // Imkon qadar fayllarni tozalaymiz (bu heç qaçon öçirişni töxtatmaydi).
-  const docs = await db
-    .select({ fileUrl: stageDocuments.fileUrl })
-    .from(stageDocuments)
-    .innerJoin(projectStages, eq(projectStages.id, stageDocuments.stageId))
-    .where(eq(projectStages.projectId, projectId));
-  for (const d of docs) {
-    try { await deleteFileByUrl(d.fileUrl); } catch { /* egasiz fayl — e'tiborsiz qoldiramiz */ }
-  }
-  if (prj.posterUrl) {
-    try { await deleteFileByUrl(prj.posterUrl); } catch { /* e'tiborsiz qoldiramiz */ }
-  }
-
-  await db.delete(projects).where(eq(projects.id, projectId));
+  // YUMSHOQ o'chirish (soft-delete): qatorni arxivlaymiz. Qattiq o'chirish (db.delete)
+  // kaskad bilan project_stages → stage_payments (to'lovlar reestri), stage/project
+  // hujjatlari va xabarlarini butunlay yo'q qilardi — moliyaviy audit qaytarib bo'lmas
+  // tarzda yo'qolardi. Endi hamma yozuv (va fayllar) saqlanadi, loyiha ro'yxatlardan
+  // yo'qoladi (deleted_at IS NULL filtri).
+  await db.update(projects).set({ deletedAt: new Date() }).where(eq(projects.id, projectId));
   await logActivity({ userId: me.id, action: "project.deleted", entityType: "project", entityId: projectId, oldValue: { name: prj.name } });
   revalidatePath("/projects");
 }

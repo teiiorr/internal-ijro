@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, isNull, lte, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "@/lib/db";
 import {
@@ -108,6 +108,7 @@ function typeLabel(row: { typeUz: string | null; typeCy: string | null; typeRu: 
 export async function listProjects(f: ProjectFilters, locale?: string) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const conds = [] as any[];
+  conds.push(isNull(projects.deletedAt)); // arxivlangan (soft-deleted) loyihalarni yashiramiz
   if (f.search) {
     // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant har bir ustunda.
     const patterns = queryVariants(f.search).map((v) => `%${v}%`);
@@ -162,7 +163,7 @@ export async function listProjects(f: ProjectFilters, locale?: string) {
 }
 
 export async function getProject(id: string) {
-  const p = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  const p = await db.select().from(projects).where(and(eq(projects.id, id), isNull(projects.deletedAt))).limit(1);
   if (p.length === 0) return null;
   const [company, curator, curators, studios, mls, dlvs, msgs, prjTasks, rt] = await Promise.all([
     p[0].externalCompanyId
@@ -366,7 +367,7 @@ export async function listProjectsForContractor(contractorUserId: string, locale
     })
     .from(projects)
     .leftJoin(projectTypes, eq(projectTypes.id, projects.projectTypeId))
-    .where(or(eq(projects.externalCompanyId, company[0].id), studioProjectIds.length ? inArray(projects.id, studioProjectIds) : sql`false`))
+    .where(and(isNull(projects.deletedAt), or(eq(projects.externalCompanyId, company[0].id), studioProjectIds.length ? inArray(projects.id, studioProjectIds) : sql`false`)))
     .orderBy(desc(projects.createdAt));
 
   // Faol bosqiç nomi + "N tadan X-bosqiç" bilan boyitamiz — "men qayerdaman" signali.
@@ -432,6 +433,7 @@ export type ProjectReportRow = {
 export async function listProjectsForReport(f: ProjectFilters = {}): Promise<ProjectReportRow[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const conds = [] as any[];
+  conds.push(sql`p.deleted_at is null`); // arxivlangan loyihalarni hisobotdan chiqarib tashlaymiz
   if (f.search) {
     // Klaviatura joylashuvini sezmaydi: asl + almashtirilgan (RU<->US) variant.
     const patterns = queryVariants(f.search).map((v) => `%${v}%`);
@@ -527,7 +529,7 @@ export async function getContractorDetail(companyId: string) {
     })
     .from(projects)
     .leftJoin(users, eq(users.id, projects.curatorUserId))
-    .where(eq(projects.externalCompanyId, companyId))
+    .where(and(eq(projects.externalCompanyId, companyId), isNull(projects.deletedAt)))
     .orderBy(desc(projects.createdAt));
 
   const projectIds = prjs.map((p) => p.id);
@@ -582,7 +584,7 @@ export async function getContractorReviewProjects(companyId: string) {
     })
     .from(projects)
     .leftJoin(users, eq(users.id, projects.curatorUserId))
-    .where(eq(projects.externalCompanyId, companyId))
+    .where(and(eq(projects.externalCompanyId, companyId), isNull(projects.deletedAt)))
     .orderBy(desc(projects.createdAt));
 
   const ids = prjs.map((p) => p.id);
