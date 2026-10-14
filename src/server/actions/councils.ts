@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { councilMeetings, councilAgendaItems } from "@/lib/db/schema";
 import { requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
-import { type ActionResult } from "@/lib/action-result";
+import { type ActionResult, ok, err } from "@/lib/action-result";
 
 const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 const KINDS = ["ekspert", "smeta"] as const;
@@ -94,6 +94,45 @@ export async function addAgendaItem(input: z.infer<typeof agendaSchema>): Promis
   await logActivity({ userId: me.id, action: "council.agenda_added", entityType: "council_meeting", entityId: p.meetingId });
   revalidate(kind);
   return { ok: true };
+}
+
+const DECISION_STATUSES = ["pending", "approved", "rejected", "deferred"] as const;
+
+const decisionSchema = z.object({
+  decisionStatus: z.enum(DECISION_STATUSES),
+  decision: z.string().max(2000).nullable().optional(),
+});
+
+/**
+ * Kun tartibi bandiga kengash qarorini yozadi: holat (ma'qullandi/rad etildi/keyinga
+ * qoldirildi/kutilmoqda) + ixtiyoriy erkin matn. Ruxsat — boşqa kengash amallari bilan
+ * bir xil (MANAGERS lavozimlari). Holat 4 qiymatdan biri bölmasa — err("invalid").
+ */
+export async function setAgendaDecision(
+  itemId: string,
+  input: z.infer<typeof decisionSchema>,
+): Promise<ActionResult> {
+  const me = await requirePosition([...MANAGERS]);
+  const parsed = decisionSchema.safeParse(input);
+  if (!parsed.success) return err("invalid");
+  const p = parsed.data;
+
+  const [row] = await db
+    .select({ meetingId: councilAgendaItems.meetingId })
+    .from(councilAgendaItems)
+    .where(eq(councilAgendaItems.id, itemId))
+    .limit(1);
+  if (!row) return err("not_found");
+  const kind = await meetingKind(row.meetingId);
+  if (!kind) return err("not_found");
+
+  await db
+    .update(councilAgendaItems)
+    .set({ decisionStatus: p.decisionStatus, decision: p.decision?.trim() || null })
+    .where(eq(councilAgendaItems.id, itemId));
+  await logActivity({ userId: me.id, action: "council.decision_set", entityType: "council_meeting", entityId: row.meetingId, newValue: { decisionStatus: p.decisionStatus } });
+  revalidate(kind);
+  return ok();
 }
 
 export async function deleteAgendaItem(itemId: string) {

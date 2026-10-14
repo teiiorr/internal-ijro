@@ -1,9 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown } from "@tabler/icons-react";
+import { IconCalendarClock as CalendarClock, IconChevronDown as ChevronDown, IconFileText as FileText } from "@tabler/icons-react";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { Section } from "@/components/ui-biib/Section";
 import { Card } from "@/components/ui-biib/Card";
+import { Button } from "@/components/ui/button";
+import { Status, type StatusTone } from "@/components/ui-biib/Status";
 import { EmptyState } from "@/components/empty-state";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -19,6 +21,14 @@ import { formatDateMaybeTime } from "@/lib/dates";
 
 const KINDS = ["ekspert", "smeta"] as const;
 type Kind = (typeof KINDS)[number];
+
+// Qaror holati → plashka tusi (CouncilDecision bilan bir xil xaritalash).
+const DECISION_TONE: Record<string, StatusTone> = {
+  approved: "success",
+  rejected: "danger",
+  deferred: "warning",
+  pending: "neutral",
+};
 
 export default async function CouncilPage({ params }: { params: Promise<{ kind: string }> }) {
   const session = await auth();
@@ -69,6 +79,16 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
         <Section
           title={upcoming.title || t("kengash.agenda")}
           meta={formatDateMaybeTime(upcoming.scheduledAt, locale)}
+          action={
+            canManage ? (
+              <Button asChild variant="outline" size="sm" className="shrink-0">
+                <a href={`/api/export/council-protocol?meeting=${upcoming.id}`} target="_blank" rel="noopener noreferrer">
+                  <FileText className="size-4" />
+                  {t("kengash.protocol.download")}
+                </a>
+              </Button>
+            ) : undefined
+          }
         >
           <div className="flex flex-col gap-4">
             <Card solid>
@@ -117,6 +137,7 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
                                   <th className="py-2 pr-3 font-semibold">{t("kengash.topic")}</th>
                                   <th className="py-2 pr-3 font-semibold">{t("kengash.project")}</th>
                                   <th className="py-2 pr-3 font-semibold">{t("kengash.studio")}</th>
+                                  <th className="py-2 pr-3 font-semibold">{t("kengash.protocol.decision")}</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-[var(--line)]">
@@ -126,10 +147,28 @@ export default async function CouncilPage({ params }: { params: Promise<{ kind: 
                                     <td className="py-2 pr-3 font-medium text-[var(--ink)]">{it.topic}</td>
                                     <td className="py-2 pr-3 text-[var(--ink-2)]">{it.projectName ?? "—"}</td>
                                     <td className="py-2 pr-3 text-[var(--ink-2)]">{it.studioName ?? "—"}</td>
+                                    <td className="py-2 pr-3">
+                                      <div className="flex flex-col items-start gap-1">
+                                        <Status tone={DECISION_TONE[it.decisionStatus] ?? "neutral"}>
+                                          {t(`kengash.decision.${(["pending", "approved", "rejected", "deferred"].includes(it.decisionStatus) ? it.decisionStatus : "pending") as "pending"}`)}
+                                        </Status>
+                                        {it.decision && <span className="t-small text-[var(--ink-2)]">{it.decision}</span>}
+                                      </div>
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
                             </table>
+                          </div>
+                        )}
+                        {canManage && (
+                          <div className="mt-3 flex justify-end">
+                            <Button asChild variant="outline" size="sm">
+                              <a href={`/api/export/council-protocol?meeting=${m.id}`} target="_blank" rel="noopener noreferrer">
+                                <FileText className="size-4" />
+                                {t("kengash.protocol.download")}
+                              </a>
+                            </Button>
                           </div>
                         )}
                       </div>

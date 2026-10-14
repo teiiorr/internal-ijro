@@ -1230,6 +1230,19 @@
 		"requestedBy": "Soʻradi:"
 	},
 	"kengash": {
+		"protocol": {
+			"decision": "Qaror",
+			"download": "Bayonnomani yuklab oliş",
+			"setDecision": "Qaror belgilaş",
+			"decisionPlaceholder": "Qaror matni (ixtiyoriy)",
+			"decisionSaved": "Qaror saqlandi"
+		},
+		"decision": {
+			"pending": "Kutilmoqda",
+			"approved": "Maʼqullandi",
+			"rejected": "Rad etildi",
+			"deferred": "Keyinga qoldirildi"
+		},
 		"ekspertHeading": "Kelayotgan Ekspertlar Kengaşining kun tartibi",
 		"smetaHeading": "Kelayotgan Smeta Komissiyasining kun tartibi",
 		"archiveButton": "Arxiv",

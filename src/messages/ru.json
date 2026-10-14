@@ -1230,6 +1230,19 @@
 		"requestedBy": "Запросил:"
 	},
 	"kengash": {
+		"protocol": {
+			"decision": "Решение",
+			"download": "Скачать протокол",
+			"setDecision": "Задать решение",
+			"decisionPlaceholder": "Текст решения (необязательно)",
+			"decisionSaved": "Решение сохранено"
+		},
+		"decision": {
+			"pending": "На рассмотрении",
+			"approved": "Одобрено",
+			"rejected": "Отклонено",
+			"deferred": "Отложено"
+		},
 		"ekspertHeading": "Повестка предстоящего заседания Экспертного совета",
 		"smetaHeading": "Повестка предстоящего заседания Сметной комиссии",
 		"archiveButton": "Архив",

@@ -12,6 +12,9 @@ export type AgendaRow = {
   studioName: string | null;
   presenterUserId: string | null;
   presenterName: string | null;
+  // Kengash qarori: holat ('pending'|'approved'|'rejected'|'deferred') + erkin matn.
+  decisionStatus: string;
+  decision: string | null;
 };
 
 /** Kengaş sahifasiga kerak bölgan hamma narsa: eng yaqin böladigan majlis + uning kun tartibi, va töliq tarix. */
@@ -44,6 +47,8 @@ export async function getCouncilPage(kind: string) {
         studioName: externalCompanies.name,
         presenterUserId: councilAgendaItems.presenterUserId,
         presenterName: sql<string | null>`coalesce(${users.fullName}, ${councilAgendaItems.presenterName})`,
+        decisionStatus: councilAgendaItems.decisionStatus,
+        decision: councilAgendaItems.decision,
       })
       .from(councilAgendaItems)
       .leftJoin(projects, eq(projects.id, councilAgendaItems.projectId))
@@ -66,6 +71,8 @@ export async function getCouncilPage(kind: string) {
       studioName: externalCompanies.name,
       presenterUserId: councilAgendaItems.presenterUserId,
       presenterName: sql<string | null>`coalesce(${users.fullName}, ${councilAgendaItems.presenterName})`,
+      decisionStatus: councilAgendaItems.decisionStatus,
+      decision: councilAgendaItems.decision,
     })
     .from(councilAgendaItems)
     .innerJoin(councilMeetings, eq(councilMeetings.id, councilAgendaItems.meetingId))
@@ -81,4 +88,59 @@ export async function getCouncilPage(kind: string) {
   }
 
   return { meetings, upcoming, agenda, agendaByMeeting };
+}
+
+/** Bayonnoma (protokol) PDF'i uçun bitta kun tartibi bandi — nomlari hal qilingan. */
+export type ProtocolItem = {
+  orderIndex: number;
+  topic: string;
+  projectName: string | null;
+  presenterName: string | null;
+  decisionStatus: string;
+  decision: string | null;
+};
+
+/** Bayonnoma uçun majlis + uning tartiblangan kun tartibi. */
+export type ProtocolMeeting = {
+  id: string;
+  kind: string;
+  scheduledAt: Date;
+  title: string | null;
+  items: ProtocolItem[];
+};
+
+/**
+ * Bayonnoma (kengash majlisi protokoli) PDF'i uçun majlis va uning tartiblangan kun
+ * tartibini qaytaradi: har bir bandning mavzusi, loyihasi/ma'ruzaçisi (nomlari hal
+ * qilingan) hamda qarori (holat + matn). Majlis topilmasa null.
+ */
+export async function getMeetingForProtocol(meetingId: string): Promise<ProtocolMeeting | null> {
+  const [meeting] = await db
+    .select({
+      id: councilMeetings.id,
+      kind: councilMeetings.kind,
+      scheduledAt: councilMeetings.scheduledAt,
+      title: councilMeetings.title,
+    })
+    .from(councilMeetings)
+    .where(eq(councilMeetings.id, meetingId))
+    .limit(1);
+  if (!meeting) return null;
+
+  const items = await db
+    .select({
+      orderIndex: councilAgendaItems.orderIndex,
+      topic: councilAgendaItems.topic,
+      projectName: sql<string | null>`coalesce(${projects.name}, ${councilAgendaItems.projectName})`,
+      presenterName: sql<string | null>`coalesce(${users.fullName}, ${councilAgendaItems.presenterName})`,
+      decisionStatus: councilAgendaItems.decisionStatus,
+      decision: councilAgendaItems.decision,
+    })
+    .from(councilAgendaItems)
+    .leftJoin(projects, eq(projects.id, councilAgendaItems.projectId))
+    .leftJoin(users, eq(users.id, councilAgendaItems.presenterUserId))
+    .where(eq(councilAgendaItems.meetingId, meetingId))
+    .orderBy(asc(councilAgendaItems.orderIndex));
+
+  return { ...meeting, items };
 }
