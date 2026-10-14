@@ -17,6 +17,7 @@ import { IconPlus as Plus, IconDownload as Download, IconAlertTriangle as AlertT
 import { derivedStatus, type DerivedStatus } from "@/lib/projects/progress";
 import { isProjectGenre } from "@/lib/projects/genres";
 import { canEditProjects, canViewMoney } from "@/lib/permissions/project-editors";
+import { parseTake, sliceWindow, loadMoreHref } from "@/lib/pagination";
 
 type Sort = "created" | "name" | "deadline" | "progress";
 type StatusFilter = "all" | "not_started" | "in_progress" | "completed" | "on_hold" | "at_risk";
@@ -49,11 +50,14 @@ export default async function ProjectsPage({
   const stage = get("stage") || null;
   const search = get("search")?.trim() || null;
 
-  const [rows, projectTypeOptions, stagesByType] = await Promise.all([
-    listProjects({ search, projectTypeId, payment, overdue: overdue || null, stage }, locale),
+  // Load-more oynasi: bitta ortiq qator soʻrab, "yana bormi" ni aniqlaymiz.
+  const take = parseTake(sp.take);
+  const [rawProjects, projectTypeOptions, stagesByType] = await Promise.all([
+    listProjects({ search, projectTypeId, payment, overdue: overdue || null, stage }, locale, take + 1),
     listProjectTypes(locale),
     listStageOptionsByType(locale),
   ]);
+  const { items: rows, hasMore } = sliceWindow(rawProjects, take);
   const canCreate = canEditProjects(session.user.email);
   const canExport = canViewMoney(session.user.email); // hisobotda summalar bör → faqat allowlist uçun
   // Excel eksporti hozir qöllangan filtrlarni aynan takrorlaydi.
@@ -223,6 +227,14 @@ export default async function ProjectsPage({
                 </div>
               </Link>
             ))}
+          </div>
+        )}
+
+        {hasMore && (
+          <div className="flex justify-center pt-1">
+            <Button asChild variant="glass" size="40">
+              <a href={loadMoreHref(sp, take)}>{t("common.loadMore")}</a>
+            </Button>
           </div>
         )}
       </div>

@@ -15,22 +15,33 @@ import { markAllRead } from "@/server/actions/notifications";
 import { formatDate } from "@/lib/dates";
 import { addDays, todayTashkent } from "@/lib/my-work/buckets";
 import { cn } from "@/lib/utils";
+import { parseTake, sliceWindow, loadMoreHref } from "@/lib/pagination";
 
 type Notification = typeof notifications.$inferSelect;
 
-export default async function NotificationsPage() {
+export default async function NotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const session = await auth();
   if (!session?.user) redirect("/login");
   const t = await getTranslations("notifications");
   const tc = await getTranslations("common");
   const locale = await getLocale();
+  const sp = await searchParams;
 
-  const rows = await db
-    .select()
-    .from(notifications)
-    .where(eq(notifications.userId, session.user.id))
-    .orderBy(desc(notifications.createdAt))
-    .limit(200);
+  // Load-more oynasi: bitta ortiq qator soʻrab, "yana bormi" ni aniqlaymiz.
+  const take = parseTake(sp.take);
+  const { items: rows, hasMore } = sliceWindow(
+    await db
+      .select()
+      .from(notifications)
+      .where(eq(notifications.userId, session.user.id))
+      .orderBy(desc(notifications.createdAt))
+      .limit(take + 1),
+    take,
+  );
 
   const today = todayTashkent();
   const yesterday = addDays(today, -1);
@@ -114,6 +125,14 @@ export default async function NotificationsPage() {
               </Card>
             </Section>
           ))}
+
+          {hasMore && (
+            <div className="flex justify-center pt-1">
+              <Button asChild variant="glass" size="40">
+                <a href={loadMoreHref(sp, take)}>{tc("loadMore")}</a>
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

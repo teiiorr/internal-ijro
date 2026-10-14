@@ -27,6 +27,8 @@ export type TaskListFilters = {
   actorId: string;
   actorPosition: Position;
   actorDepartmentId: string | null;
+  /** Oyna oʻlchami (load-more). Berilmasa — eski qattiq chegara (eksport ham shunga tayanadi). */
+  take?: number;
 };
 
 export async function listTasks(f: TaskListFilters) {
@@ -80,7 +82,7 @@ export async function listTasks(f: TaskListFilters) {
     .leftJoin(projects, eq(projects.id, tasks.projectId))
     .where(condition)
     .orderBy(desc(tasks.createdAt))
-    .limit(500);
+    .limit(f.take ?? 500);
 
   return rows;
 }
