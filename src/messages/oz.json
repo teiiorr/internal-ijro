@@ -574,7 +574,8 @@
 			"created": "Sana böyiça",
 			"name": "Nom böyiça",
 			"deadline": "Muddati böyiça",
-			"progress": "Bajariliş böyiça"
+			"progress": "Bajariliş böyiça",
+				"label": "Saralaş"
 		},
 		"stagePath": {
 			"title": "Bosqiçlar",

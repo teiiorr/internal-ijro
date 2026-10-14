@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -65,6 +65,7 @@ export function RegisterFiltersBar({
   const params = useSearchParams();
   const [, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const panelId = useId();
   const [contract, setContract] = useState(params.get("contract") ?? "");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -159,6 +160,7 @@ export function RegisterFiltersBar({
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
+        aria-controls={panelId}
         className={`${FIELD} flex items-center justify-between sm:hidden`}
       >
         <span className="inline-flex items-center gap-2">
@@ -171,7 +173,7 @@ export function RegisterFiltersBar({
         <ChevronDown className={cn("size-4 text-[var(--muted)] transition-transform", open && "rotate-180")} />
       </button>
 
-      <div className={cn("grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4", !open && "hidden sm:grid")}>
+      <div id={panelId} className={cn("grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4", !open && "hidden sm:grid")}>
         <Sel label={t("status")} value={status} onChange={(v) => push({ status: v || null })}>
           <option value="">{t("allStatuses")}</option>
           <option value="paid">{t("paid")}</option>
