@@ -252,6 +252,23 @@ export async function shareTaskToChat(taskId: string): Promise<ActionResult> {
   return ok();
 }
 
+/**
+ * Topshiriq sub-resurslari (izoh / checklist / ilova) uchun kirish tekshiruvi (IDOR'ga qarshi):
+ * yaratuvchi, ijrochi yoki rahbar (direktor/orinbosar) bo'lishi shart. Aks holda — forbidden.
+ */
+async function assertCanAccessTask(taskId: string, me: { id: string; position: string }): Promise<void> {
+  if (me.position === "direktor" || me.position === "orinbosar") return;
+  const [t] = await db.select({ createdBy: tasks.createdByUserId }).from(tasks).where(eq(tasks.id, taskId)).limit(1);
+  if (!t) throw new Error("not_found");
+  if (t.createdBy === me.id) return;
+  const [asg] = await db
+    .select({ u: taskAssignees.userId })
+    .from(taskAssignees)
+    .where(and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, me.id)))
+    .limit(1);
+  if (!asg) throw new Error("forbidden");
+}
+
 const commentSchema = z.object({
   taskId: z.string().uuid(),
   content: z.string().min(1).max(5000),
@@ -262,6 +279,7 @@ const commentSchema = z.object({
 export async function addComment(input: z.infer<typeof commentSchema>) {
   const me = await requireUser();
   const parsed = commentSchema.parse(input);
+  await assertCanAccessTask(parsed.taskId, me);
   const inserted = await db
     .insert(taskComments)
     .values({
@@ -315,14 +333,18 @@ const checklistSchema = z.object({
 });
 
 export async function addChecklistItem(input: z.infer<typeof checklistSchema>) {
-  await requireUser();
+  const me = await requireUser();
   const parsed = checklistSchema.parse(input);
+  await assertCanAccessTask(parsed.taskId, me);
   await db.insert(taskChecklistItems).values({ taskId: parsed.taskId, content: parsed.content });
   revalidatePath(`/tasks/${parsed.taskId}`);
 }
 
 export async function toggleChecklistItem(itemId: string, taskId: string, done: boolean) {
-  await requireUser();
+  const me = await requireUser();
+  const [item] = await db.select({ taskId: taskChecklistItems.taskId }).from(taskChecklistItems).where(eq(taskChecklistItems.id, itemId)).limit(1);
+  if (!item) throw new Error("not_found");
+  await assertCanAccessTask(item.taskId, me);
   await db
     .update(taskChecklistItems)
     .set({ isCompleted: done, completedAt: done ? new Date() : null })
@@ -331,13 +353,17 @@ export async function toggleChecklistItem(itemId: string, taskId: string, done: 
 }
 
 export async function deleteChecklistItem(itemId: string, taskId: string) {
-  await requireUser();
+  const me = await requireUser();
+  const [item] = await db.select({ taskId: taskChecklistItems.taskId }).from(taskChecklistItems).where(eq(taskChecklistItems.id, itemId)).limit(1);
+  if (!item) throw new Error("not_found");
+  await assertCanAccessTask(item.taskId, me);
   await db.delete(taskChecklistItems).where(eq(taskChecklistItems.id, itemId));
   revalidatePath(`/tasks/${taskId}`);
 }
 
 export async function attachFileToTask(taskId: string, file: File) {
   const me = await requireUser();
+  await assertCanAccessTask(taskId, me);
   const stored = await storeFile(file, `task-attachments/${taskId}`);
   await db.insert(taskAttachments).values({
     taskId,
@@ -352,9 +378,10 @@ export async function attachFileToTask(taskId: string, file: File) {
 }
 
 export async function removeAttachment(attachmentId: string, taskId: string) {
-  await requireUser();
+  const me = await requireUser();
   const row = await db.select().from(taskAttachments).where(eq(taskAttachments.id, attachmentId)).limit(1);
   if (row.length === 0) return;
+  await assertCanAccessTask(row[0].taskId, me);
   await deleteFileByUrl(row[0].fileUrl);
   await db.delete(taskAttachments).where(eq(taskAttachments.id, attachmentId));
   revalidatePath(`/tasks/${taskId}`);
