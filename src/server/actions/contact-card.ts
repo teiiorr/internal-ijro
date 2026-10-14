@@ -22,7 +22,7 @@ import {
  */
 export async function saveContactCard(input: ContactCardInput): Promise<SaveContactCardResult> {
   const me = await requireUser();
-  if (me.position === "kontragent") throw new Error("forbidden");
+  if (me.position === "kontragent") return { ok: false, error: "forbidden" };
 
   const parsed = contactCardSchema.safeParse(input);
   if (!parsed.success) {
@@ -31,14 +31,14 @@ export async function saveContactCard(input: ContactCardInput): Promise<SaveCont
   const d = parsed.data;
 
   const target = d.userId ?? me.id;
-  if (target !== me.id && !can(me.position, "employees.create")) throw new Error("forbidden");
+  if (target !== me.id && !can(me.position, "employees.create")) return { ok: false, error: "forbidden" };
 
   const [u] = await db
     .select({ id: users.id, position: users.position })
     .from(users)
     .where(eq(users.id, target))
     .limit(1);
-  if (!u || u.position === "kontragent") throw new Error("not_found");
+  if (!u || u.position === "kontragent") return { ok: false, error: "not_found" };
 
   // Faqat yuborilgan maydonlar oʻzgaradi (undefined — tegilmaydi).
   const changed: Partial<typeof employeeContactCards.$inferInsert> = {};

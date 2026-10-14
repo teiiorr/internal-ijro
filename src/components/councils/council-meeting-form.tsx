@@ -22,11 +22,12 @@ export function CouncilMeetingForm({ kind, onDone }: { kind: "ekspert" | "smeta"
     if (!date) { setError(t("kengash.meetingDateRequired")); return; }
     start(async () => {
       try {
-        await createCouncilMeeting({ kind, date, time: showTime ? time || null : null, title: title || null });
+        const r = await createCouncilMeeting({ kind, date, time: showTime ? time || null : null, title: title || null });
+        if (!r.ok) { setError(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         setDate(""); setTime(""); setShowTime(false); setTitle("");
         router.refresh();
         onDone?.();
-      } catch (e) { setError((e as Error).message); }
+      } catch { setError(t("common.error")); }
     });
   }
 

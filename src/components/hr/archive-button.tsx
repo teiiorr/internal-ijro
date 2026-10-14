@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { archiveEmployee, restoreEmployee } from "@/server/actions/employees";
 
@@ -31,7 +32,8 @@ export function ArchiveButton({ userId, status }: { userId: string; status: stri
           variant="destructive"
           disabled={pending}
           onClick={() => start(async () => {
-            await archiveEmployee(userId, date);
+            const r = await archiveEmployee(userId, date);
+            if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
             setOpen(false);
           })}
         >

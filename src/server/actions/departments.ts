@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { departments, coordinatorAssignments, users } from "@/lib/db/schema";
 import { requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
+import { type ActionResult } from "@/lib/action-result";
 
 const departmentSchema = z.object({
   name: z.string().min(2).max(255),
@@ -61,11 +62,11 @@ export async function deleteDepartment(id: string) {
   revalidatePath("/departments");
 }
 
-export async function assignCoordinator(departmentId: string, coordinatorUserId: string) {
+export async function assignCoordinator(departmentId: string, coordinatorUserId: string): Promise<ActionResult> {
   const me = await requirePosition(["direktor", "orinbosar"]);
   // Foydalanuvçi koordinator ekanini tekşiramiz
   const u = await db.select({ position: users.position }).from(users).where(eq(users.id, coordinatorUserId)).limit(1);
-  if (u.length === 0 || u[0].position !== "koordinator") throw new Error("not_a_coordinator");
+  if (u.length === 0 || u[0].position !== "koordinator") return { ok: false, error: "not_a_coordinator" };
   await db
     .insert(coordinatorAssignments)
     .values({ departmentId, coordinatorUserId })
@@ -79,6 +80,7 @@ export async function assignCoordinator(departmentId: string, coordinatorUserId:
   });
   revalidatePath(`/departments`);
   revalidatePath(`/departments/${departmentId}`);
+  return { ok: true };
 }
 
 export async function unassignCoordinator(departmentId: string, coordinatorUserId: string) {

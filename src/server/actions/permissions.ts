@@ -7,12 +7,13 @@ import { requireUser } from "@/lib/session";
 import { isOwner } from "@/lib/permissions/owner";
 import { isManagedCapability } from "@/lib/permissions/grants";
 import { logActivity } from "@/lib/audit";
+import { type ActionResult } from "@/lib/action-result";
 
 /** Faqat egasi uçun: foydalanuvçiga boşqariladigan huquqni beradi yoki bekor qiladi. */
-export async function setUserPermission(userId: string, capability: string, enabled: boolean) {
+export async function setUserPermission(userId: string, capability: string, enabled: boolean): Promise<ActionResult> {
   const me = await requireUser();
-  if (!isOwner(me.email)) throw new Error("forbidden");
-  if (!isManagedCapability(capability)) throw new Error("bad_capability");
+  if (!isOwner(me.email)) return { ok: false, error: "forbidden" };
+  if (!isManagedCapability(capability)) return { ok: false, error: "bad_capability" };
 
   if (enabled) {
     await db
@@ -33,4 +34,5 @@ export async function setUserPermission(userId: string, capability: string, enab
     newValue: { capability },
   });
   revalidatePath("/owner");
+  return { ok: true };
 }

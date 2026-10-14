@@ -130,7 +130,8 @@ export function AddNormativeDoc({ folderNames, maxBytes }: { folderNames: string
     if (!/^https?:\/\//i.test(url)) url = `https://${url}`; // protokolsiz kiritilsa ham qabul qilamiz
     start(async () => {
       try {
-        await addNormativeLink({ title, url, folder: folder.trim() || null });
+        const r = await addNormativeLink({ title, url, folder: folder.trim() || null });
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("projects.stageDocs.added"));
         setOpen(false);
         router.refresh();

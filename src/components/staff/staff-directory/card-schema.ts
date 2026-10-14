@@ -37,7 +37,7 @@ export type ContactCardData = z.output<typeof contactCardSchema>;
 
 export type SaveContactCardResult =
   | { ok: true }
-  | { ok: false; error: "invalid_telegram" | "invalid_phone" | "invalid_input" };
+  | { ok: false; error: "invalid_telegram" | "invalid_phone" | "invalid_input" | "forbidden" | "not_found" };
 
 /** Zod xatosidan foydalanuvchiga koʻrsatiladigan xato kodini tanlaydi. */
 export function cardErrorCode(paths: Array<PropertyKey | undefined>): "invalid_telegram" | "invalid_phone" | "invalid_input" {

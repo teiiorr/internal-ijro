@@ -48,17 +48,23 @@ export function PermissionsManager({
       else set.add(cap);
       return { ...prev, [userId]: [...set] };
     });
+    const revert = () =>
+      setGrants((prev) => {
+        const set = new Set(prev[userId] ?? []);
+        if (on) set.add(cap);
+        else set.delete(cap);
+        return { ...prev, [userId]: [...set] };
+      });
     start(async () => {
       try {
-        await setUserPermission(userId, cap, !on);
+        const res = await setUserPermission(userId, cap, !on);
+        if (!res.ok) {
+          toast.error(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
+          revert();
+        }
       } catch {
         toast.error(t("common.error"));
-        setGrants((prev) => {
-          const set = new Set(prev[userId] ?? []);
-          if (on) set.add(cap);
-          else set.delete(cap);
-          return { ...prev, [userId]: [...set] };
-        });
+        revert();
       } finally {
         setBusy(null);
       }

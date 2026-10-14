@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -42,16 +43,21 @@ export function ChangePositionDialog({
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     start(async () => {
-      await changePosition({
-        userId,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        newPosition: pos as any,
-        positionTitle: title.trim() || null,
-        newDepartmentId: dept || null,
-        reportsToUserId: reportsTo || null,
-        reason: reason || undefined,
-      });
-      setOpen(false);
+      try {
+        const r = await changePosition({
+          userId,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          newPosition: pos as any,
+          positionTitle: title.trim() || null,
+          newDepartmentId: dept || null,
+          reportsToUserId: reportsTo || null,
+          reason: reason || undefined,
+        });
+        if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
+        setOpen(false);
+      } catch {
+        toast.error(t("common.error"));
+      }
     });
   }
 
