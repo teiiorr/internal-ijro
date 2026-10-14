@@ -82,8 +82,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
+        // Parol to'g'ri. 2FA xato bo'lsa — uni ham bir xil 5-urinishli bloklashga sanaymiz,
+        // aks holda to'g'ri parol bilan 6 xonali TOTP'ni cheksiz brute-force qilib bo'lardi.
         if (user.twoFactorEnabled) {
-          if (!totp || !user.twoFactorSecret || !verifyTotp(totp, user.twoFactorSecret)) {
+          const totpOk = !!totp && !!user.twoFactorSecret && verifyTotp(totp, user.twoFactorSecret);
+          if (!totpOk) {
+            const failed = user.failedLoginCount + 1;
+            const locked = failed >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null;
+            await db
+              .update(users)
+              .set({ failedLoginCount: failed, lockedUntil: locked })
+              .where(eq(users.id, user.id));
             return null;
           }
         }
@@ -127,6 +136,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.languagePreference = user.languagePreference;
         token.themePreference = user.themePreference;
         token.twoFactorEnabled = user.twoFactorEnabled;
+        token.checkedAt = Date.now();
+        return token;
+      }
+      // Keyingi so'rovlarda — jonli qayta tekshiruv: bloklash/arxivlash yoki lavozim
+      // o'zgarishi 30 kunlik JWT tugashini kutmasin. DB'ni har so'rovda emas, ~60s da
+      // bir marta o'qiymiz (token.checkedAt bilan throttle). Bloklansa — uid olib
+      // tashlanadi, shunda session.user.id bo'sh qoladi va requireUser /login'ga yo'naltiradi.
+      const checkedAt = typeof token.checkedAt === "number" ? token.checkedAt : 0;
+      if (token.uid && Date.now() - checkedAt > 60_000) {
+        try {
+          const [row] = await db
+            .select({
+              status: users.status,
+              position: users.position,
+              departmentId: users.departmentId,
+              email: users.email,
+              fullName: users.fullName,
+            })
+            .from(users)
+            .where(eq(users.id, token.uid as string))
+            .limit(1);
+          if (!row || row.status === "archived" || row.status === "blocked") {
+            delete token.uid;
+            return token;
+          }
+          token.status = row.status;
+          token.position = effectivePosition(row.email, row.position);
+          token.departmentId = row.departmentId ?? null;
+          token.fullName = row.fullName;
+          token.checkedAt = Date.now();
+        } catch {
+          // DB vaqtincha yetib bo'lmasa — mavjud tokenni saqlaymiz (tasodifan logout qilmaymiz).
+        }
       }
       return token;
     },
