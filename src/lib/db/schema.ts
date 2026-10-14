@@ -932,10 +932,17 @@ export const councilAgendaItems = pgTable(
     presenterUserId: uuid("presenter_user_id").references(() => users.id, { onDelete: "set null" }), // Ma'ruzaçi (tizimdagi)
     /** Röyxatdan ötmagan foydalanuvçi bölganda erkin matnli ma'ruzaçi nomi (presenterUserId null). */
     presenterName: varchar("presenter_name", { length: 255 }),
+    /** Kengash qarori: holat (kutilmoqda/ma'qullandi/rad etildi/keyinga qoldirildi) + erkin matn. */
+    decisionStatus: varchar("decision_status", { length: 20 }).default("pending").notNull(),
+    decision: text("decision"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => ({
     meetingIdx: index("council_agenda_items_meeting_idx").on(t.meetingId),
+    decisionStatusCheck: check(
+      "council_agenda_decision_status_chk",
+      sql`${t.decisionStatus} in ('pending','approved','rejected','deferred')`,
+    ),
   })
 );
 
