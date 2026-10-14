@@ -1,5 +1,8 @@
 "use client"; // Error boundaries must be Client Components
 
+import { useEffect } from "react";
+import { reportError } from "@/lib/observability/report";
+
 /**
  * Oxirgi chora: ildiz layout/template qulaganda ishlaydi va o'z <html>/<body>'siga ega.
  * next-intl provayderidan tashqarida bo'lgani uchun matn standart tilda (uz-latn) beriladi.
@@ -14,6 +17,11 @@ export default function GlobalError({
   reset?: () => void;
 }) {
   const retry = unstable_retry ?? reset;
+
+  useEffect(() => {
+    // Strukturali log + ixtiyoriy tashqi monitoring (ERROR_REPORT_URL).
+    reportError(error, { boundary: "global-error", digest: error?.digest });
+  }, [error]);
   return (
     <html lang="uz-Latn">
       <body

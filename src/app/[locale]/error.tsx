@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { IconAlertTriangle, IconRefresh, IconHome } from "@tabler/icons-react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui-biib/Button";
+import { reportError } from "@/lib/observability/report";
 
 /**
  * [locale] daraxtidagi barcha sahifa/komponent xatolarini ushlovchi chegara.
@@ -23,8 +24,8 @@ export default function Error({
   const retry = unstable_retry ?? reset;
 
   useEffect(() => {
-    // TODO(observability): bu yerda xatolikni tashqi monitoringga yuborish mumkin.
-    console.error(error);
+    // Strukturali log + ixtiyoriy tashqi monitoring (ERROR_REPORT_URL).
+    reportError(error, { boundary: "app/[locale]", digest: error?.digest });
   }, [error]);
 
   return (
