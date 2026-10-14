@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { councilMeetings, councilAgendaItems } from "@/lib/db/schema";
 import { requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
+import { type ActionResult } from "@/lib/action-result";
 
 const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 const KINDS = ["ekspert", "smeta"] as const;
@@ -21,25 +22,27 @@ const meetingSchema = z.object({
   title: z.string().max(255).nullable().optional(),
 });
 
-export async function createCouncilMeeting(input: z.infer<typeof meetingSchema>) {
+export async function createCouncilMeeting(input: z.infer<typeof meetingSchema>): Promise<ActionResult<{ id: string }>> {
   const me = await requirePosition([...MANAGERS]);
-  const parsed = meetingSchema.parse(input);
+  const parsed = meetingSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+  const p = parsed.data;
   // Toşkent vaqti böyiça aniq (+05:00) lahzani hosil qilamiz. Faqat sana körsatilgan
   // yiğilişlar Toşkent vaqti bilan yarim tunda saqlanadi, şunda UI ularni vaqtsiz körsata oladi.
-  const time = parsed.time || "00:00";
-  const scheduledAt = new Date(`${parsed.date}T${time}:00+05:00`);
+  const time = p.time || "00:00";
+  const scheduledAt = new Date(`${p.date}T${time}:00+05:00`);
   const ins = await db
     .insert(councilMeetings)
     .values({
-      kind: parsed.kind,
+      kind: p.kind,
       scheduledAt,
-      title: parsed.title || null,
+      title: p.title || null,
       createdByUserId: me.id,
     })
     .returning({ id: councilMeetings.id });
-  await logActivity({ userId: me.id, action: "council.meeting_created", entityType: "council_meeting", entityId: ins[0].id, newValue: { kind: parsed.kind } });
-  revalidate(parsed.kind);
-  return { id: ins[0].id };
+  await logActivity({ userId: me.id, action: "council.meeting_created", entityType: "council_meeting", entityId: ins[0].id, newValue: { kind: p.kind } });
+  revalidate(p.kind);
+  return { ok: true, id: ins[0].id };
 }
 
 export async function deleteCouncilMeeting(meetingId: string) {
@@ -62,32 +65,35 @@ const agendaSchema = z.object({
   presenterName: z.string().max(255).nullable().optional(),
 });
 
-async function meetingKind(meetingId: string): Promise<string> {
+async function meetingKind(meetingId: string): Promise<string | null> {
   const [m] = await db.select({ kind: councilMeetings.kind }).from(councilMeetings).where(eq(councilMeetings.id, meetingId)).limit(1);
-  if (!m) throw new Error("not_found");
-  return m.kind;
+  return m?.kind ?? null;
 }
 
-export async function addAgendaItem(input: z.infer<typeof agendaSchema>) {
+export async function addAgendaItem(input: z.infer<typeof agendaSchema>): Promise<ActionResult> {
   const me = await requirePosition([...MANAGERS]);
-  const parsed = agendaSchema.parse(input);
-  const kind = await meetingKind(parsed.meetingId);
+  const parsed = agendaSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+  const p = parsed.data;
+  const kind = await meetingKind(p.meetingId);
+  if (!kind) return { ok: false, error: "not_found" };
   const [{ next }] = await db
     .select({ next: sql<number>`coalesce(max(${councilAgendaItems.orderIndex}), -1) + 1` })
     .from(councilAgendaItems)
-    .where(eq(councilAgendaItems.meetingId, parsed.meetingId));
+    .where(eq(councilAgendaItems.meetingId, p.meetingId));
   await db.insert(councilAgendaItems).values({
-    meetingId: parsed.meetingId,
+    meetingId: p.meetingId,
     orderIndex: Number(next) || 0,
-    topic: parsed.topic,
+    topic: p.topic,
     // Röyxatdan ötgan id ustun; aks holda qölda kiritilgan nom saqlanadi.
-    projectId: parsed.projectId || null,
-    projectName: parsed.projectId ? null : parsed.projectName?.trim() || null,
-    presenterUserId: parsed.presenterUserId || null,
-    presenterName: parsed.presenterUserId ? null : parsed.presenterName?.trim() || null,
+    projectId: p.projectId || null,
+    projectName: p.projectId ? null : p.projectName?.trim() || null,
+    presenterUserId: p.presenterUserId || null,
+    presenterName: p.presenterUserId ? null : p.presenterName?.trim() || null,
   });
-  await logActivity({ userId: me.id, action: "council.agenda_added", entityType: "council_meeting", entityId: parsed.meetingId });
+  await logActivity({ userId: me.id, action: "council.agenda_added", entityType: "council_meeting", entityId: p.meetingId });
   revalidate(kind);
+  return { ok: true };
 }
 
 export async function deleteAgendaItem(itemId: string) {
@@ -97,5 +103,5 @@ export async function deleteAgendaItem(itemId: string) {
   const kind = await meetingKind(row.meetingId);
   await db.delete(councilAgendaItems).where(eq(councilAgendaItems.id, itemId));
   await logActivity({ userId: me.id, action: "council.agenda_deleted", entityType: "council_meeting", entityId: row.meetingId });
-  revalidate(kind);
+  if (kind) revalidate(kind);
 }

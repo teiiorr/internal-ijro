@@ -7,6 +7,12 @@ import { contests, contestPhotos, contestFiles, contestComments } from "@/lib/db
 import { requireProjectEditor, requireUser } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { deleteFileByUrl } from "@/lib/upload";
+import { type ActionResult } from "@/lib/action-result";
+
+/** Zod xatosidan foydalanuvchiga koʻrsatiladigan kod (nom qisqa boʻlsa — name_too_short). */
+function contestErrorCode(paths: Array<PropertyKey | undefined>): string {
+  return paths.includes("name") ? "name_too_short" : "invalid";
+}
 
 function rp(id: string) {
   revalidatePath("/tanlov");
@@ -22,9 +28,11 @@ const contestSchema = z.object({
 });
 export type ContestInput = z.infer<typeof contestSchema>;
 
-export async function createContest(input: ContestInput) {
+export async function createContest(input: ContestInput): Promise<ActionResult<{ id: string }>> {
   const me = await requireProjectEditor();
-  const p = contestSchema.parse(input);
+  const parsed = contestSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: contestErrorCode(parsed.error.issues.map((i) => i.path[0])) };
+  const p = parsed.data;
   const [row] = await db
     .insert(contests)
     .values({
@@ -38,12 +46,14 @@ export async function createContest(input: ContestInput) {
     .returning({ id: contests.id });
   await logActivity({ userId: me.id, action: "contest.created", entityType: "contest", entityId: row.id, newValue: { name: p.name } });
   revalidatePath("/tanlov");
-  return { id: row.id };
+  return { ok: true, id: row.id };
 }
 
-export async function updateContest(id: string, input: ContestInput) {
+export async function updateContest(id: string, input: ContestInput): Promise<ActionResult> {
   const me = await requireProjectEditor();
-  const p = contestSchema.parse(input);
+  const parsed = contestSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: contestErrorCode(parsed.error.issues.map((i) => i.path[0])) };
+  const p = parsed.data;
   await db
     .update(contests)
     .set({
@@ -57,6 +67,7 @@ export async function updateContest(id: string, input: ContestInput) {
     .where(eq(contests.id, id));
   await logActivity({ userId: me.id, action: "contest.updated", entityType: "contest", entityId: id });
   rp(id);
+  return { ok: true };
 }
 
 export async function deleteContest(id: string) {

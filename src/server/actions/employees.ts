@@ -15,6 +15,7 @@ import { createInvitation } from "@/server/actions/auth-flow";
 import { logActivity } from "@/lib/audit";
 import { can } from "@/lib/permissions";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
+import { type ActionResult } from "@/lib/action-result";
 
 const internalPositions = POSITIONS.filter((p) => p !== "kontragent");
 
@@ -28,9 +29,9 @@ const inviteEmployeeSchema = z.object({
   locale: z.string().default("ru"),
 });
 
-export async function inviteEmployee(formData: FormData) {
+export async function inviteEmployee(formData: FormData): Promise<ActionResult> {
   const me = await requirePosition(["direktor", "orinbosar", "hr"]);
-  if (!can(me.position, "employees.create")) throw new Error("forbidden");
+  if (!can(me.position, "employees.create")) return { ok: false, error: "forbidden" };
 
   const parsed = inviteEmployeeSchema.safeParse({
     email: String(formData.get("email") ?? "").toLowerCase(),
@@ -40,10 +41,10 @@ export async function inviteEmployee(formData: FormData) {
     reportsToUserId: formData.get("reportsToUserId") || null,
     locale: formData.get("locale") ?? "ru",
   });
-  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "invalid");
+  if (!parsed.success) return { ok: false, error: "invalid" };
 
   const existing = await db.select({ id: users.id }).from(users).where(eq(users.email, parsed.data.email)).limit(1);
-  if (existing.length > 0) throw new Error("email_taken");
+  if (existing.length > 0) return { ok: false, error: "email_taken" };
 
   await createInvitation({
     email: parsed.data.email,
@@ -62,6 +63,7 @@ export async function inviteEmployee(formData: FormData) {
     newValue: { email: parsed.data.email, position: parsed.data.position },
   });
   revalidatePath("/employees");
+  return { ok: true };
 }
 
 // --- Lavozim / bölimni özgartiriş ---
@@ -75,13 +77,13 @@ const changePositionSchema = z.object({
   reason: z.string().max(500).optional(),
 });
 
-export async function changePosition(input: z.infer<typeof changePositionSchema>) {
+export async function changePosition(input: z.infer<typeof changePositionSchema>): Promise<ActionResult> {
   const me = await requirePosition(["direktor", "orinbosar"]);
-  if (!can(me.position, "users.assign_position")) throw new Error("forbidden");
+  if (!can(me.position, "users.assign_position")) return { ok: false, error: "forbidden" };
 
   const parsed = changePositionSchema.parse(input);
   const existing = await db.select().from(users).where(eq(users.id, parsed.userId)).limit(1);
-  if (existing.length === 0) throw new Error("not_found");
+  if (existing.length === 0) return { ok: false, error: "not_found" };
   const u = existing[0];
 
   await db.transaction(async (tx) => {
@@ -116,12 +118,13 @@ export async function changePosition(input: z.infer<typeof changePositionSchema>
   });
   revalidatePath(`/employees/${u.id}`);
   revalidatePath("/employees");
+  return { ok: true };
 }
 
 // --- Xodimni arxivlaş / tiklaş ---
-export async function archiveEmployee(userId: string, terminationDate: string) {
+export async function archiveEmployee(userId: string, terminationDate: string): Promise<ActionResult> {
   const me = await requirePosition(["direktor", "orinbosar", "hr"]);
-  if (!can(me.position, "employees.archive")) throw new Error("forbidden");
+  if (!can(me.position, "employees.archive")) return { ok: false, error: "forbidden" };
   await db
     .update(users)
     .set({ status: "archived", terminationDate, updatedAt: new Date() })
@@ -129,6 +132,7 @@ export async function archiveEmployee(userId: string, terminationDate: string) {
   await logActivity({ userId: me.id, action: "employee.archived", entityType: "user", entityId: userId });
   revalidatePath(`/employees/${userId}`);
   revalidatePath("/employees");
+  return { ok: true };
 }
 
 export async function restoreEmployee(userId: string) {
@@ -184,9 +188,9 @@ export async function upsertEmployeeProfile(input: z.infer<typeof profileSchema>
 }
 
 // --- Xodim hujjatini yuklaş ---
-export async function uploadEmployeeDocument(userId: string, documentType: string, title: string, file: File) {
+export async function uploadEmployeeDocument(userId: string, documentType: string, title: string, file: File): Promise<ActionResult<{ id: string; url: string }>> {
   const me = await requirePosition(["direktor", "orinbosar", "hr"]);
-  if (!can(me.position, "hr.documents")) throw new Error("forbidden");
+  if (!can(me.position, "hr.documents")) return { ok: false, error: "forbidden" };
   const stored = await storeFile(file, `employee-docs/${userId}`);
   const inserted = await db
     .insert(employeeDocuments)

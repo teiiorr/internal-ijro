@@ -37,6 +37,7 @@ export function WeeklySummaryEditor({
 }) {
   const t = useTranslations("staffX.weeklyBrief");
   const tc = useTranslations("common");
+  const tr = useTranslations();
   const router = useRouter();
   const [value, setValue] = useState(note ?? "");
   const [pending, start] = useTransition();
@@ -53,18 +54,12 @@ export function WeeklySummaryEditor({
   function onSave() {
     start(async () => {
       try {
-        await saveWeeklySummary({ weekStart, note: value });
+        const r = await saveWeeklySummary({ weekStart, note: value });
+        if (!r.ok) { toast.error(tr(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         toast.success(t("summarySaved"));
         router.refresh();
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : "";
-        toast.error(
-          msg === "forbidden"
-            ? t("errors.forbidden")
-            : msg === "week_not_finished"
-              ? t("errors.weekNotFinished")
-              : tc("error")
-        );
+      } catch {
+        toast.error(tc("error"));
       }
     });
   }

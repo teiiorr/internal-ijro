@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { weeklySnapshots } from "@/lib/db/tables/weekly-brief";
 import { requireUser } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
+import { type ActionResult } from "@/lib/action-result";
 import { isOwner } from "@/lib/permissions/owner";
 import { ensureSnapshot } from "@/lib/reports/weekly-snapshot";
 import {
@@ -29,13 +30,15 @@ const summarySchema = z.object({
  * Faqat TUGAGAN haftaga yoziladi: joriy hafta uchun snapshot yaratilsa, dushanba
  * worker'i uni toʻliq koʻrsatkichlar bilan qayta yoza olmas edi (ON CONFLICT DO NOTHING).
  */
-export async function saveWeeklySummary(input: { weekStart: string; note: string }): Promise<{ ok: true }> {
+export async function saveWeeklySummary(input: { weekStart: string; note: string }): Promise<ActionResult> {
   const me = await requireUser();
-  if (!canEditWeeklySummary(me.position, isOwner(me.email))) throw new Error("forbidden");
-  const { weekStart, note } = summarySchema.parse(input);
-  if (weekStart > lastCompletedWeekStart()) throw new Error("week_not_finished");
+  if (!canEditWeeklySummary(me.position, isOwner(me.email))) return { ok: false, error: "forbidden" };
+  const parsed = summarySchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid_week" };
+  const { weekStart, note } = parsed.data;
+  if (weekStart > lastCompletedWeekStart()) return { ok: false, error: "week_not_finished" };
   // Sahifadagi ?week= bilan bir xil chegaralar (juda eski / maʼnosiz sanalar uchun snapshot yaratilmaydi).
-  if (parseWeekParam(weekStart) !== weekStart) throw new Error("invalid_week");
+  if (parseWeekParam(weekStart) !== weekStart) return { ok: false, error: "invalid_week" };
 
   await ensureSnapshot(db, weekStart);
   const text = note.trim();
@@ -44,7 +47,7 @@ export async function saveWeeklySummary(input: { weekStart: string; note: string
     .set({ summaryNote: text || null, summaryByUserId: me.id, summaryUpdatedAt: new Date() })
     .where(eq(weeklySnapshots.weekStart, weekStart))
     .returning({ id: weeklySnapshots.id });
-  if (!row) throw new Error("not_found");
+  if (!row) return { ok: false, error: "not_found" };
 
   await logActivity({
     userId: me.id,

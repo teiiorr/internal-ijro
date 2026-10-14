@@ -42,7 +42,7 @@ export function CouncilAgenda({
     const proj = projects.find((p) => p.name.trim().toLowerCase() === projectText.trim().toLowerCase());
     start(async () => {
       try {
-        await addAgendaItem({
+        const r = await addAgendaItem({
           meetingId,
           topic: topic.trim(),
           projectId: proj?.id ?? null,
@@ -50,8 +50,9 @@ export function CouncilAgenda({
           presenterUserId: null,
           presenterName: null,
         });
+        if (!r.ok) { setError(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         setTopic(""); setProjectText("");
-      } catch (e) { setError((e as Error).message); }
+      } catch { setError(t("common.error")); }
     });
   }
 

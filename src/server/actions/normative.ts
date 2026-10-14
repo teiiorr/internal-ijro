@@ -7,6 +7,7 @@ import { normativeDocuments } from "@/lib/db/schema";
 import { requirePosition } from "@/lib/session";
 import { logActivity } from "@/lib/audit";
 import { deleteFileByUrl } from "@/lib/upload";
+import { type ActionResult } from "@/lib/action-result";
 
 const MANAGERS = ["direktor", "orinbosar", "koordinator", "bolim_boshligi", "bosh_mutaxassis", "yetakchi_mutaxassis", "mutaxassis", "hr"] as const;
 
@@ -17,20 +18,22 @@ const linkSchema = z.object({
 });
 
 /** Taşqi havolani meyoriy "hujjat" sifatida qöşadi (diskda fayl saqlanmaydi). */
-export async function addNormativeLink(input: z.infer<typeof linkSchema>) {
+export async function addNormativeLink(input: z.infer<typeof linkSchema>): Promise<ActionResult> {
   const me = await requirePosition([...MANAGERS]);
-  const parsed = linkSchema.parse(input);
+  const parsed = linkSchema.safeParse(input);
   // Faqat http/https havolalari.
-  if (!/^https?:\/\//i.test(parsed.url)) throw new Error("bad_url");
+  if (!parsed.success || !/^https?:\/\//i.test(parsed.data.url)) return { ok: false, error: "bad_url" };
+  const p = parsed.data;
   await db.insert(normativeDocuments).values({
-    folder: parsed.folder?.trim() || null,
+    folder: p.folder?.trim() || null,
     isLink: true,
-    fileUrl: parsed.url,
-    fileName: parsed.title,
+    fileUrl: p.url,
+    fileName: p.title,
     uploadedByUserId: me.id,
   });
-  await logActivity({ userId: me.id, action: "normative.link_added", entityType: "normative_document", newValue: { title: parsed.title, url: parsed.url } });
+  await logActivity({ userId: me.id, action: "normative.link_added", entityType: "normative_document", newValue: { title: p.title, url: p.url } });
   revalidatePath("/meyoriy-hujjatlar");
+  return { ok: true };
 }
 
 export async function removeNormativeDocument(id: string) {

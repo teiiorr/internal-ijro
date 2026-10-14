@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations, useLocale } from "next-intl";
+import { toast } from "sonner";
 import { useConfirm } from "@/components/ui/confirm-dialog";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,8 @@ export function DocumentsTab({ userId, documents, canEdit }: { userId: string; d
     const f = fileRef.current?.files?.[0];
     if (!f || !title) return;
     start(async () => {
-      await uploadEmployeeDocument(userId, docType, title, f);
+      const r = await uploadEmployeeDocument(userId, docType, title, f);
+      if (!r.ok) { toast.error(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
       setTitle("");
       if (fileRef.current) fileRef.current.value = "";
     });

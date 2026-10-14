@@ -31,10 +31,11 @@ export function InviteEmployeeForm({ departments, managers }: { departments: Dep
     fd.set("locale", locale);
     start(async () => {
       try {
-        await inviteEmployee(fd);
+        const r = await inviteEmployee(fd);
+        if (!r.ok) { setError(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         router.push("/employees");
-      } catch (err) {
-        setError((err as Error).message);
+      } catch {
+        setError(t("common.error"));
       }
     });
   }

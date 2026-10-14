@@ -47,13 +47,13 @@ export function ContestForm({ contest }: { contest?: Contest }) {
     };
     start(async () => {
       try {
-        if (isEdit) await updateContest(contest!.id, payload);
-        else await createContest(payload);
+        const r = isEdit ? await updateContest(contest!.id, payload) : await createContest(payload);
+        if (!r.ok) { setError(t(`common.actionErrors.${r.error}` as "common.actionErrors.not_found")); return; }
         setOpen(false);
         if (!isEdit) { setName(""); setParticipants(""); setWinner(""); setHeldAt(""); setDescription(""); }
         router.refresh();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
+      } catch {
+        setError(t("common.error"));
       }
     });
   }
