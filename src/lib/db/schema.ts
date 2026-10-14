@@ -92,6 +92,7 @@ export const users = pgTable(
     reportsIdx: index("users_reports_idx").on(t.reportsToUserId),
     positionIdx: index("users_position_idx").on(t.position),
     statusIdx: index("users_status_idx").on(t.status),
+    statusCheck: check("users_status_chk", sql`${t.status} in ('pending','active','archived','blocked')`),
   })
 );
 
@@ -378,6 +379,7 @@ export const tasks = pgTable(
     statusIdx: index("tasks_status_idx").on(t.status),
     deadlineIdx: index("tasks_deadline_idx").on(t.deadline),
     regNumIdx: uniqueIndex("tasks_registration_number_idx").on(t.registrationNumber),
+    statusCheck: check("tasks_status_chk", sql`${t.status} in ('todo','in_progress','under_review','completed','rejected')`),
   })
 );
 
@@ -404,6 +406,7 @@ export const taskAssignees = pgTable(
   (t) => ({
     pk: primaryKey({ columns: [t.taskId, t.userId] }),
     userIdx: index("task_assignees_user_idx").on(t.userId),
+    statusCheck: check("task_assignees_status_chk", sql`${t.status} in ('todo','in_progress','under_review','completed','rejected')`),
   })
 );
 
@@ -892,6 +895,7 @@ export const stagePayments = pgTable(
     // Global to'lovlar reestri filtrlari (holat / to'langan sana) uchun.
     statusIdx: index("stage_payments_status_idx").on(t.status),
     paidIdx: index("stage_payments_paid_idx").on(t.paidAt),
+    statusCheck: check("stage_payments_status_chk", sql`${t.status} in ('pending','partial','paid')`),
   })
 );
 
