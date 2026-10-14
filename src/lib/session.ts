@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import type { Position, UserStatus } from "@/lib/db/schema";
 import { canEditProjects } from "@/lib/permissions/project-editors";
 import { hasGrant } from "@/lib/permissions/grants";
+import { isOwner } from "@/lib/permissions/owner";
+import { isMaintenanceOn } from "@/lib/maintenance";
 
 export type SessionUser = {
   id: string;
@@ -24,6 +26,9 @@ export const getSession = cache(async () => auth());
 export const requireUser = cache(async (): Promise<SessionUser> => {
   const session = await getSession();
   if (!session?.user?.id) redirect("/login");
+  // Texnik rejim: egadan boshqa hamma — sahifada ham, server amallarida ham — /texnik'ga.
+  // Layout faqat sahifa yuklovini to'sadi; bu esa ochiq sahifadan yuborilgan mutatsiyani ham to'sadi.
+  if (!isOwner(session.user.email!) && (await isMaintenanceOn())) redirect("/texnik");
   return {
     id: session.user.id,
     email: session.user.email!,
