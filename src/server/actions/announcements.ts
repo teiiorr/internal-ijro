@@ -37,8 +37,8 @@ import {
   tashkentYmd,
   todayTashkentYmd,
   validateVoteSelection,
-  type ActionResult,
 } from "@/components/staff/announcements/logic";
+import { type ActionResult } from "@/lib/action-result";
 
 // Kutilgan xatolar (huquq yoʻq, notoʻgʻri maʼlumot, 12 soatlik cheklov) throw emas,
 // { ok:false, error } qiymati sifatida qaytadi — prod build'da Next server action

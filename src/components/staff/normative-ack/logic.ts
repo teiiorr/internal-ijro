@@ -292,7 +292,8 @@ export type AckComposerOptions = {
   people: AckComposerPerson[];
 };
 
-export type ActionResult<T extends object = object> = ({ ok: true } & T) | { ok: false; error: string };
+// Yagona shartnoma src/lib/action-result.ts'da — bu yerda faqat qayta eksport (moslik uchun).
+export type { ActionResult } from "@/lib/action-result";
 
 // ---------------- error codes → i18n keys (staffX.normativeAck.*) ----------------
 

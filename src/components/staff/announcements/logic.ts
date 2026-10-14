@@ -3,7 +3,8 @@
 import { isOwner } from "@/lib/permissions/owner";
 
 /** Server action natijasi: kutilgan xatolar throw emas, qiymat sifatida qaytadi (prod'da xabar yashirilmasligi uchun). */
-export type ActionResult<T extends object = object> = ({ ok: true } & T) | { ok: false; error: string };
+// Yagona shartnoma src/lib/action-result.ts'da — bu yerda faqat qayta eksport (moslik uchun).
+export type { ActionResult } from "@/lib/action-result";
 
 type Actor = { id: string; position: string; email?: string | null };
 

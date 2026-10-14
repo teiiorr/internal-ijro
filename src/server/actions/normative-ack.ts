@@ -22,9 +22,9 @@ import {
   remindTooSoon,
   tashkentYmd,
   ymdToDots,
-  type ActionResult,
   type AckRecipientItem,
 } from "@/components/staff/normative-ack/logic";
+import { type ActionResult } from "@/lib/action-result";
 
 // Expected failures (no rights, bad input, 12h throttle, "open first") are returned as
 // { ok:false, error } instead of thrown: production builds hide server-action error
