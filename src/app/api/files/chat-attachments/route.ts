@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { projects, externalCompanies } from "@/lib/db/schema";
+import { projects } from "@/lib/db/schema";
 import { storeStream, isForbiddenExt } from "@/lib/upload";
-import { isCompanyStudioOfProject } from "@/server/queries/studio";
+import { getStudioCompany, isCompanyStudioOfProject } from "@/server/queries/studio";
 
 export const runtime = "nodejs";
 
@@ -37,11 +37,8 @@ export async function POST(req: NextRequest) {
   if (!project) return NextResponse.json({ error: "not_found" }, { status: 404 });
 
   if (session.user.position === "kontragent") {
-    const [company] = await db
-      .select({ id: externalCompanies.id })
-      .from(externalCompanies)
-      .where(eq(externalCompanies.contactEmail, session.user.email))
-      .limit(1);
+    // Studiya email böyiça, registrga befarq (portal sahifalari bilan bir xil).
+    const company = await getStudioCompany(session.user.email);
     // Asosiy studiya YOKI project_studios a'zoligi (0034) — faqat şu ikkisi.
     if (!company || !(await isCompanyStudioOfProject(projectId, company.id, project.ec)))
       return NextResponse.json({ error: "forbidden" }, { status: 403 });

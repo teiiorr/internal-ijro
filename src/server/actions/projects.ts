@@ -31,6 +31,7 @@ import { notify } from "@/lib/notifications";
 import { storeFile, deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
 import { type ActionResult } from "@/lib/action-result";
+import { studioUserCanAccessProject, projectStudioContactUserIds } from "@/server/queries/studio";
 
 const projectSchema = z.object({
   name: z.string().min(2).max(255),
@@ -414,19 +415,12 @@ const msgSchema = z.object({
   attachments: z.array(attachmentSchema).optional(),
   replyToId: z.string().uuid().optional().nullable(),
 });
-/** Kontragent faqat öz studiyasiga tegişli loyiha üstida amal bajara oladi
- *  (email → kompaniya → loyiha orqali aniqlanadi). Xodimlar heç qanday çeklovsiz ötadi. */
+/** Kontragent faqat öz studiyasiga tegişli loyiha üstida amal bajara oladi: ASOSIY studiya
+ *  YOKI `project_studios` orqali biriktirilgan qöşimça studiya (portal sahifalaridagi bilan bir xil
+ *  tekşiruv). Xodimlar heç qanday çeklovsiz ötadi. */
 async function assertProjectAccess(me: { position: string; email: string }, projectId: string) {
   if (me.position !== "kontragent") return;
-  const [c] = await db
-    .select({ id: externalCompanies.id })
-    .from(externalCompanies)
-    .where(eq(externalCompanies.contactEmail, me.email))
-    .limit(1);
-  const [p] = c
-    ? await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1)
-    : [undefined];
-  if (!c || !p || p.ec !== c.id) throw new Error("forbidden");
+  if (!(await studioUserCanAccessProject(me.email, projectId))) throw new Error("forbidden");
 }
 
 export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
@@ -468,23 +462,8 @@ export async function postProjectMessage(input: z.infer<typeof msgSchema>) {
       // studiya yozdi → bizning tomon kuratorlariga xabar beramiz
       recipients = [...curatorIds].filter((id) => id !== me.id);
     } else {
-      // bizning tomon yozdi → studiyaning aloqa foydalanuvçisiga xabar beramiz
-      recipients = [];
-      if (prj.ec) {
-        const [company] = await db
-          .select({ email: externalCompanies.contactEmail })
-          .from(externalCompanies)
-          .where(eq(externalCompanies.id, prj.ec))
-          .limit(1);
-        if (company?.email) {
-          const [contact] = await db
-            .select({ id: users.id })
-            .from(users)
-            .where(eq(users.email, company.email))
-            .limit(1);
-          if (contact && contact.id !== me.id) recipients = [contact.id];
-        }
-      }
+      // bizning tomon yozdi → loyihaning BARÇA studiyalari (asosiy + qöşimça) aloqa foydalanuvçilariga
+      recipients = (await projectStudioContactUserIds(parsed.projectId, prj.ec)).filter((id) => id !== me.id);
     }
 
     if (recipients.length) {
@@ -949,7 +928,7 @@ export async function acceptNda() {
   await db
     .update(externalCompanies)
     .set({ ndaAcceptedAt: new Date() })
-    .where(eq(externalCompanies.contactEmail, me.email));
+    .where(sql`lower(${externalCompanies.contactEmail}) = ${me.email.toLowerCase()}`);
   await logActivity({ userId: me.id, action: "contractor.nda_accepted" });
   revalidatePath("/contractor/dashboard");
 }

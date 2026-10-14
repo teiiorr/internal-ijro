@@ -21,19 +21,13 @@ import { hasGrant } from "@/lib/permissions/grants";
 import { isOwner } from "@/lib/permissions/owner";
 import { recordDeadlineChange } from "@/lib/projects/deadline-log";
 import { type ActionResult } from "@/lib/action-result";
+import { studioUserCanAccessProject } from "@/server/queries/studio";
 
 // ---------------- yordamchilar ----------------
 
-/** Kontragent faqat o'z studiyasiga biriktirilgan loyiha bilan ishlay oladimi. */
+/** Kontragent o'z studiyasiga (asosiy yoki project_studios orqali qo'shimcha) biriktirilgan loyiha bilan ishlay oladimi. */
 async function studioOwnsProject(me: SessionUser, projectId: string): Promise<boolean> {
-  const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, projectId)).limit(1);
-  if (!prj?.ec) return false;
-  const [own] = await db
-    .select({ id: externalCompanies.id })
-    .from(externalCompanies)
-    .where(and(eq(externalCompanies.id, prj.ec), sql`lower(${externalCompanies.contactEmail}) = ${me.email.toLowerCase()}`))
-    .limit(1);
-  return !!own;
+  return studioUserCanAccessProject(me.email, projectId);
 }
 
 /** Loyiha kuratorlari (asosiy + qo'shimcha). */

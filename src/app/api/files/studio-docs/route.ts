@@ -3,10 +3,10 @@ import { revalidatePath } from "next/cache";
 import { and, asc, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { projects, projectStages, stageDocuments, externalCompanies } from "@/lib/db/schema";
+import { projects, projectStages, stageDocuments } from "@/lib/db/schema";
 import { storeStream, isForbiddenExt } from "@/lib/upload";
 import { logActivity } from "@/lib/audit";
-import { isCompanyStudioOfProject } from "@/server/queries/studio";
+import { getStudioCompany, isCompanyStudioOfProject } from "@/server/queries/studio";
 
 export const runtime = "nodejs";
 
@@ -48,11 +48,7 @@ export async function POST(req: NextRequest) {
   if (isForbiddenExt(name)) return NextResponse.json({ error: "ext_forbidden" }, { status: 400 });
 
   // Çaqiruvçining studiyasini email böyiça aniqlaymiz (portalning boğlanish modeli).
-  const [company] = await db
-    .select({ id: externalCompanies.id })
-    .from(externalCompanies)
-    .where(eq(externalCompanies.contactEmail, session.user.email))
-    .limit(1);
+  const company = await getStudioCompany(session.user.email);
   if (!company) return NextResponse.json({ error: "no_company" }, { status: 403 });
 
   // Loyiha aynan ŞU studiyaga tegişli bölişi kerak: asosiy studiya YOKI project_studios a'zoligi (0034).

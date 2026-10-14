@@ -74,6 +74,51 @@ export async function isCompanyStudioOfProject(
   }
 }
 
+/** Kontragent foydalanuvchisi (email) şu loyiha bilan işlay oladimi: studiyasi email böyiça
+ * (registrga befarq) topiladi, keyin ASOSIY studiya YOKI `project_studios` a'zoligi tekşiriladi.
+ * Studiyaning barça YOZUV amallari (xabar, öqildi, topşiriş, hisobot, söʻrov) uçun yagona manba —
+ * öqiş tomonidagi (portal sahifalari) tekşiruv bilan bir xil, aks holda qöşimça studiya çatni
+ * köradi-yu, yoza olmaydi. */
+export async function studioUserCanAccessProject(email: string | null | undefined, projectId: string): Promise<boolean> {
+  const company = await getStudioCompany(email);
+  if (!company) return false;
+  const [prj] = await db
+    .select({ ec: projects.externalCompanyId })
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+  if (!prj) return false;
+  return isCompanyStudioOfProject(projectId, company.id, prj.ec);
+}
+
+/** Loyihaning BARÇA studiyalari (asosiy + `project_studios`) aloqa foydalanuvçilarining id'lari —
+ * xodim yozganda xabarnoma şularga boradi. */
+export async function projectStudioContactUserIds(projectId: string, primaryCompanyId: string | null): Promise<string[]> {
+  const companyIds = new Set<string>();
+  if (primaryCompanyId) companyIds.add(primaryCompanyId);
+  try {
+    const rows = await db
+      .select({ companyId: projectStudios.companyId })
+      .from(projectStudios)
+      .where(eq(projectStudios.projectId, projectId));
+    for (const r of rows) companyIds.add(r.companyId);
+  } catch {
+    /* project_studios hali yöq (0034 qöllanmagan) — faqat asosiy studiya */
+  }
+  if (companyIds.size === 0) return [];
+  const companies = await db
+    .select({ email: externalCompanies.contactEmail })
+    .from(externalCompanies)
+    .where(inArray(externalCompanies.id, [...companyIds]));
+  const emails = companies.map((c) => c.email?.toLowerCase()).filter((e): e is string => !!e);
+  if (emails.length === 0) return [];
+  const contacts = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(inArray(sql`lower(${users.email})`, emails));
+  return contacts.map((u) => u.id);
+}
+
 // ---------------- Studiya samaradorligi (scorecard) ----------------
 
 export type StudioScorecard = {

@@ -12,6 +12,7 @@ import { deleteFileByUrl } from "@/lib/upload";
 import { recalcProjectProgress } from "@/lib/projects/recalc";
 import { recordDeadlineChange } from "@/lib/projects/deadline-log";
 import { type ActionResult } from "@/lib/action-result";
+import { studioUserCanAccessProject } from "@/server/queries/studio";
 
 function stageLinks(projectId: string, stageId: string) {
   revalidatePath(`/projects/${projectId}`);
@@ -322,13 +323,9 @@ export async function submitStageWork(stageId: string): Promise<ActionResult> {
   if (stage.status !== "active") return { ok: false, error: "stage_not_active" };
   if (stage.reviewStatus !== "in_progress" && stage.reviewStatus !== "changes_requested") return { ok: false, error: "already_submitted" };
 
-  // Kontragent faqat öz loyihasining bosqiçini topşira oladi.
-  if (me.position === "kontragent") {
-    const [prj] = await db.select({ ec: projects.externalCompanyId }).from(projects).where(eq(projects.id, stage.projectId)).limit(1);
-    const owned = prj?.ec
-      ? await db.select({ id: externalCompanies.id }).from(externalCompanies).where(and(eq(externalCompanies.id, prj.ec), eq(externalCompanies.contactEmail, me.email))).limit(1)
-      : [];
-    if (owned.length === 0) return { ok: false, error: "forbidden" };
+  // Kontragent faqat öz loyihasining (asosiy yoki qöşimça studiya) bosqiçini topşira oladi.
+  if (me.position === "kontragent" && !(await studioUserCanAccessProject(me.email, stage.projectId))) {
+    return { ok: false, error: "forbidden" };
   }
 
   // Topşiriş uçun aqalli bir narsa bölişi kerak.
