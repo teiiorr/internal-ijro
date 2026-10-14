@@ -187,7 +187,8 @@
 		"calendar": "Işlab çiqariş kalendari",
 		"myProjects": "Loyihalarim",
 		"taskControl": "Ijro nazorati",
-		"menu": "Menyu"
+		"menu": "Menyu",
+		"approvals": "Soʻrovlar"
 	},
 	"positions": {
 		"direktor": "Direktor",
@@ -1220,7 +1221,12 @@
 		"assignedPrefix": "Bergan:",
 		"myTasks": "Bajariş kerak",
 		"myTasksDescription": "Sizga yuklatilgan topşiriqlar",
-		"allComplete": "Hammasi bajarilgan"
+		"allComplete": "Hammasi bajarilgan",
+		"pageTitle": "Soʻrovlar markazi",
+		"deadlineRequests": "Muddat soʻrovlari",
+		"extraDays": "+{days} kun",
+		"empty": "Hozircha qaror kutayotgan soʻrov yoʻq",
+		"requestedBy": "Soʻradi:"
 	},
 	"kengash": {
 		"ekspertHeading": "Kelayotgan Ekspertlar Kengaşining kun tartibi",

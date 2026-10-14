@@ -187,7 +187,8 @@
 		"calendar": "Ишлаб чиқариш календари",
 		"myProjects": "Лойиҳаларим",
 		"taskControl": "Ижро назорати",
-		"menu": "Меню"
+		"menu": "Меню",
+		"approvals": "Сўровлар"
 	},
 	"positions": {
 		"direktor": "Директор",
@@ -1220,7 +1221,12 @@
 		"assignedPrefix": "Берган:",
 		"myTasks": "Бажариш керак",
 		"myTasksDescription": "Сизга юклатилган топшириқлар",
-		"allComplete": "Ҳаммаси бажарилган"
+		"allComplete": "Ҳаммаси бажарилган",
+		"pageTitle": "Сўровлар маркази",
+		"deadlineRequests": "Муддат сўровлари",
+		"extraDays": "+{days} кун",
+		"empty": "Ҳозирча қарор кутаётган сўров йўқ",
+		"requestedBy": "Сўради:"
 	},
 	"kengash": {
 		"ekspertHeading": "Келаётган Экспертлар Кенгашининг кун тартиби",

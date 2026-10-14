@@ -24,6 +24,7 @@ export const STAFF_NAV: NavConfig = {
     { key: "work", labelKey: "nav.group.work", icon: IconBriefcase, children: [
       { key: "myWork", href: "/my-work", labelKey: "nav.myWork", shortLabelKey: "nav.short.myWork", icon: IconCalendarCheck, rule: ALL },
       { key: "tasks", href: "/tasks", labelKey: "nav.tasks", icon: IconListCheck, rule: STAFF },
+      { key: "approvals", href: "/inbox", labelKey: "nav.approvals", icon: IconFileCheck, rule: STAFF },
       { key: "taskControl", href: "/tasks/control", labelKey: "nav.taskControl", icon: IconChecklist, rule: STAFF },
     ] },
 

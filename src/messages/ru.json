@@ -187,7 +187,8 @@
 		"calendar": "Производственный календарь",
 		"myProjects": "Мои проекты",
 		"taskControl": "Контроль исполнения",
-		"menu": "Меню"
+		"menu": "Меню",
+		"approvals": "Согласования"
 	},
 	"positions": {
 		"direktor": "Директор",
@@ -1220,7 +1221,12 @@
 		"assignedPrefix": "Назначил:",
 		"myTasks": "Нужно выполнить",
 		"myTasksDescription": "Назначенные вам задачи",
-		"allComplete": "Всё выполнено"
+		"allComplete": "Всё выполнено",
+		"pageTitle": "Центр согласований",
+		"deadlineRequests": "Запросы срока",
+		"extraDays": "+{days} дн.",
+		"empty": "Нет запросов, требующих решения",
+		"requestedBy": "Запросил:"
 	},
 	"kengash": {
 		"ekspertHeading": "Повестка предстоящего заседания Экспертного совета",
