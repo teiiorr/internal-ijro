@@ -28,10 +28,10 @@ describe("resolveNav — guruhlar va ko'rinish", () => {
     expect(team && team.type === "link" && team.item.key).toBe("employees");
   });
 
-  it("direktor: 7 ta yuqori daraja (admin → reports havolasiga yigʻiladi)", () => {
+  it("direktor: 8 ta yuqori daraja (admin → reports havolasiga yigʻiladi)", () => {
     const keys = topKeys(viewer("direktor", false, { contractors: true, money: true, reports: true }));
     // auditLog/owner endi faqat egaga koʻrinadi → admin guruhida yolgʻiz "reports" qoladi va havolaga aylanadi.
-    expect(keys).toEqual(["dashboard", "work", "projects", "councils", "team", "info", "reports"]);
+    expect(keys).toEqual(["dashboard", "work", "projects", "councils", "team", "info", "internalDocs", "reports"]);
   });
 
   it("mutaxassis: boshqaruv yo'q, team va admin yashirin", () => {
@@ -42,6 +42,7 @@ describe("resolveNav — guruhlar va ko'rinish", () => {
     expect(keys).not.toContain("admin");
     expect(keys).not.toContain("team");
     expect(keys).toContain("info");
+    expect(keys).toContain("internalDocs");
   });
 
   it("hr: tasks/taskControl yo'q (STAFF), employees ko'rinadi", () => {

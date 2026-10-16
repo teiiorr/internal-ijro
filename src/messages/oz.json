@@ -178,7 +178,8 @@
 			"councils": "Kengaşlar",
 			"team": "Jamoa",
 			"info": "Axborot",
-			"admin": "Boşqaruv"
+			"admin": "Boşqaruv",
+			"internalDocs": "Içki hujjatlar"
 		},
 		"short": {
 			"dashboard": "Asosiy",
@@ -189,7 +190,9 @@
 		"myProjects": "Loyihalarim",
 		"taskControl": "Ijro nazorati",
 		"menu": "Menyu",
-		"approvals": "Soʻrovlar"
+		"approvals": "Soʻrovlar",
+		"bildirgilar": "Bildirgilar",
+		"buyruqlar": "Buyruqlar"
 	},
 	"positions": {
 		"direktor": "Direktor",
@@ -576,7 +579,7 @@
 			"name": "Nom böyiça",
 			"deadline": "Muddati böyiça",
 			"progress": "Bajariliş böyiça",
-				"label": "Saralaş"
+			"label": "Saralaş"
 		},
 		"stagePath": {
 			"title": "Bosqiçlar",
@@ -2337,5 +2340,27 @@
 		"home": "Bosh sahifaga",
 		"globalTitle": "Tizimda xatolik",
 		"globalDesc": "Ilovani yuklashda xatolik yuz berdi. Sahifani yangilang."
+	},
+	"internalDocs": {
+		"add": "Hujjat qöşiş",
+		"newBildirgi": "Yangi bildirgi",
+		"newBuyruq": "Yangi buyruq",
+		"fieldTitle": "Nomi",
+		"titlePlaceholder": "Böş qolsa, fayl nomi olinadi",
+		"fieldNumber": "Raqami",
+		"numberPlaceholder": "Masalan, 15",
+		"fieldDate": "Sanasi",
+		"openInWord": "Wordda oçiş",
+		"openInWordHint": "Kompyuter yoki telefonda Microsoft Word örnatilgan bölişi kerak",
+		"wordOpenError": "Wordda oçib bölmadi. Faylni yuklab oling.",
+		"confirmDelete": "«{title}» öçirilsinmi? Faylni qayta tiklab bölmaydi.",
+		"deleted": "Hujjat öçirildi",
+		"uploaded": "Hujjat qöşildi",
+		"empty": "Hozirça hujjat yöq",
+		"emptyHint": "Birinçi hujjatni «Hujjat qöşiş» tugmasi orqali qöşing",
+		"searchPlaceholder": "Nomi, raqami yoki muallif böyiça qidiriş",
+		"noMatches": "Heç narsa topilmadi",
+		"count": "{count} ta hujjat",
+		"numberPrefix": "№ {number}"
 	}
 }

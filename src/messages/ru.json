@@ -178,7 +178,8 @@
 			"councils": "Советы и комиссии",
 			"team": "Коллектив",
 			"info": "Информация",
-			"admin": "Управление"
+			"admin": "Управление",
+			"internalDocs": "Внутренние документы"
 		},
 		"short": {
 			"dashboard": "Главная",
@@ -189,7 +190,9 @@
 		"myProjects": "Мои проекты",
 		"taskControl": "Контроль исполнения",
 		"menu": "Меню",
-		"approvals": "Согласования"
+		"approvals": "Согласования",
+		"bildirgilar": "Служебные записки",
+		"buyruqlar": "Приказы"
 	},
 	"positions": {
 		"direktor": "Директор",
@@ -576,7 +579,7 @@
 			"name": "По названию",
 			"deadline": "По сроку",
 			"progress": "По прогрессу",
-				"label": "Сортировка"
+			"label": "Сортировка"
 		},
 		"stagePath": {
 			"title": "Этапы",
@@ -2337,5 +2340,27 @@
 		"home": "На главную",
 		"globalTitle": "Ошибка системы",
 		"globalDesc": "Не удалось загрузить приложение. Обновите страницу."
+	},
+	"internalDocs": {
+		"add": "Добавить документ",
+		"newBildirgi": "Новая служебная записка",
+		"newBuyruq": "Новый приказ",
+		"fieldTitle": "Название",
+		"titlePlaceholder": "Если не заполнить, возьмём имя файла",
+		"fieldNumber": "Номер",
+		"numberPlaceholder": "Например, 15",
+		"fieldDate": "Дата",
+		"openInWord": "Открыть в Word",
+		"openInWordHint": "На компьютере или телефоне должен быть установлен Microsoft Word",
+		"wordOpenError": "Не удалось открыть в Word. Скачайте файл.",
+		"confirmDelete": "Удалить «{title}»? Файл нельзя будет восстановить.",
+		"deleted": "Документ удалён",
+		"uploaded": "Документ добавлен",
+		"empty": "Пока нет документов",
+		"emptyHint": "Добавьте первый документ кнопкой «Добавить документ»",
+		"searchPlaceholder": "Поиск по названию, номеру или автору",
+		"noMatches": "Ничего не найдено",
+		"count": "{count, plural, one {# документ} few {# документа} many {# документов} other {# документа}}",
+		"numberPrefix": "№ {number}"
 	}
 }

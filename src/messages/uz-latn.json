@@ -178,7 +178,8 @@
 			"councils": "Kengashlar",
 			"team": "Jamoa",
 			"info": "Axborot",
-			"admin": "Boshqaruv"
+			"admin": "Boshqaruv",
+			"internalDocs": "Ichki hujjatlar"
 		},
 		"short": {
 			"dashboard": "Asosiy",
@@ -189,7 +190,9 @@
 		"myProjects": "Loyihalarim",
 		"taskControl": "Ijro nazorati",
 		"menu": "Menyu",
-		"approvals": "Soʻrovlar"
+		"approvals": "Soʻrovlar",
+		"bildirgilar": "Bildirgilar",
+		"buyruqlar": "Buyruqlar"
 	},
 	"positions": {
 		"direktor": "Direktor",
@@ -576,7 +579,7 @@
 			"name": "Nom boʻyicha",
 			"deadline": "Muddati boʻyicha",
 			"progress": "Bajarilish boʻyicha",
-				"label": "Saralash"
+			"label": "Saralash"
 		},
 		"stagePath": {
 			"title": "Bosqichlar",
@@ -2337,5 +2340,27 @@
 		"home": "Bosh sahifaga",
 		"globalTitle": "Tizimda xatolik",
 		"globalDesc": "Ilovani yuklashda xatolik yuz berdi. Sahifani yangilang."
+	},
+	"internalDocs": {
+		"add": "Hujjat qoʻshish",
+		"newBildirgi": "Yangi bildirgi",
+		"newBuyruq": "Yangi buyruq",
+		"fieldTitle": "Nomi",
+		"titlePlaceholder": "Boʻsh qolsa, fayl nomi olinadi",
+		"fieldNumber": "Raqami",
+		"numberPlaceholder": "Masalan, 15",
+		"fieldDate": "Sanasi",
+		"openInWord": "Wordda ochish",
+		"openInWordHint": "Kompyuter yoki telefonda Microsoft Word oʻrnatilgan boʻlishi kerak",
+		"wordOpenError": "Wordda ochib boʻlmadi. Faylni yuklab oling.",
+		"confirmDelete": "«{title}» oʻchirilsinmi? Faylni qayta tiklab boʻlmaydi.",
+		"deleted": "Hujjat oʻchirildi",
+		"uploaded": "Hujjat qoʻshildi",
+		"empty": "Hozircha hujjat yoʻq",
+		"emptyHint": "Birinchi hujjatni «Hujjat qoʻshish» tugmasi orqali qoʻshing",
+		"searchPlaceholder": "Nomi, raqami yoki muallif boʻyicha qidirish",
+		"noMatches": "Hech narsa topilmadi",
+		"count": "{count} ta hujjat",
+		"numberPrefix": "№ {number}"
 	}
 }

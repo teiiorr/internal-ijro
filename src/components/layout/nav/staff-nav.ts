@@ -4,6 +4,7 @@ import {
   IconBuildingBank, IconPresentation, IconCoins, IconUsersGroup,
   IconUsers, IconBuilding, IconInfoSquareRounded, IconSpeakerphone, IconFileCheck,
   IconShieldCog, IconReportAnalytics, IconHistory, IconShieldCheck, IconBell, IconSettings,
+  IconFolders, IconFileDescription, IconFileCertificate,
 } from "@tabler/icons-react";
 import type { Position } from "@/lib/db/schema";
 import type { NavConfig, NavRule } from "./types";
@@ -51,6 +52,12 @@ export const STAFF_NAV: NavConfig = {
     { key: "info", labelKey: "nav.group.info", icon: IconInfoSquareRounded, children: [
       { key: "announcements", href: "/elonlar", labelKey: "nav.announcements", icon: IconSpeakerphone, rule: ALL },
       { key: "normativeDocs", href: "/meyoriy-hujjatlar", labelKey: "nav.normativeDocs", icon: IconFileCheck, rule: ALL },
+    ] },
+
+    // Ichki hujjatlar: barcha ichki xodimlar yuklaydi va koʻradi (studiya portalida yoʻq).
+    { key: "internalDocs", labelKey: "nav.group.internalDocs", icon: IconFolders, children: [
+      { key: "bildirgilar", href: "/ichki-hujjatlar/bildirgilar", labelKey: "nav.bildirgilar", icon: IconFileDescription, rule: ALL },
+      { key: "buyruqlar", href: "/ichki-hujjatlar/buyruqlar", labelKey: "nav.buyruqlar", icon: IconFileCertificate, rule: ALL },
     ] },
 
     { key: "admin", labelKey: "nav.group.admin", icon: IconShieldCog, children: [

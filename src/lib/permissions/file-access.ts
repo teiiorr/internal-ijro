@@ -55,6 +55,9 @@ export async function canAccessFile(user: FileAccessUser, segs: string[]): Promi
   // Me'yoriy hujjatlar — faqat ichki xodimlar (kontragent emas).
   if (type === "normative-docs") return !isContractor;
 
+  // Ichki hujjatlar (bildirgilar, buyruqlar) — faqat ichki xodimlar; studiyalar hech qachon.
+  if (type === "internal-docs") return !isContractor;
+
   // Loyihaga bog'liq: project-docs/<projectId>, chat/<projectId>.
   if (type === "project-docs" || type === "chat") {
     const projectId = segs[1];

@@ -178,7 +178,8 @@
 			"councils": "Кенгашлар",
 			"team": "Жамоа",
 			"info": "Ахборот",
-			"admin": "Бошқарув"
+			"admin": "Бошқарув",
+			"internalDocs": "Ички ҳужжатлар"
 		},
 		"short": {
 			"dashboard": "Асосий",
@@ -189,7 +190,9 @@
 		"myProjects": "Лойиҳаларим",
 		"taskControl": "Ижро назорати",
 		"menu": "Меню",
-		"approvals": "Сўровлар"
+		"approvals": "Сўровлар",
+		"bildirgilar": "Билдиргилар",
+		"buyruqlar": "Буйруқлар"
 	},
 	"positions": {
 		"direktor": "Директор",
@@ -576,7 +579,7 @@
 			"name": "Ном бўйича",
 			"deadline": "Муддати бўйича",
 			"progress": "Бажарилиш бўйича",
-				"label": "Саралаш"
+			"label": "Саралаш"
 		},
 		"stagePath": {
 			"title": "Босқичлар",
@@ -2337,5 +2340,27 @@
 		"home": "Бош саҳифага",
 		"globalTitle": "Тизимда хатолик",
 		"globalDesc": "Иловани юклашда хатолик юз берди. Саҳифани янгиланг."
+	},
+	"internalDocs": {
+		"add": "Ҳужжат қўшиш",
+		"newBildirgi": "Янги билдирги",
+		"newBuyruq": "Янги буйруқ",
+		"fieldTitle": "Номи",
+		"titlePlaceholder": "Бўш қолса, файл номи олинади",
+		"fieldNumber": "Рақами",
+		"numberPlaceholder": "Масалан, 15",
+		"fieldDate": "Санаси",
+		"openInWord": "Word дастурида очиш",
+		"openInWordHint": "Компьютер ёки телефонда Microsoft Word ўрнатилган бўлиши керак",
+		"wordOpenError": "Word дастурида очиб бўлмади. Файлни юклаб олинг.",
+		"confirmDelete": "«{title}» ўчирилсинми? Файлни қайта тиклаб бўлмайди.",
+		"deleted": "Ҳужжат ўчирилди",
+		"uploaded": "Ҳужжат қўшилди",
+		"empty": "Ҳозирча ҳужжат йўқ",
+		"emptyHint": "Биринчи ҳужжатни «Ҳужжат қўшиш» тугмаси орқали қўшинг",
+		"searchPlaceholder": "Номи, рақами ёки муаллиф бўйича қидириш",
+		"noMatches": "Ҳеч нарса топилмади",
+		"count": "{count} та ҳужжат",
+		"numberPrefix": "№ {number}"
 	}
 }
