@@ -22,8 +22,17 @@ const PROJECT_EDITOR_SURNAMES = new Set([
   "mamatov",
 ]);
 
+/**
+ * Aniq email böyiça muharrirlar (familiya böyiça emas): şu familiyali boşqa xodim keyin
+ * işga kirsa, u avtomatik huquq olmaydi. Yangi muharrirlar şu yerga qöşiladi.
+ */
+const PROJECT_EDITOR_EMAILS = new Set([
+  "maxkamov.mirjalol@bkrm.uz",
+]);
+
 export function canEditProjects(email: string | null | undefined): boolean {
   if (!email) return false;
+  if (PROJECT_EDITOR_EMAILS.has(email.trim().toLowerCase())) return true;
   const surname = email.split("@")[0]?.split(".")[0]?.toLowerCase() ?? "";
   return PROJECT_EDITOR_SURNAMES.has(surname);
 }
@@ -38,7 +47,7 @@ const PROJECT_DOC_UPLOADER_SURNAMES = new Set(["matyakubov", "matyoqubov"]);
 export function canUploadProjectDocs(email: string | null | undefined): boolean {
   if (!email) return false;
   const surname = email.split("@")[0]?.split(".")[0]?.toLowerCase() ?? "";
-  return PROJECT_EDITOR_SURNAMES.has(surname) || PROJECT_DOC_UPLOADER_SURNAMES.has(surname);
+  return canEditProjects(email) || PROJECT_DOC_UPLOADER_SURNAMES.has(surname);
 }
 
 /**

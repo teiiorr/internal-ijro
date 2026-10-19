@@ -70,3 +70,17 @@ describe("canViewMoney", () => {
     expect(MONEY_MASK).toBe("***");
   });
 });
+
+describe("exact-email editors", () => {
+  it("grants Maxkamov Mirjalol by his exact address (any case/whitespace)", () => {
+    expect(canEditProjects("maxkamov.mirjalol@bkrm.uz")).toBe(true);
+    expect(canEditProjects(" Maxkamov.Mirjalol@BKRM.UZ ")).toBe(true);
+    expect(canUploadProjectDocs("maxkamov.mirjalol@bkrm.uz")).toBe(true);
+    expect(canViewMoney("maxkamov.mirjalol@bkrm.uz")).toBe(true);
+  });
+
+  it("does not extend to someone else with the same surname", () => {
+    expect(canEditProjects("maxkamov.boshqa@bkrm.uz")).toBe(false);
+    expect(canEditProjects("maxkamov@bkrm.uz")).toBe(false);
+  });
+});
