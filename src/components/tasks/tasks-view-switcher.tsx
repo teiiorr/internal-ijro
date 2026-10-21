@@ -3,7 +3,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder, IconCalendarEvent, IconPaperclip as Paperclip } from "@tabler/icons-react";
-import { toBcp47 } from "@/i18n/bcp47";
+import { formatShortDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/i18n/navigation";
 import { Card } from "@/components/ui-biib/Card";
@@ -57,7 +57,6 @@ export function TasksViewSwitcher({
   const [view, setView] = useState<"list" | "calendar">("list");
   const [sel, setSel] = useState<Set<string>>(new Set());
   const [pending, start] = useTransition();
-  const dueFmt = new Intl.DateTimeFormat(toBcp47(locale), { day: "2-digit", month: "short" });
 
   function toggle(id: string) {
     setSel((prev) => {
@@ -145,7 +144,7 @@ export function TasksViewSwitcher({
                         {row.deadline && (
                           <span className="inline-flex shrink-0 items-center gap-1 tabular-nums">
                             <IconCalendarEvent className="size-3.5 shrink-0" aria-hidden />
-                            {dueFmt.format(new Date(row.deadline))}
+                            {formatShortDate(row.deadline, locale)}
                           </span>
                         )}
                         {!!row.attachmentCount && row.attachmentCount > 0 && (

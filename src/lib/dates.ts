@@ -3,9 +3,47 @@ const toTashkent = (d: Date) => new Date(d.getTime() + TASHKENT_OFFSET_MS);
 
 const MONTHS: Record<string, string[]> = {
   "uz-latn": ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"],
+  oz: ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"],
   "uz-cyrl": ["январ", "феврал", "март", "апрел", "май", "июн", "июл", "август", "сентябр", "октябр", "ноябр", "декабр"],
   ru: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
 };
+
+// Oylarning qisqa nomlari qölda yozilgan: brauzerlarning Intl ma'lumotida özbekça qisqa nomlar
+// yöq (Chrome "M10" çiqaradi), server esa "okt" beradi. Natijada gidratsiya buzilardi.
+// Ruscha: kun bilan keladigan qaratqiç shakl ("5 окт.", "5 мая").
+const MONTHS_SHORT: Record<string, string[]> = {
+  "uz-latn": ["yan", "fev", "mar", "apr", "may", "iyn", "iyl", "avg", "sen", "okt", "noy", "dek"],
+  oz: ["yan", "fev", "mar", "apr", "may", "iyn", "iyl", "avg", "sen", "okt", "noy", "dek"],
+  "uz-cyrl": ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"],
+  ru: ["янв.", "февр.", "мар.", "апр.", "мая", "июн.", "июл.", "авг.", "сент.", "окт.", "нояб.", "дек."],
+};
+
+/** Oyning qisqa nomi (0 = yanvar). Brauzerga boğliq emas: server va mijozda bir xil. */
+export function monthShort(monthIndex: number, locale = "uz-latn"): string {
+  const list = MONTHS_SHORT[locale] ?? MONTHS_SHORT["uz-latn"];
+  return list[((monthIndex % 12) + 12) % 12];
+}
+
+/**
+ * Qisqa sana Toşkent vaqti böyiça: "5-okt", "5-окт", "5 окт.". Röyxatlardagi muddat belgisi
+ * uçun; Intl'ga tayanmaydi, şu bois server va brauzer bir xil matn çiqaradi.
+ */
+export function formatShortDate(d: Date | string, locale = "uz-latn"): string {
+  const x = toTashkent(new Date(d));
+  const sep = locale === "ru" ? " " : "-";
+  return `${x.getUTCDate()}${sep}${monthShort(x.getUTCMonth(), locale)}`;
+}
+
+/** Soat va daqiqa Toşkent vaqti böyiça ("14:05"); server UTC'da işlasa ham bir xil. */
+export function formatTime(d: Date | string): string {
+  const x = toTashkent(new Date(d));
+  return `${String(x.getUTCHours()).padStart(2, "0")}:${String(x.getUTCMinutes()).padStart(2, "0")}`;
+}
+
+/** Toşkent vaqti böyiça kun kaliti "YYYY-MM-DD": ikki vaqt bir kunga tegişlimi, şuni soliştiriş uçun. */
+export function tashkentDayKey(d: Date | string): string {
+  return toTashkent(new Date(d)).toISOString().slice(0, 10);
+}
 
 const REL: Record<string, { overdue: string; today: string; tomorrow: string; daysLeft: string; dayUnit: string }> = {
   "uz-latn": { overdue: "Kechikdi", today: "Bugun", tomorrow: "Ertaga", daysLeft: "kun qoldi", dayUnit: "kun" },

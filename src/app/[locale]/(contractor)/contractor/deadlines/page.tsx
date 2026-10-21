@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { Rows, Row } from "@/components/ui-biib/Rows";
 import { DeadlineCountdown } from "@/components/tasks/deadline-countdown";
 import { getStudioCompany, getStudioDeadlines } from "@/server/queries/studio";
+import { monthShort } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +30,8 @@ export default async function StudioDeadlinesPage() {
         ) : (
           <Rows>
             {rows.map((r) => {
-              // Oyning qisqa nomi — vaqt mintaqasidan mustaqil (UTC).
-              const d = new Date(`${r.deadline.slice(0, 10)}T00:00:00Z`);
-              const month = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(d);
+              // Oyning qisqa nomi sana satridan (YYYY-MM-DD): vaqt mintaqasi va Intl'ga boğliq emas.
+              const month = monthShort(Number(r.deadline.slice(5, 7)) - 1, locale);
               return (
                 <Row key={r.stageId} href={`/contractor/projects/${r.projectId}/stages/${r.stageId}`}>
                   <div className="w-10 shrink-0 text-center">

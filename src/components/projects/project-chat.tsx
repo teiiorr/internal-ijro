@@ -23,6 +23,7 @@ import { compressImage } from "@/lib/images/compress";
 import { toast } from "sonner";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { LiveRegion } from "@/components/ui/live-region";
+import { formatDate, formatTime, tashkentDayKey } from "@/lib/dates";
 
 type Attachment = { url: string; name: string; size: number; mimeType: string };
 type Msg = {
@@ -50,28 +51,21 @@ function humanSize(bytes: number): string {
 }
 
 const isImage = (m: string) => m.startsWith("image/");
-const localeCode = (l: string) => (l === "ru" ? "ru-RU" : l === "uz-cyrl" ? "uz-Cyrl" : "uz-Latn");
-
+// Sana va vaqt Toşkent böyiça, Intl'siz: server (UTC) va brauzer bir xil matn çiqaradi.
 function dateSeparator(d: Date | string, locale: string, today: string, yesterday: string): string {
-  const date = d instanceof Date ? d : new Date(d);
-  const now = new Date();
-  const yst = new Date();
-  yst.setDate(yst.getDate() - 1);
-  if (date.toDateString() === now.toDateString()) return today;
-  if (date.toDateString() === yst.toDateString()) return yesterday;
-  return date.toLocaleDateString(localeCode(locale), { day: "numeric", month: "long", year: "numeric" });
+  const key = tashkentDayKey(d);
+  if (key === tashkentDayKey(new Date())) return today;
+  if (key === tashkentDayKey(new Date(Date.now() - 86_400_000))) return yesterday;
+  return formatDate(d, locale);
 }
 
-function timeOnly(d: Date | string, locale: string): string {
-  const date = d instanceof Date ? d : new Date(d);
-  return date.toLocaleTimeString(localeCode(locale), { hour: "2-digit", minute: "2-digit" });
+function timeOnly(d: Date | string): string {
+  return formatTime(d);
 }
 
 function shouldShowSeparator(current: Date | string, prev: Date | string | null): boolean {
   if (!prev) return true;
-  const a = (current instanceof Date ? current : new Date(current)).toDateString();
-  const b = (prev instanceof Date ? prev : new Date(prev)).toDateString();
-  return a !== b;
+  return tashkentDayKey(current) !== tashkentDayKey(prev);
 }
 
 type Staged = { file: File; preview?: string };
@@ -83,7 +77,6 @@ function MessageRow({
   mine,
   sameUser,
   isOptimistic,
-  locale,
   readOnly,
   viewerIsContractor,
   onReply,
@@ -93,7 +86,6 @@ function MessageRow({
   mine: boolean;
   sameUser: boolean;
   isOptimistic: boolean;
-  locale: string;
   readOnly: boolean;
   viewerIsContractor: boolean;
   onReply: (m: Msg) => void;
@@ -196,7 +188,7 @@ function MessageRow({
             )}
             {m.content.trim() && <p className="whitespace-pre-wrap">{m.content}</p>}
             <p className={`mt-0.5 flex items-center justify-end gap-1 text-[0.625rem] leading-none ${mine ? "text-[var(--on-tint)]/60" : "text-[var(--ink-3)]"}`}>
-              <span>{m.editedAt ? "✎ " : ""}{isOptimistic ? "..." : timeOnly(m.createdAt, locale)}</span>
+              <span>{m.editedAt ? "✎ " : ""}{isOptimistic ? "..." : timeOnly(m.createdAt)}</span>
               {/* Telegram uslubidagi tasdiq — faqat öz xabarlarimda, manba öqiş ma'lumotini bergan bölsa */}
               {mine && !isOptimistic && (m.readByCuratorAt !== undefined || m.readByContractorAt !== undefined) && (
                 (viewerIsContractor ? !!m.readByCuratorAt : !!m.readByContractorAt)
@@ -393,7 +385,6 @@ export function ProjectChat({
                 mine={m.userId === currentUserId}
                 sameUser={sameUser}
                 isOptimistic={m.id.startsWith("optimistic-")}
-                locale={locale}
                 readOnly={readOnly}
                 viewerIsContractor={viewerIsContractor}
                 onReply={startReply}
