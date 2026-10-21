@@ -164,19 +164,26 @@ export function AttachmentDropzone({
   disabled,
   compact,
   id,
+  title,
+  hint,
+  accept,
 }: {
   onFiles: (files: File[]) => void;
   maxBytes: number;
   disabled?: boolean;
   compact?: boolean;
   id?: string;
+  /** Boşqa bölimlar uçun sarlavha, izoh va fayl turi filtri (standart: topşiriq hujjatlari). */
+  title?: string;
+  hint?: string;
+  accept?: string;
 }) {
   const t = useTranslations();
   const inputRef = useRef<HTMLInputElement>(null);
   const hintId = useId();
   const [dragging, setDragging] = useState(false);
   const depth = useRef(0);
-  const label = compact ? t("tasks.attachments.addMore") : t("tasks.attachments.dropTitle");
+  const label = compact ? t("tasks.attachments.addMore") : (title ?? t("tasks.attachments.dropTitle"));
 
   function pick(list: FileList | null) {
     const files = list ? Array.from(list) : [];
@@ -242,6 +249,7 @@ export function AttachmentDropzone({
         ref={inputRef}
         type="file"
         multiple
+        accept={accept}
         className="sr-only"
         tabIndex={-1}
         disabled={disabled}
@@ -262,10 +270,10 @@ export function AttachmentDropzone({
       ) : (
         <span className="min-w-0">
           <span className="block text-[0.9375rem] font-semibold text-[var(--ink)]">
-            {dragging ? t("tasks.attachments.dropActive") : t("tasks.attachments.dropTitle")}
+            {dragging ? t("tasks.attachments.dropActive") : label}
           </span>
           <span id={hintId} className="mt-0.5 block t-small text-[var(--ink-3)]">
-            {t("tasks.attachments.dropHint", { max: humanSize(maxBytes) })}
+            {hint ?? t("tasks.attachments.dropHint", { max: humanSize(maxBytes) })}
           </span>
         </span>
       )}

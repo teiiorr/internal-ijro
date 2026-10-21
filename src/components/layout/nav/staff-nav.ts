@@ -4,7 +4,7 @@ import {
   IconBuildingBank, IconPresentation, IconCoins, IconUsersGroup,
   IconUsers, IconBuilding, IconInfoSquareRounded, IconSpeakerphone, IconFileCheck,
   IconShieldCog, IconReportAnalytics, IconHistory, IconShieldCheck, IconBell, IconSettings,
-  IconFolders, IconFileDescription, IconFileCertificate,
+  IconFolders, IconFileDescription, IconFileCertificate, IconAlphabetLatin,
 } from "@tabler/icons-react";
 import type { Position } from "@/lib/db/schema";
 import type { NavConfig, NavRule } from "./types";
@@ -58,6 +58,7 @@ export const STAFF_NAV: NavConfig = {
     { key: "internalDocs", labelKey: "nav.group.internalDocs", icon: IconFolders, children: [
       { key: "bildirgilar", href: "/ichki-hujjatlar/bildirgilar", labelKey: "nav.bildirgilar", icon: IconFileDescription, rule: ALL },
       { key: "buyruqlar", href: "/ichki-hujjatlar/buyruqlar", labelKey: "nav.buyruqlar", icon: IconFileCertificate, rule: ALL },
+      { key: "yangiAlifbo", href: "/ichki-hujjatlar/yangi-alifbo", labelKey: "nav.yangiAlifbo", icon: IconAlphabetLatin, rule: ALL },
     ] },
 
     { key: "admin", labelKey: "nav.group.admin", icon: IconShieldCog, children: [

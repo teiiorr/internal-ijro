@@ -192,7 +192,8 @@
 		"menu": "Menyu",
 		"approvals": "Soʻrovlar",
 		"bildirgilar": "Bildirgilar",
-		"buyruqlar": "Buyruqlar"
+		"buyruqlar": "Buyruqlar",
+		"yangiAlifbo": "Yangi alifbo"
 	},
 	"positions": {
 		"direktor": "Direktor",
@@ -2383,6 +2384,31 @@
 		"searchPlaceholder": "Nomi, raqami yoki muallif böyiça qidiriş",
 		"noMatches": "Heç narsa topilmadi",
 		"count": "{count} ta hujjat",
-		"numberPrefix": "№ {number}"
+		"numberPrefix": "№ {number}",
+		"alphabet": {
+			"intro": "Word hujjatini (DOCX) yuklang: matn kirill yoki eski lotin yozuvidan yangi özbek lotin alifbosiga ögiriladi. Formatlaş, jadvallar va rasmlar özgarmaydi, fayl serverda saqlanmaydi.",
+			"dropTitle": "Word faylini tanlang yoki şu yerga taşlang",
+			"dropHint": "Faqat DOCX, har biri {max} gaça. Bir neçta faylni birdaniga yuklaş mumkin",
+			"rules": "Kirill: ў → ö, ғ → ğ, ш → ş, ч → ç, қ → q, ҳ → h, ё → yo, ю → yu, я → ya. Eski lotin: oʻ → ö, gʻ → ğ, sh → ş, ch → ç.",
+			"working": "Ögirilmoqda…",
+			"changed": "{count} ta harf özgardi",
+			"nothing": "Özgartiradigan harf topilmadi: matn allaqaçon yangi alifboda",
+			"download": "Yuklab oliş",
+			"source": {
+				"cyrl": "Kirilldan",
+				"latn": "Eski lotindan",
+				"mixed": "Kirill va lotindan",
+				"none": "Özgarişsiz"
+			},
+			"errors": {
+				"doc": "Eski .doc format qöllab-quvvatlanmaydi. Faylni Wordda .docx qilib saqlang.",
+				"not_docx": "Bu Word (DOCX) fayli emas",
+				"encrypted": "Fayl parol bilan himoyalangan",
+				"unsupported": "Bu fayl tuzilişini oçib bölmadi",
+				"file_too_large": "Fayl juda katta (maksimal {max})",
+				"file_empty": "Fayl böş",
+				"failed": "Ögirib bölmadi. Qayta urinib köring."
+			}
+		}
 	}
 }
