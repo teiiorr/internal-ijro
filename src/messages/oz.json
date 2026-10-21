@@ -6,12 +6,12 @@
 	},
 	"developer": {
 		"title": "Dastur muallifi",
-		"p1": "Bu platforma ilk ğoyadan to bugungi körinişigacha butunlay Baxtiyor Murodxöjayev tomonidan yaratilgan. Uning har bir funksiyasi, har bir çiziği va butun arxitekturasida muallifning fikri, mehnati va ilhomi mujassam.",
+		"p1": "Bu platforma ilk ğoyadan to bugungi körinişigaça butunlay Baxtiyor Murodxöjayev tomonidan yaratilgan. Uning har bir funksiyasi, har bir çiziği va butun arxitekturasida muallifning fikri, mehnati va ilhomi mujassam.",
 		"p2": "Uşbu asar Özbekiston Respublikasi qonunçiligiga muvofiq intellektual mulk sifatida rasman röyxatdan ötkazilgan va davlat himoyasi ostida turadi. Guvohnoma № DGU 68862 (Özbekiston Respublikasi Adliya vazirligi, 22.09.2026).",
 		"p3": "Dasturning kodi, arxitekturasi yoki ğoyasi kabi biror bölagini muallifning yozma ruxsatisiz nusxalaş, tarqatiş, özgartiriş yoki tijorat maqsadida işlatiş qatʼiyan man etiladi. Aks holda amaldagi qonunçilikka muvofiq javobgarlik yuzaga keladi.",
 		"lex": "Batafsil: Lex.uz",
-		"contacts": "Har bir taklif va fikringiz muallif uchun qadrli. Bemalol boğlaning:",
-		"cert": "Guvohnomani körish (PDF)"
+		"contacts": "Har bir taklif va fikringiz muallif uçun qadrli. Bemalol boğlaning:",
+		"cert": "Guvohnomani köriş (PDF)"
 	},
 	"offline": {
 		"title": "Internet aloqasi yöq",
@@ -108,41 +108,41 @@
 		"orDropHere": "yoki bu yerga olib keling",
 		"replaceFile": "Boşqasini tanlaş",
 		"confirmTitle": "Tasdiqlaysizmi?",
-		"skipToContent": "Asosiy mazmunga oʻtish",
+		"skipToContent": "Asosiy mazmunga ötiş",
 		"actionErrors": {
 			"not_found": "Topilmadi",
-			"forbidden": "Ruxsat yoʻq",
-			"stage_not_active": "Bosqich faol emas",
-			"studio_has_no_login": "Studiyaning kirish akkaunti yoʻq",
+			"forbidden": "Ruxsat yöq",
+			"stage_not_active": "Bosqiç faol emas",
+			"studio_has_no_login": "Studiyaning kiriş akkaunti yöq",
 			"email_taken": "Bu email band",
-			"bad_decision": "Notoʻgʻri qaror",
+			"bad_decision": "Notöğri qaror",
 			"week_not_finished": "Hafta hali tugamagan",
-			"stage_not_in_project": "Bosqich bu loyihaga tegishli emas",
-			"stage_not_completed": "Bosqich yakunlanmagan",
-			"stage_completed": "Bosqich allaqachon yakunlangan",
-			"nudge_unavailable": "Eslatish hozir mumkin emas",
-			"nothing_to_submit": "Yuborish uchun hech narsa yoʻq",
+			"stage_not_in_project": "Bosqiç bu loyihaga tegişli emas",
+			"stage_not_completed": "Bosqiç yakunlanmagan",
+			"stage_completed": "Bosqiç allaqaçon yakunlangan",
+			"nudge_unavailable": "Eslatiş hozir mumkin emas",
+			"nothing_to_submit": "Yuboriş uçun heç narsa yöq",
 			"note_required": "Izoh majburiy",
-			"not_last_completed": "Faqat oxirgi yakunlangan bosqich",
-			"not_an_assignee": "Siz ijrochi emassiz",
+			"not_last_completed": "Faqat oxirgi yakunlangan bosqiç",
+			"not_an_assignee": "Siz ijroçi emassiz",
 			"not_a_studio_project": "Bu studiya loyihasi emas",
 			"not_a_coordinator": "Siz koordinator emassiz",
 			"name_too_short": "Nom juda qisqa",
-			"invalid_week": "Notoʻgʻri hafta",
-			"invalid_project_type": "Notoʻgʻri loyiha turi",
-			"invalid": "Notoʻgʻri maʼlumot",
+			"invalid_week": "Notöğri hafta",
+			"invalid_project_type": "Notöğri loyiha turi",
+			"invalid": "Notöğri maʼlumot",
 			"image_required": "Rasm majburiy",
-			"has_projects": "Bogʻliq loyihalar bor",
-			"deadline_not_later": "Muddat kechroq boʻlishi kerak",
-			"deadline_in_past": "Muddat oʻtmishda boʻlolmaydi",
+			"has_projects": "Boğliq loyihalar bor",
+			"deadline_not_later": "Muddat keçroq bölişi kerak",
+			"deadline_in_past": "Muddat ötmişda bölolmaydi",
 			"company_required": "Kompaniya majburiy",
-			"bad_url": "Notoʻgʻri havola",
-			"bad_capability": "Notoʻgʻri ruxsat turi",
-			"assignee_not_found": "Ijrochi topilmadi",
-			"already_submitted": "Allaqachon yuborilgan",
-			"already_setup": "Allaqachon sozlangan",
-			"already_pending": "Allaqachon koʻrib chiqilmoqda",
-			"already_decided": "Qaror allaqachon qabul qilingan"
+			"bad_url": "Notöğri havola",
+			"bad_capability": "Notöğri ruxsat turi",
+			"assignee_not_found": "Ijroçi topilmadi",
+			"already_submitted": "Allaqaçon yuborilgan",
+			"already_setup": "Allaqaçon sozlangan",
+			"already_pending": "Allaqaçon körib çiqilmoqda",
+			"already_decided": "Qaror allaqaçon qabul qilingan"
 		}
 	},
 	"nav": {
@@ -190,7 +190,7 @@
 		"myProjects": "Loyihalarim",
 		"taskControl": "Ijro nazorati",
 		"menu": "Menyu",
-		"approvals": "Soʻrovlar",
+		"approvals": "Sörovlar",
 		"bildirgilar": "Bildirgilar",
 		"buyruqlar": "Buyruqlar",
 		"yangiAlifbo": "Yangi alifbo"
@@ -395,7 +395,7 @@
 			"created": "Vazifa berildi"
 		},
 		"bulk": {
-			"select": "Tanlash",
+			"select": "Tanlaş",
 			"selected": "{n} tanlandi",
 			"setPriority": "Ustuvorlik",
 			"applied": "{n} ta vazifa yangilandi",
@@ -1018,11 +1018,11 @@
 				"twoFaDisabled": "2FA öçirildi"
 			},
 			"errors": {
-				"not_found": "Foydalanuvchi topilmadi",
-				"wrong_password": "Joriy parol notoʻgʻri",
-				"too_short": "Yangi parol kamida 8 belgidan iborat boʻlsin",
+				"not_found": "Foydalanuvçi topilmadi",
+				"wrong_password": "Joriy parol notöğri",
+				"too_short": "Yangi parol kamida 8 belgidan iborat bölsin",
 				"not_setup": "Avval 2FA sozlang",
-				"invalid_code": "Kod notoʻgʻri"
+				"invalid_code": "Kod notöğri"
 			}
 		},
 		"telegram": {
@@ -1211,16 +1211,16 @@
 		},
 		"standup": {
 			"title": "Kunlik hisobot",
-			"doneYesterday": "Kecha nima qildim",
+			"doneYesterday": "Keça nima qildim",
 			"plannedToday": "Bugun nima qilaman",
-			"blockers": "Toʻsiqlar",
-			"donePlaceholder": "Kechagi natijalar...",
+			"blockers": "Tösiqlar",
+			"donePlaceholder": "Keçagi natijalar...",
 			"todayPlaceholder": "Bugungi reja...",
 			"blockersPlaceholder": "Nima xalaqit beryapti? (ixtiyoriy)",
-			"submit": "Topshirish",
-			"update": "Yangilash",
+			"submit": "Topşiriş",
+			"update": "Yangilaş",
 			"saved": "Saqlandi",
-			"submittedToday": "Bugungi hisobot topshirildi"
+			"submittedToday": "Bugungi hisobot topşirildi"
 		}
 	},
 	"commandPalette": {
@@ -1264,11 +1264,11 @@
 		"myTasks": "Bajariş kerak",
 		"myTasksDescription": "Sizga yuklatilgan topşiriqlar",
 		"allComplete": "Hammasi bajarilgan",
-		"pageTitle": "Soʻrovlar markazi",
-		"deadlineRequests": "Muddat soʻrovlari",
+		"pageTitle": "Sörovlar markazi",
+		"deadlineRequests": "Muddat sörovlari",
 		"extraDays": "+{days} kun",
-		"empty": "Hozircha qaror kutayotgan soʻrov yoʻq",
-		"requestedBy": "Soʻradi:"
+		"empty": "Hozirça qaror kutayotgan sörov yöq",
+		"requestedBy": "Söradi:"
 	},
 	"kengash": {
 		"protocol": {
@@ -2294,23 +2294,23 @@
 			"tabStandup": "Kunlik hisobot",
 			"pdf": {
 				"reportTitle": "Haftalik rahbar brifingi",
-				"org": "Bolalar kontentini rivojlantirish markazi",
-				"metrics": "Koʻrsatkichlar",
+				"org": "Bolalar kontentini rivojlantiriş markazi",
+				"metrics": "Körsatkiçlar",
 				"thisWeek": "Bu hafta",
 				"attention": "Eʼtibor talab qiladi",
 				"summaryTitle": "Hafta xulosasi",
-				"generatedAt": "Shakllantirildi",
-				"completedStages": "Yakunlangan bosqichlar",
+				"generatedAt": "Şakllantirildi",
+				"completedStages": "Yakunlangan bosqiçlar",
 				"newProjects": "Yangi loyihalar",
-				"payments": "Toʻlovlar",
+				"payments": "Tölovlar",
 				"tasksCompleted": "Yakunlangan vazifalar",
 				"silentProjects": "Jim loyihalar",
-				"waitingReview": "Koʻrik kutmoqda",
-				"overrunning": "Muddatdan oshgan",
+				"waitingReview": "Körik kutmoqda",
+				"overrunning": "Muddatdan oşgan",
 				"noSummary": "Xulosa kiritilmagan",
 				"value": "Qiymat",
-				"indicator": "Koʻrsatkich",
-				"exportPdf": "PDF yuklab olish"
+				"indicator": "Körsatkiç",
+				"exportPdf": "PDF yuklab oliş"
 			}
 		},
 		"ministryReport": {
@@ -2346,23 +2346,23 @@
 		},
 		"standupTeam": {
 			"title": "Jamoaning kunlik hisobotlari",
-			"submittedCount": "{done}/{total} topshirdi",
-			"empty": "Bugun hali hech kim hisobot topshirmagan",
-			"doneYesterday": "Kecha",
+			"submittedCount": "{done}/{total} topşirdi",
+			"empty": "Bugun hali heç kim hisobot topşirmagan",
+			"doneYesterday": "Keça",
 			"plannedToday": "Bugun",
-			"blockers": "Toʻsiqlar",
-			"notSubmittedYet": "Hali topshirmaganlar"
+			"blockers": "Tösiqlar",
+			"notSubmittedYet": "Hali topşirmaganlar"
 		}
 	},
 	"errorPage": {
 		"notFoundTitle": "Sahifa topilmadi",
-		"notFoundDesc": "Siz qidirgan sahifa mavjud emas yoki koʻchirilgan.",
+		"notFoundDesc": "Siz qidirgan sahifa mavjud emas yoki köçirilgan.",
 		"errorTitle": "Nimadir xato ketdi",
-		"errorDesc": "Kutilmagan xatolik yuz berdi. Qayta urinib koʻring.",
-		"retry": "Qayta urinish",
-		"home": "Bosh sahifaga",
+		"errorDesc": "Kutilmagan xatolik yuz berdi. Qayta urinib köring.",
+		"retry": "Qayta uriniş",
+		"home": "Boş sahifaga",
 		"globalTitle": "Tizimda xatolik",
-		"globalDesc": "Ilovani yuklashda xatolik yuz berdi. Sahifani yangilang."
+		"globalDesc": "Ilovani yuklaşda xatolik yuz berdi. Sahifani yangilang."
 	},
 	"internalDocs": {
 		"add": "Hujjat qöşiş",
