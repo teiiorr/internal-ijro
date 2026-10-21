@@ -439,18 +439,25 @@ export const taskChecklistItems = pgTable("task_checklist_items", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const taskAttachments = pgTable("task_attachments", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  taskId: uuid("task_id")
-    .notNull()
-    .references(() => tasks.id, { onDelete: "cascade" }),
-  fileUrl: text("file_url").notNull(),
-  fileName: varchar("file_name", { length: 255 }).notNull(),
-  fileSize: integer("file_size"),
-  fileMimeType: varchar("file_mime_type", { length: 100 }),
-  uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id),
-  uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
-});
+export const taskAttachments = pgTable(
+  "task_attachments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    taskId: uuid("task_id")
+      .notNull()
+      .references(() => tasks.id, { onDelete: "cascade" }),
+    fileUrl: text("file_url").notNull(),
+    fileName: varchar("file_name", { length: 255 }).notNull(),
+    fileSize: integer("file_size"),
+    fileMimeType: varchar("file_mime_type", { length: 100 }),
+    uploadedByUserId: uuid("uploaded_by_user_id").references(() => users.id),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  // 0045: röyxatdagi hujjatlar soni va topşiriq sahifasi task_id böyiça öqiydi.
+  (t) => ({
+    taskIdx: index("task_attachments_task_idx").on(t.taskId, t.uploadedAt),
+  })
+);
 
 export const taskComments = pgTable("task_comments", {
   id: uuid("id").primaryKey().defaultRandom(),

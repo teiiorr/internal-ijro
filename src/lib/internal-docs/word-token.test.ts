@@ -36,4 +36,12 @@ describe("word token", () => {
     expect(verifyWordToken(DOC, createWordToken(DOC, SECRET, NOW), "", NOW)).toBe(false);
     expect(() => createWordToken(DOC, "", NOW)).toThrow("missing_secret");
   });
+
+  it("binds the token to its scope", () => {
+    const doc = createWordToken(DOC, SECRET, NOW);
+    const task = createWordToken(DOC, SECRET, NOW, "task-attachment-word");
+    expect(verifyWordToken(DOC, task, SECRET, NOW, "task-attachment-word")).toBe(true);
+    expect(verifyWordToken(DOC, task, SECRET, NOW)).toBe(false);
+    expect(verifyWordToken(DOC, doc, SECRET, NOW, "task-attachment-word")).toBe(false);
+  });
 });

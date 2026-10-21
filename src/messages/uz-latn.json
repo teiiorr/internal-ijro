@@ -339,7 +339,6 @@
 		"sections": {
 			"description": "Tavsif",
 			"checklist": "Tekshiruv roʻyxati",
-			"attachments": "Biriktirilgan fayllar",
 			"comments": "Sharhlar",
 			"statusSection": "Holat",
 			"people": "Ishtirokchilar",
@@ -347,7 +346,6 @@
 			"noDescription": "Tavsif kiritilmagan.",
 			"rejectionReason": "Rad etish sababi",
 			"noChecklist": "Tekshiruv roʻyxati boʻsh.",
-			"noAttachments": "Biriktirilgan fayllar yoʻq.",
 			"noComments": "Sharhlar yoʻq.",
 			"writeComment": "Sharh yozing... @\"Toʻliq Ism\" orqali eslab oʻting",
 			"newChecklistItem": "Yangi tekshiruv punkti...",
@@ -401,6 +399,29 @@
 			"setPriority": "Ustuvorlik",
 			"applied": "{n} ta vazifa yangilandi",
 			"clear": "Bekor"
+		},
+		"attachments": {
+			"title": "Hujjatlar",
+			"count": "{count} ta hujjat",
+			"dropTitle": "Hujjat biriktirish",
+			"dropActive": "Fayllarni qoʻyib yuboring",
+			"dropHint": "Fayllarni shu yerga tashlang yoki bosib tanlang. PDF, Word, Excel, rasm va boshqalar, har biri {max} gacha",
+			"addMore": "Yana fayl qoʻshish",
+			"remove": "Olib tashlash",
+			"formHint": "Ixtiyoriy. Ijrochi hujjatlarni topshiriq sahifasida ochadi va yuklab oladi.",
+			"view": "Koʻrish",
+			"openInWord": "Wordda ochish",
+			"openInWordHint": "Kompyuter yoki telefonda Microsoft Word oʻrnatilgan boʻlishi kerak",
+			"wordOpenError": "Wordda ochib boʻlmadi. Faylni yuklab oling.",
+			"confirmDelete": "«{name}» oʻchirilsinmi? Faylni qayta tiklab boʻlmaydi.",
+			"deleted": "Hujjat oʻchirildi",
+			"uploaded": "{count} ta hujjat qoʻshildi",
+			"uploadedOne": "Yuklandi",
+			"uploadingCount": "Yuklanmoqda {done}/{total}",
+			"someFailed": "{count} ta fayl yuklanmadi. Ularni topshiriq sahifasida qayta qoʻshing.",
+			"tooMany": "Bitta topshiriqqa {max} tagacha hujjat biriktiriladi",
+			"network": "Internet aloqasi uzildi. Qayta urinib koʻring.",
+			"empty": "Hujjat biriktirilmagan"
 		}
 	},
 	"projects": {
@@ -2181,6 +2202,7 @@
 				"rejected": "{actor} {target} javobini rad etdi",
 				"comment": "{actor} izoh qoldirdi",
 				"attachment": "{actor} fayl biriktirdi",
+				"attachment_removed": "{actor} faylni oʻchirdi",
 				"assignees_added": "{actor} ijrochi qoʻshdi",
 				"assignee_removed": "{actor} ijrochini olib tashladi",
 				"nudged": "{actor} eslatma yubordi",

@@ -55,8 +55,8 @@ async function tryResize(filePath: string, mime: string, width: number, size: nu
 
     if (!out) {
       const { default: sharp } = await import("sharp");
-      const input = await readFile(filePath);
-      out = await sharp(input)
+      // Faylni Buffer'ga yiğmasdan libvips özi öqiydi; juda katta (piksel) rasmlar rad etiladi.
+      out = await sharp(filePath, { limitInputPixels: 50_000_000 })
         .rotate() // EXIF orientatsiyasini hisobga olamiz
         .resize(width, width, { fit: "inside", withoutEnlargement: true })
         .webp({ quality: 78 })
@@ -106,8 +106,10 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ path: strin
   );
   if (!allowed) return new NextResponse("forbidden", { status: 403 });
 
-  const fileName = path[path.length - 1];
-  const subdir = path.slice(0, -1).join("/");
+  // Faylni aynan tekşiruvdan ötgan (normallaştirilgan) yöldan beramiz. Xom `path`dan olinsa,
+  // oxirgi segmentdagi kodlangan "..%2F" tekşiruvni bir papkaga, berilgan faylni esa boşqasiga yönaltirardi.
+  const fileName = segs[segs.length - 1];
+  const subdir = segs.slice(0, -1).join("/");
   const f = await statFileForDownload(subdir, fileName);
   if (!f) return new NextResponse("not_found", { status: 404 });
 

@@ -1,11 +1,12 @@
 import "server-only";
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { departments, taskAssignees, tasks, users } from "@/lib/db/schema";
+import { departments, taskAssignees, taskAttachments, tasks, users } from "@/lib/db/schema";
 import { registerMontserrat } from "@/lib/pdf/fonts";
 import { shortName } from "@/lib/names";
+import { humanSize } from "@/lib/files/file-kind";
 
 registerMontserrat();
 
@@ -232,6 +233,13 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
     .leftJoin(departments, eq(departments.id, users.departmentId))
     .where(eq(taskAssignees.taskId, taskId));
 
+  // Ilovalar: topşiriqqa biriktirilgan hujjatlar röyxati (rasmiy hujjatdagi «Ilova» qismi).
+  const attachmentRows = await db
+    .select({ id: taskAttachments.id, fileName: taskAttachments.fileName, fileSize: taskAttachments.fileSize })
+    .from(taskAttachments)
+    .where(eq(taskAttachments.taskId, taskId))
+    .orderBy(asc(taskAttachments.uploadedAt), asc(taskAttachments.id));
+
   const doc = (
     <Document>
       <Page size="A4" style={s.page}>
@@ -281,6 +289,17 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
         <Text style={[s.body, { fontWeight: 700, marginBottom: 4 }]}>{task.title}</Text>
         {task.description && (
           <Text style={s.body}>{task.description}</Text>
+        )}
+
+        {attachmentRows.length > 0 && (
+          <>
+            <Text style={s.sectionTitle}>Ilovalar</Text>
+            {attachmentRows.map((a, i) => (
+              <Text key={a.id} style={[s.body, { marginBottom: 2 }]}>
+                {`${i + 1}. ${a.fileName}${a.fileSize ? ` (${humanSize(a.fileSize)})` : ""}`}
+              </Text>
+            ))}
+          </>
         )}
 
         {/* Ijroçilar */}

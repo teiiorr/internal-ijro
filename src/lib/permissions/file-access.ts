@@ -1,7 +1,7 @@
 import "server-only";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { projects, projectStages, externalCompanies, type Position } from "@/lib/db/schema";
+import { projects, projectStages, externalCompanies, taskAssignees, type Position } from "@/lib/db/schema";
 import { isCompanyStudioOfProject } from "@/server/queries/studio";
 import { can } from "@/lib/permissions/capabilities";
 
@@ -78,6 +78,21 @@ export async function canAccessFile(user: FileAccessUser, segs: string[]): Promi
       .limit(1);
     if (!row) return false;
     return contractorOwnsProject(user, row.projectId);
+  }
+
+  // Topşiriq hujjatlari va javob fayllari: task-attachments/<taskId>, task-responses/<taskId>.
+  // Içki xodim — ruxsat (topşiriq sahifasi ularga oçiq); studiya — faqat öziga tayinlangan topşiriq.
+  if (type === "task-attachments" || type === "task-responses") {
+    const taskId = segs[1];
+    if (!taskId) return false;
+    if (!isContractor) return true;
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(taskId)) return false;
+    const [row] = await db
+      .select({ u: taskAssignees.userId })
+      .from(taskAssignees)
+      .where(and(eq(taskAssignees.taskId, taskId), eq(taskAssignees.userId, user.id)))
+      .limit(1);
+    return !!row;
   }
 
   // Noma'lum tur — ichki xodimga ruxsat, kontragentga yo'q (xavfsiz standart).

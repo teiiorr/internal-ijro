@@ -6,6 +6,7 @@ import { pipeline } from "node:stream/promises";
 import type { ReadableStream as NodeWebReadableStream } from "node:stream/web";
 import { join, extname, basename } from "node:path";
 import { randomUUID } from "node:crypto";
+import { BLOCKED_UPLOAD_EXTS } from "@/lib/files/file-kind";
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR ?? "./uploads";
 const MAX_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 104857600);
@@ -22,12 +23,7 @@ export function isForbiddenExt(fileName: string): boolean {
 // bajariladigan/aktiv-kontent qora röyxati (fayllar `Content-Disposition: inline` bilan
 // beriladi, şuning uçun skript işga tuşira oladigan markup — .html/.svg va h.k. — ilova
 // originida saqlangan XSS'ning oldini oliş uçun bloklanadi).
-const FORBIDDEN_EXT = new Set([
-  ".exe", ".bat", ".sh", ".cmd", ".com", ".js", ".mjs", ".cjs", ".jar", ".msi",
-  ".vbs", ".ps1", ".scr", ".app", ".dll",
-  // active markup — dangerous under inline disposition
-  ".html", ".htm", ".xhtml", ".svg", ".svgz", ".xml", ".xsl", ".mht", ".mhtml",
-]);
+const FORBIDDEN_EXT = new Set(BLOCKED_UPLOAD_EXTS.map((e) => `.${e}`));
 
 export type StoredFile = {
   url: string;

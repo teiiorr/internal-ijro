@@ -147,7 +147,8 @@ describe("history mapping", () => {
     expect(historyKindForAction("task.nudged")).toBe("nudged");
     expect(historyKindForAction("task.deadline_request_approved")).toBe("deadline_request_approved");
     expect(historyKindForAction("project.updated")).toBeNull();
-    expect(HISTORY_KINDS).toHaveLength(15);
+    expect(historyKindForAction("task.attachment_removed")).toBe("attachment_removed");
+    expect(HISTORY_KINDS).toHaveLength(16);
   });
   it("surfaces rejection feedback and the reviewed assignee", () => {
     const names = new Map([["u1", "Valiyev Akmal"]]);
@@ -166,6 +167,11 @@ describe("history mapping", () => {
     expect(historyDetails("assignees_added", null, { userIds: ["a", "b", "zz"] }, nameOf).targets).toEqual(["A", "B"]);
     expect(historyDetails("assignee_removed", null, { userId: "b" }, nameOf).targets).toEqual(["B"]);
     expect(historyUserRefs("nudged", { to: ["a"], message: null })).toEqual(["a"]);
+  });
+  it("names the attached or removed file", () => {
+    expect(historyDetails("attachment", null, { fileName: "Buyruq.docx" }, () => null)).toEqual({ file: "Buyruq.docx" });
+    expect(historyDetails("attachment_removed", { fileName: "eski.pdf" }, null, () => null)).toEqual({ file: "eski.pdf" });
+    expect(historyDetails("attachment", null, null, () => null)).toEqual({ file: null });
   });
   it("tolerates malformed payloads", () => {
     expect(historyDetails("status_changed", null, null, () => null)).toEqual({ status: null });

@@ -2,7 +2,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder, IconCalendarEvent } from "@tabler/icons-react";
+import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder, IconCalendarEvent, IconPaperclip as Paperclip } from "@tabler/icons-react";
 import { toBcp47 } from "@/i18n/bcp47";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/i18n/navigation";
@@ -25,6 +25,8 @@ type T = {
   assignedToName: string | null;
   assignedToAvatarUrl?: string | null;
   projectName: string | null;
+  /** Biriktirilgan hujjatlar soni (röyxatda qoğoz qisqiç belgisi). */
+  attachmentCount?: number | null;
 };
 
 /** Qatorning oʻng tomonidagi yagona belgi: faqat qaror talab qiladigan holat koʻrsatiladi. */
@@ -144,6 +146,16 @@ export function TasksViewSwitcher({
                           <span className="inline-flex shrink-0 items-center gap-1 tabular-nums">
                             <IconCalendarEvent className="size-3.5 shrink-0" aria-hidden />
                             {dueFmt.format(new Date(row.deadline))}
+                          </span>
+                        )}
+                        {!!row.attachmentCount && row.attachmentCount > 0 && (
+                          <span
+                            className="inline-flex shrink-0 items-center gap-1 tabular-nums"
+                            title={t("tasks.attachments.count", { count: row.attachmentCount })}
+                          >
+                            <Paperclip className="size-3.5 shrink-0" aria-hidden />
+                            <span className="sr-only">{t("tasks.attachments.count", { count: row.attachmentCount })}</span>
+                            <span aria-hidden>{row.attachmentCount}</span>
                           </span>
                         )}
                       </div>

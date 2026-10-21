@@ -92,7 +92,7 @@ export function StudioProjectsList({
                   {/* Studiyaga vazifa berish — eng ustda, bosqich boʻyicha (standart joriy bosqich) */}
                   {isEditor && (
                     <div className="flex justify-end">
-                      <NewStudioTaskDialog projectId={p.id} stages={p.stages} defaultStageId={a?.id ?? null} />
+                      <NewStudioTaskDialog projectId={p.id} stages={p.stages} defaultStageId={a?.id ?? null} maxBytes={maxBytes} />
                     </div>
                   )}
                   {a ? (

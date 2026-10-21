@@ -5,6 +5,8 @@ import { getTask } from "@/server/queries/tasks";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
 import { MyResponseCard } from "@/components/tasks/my-response-card";
 import { ShareTaskChatButton } from "@/components/tasks/share-task-chat-button";
+import { TaskAttachments } from "@/components/tasks/attachments-section";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { BackButton } from "@/components/ui/back-button";
 
@@ -48,6 +50,18 @@ export default async function ContractorTaskDetailPage({ params }: { params: Pro
           }}
           projectName={data.project?.name ?? null}
         />
+
+        {/* Topşiriq beruvçi biriktirgan hujjatlar: studiya köradi va yuklab oladi (qöşa olmaydi). */}
+        {data.attachments.length > 0 && (
+          <TaskAttachments
+            taskId={data.task.id}
+            items={data.attachments}
+            canAdd={false}
+            viewer={{ id: me.id, position: me.position }}
+            createdByUserId={data.task.createdByUserId}
+            maxBytes={MAX_UPLOAD_BYTES}
+          />
+        )}
 
         <MyResponseCard
           taskId={data.task.id}

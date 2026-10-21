@@ -339,7 +339,6 @@
 		"sections": {
 			"description": "Tavsif",
 			"checklist": "Tekşiruv röyxati",
-			"attachments": "Biriktirilgan fayllar",
 			"comments": "Şarhlar",
 			"statusSection": "Holat",
 			"people": "Iştirokçilar",
@@ -347,7 +346,6 @@
 			"noDescription": "Tavsif kiritilmagan.",
 			"rejectionReason": "Rad etiş sababi",
 			"noChecklist": "Tekşiruv röyxati böş.",
-			"noAttachments": "Biriktirilgan fayllar yöq.",
 			"noComments": "Şarhlar yöq.",
 			"writeComment": "Şarh yozing... @\"Töliq Ism\" orqali eslab öting",
 			"newChecklistItem": "Yangi tekşiruv punkti...",
@@ -401,6 +399,29 @@
 			"setPriority": "Ustuvorlik",
 			"applied": "{n} ta vazifa yangilandi",
 			"clear": "Bekor"
+		},
+		"attachments": {
+			"title": "Hujjatlar",
+			"count": "{count} ta hujjat",
+			"dropTitle": "Hujjat biriktiriş",
+			"dropActive": "Fayllarni qöyib yuboring",
+			"dropHint": "Fayllarni şu yerga taşlang yoki bosib tanlang. PDF, Word, Excel, rasm va boşqalar, har biri {max} gaça",
+			"addMore": "Yana fayl qöşiş",
+			"remove": "Olib taşlaş",
+			"formHint": "Ixtiyoriy. Ijroçi hujjatlarni topşiriq sahifasida oçadi va yuklab oladi.",
+			"view": "Köriş",
+			"openInWord": "Wordda oçiş",
+			"openInWordHint": "Kompyuter yoki telefonda Microsoft Word örnatilgan bölişi kerak",
+			"wordOpenError": "Wordda oçib bölmadi. Faylni yuklab oling.",
+			"confirmDelete": "«{name}» öçirilsinmi? Faylni qayta tiklab bölmaydi.",
+			"deleted": "Hujjat öçirildi",
+			"uploaded": "{count} ta hujjat qöşildi",
+			"uploadedOne": "Yuklandi",
+			"uploadingCount": "Yuklanmoqda {done}/{total}",
+			"someFailed": "{count} ta fayl yuklanmadi. Ularni topşiriq sahifasida qayta qöşing.",
+			"tooMany": "Bitta topşiriqqa {max} tagaça hujjat biriktiriladi",
+			"network": "Internet aloqasi uzildi. Qayta urinib köring.",
+			"empty": "Hujjat biriktirilmagan"
 		}
 	},
 	"projects": {
@@ -2181,6 +2202,7 @@
 				"rejected": "{actor} {target} javobini rad etdi",
 				"comment": "{actor} izoh qoldirdi",
 				"attachment": "{actor} fayl biriktirdi",
+				"attachment_removed": "{actor} faylni öçirdi",
 				"assignees_added": "{actor} ijroçi qöşdi",
 				"assignee_removed": "{actor} ijroçini olib taşladi",
 				"nudged": "{actor} eslatma yubordi",

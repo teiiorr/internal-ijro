@@ -233,6 +233,7 @@ export const HISTORY_KINDS = [
   "rejected",
   "comment",
   "attachment",
+  "attachment_removed",
   "assignees_added",
   "assignee_removed",
   "nudged",
@@ -253,6 +254,7 @@ const ACTION_TO_KIND: Record<string, HistoryKind> = {
   "task.assignee_rejected": "rejected",
   "task.comment_added": "comment",
   "task.attachment_added": "attachment",
+  "task.attachment_removed": "attachment_removed",
   "task.assignees_added": "assignees_added",
   "task.assignee_removed": "assignee_removed",
   "task.nudged": "nudged",
@@ -277,6 +279,8 @@ export type HistoryDetails = {
   note?: string | null;
   reason?: string | null;
   message?: string | null;
+  /** Biriktirilgan yoki öçirilgan hujjat nomi. */
+  file?: string | null;
 };
 
 export type HistoryEvent = {
@@ -346,6 +350,10 @@ export function historyDetails(
       return { targets: names(strArr([nv.userId])) };
     case "nudged":
       return { targets: names(strArr(nv.to)), message: str(nv.message) };
+    case "attachment":
+      return { file: str(nv.fileName) };
+    case "attachment_removed":
+      return { file: str(ov.fileName) };
     case "deadline_requested":
       return { fromDate: str(nv.previousDate), toDate: str(nv.requestedDate), reason: str(nv.reason) };
     case "deadline_request_approved":

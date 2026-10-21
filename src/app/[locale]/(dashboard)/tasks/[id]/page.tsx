@@ -16,7 +16,9 @@ import { Card } from "@/components/ui-biib/Card";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { Button } from "@/components/ui/button";
 import { CommentsSection } from "@/components/tasks/comments-section";
-import { AttachmentsSection } from "@/components/tasks/attachments-section";
+import { TaskAttachments } from "@/components/tasks/attachments-section";
+import { canAddTaskAttachments } from "@/lib/tasks/attachments";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 import { TaskHeaderCard } from "@/components/tasks/task-header-card";
 import { AssigneesCard, type AssigneeItem } from "@/components/tasks/assignees-card";
 import { MyResponseCard } from "@/components/tasks/my-response-card";
@@ -38,10 +40,13 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const isCreator = data.task.createdByUserId === me.id;
   const myAssignment = data.assignees.find((a) => a.userId === me.id);
   const isAssignee = !!myAssignment;
-  const canEdit = isCreator || isAssignee || ["direktor", "orinbosar"].includes(me.position);
   // Tahrirlash, muddat so'rovlarini hal qilish va eslatish — topshiriq beruvchi yoki rahbariyat.
   const canManage = isCreator || ["direktor", "orinbosar"].includes(me.position);
   const isParticipant = isCreator || isAssignee || ["direktor", "orinbosar"].includes(me.position);
+  const canAddFiles = canAddTaskAttachments(me, {
+    createdByUserId: data.task.createdByUserId,
+    assigneeIds: data.assignees.map((a) => a.userId),
+  });
   // Muddat UTC yarim tunda saqlanadi → Toshkent sanasi (YYYY-MM-DD).
   const deadlineDate = data.task.deadline
     ? new Date(new Date(data.task.deadline as Date).getTime() + 5 * 3600e3).toISOString().slice(0, 10)
@@ -113,6 +118,18 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         projectName={data.project?.name ?? null}
       />
 
+      {/* Hujjatlar topşiriq mazmunidan keyin darhol: ijroçi avval nimani bajarişni va qaysi fayllar bilan işlaşni köradi. */}
+      {(data.attachments.length > 0 || canAddFiles) && (
+        <TaskAttachments
+          taskId={data.task.id}
+          items={data.attachments}
+          canAdd={canAddFiles}
+          viewer={{ id: me.id, position: me.position }}
+          createdByUserId={data.task.createdByUserId}
+          maxBytes={MAX_UPLOAD_BYTES}
+        />
+      )}
+
       {isAssignee && myAssignment && (
         <MyResponseCard
           taskId={data.task.id}
@@ -158,17 +175,10 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
         </Card>
       )}
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-        <Card>
-          <h3 className="mb-3 font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("tasks.sections.attachments")}</h3>
-          <AttachmentsSection taskId={data.task.id} attachments={data.attachments} canEdit={canEdit} />
-        </Card>
-
-        <Card>
-          <h3 className="mb-3 font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("tasks.sections.comments")}</h3>
-          <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
-        </Card>
-      </div>
+      <Card>
+        <h3 className="mb-3 font-[family-name:var(--font-ui)] text-[1.0625rem] font-bold tracking-tight text-[var(--ink)]">{t("tasks.sections.comments")}</h3>
+        <CommentsSection taskId={data.task.id} comments={data.comments} users={allUsers} />
+      </Card>
 
       {isParticipant && (
         <Suspense fallback={null}>

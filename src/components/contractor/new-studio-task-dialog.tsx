@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { createStudioTask } from "@/server/actions/tasks";
+import { AttachmentDropzone, QueuedFileList, useAttachmentQueue } from "@/components/tasks/attachment-queue";
 
 type Stage = { id: string; name: string; orderIndex: number; status: string };
 const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
@@ -26,10 +27,12 @@ export function NewStudioTaskDialog({
   projectId,
   stages,
   defaultStageId,
+  maxBytes,
 }: {
   projectId: string;
   stages: Stage[];
   defaultStageId?: string | null;
+  maxBytes: number;
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -39,6 +42,7 @@ export function NewStudioTaskDialog({
   const [stageId, setStageId] = useState<string>(initialStage);
   const [priority, setPriority] = useState<string>("medium");
   const [error, setError] = useState<string | null>(null);
+  const files = useAttachmentQueue({ maxBytes });
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,7 +66,13 @@ export function NewStudioTaskDialog({
           setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
           return;
         }
+        // Vazifa yaratildi: biriktirilgan hujjatlarni ketma-ket yuklaymiz.
+        if (files.items.length > 0) {
+          const r = await files.uploadAll(res.id);
+          if (r.failed > 0) toast.error(t("tasks.attachments.someFailed", { count: r.failed }));
+        }
         toast.success(t("tasks.studioTask.created"));
+        files.reset();
         setOpen(false);
         router.refresh();
       } catch (err) {
@@ -72,11 +82,19 @@ export function NewStudioTaskDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        // Vazifa yaratilayotganda va yuklaş davomida dialog yopilmaydi; yopilganda tanlangan fayllar unutiladi.
+        if (!next && (files.busy || pending)) return;
+        if (!next) files.reset();
+        setOpen(next);
+      }}
+    >
       <DialogTrigger asChild>
         <Button size="sm" className="gap-1.5"><ClipboardPlus className="size-4" />{t("tasks.studioTask.new")}</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader><DialogTitle>{t("tasks.studioTask.dialogTitle")}</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="min-w-0 space-y-4">
           <div className="space-y-1.5">
@@ -86,6 +104,17 @@ export function NewStudioTaskDialog({
           <div className="space-y-1.5">
             <Label htmlFor="st-desc">{t("tasks.fields.description")}</Label>
             <Textarea id="st-desc" name="description" rows={3} />
+          </div>
+          <div className="min-w-0 space-y-1.5">
+            <Label htmlFor="st-files">{t("tasks.attachments.title")}</Label>
+            <QueuedFileList items={files.items} onRemove={files.busy || pending ? undefined : files.remove} />
+            <AttachmentDropzone
+              id="st-files"
+              onFiles={files.add}
+              maxBytes={maxBytes}
+              disabled={files.busy || pending}
+              compact={files.items.length > 0}
+            />
           </div>
           {stages.length > 0 && (
             <div className="space-y-1.5">
@@ -122,9 +151,18 @@ export function NewStudioTaskDialog({
           </div>
           {error && <p className="text-sm font-medium text-[var(--danger)]">{error}</p>}
           <DialogFooter>
-            <DialogClose asChild><Button type="button" variant="ghost">{t("common.cancel")}</Button></DialogClose>
+            <DialogClose asChild><Button type="button" variant="ghost" disabled={files.busy || pending}>{t("common.cancel")}</Button></DialogClose>
             <Button type="submit" disabled={pending}>
-              {pending ? <Loader className="size-4 animate-spin" /> : t("common.create")}
+              {files.busy ? (
+                <>
+                  <Loader className="size-4 animate-spin" />
+                  {t("tasks.attachments.uploadingCount", { done: files.done, total: files.items.length })}
+                </>
+              ) : pending ? (
+                <Loader className="size-4 animate-spin" />
+              ) : (
+                t("common.create")
+              )}
             </Button>
           </DialogFooter>
         </form>

@@ -1,6 +1,5 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { internalDocuments } from "@/lib/db/tables/internal-documents";
@@ -18,6 +17,7 @@ import {
   wordOpenUri,
 } from "@/lib/internal-docs/logic";
 import { createWordToken } from "@/lib/internal-docs/word-token";
+import { requestOrigin } from "@/lib/request-origin";
 
 /** Hujjatni oʻchiradi: yuklagan xodim yoki rahbariyat (direktor, oʻrinbosar, HR). */
 export async function removeInternalDocument(id: string): Promise<ActionResult> {
@@ -38,18 +38,6 @@ export async function removeInternalDocument(id: string): Promise<ActionResult> 
   });
   revalidatePath(internalDocsPath(doc.kind));
   return { ok: true };
-}
-
-/** Joriy soʻrovning tashqi manzili (proksi orqasida ham): Word faylni shu manzildan yuklaydi. */
-async function requestOrigin(): Promise<string> {
-  const h = await headers();
-  const host = (h.get("x-forwarded-host") ?? h.get("host") ?? "").split(",")[0].trim();
-  if (host) {
-    const fwd = h.get("x-forwarded-proto")?.split(",")[0].trim();
-    const local = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host);
-    return `${fwd || (local ? "http" : "https")}://${host}`;
-  }
-  return (process.env.APP_URL ?? "").replace(/\/+$/, "");
 }
 
 /**

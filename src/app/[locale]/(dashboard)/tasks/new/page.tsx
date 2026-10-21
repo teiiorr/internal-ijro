@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/ui-biib/PageHeader";
 import { BackButton } from "@/components/ui/back-button";
 import { Card } from "@/components/ui-biib/Card";
 import { NewTaskForm } from "@/components/tasks/new-task-form";
+import { MAX_UPLOAD_BYTES } from "@/lib/upload";
 
 export default async function NewTaskPage() {
   const session = await auth();
@@ -25,7 +26,7 @@ export default async function NewTaskPage() {
     <div className="mx-auto max-w-3xl">
       <PageHeader title={t("tasks.newTitle")} back={<BackButton fallbackHref="/tasks" />} />
       <Card>
-        <NewTaskForm assignees={assignees} projects={prjs} />
+        <NewTaskForm assignees={assignees} projects={prjs} maxBytes={MAX_UPLOAD_BYTES} />
       </Card>
     </div>
   );

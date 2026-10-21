@@ -12,6 +12,7 @@ import {
   IconHistory,
   IconMessage,
   IconPaperclip,
+  IconTrash,
   IconPencil,
   IconSend,
   IconCirclePlus,
@@ -49,6 +50,7 @@ const KIND_STYLE: Record<HistoryKind, { icon: Icon; tone: string }> = {
   rejected: { icon: IconCircleX, tone: "text-[var(--danger)] bg-[var(--danger-soft)]" },
   comment: { icon: IconMessage, tone: "text-[var(--muted)] bg-[var(--surface-2)]" },
   attachment: { icon: IconPaperclip, tone: "text-[var(--muted)] bg-[var(--surface-2)]" },
+  attachment_removed: { icon: IconTrash, tone: "text-[var(--muted)] bg-[var(--surface-2)]" },
   assignees_added: { icon: IconUserPlus, tone: "text-[var(--primary)] bg-[var(--primary-soft)]" },
   assignee_removed: { icon: IconUserMinus, tone: "text-[var(--warning)] bg-[var(--warning-soft)]" },
   nudged: { icon: IconBell, tone: "text-[var(--warning)] bg-[var(--warning-soft)]" },
@@ -134,7 +136,7 @@ export async function TaskHistoryCard({ taskId, taskCreatedAt, locale }: TaskHis
             </time>
           </div>
 
-          {(fields.length > 0 || showDates || (d.targets && d.targets.length > 0)) && (
+          {(fields.length > 0 || showDates || (d.targets && d.targets.length > 0) || d.file) && (
             <div className="flex flex-wrap items-center gap-1.5 text-xs text-[var(--muted)]">
               {fields.map((f) => (
                 <span key={f} className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold">
@@ -144,6 +146,11 @@ export async function TaskHistoryCard({ taskId, taskCreatedAt, locale }: TaskHis
               {showDates && (
                 <span className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold tabular">
                   {fmtDdMm(d.fromDate)} → {fmtDdMm(d.toDate)}
+                </span>
+              )}
+              {d.file && (
+                <span className="max-w-full truncate rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold" title={d.file}>
+                  {d.file}
                 </span>
               )}
               {d.targets?.map((n, i) => (

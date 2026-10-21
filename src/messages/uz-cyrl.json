@@ -339,7 +339,6 @@
 		"sections": {
 			"description": "Тавсиф",
 			"checklist": "Текширув рўйхати",
-			"attachments": "Бириктирилган файллар",
 			"comments": "Шарҳлар",
 			"statusSection": "Ҳолат",
 			"people": "Иштирокчилар",
@@ -347,7 +346,6 @@
 			"noDescription": "Тавсиф киритилмаган.",
 			"rejectionReason": "Рад этиш сабаби",
 			"noChecklist": "Текширув рўйхати бўш.",
-			"noAttachments": "Бириктирилган файллар йўқ.",
 			"noComments": "Шарҳлар йўқ.",
 			"writeComment": "Шарҳ ёзинг... @\"Тўлиқ Исм\" орқали эслаб ўтинг",
 			"newChecklistItem": "Янги текширув пункти...",
@@ -401,6 +399,29 @@
 			"setPriority": "Устуворлик",
 			"applied": "{n} та вазифа янгиланди",
 			"clear": "Бекор"
+		},
+		"attachments": {
+			"title": "Ҳужжатлар",
+			"count": "{count} та ҳужжат",
+			"dropTitle": "Ҳужжат бириктириш",
+			"dropActive": "Файлларни қўйиб юборинг",
+			"dropHint": "Файлларни шу ерга ташланг ёки босиб танланг. PDF, Word, Excel, расм ва бошқалар, ҳар бири {max} гача",
+			"addMore": "Яна файл қўшиш",
+			"remove": "Олиб ташлаш",
+			"formHint": "Ихтиёрий. Ижрочи ҳужжатларни топшириқ саҳифасида очади ва юклаб олади.",
+			"view": "Кўриш",
+			"openInWord": "Wordда очиш",
+			"openInWordHint": "Компьютер ёки телефонда Microsoft Word ўрнатилган бўлиши керак",
+			"wordOpenError": "Wordда очиб бўлмади. Файлни юклаб олинг.",
+			"confirmDelete": "«{name}» ўчирилсинми? Файлни қайта тиклаб бўлмайди.",
+			"deleted": "Ҳужжат ўчирилди",
+			"uploaded": "{count} та ҳужжат қўшилди",
+			"uploadedOne": "Юкланди",
+			"uploadingCount": "Юкланмоқда {done}/{total}",
+			"someFailed": "{count} та файл юкланмади. Уларни топшириқ саҳифасида қайта қўшинг.",
+			"tooMany": "Битта топшириққа {max} тагача ҳужжат бириктирилади",
+			"network": "Интернет алоқаси узилди. Қайта уриниб кўринг.",
+			"empty": "Ҳужжат бириктирилмаган"
 		}
 	},
 	"projects": {
@@ -2181,6 +2202,7 @@
 				"rejected": "{actor} {target} жавобини рад этди",
 				"comment": "{actor} изоҳ қолдирди",
 				"attachment": "{actor} файл бириктирди",
+				"attachment_removed": "{actor} файлни ўчирди",
 				"assignees_added": "{actor} ижрочи қўшди",
 				"assignee_removed": "{actor} ижрочини олиб ташлади",
 				"nudged": "{actor} эслатма юборди",

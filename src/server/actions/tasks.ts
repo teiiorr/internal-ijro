@@ -8,7 +8,6 @@ import {
   taskAssignees,
   taskChecklistItems,
   taskComments,
-  taskAttachments,
   users,
   projects,
   externalCompanies,
@@ -22,7 +21,7 @@ import { postProjectMessage } from "@/server/actions/projects";
 import { TASK_PRIORITIES } from "@/lib/permissions/tasks";
 import { logActivity } from "@/lib/audit";
 import { notify } from "@/lib/notifications";
-import { storeFile, deleteFileByUrl } from "@/lib/upload";
+import { storeFile } from "@/lib/upload";
 import { nextRegistrationNumber } from "@/lib/tasks/registration-number";
 import { taskDeadlineRequests } from "@/lib/db/tables/task-edit";
 import { ok, err, type ActionResult } from "@/lib/action-result";
@@ -358,32 +357,6 @@ export async function deleteChecklistItem(itemId: string, taskId: string) {
   if (!item) throw new Error("not_found");
   await assertCanAccessTask(item.taskId, me);
   await db.delete(taskChecklistItems).where(eq(taskChecklistItems.id, itemId));
-  revalidatePath(`/tasks/${taskId}`);
-}
-
-export async function attachFileToTask(taskId: string, file: File) {
-  const me = await requireUser();
-  await assertCanAccessTask(taskId, me);
-  const stored = await storeFile(file, `task-attachments/${taskId}`);
-  await db.insert(taskAttachments).values({
-    taskId,
-    fileUrl: stored.url,
-    fileName: stored.originalName,
-    fileSize: stored.size,
-    fileMimeType: stored.mimeType,
-    uploadedByUserId: me.id,
-  });
-  await logActivity({ userId: me.id, action: "task.attachment_added", entityType: "task", entityId: taskId });
-  revalidatePath(`/tasks/${taskId}`);
-}
-
-export async function removeAttachment(attachmentId: string, taskId: string) {
-  const me = await requireUser();
-  const row = await db.select().from(taskAttachments).where(eq(taskAttachments.id, attachmentId)).limit(1);
-  if (row.length === 0) return;
-  await assertCanAccessTask(row[0].taskId, me);
-  await deleteFileByUrl(row[0].fileUrl);
-  await db.delete(taskAttachments).where(eq(taskAttachments.id, attachmentId));
   revalidatePath(`/tasks/${taskId}`);
 }
 

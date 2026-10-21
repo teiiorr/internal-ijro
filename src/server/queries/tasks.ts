@@ -15,6 +15,7 @@ import {
   type Position,
 } from "@/lib/db/schema";
 import { type TaskStatus, type TaskPriority } from "@/lib/permissions/tasks";
+import { listTaskAttachments } from "@/server/queries/task-attachments";
 
 export type TaskListFilters = {
   search?: string | null;
@@ -76,6 +77,8 @@ export async function listTasks(f: TaskListFilters) {
       assignedToAvatarUrl: assignedAlias.avatarUrl,
       projectId: tasks.projectId,
       projectName: projects.name,
+      // Röyxatda qoğoz qisqiç belgisi uçun: topşiriqqa neçta hujjat biriktirilgan.
+      attachmentCount: sql<number>`(SELECT count(*)::int FROM ${taskAttachments} ta WHERE ta.task_id = ${tasks.id})`,
     })
     .from(tasks)
     .leftJoin(assignedAlias, eq(assignedAlias.id, tasks.assignedToUserId))
@@ -153,7 +156,7 @@ export async function getTask(id: string) {
       .innerJoin(users, eq(users.id, taskComments.userId))
       .where(and(eq(taskComments.taskId, id), isNull(taskComments.deletedAt)))
       .orderBy(asc(taskComments.createdAt)),
-    db.select().from(taskAttachments).where(eq(taskAttachments.taskId, id)).orderBy(desc(taskAttachments.uploadedAt)),
+    listTaskAttachments(id),
     db
       .select({ id: taskDependencies.id, dependsOnTaskId: taskDependencies.dependsOnTaskId, dependsOnTitle: tasks.title, dependsOnStatus: tasks.status })
       .from(taskDependencies)

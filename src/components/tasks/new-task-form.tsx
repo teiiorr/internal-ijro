@@ -1,7 +1,8 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -10,18 +11,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createTask } from "@/server/actions/tasks";
 import { EmployeePicker, type PickerPerson } from "@/components/ui/employee-picker";
 import { shortName } from "@/lib/names";
+import { AttachmentDropzone, QueuedFileList, useAttachmentQueue } from "@/components/tasks/attachment-queue";
 
 type Person = PickerPerson;
 type Project = { id: string; name: string };
 
 const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 
-export function NewTaskForm({ assignees, projects }: { assignees: Person[]; projects: Project[] }) {
+export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Person[]; projects: Project[]; maxBytes: number }) {
   const t = useTranslations();
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const files = useAttachmentQueue({ maxBytes });
+  // Yuklaş paytida foydalanuvçi boşqa sahifaga ötib ketsa, tugagandan keyin uni bu yerga qaytarmaymiz.
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   function toggle(id: string) {
     setSelectedIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
@@ -53,7 +64,12 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
           setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
           return;
         }
-        router.push(`/tasks/${res.id}`);
+        // Topşiriq yaratildi: biriktirilgan hujjatlarni ketma-ket yuklaymiz (har biri progress bilan).
+        if (files.items.length > 0) {
+          const r = await files.uploadAll(res.id);
+          if (r.failed > 0) toast.error(t("tasks.attachments.someFailed", { count: r.failed }));
+        }
+        if (mounted.current) router.push(`/tasks/${res.id}`);
       } catch (err) {
         setError((err as Error).message);
       }
@@ -70,6 +86,27 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
         <div className="space-y-2">
           <Label htmlFor="description">{t("tasks.fields.description")}</Label>
           <Textarea id="description" name="description" rows={4} />
+        </div>
+
+        {/* Hujjatlar: topşiriq bilan birga ijroçiga beriladigan PDF, Word va boşqa fayllar */}
+        <div className="min-w-0 space-y-2">
+          <div className="flex items-baseline justify-between gap-2">
+            <Label htmlFor="task-files">{t("tasks.attachments.title")}</Label>
+            {files.items.length > 0 && (
+              <span className="t-micro font-medium tabular-nums text-[var(--ink-3)]">
+                {t("tasks.attachments.count", { count: files.items.length })}
+              </span>
+            )}
+          </div>
+          <QueuedFileList items={files.items} onRemove={files.busy || pending ? undefined : files.remove} />
+          <AttachmentDropzone
+            id="task-files"
+            onFiles={files.add}
+            maxBytes={maxBytes}
+            disabled={files.busy || pending}
+            compact={files.items.length > 0}
+          />
+          <p className="t-micro text-[var(--ink-3)]">{t("tasks.attachments.formHint")}</p>
         </div>
       </div>
 
@@ -125,7 +162,9 @@ export function NewTaskForm({ assignees, projects }: { assignees: Person[]; proj
       <div className="sticky bottom-0 -mx-5 border-t border-[var(--line)] bg-[var(--surface)] px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:pb-0">
         <div className="flex justify-end">
           <Button type="submit" disabled={pending} size="lg" className="w-full sm:w-auto">
-            {t("tasks.newTitle")}
+            {files.busy
+              ? t("tasks.attachments.uploadingCount", { done: files.done, total: files.items.length })
+              : t("tasks.newTitle")}
           </Button>
         </div>
       </div>
