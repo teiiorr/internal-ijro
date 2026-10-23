@@ -264,6 +264,12 @@ export async function buildTaskDocumentPdf(taskId: string): Promise<Buffer | nul
               {shortName(creatorName)}, {POSITION_LABEL[creatorPosition] ?? creatorPosition}
             </Text>
           </View>
+          {task.documentNumber && (
+            <View style={s.infoRow}>
+              <Text style={s.infoLabel}>Hujjat raqami:</Text>
+              <Text style={s.infoValue}>{task.documentNumber}</Text>
+            </View>
+          )}
           <View style={s.infoRow}>
             <Text style={s.infoLabel}>Berilgan sana:</Text>
             <Text style={s.infoValue}>{fmt(task.createdAt)}</Text>

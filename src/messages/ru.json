@@ -287,7 +287,11 @@
 			"selectAssigneeError": "Выберите хотя бы одного исполнителя",
 			"primaryAssigneeHint": "Первый выбранный — основной исполнитель",
 			"primary": "Основной",
-			"selectedCount": "Выбрано: {n}"
+			"selectedCount": "Выбрано: {n}",
+			"byProject": "По проекту",
+			"byProjectOff": "Задание не привязано к проекту",
+			"byProjectOn": "Выберите проект ниже",
+			"selectProjectError": "Выберите проект или выключите переключатель"
 		},
 		"view": {
 			"list": "Список",
@@ -312,7 +316,10 @@
 			"repeat": "Повторение",
 			"pickAssignee": "Выберите исполнителя",
 			"noProject": "Без проекта",
-			"assignees": "Исполнители"
+			"assignees": "Исполнители",
+			"documentNumber": "Номер документа",
+			"documentNumberPlaceholder": "Например, 01-15/234",
+			"optional": "(необязательно)"
 		},
 		"status": {
 			"todo": "К выполнению",
@@ -2154,13 +2161,14 @@
 			"fieldDescription": "Описание",
 			"fieldPriority": "Приоритет",
 			"fieldDeadline": "Срок",
+			"fieldDocumentNumber": "Номер документа",
 			"assignees": "Исполнители",
 			"addAssignee": "Добавить исполнителя",
 			"removeAssignee": "Убрать исполнителя",
 			"removeConfirm": "Убрать исполнителя из поручения?",
 			"cannotRemoveResponded": "Нельзя убрать исполнителя, который уже ответил",
 			"lastAssignee": "Должен остаться хотя бы один исполнитель",
-			"completedOnlyDescription": "В выполненном поручении можно менять только описание",
+			"completedOnlyDescription": "В выполненном поручении можно менять только описание и номер документа",
 			"saved": "Изменения сохранены",
 			"selectedNew": "Выбрано новых исполнителей: {count}",
 			"requestExtension": "Запросить продление срока",

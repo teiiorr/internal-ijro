@@ -168,6 +168,14 @@ describe("history mapping", () => {
     expect(historyDetails("assignee_removed", null, { userId: "b" }, nameOf).targets).toEqual(["B"]);
     expect(historyUserRefs("nudged", { to: ["a"], message: null })).toEqual(["a"]);
   });
+  it("tracks the document number and keeps it editable on completed tasks", () => {
+    const base = { title: "A", description: null, priority: "medium", deadlineDate: null };
+    const d = buildTaskDiff({ ...base, documentNumber: null }, { ...base, documentNumber: " 01-15/234 " });
+    expect(d.changed).toEqual(["documentNumber"]);
+    expect(d.next.documentNumber).toBe("01-15/234");
+    expect(touchesLockedFields(d)).toBe(false);
+    expect(buildTaskDiff({ ...base, documentNumber: "" }, { ...base, documentNumber: null }).changed).toEqual([]);
+  });
   it("names the attached or removed file", () => {
     expect(historyDetails("attachment", null, { fileName: "Buyruq.docx" }, () => null)).toEqual({ file: "Buyruq.docx" });
     expect(historyDetails("attachment_removed", { fileName: "eski.pdf" }, null, () => null)).toEqual({ file: "eski.pdf" });

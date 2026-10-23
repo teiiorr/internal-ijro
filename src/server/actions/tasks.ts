@@ -48,6 +48,8 @@ const createSchema = z.object({
   parentTaskId: z.string().uuid().nullable().optional(),
   priority: z.enum(TASK_PRIORITIES),
   deadline: z.string().datetime().nullable().optional(),
+  /** Ixtiyoriy hujjat raqami (xat, buyruq, bildirgi); böş satr saqlanmaydi. */
+  documentNumber: z.string().trim().max(100).nullable().optional(),
 });
 
 export async function createTask(input: z.infer<typeof createSchema>): Promise<ActionResult<{ id: string }>> {
@@ -79,6 +81,7 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<A
       .insert(tasks)
       .values({
         registrationNumber: regNum,
+        documentNumber: parsed.documentNumber || null,
         title: parsed.title,
         description: parsed.description ?? null,
         assignedToUserId: parsed.assignedToUserId,
@@ -128,6 +131,8 @@ const studioTaskSchema = z.object({
   description: z.string().max(5000).nullable().optional(),
   priority: z.enum(TASK_PRIORITIES).default("medium"),
   deadline: z.string().datetime().nullable().optional(),
+  /** Ixtiyoriy hujjat raqami (xat, buyruq, bildirgi); böş satr saqlanmaydi. */
+  documentNumber: z.string().trim().max(100).nullable().optional(),
 });
 
 /**
@@ -184,6 +189,7 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
       .insert(tasks)
       .values({
         registrationNumber: regNum,
+        documentNumber: parsed.documentNumber || null,
         title: parsed.title,
         description: parsed.description ?? null,
         assignedToUserId: studioUser.id,

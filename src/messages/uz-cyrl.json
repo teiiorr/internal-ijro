@@ -287,7 +287,11 @@
 			"selectAssigneeError": "Камида битта ижрочи танланг",
 			"primaryAssigneeHint": "Биринчи танланган ижрочи — асосий",
 			"primary": "Асосий",
-			"selectedCount": "{n} танланди"
+			"selectedCount": "{n} танланди",
+			"byProject": "Лойиҳа бўйича",
+			"byProjectOff": "Топшириқ лойиҳага боғланмайди",
+			"byProjectOn": "Қуйида лойиҳани танланг",
+			"selectProjectError": "Лойиҳани танланг ёки тумблерни ўчиринг"
 		},
 		"view": {
 			"list": "Рўйхат",
@@ -312,7 +316,10 @@
 			"repeat": "Такрорлаш",
 			"pickAssignee": "Ижрочини танланг",
 			"noProject": "Лойиҳасиз",
-			"assignees": "Ижрочилар"
+			"assignees": "Ижрочилар",
+			"documentNumber": "Ҳужжат рақами",
+			"documentNumberPlaceholder": "Масалан, 01-15/234",
+			"optional": "(ихтиёрий)"
 		},
 		"status": {
 			"todo": "Бажарилиши керак",
@@ -2154,13 +2161,14 @@
 			"fieldDescription": "Тавсиф",
 			"fieldPriority": "Устуворлик",
 			"fieldDeadline": "Муддат",
+			"fieldDocumentNumber": "Ҳужжат рақами",
 			"assignees": "Ижрочилар",
 			"addAssignee": "Ижрочи қўшиш",
 			"removeAssignee": "Ижрочини олиб ташлаш",
 			"removeConfirm": "Ижрочи топшириқдан олиб ташлансинми?",
 			"cannotRemoveResponded": "Жавоб юборган ижрочини олиб ташлаб бўлмайди",
 			"lastAssignee": "Камида битта ижрочи қолиши керак",
-			"completedOnlyDescription": "Бажарилган топшириқда фақат тавсифни ўзгартириш мумкин",
+			"completedOnlyDescription": "Бажарилган топшириқда фақат тавсиф ва ҳужжат рақамини ўзгартириш мумкин",
 			"saved": "Ўзгаришлар сақланди",
 			"selectedNew": "{count} та янги ижрочи танланди",
 			"requestExtension": "Муддатни узайтиришни сўраш",

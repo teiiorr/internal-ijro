@@ -287,7 +287,11 @@
 			"selectAssigneeError": "Kamida bitta ijroçi tanlang",
 			"primaryAssigneeHint": "Birinçi tanlangan ijroçi — asosiy",
 			"primary": "Asosiy",
-			"selectedCount": "{n} tanlandi"
+			"selectedCount": "{n} tanlandi",
+			"byProject": "Loyiha böyiça",
+			"byProjectOff": "Topşiriq loyihaga boğlanmaydi",
+			"byProjectOn": "Quyida loyihani tanlang",
+			"selectProjectError": "Loyihani tanlang yoki tumblerni öçiring"
 		},
 		"view": {
 			"list": "Röyxat",
@@ -312,7 +316,10 @@
 			"repeat": "Takrorlaş",
 			"pickAssignee": "Ijroçini tanlang",
 			"noProject": "Loyihasiz",
-			"assignees": "Ijroçilar"
+			"assignees": "Ijroçilar",
+			"documentNumber": "Hujjat raqami",
+			"documentNumberPlaceholder": "Masalan, 01-15/234",
+			"optional": "(ixtiyoriy)"
 		},
 		"status": {
 			"todo": "Bajarilişi kerak",
@@ -2154,13 +2161,14 @@
 			"fieldDescription": "Tavsif",
 			"fieldPriority": "Ustuvorlik",
 			"fieldDeadline": "Muddat",
+			"fieldDocumentNumber": "Hujjat raqami",
 			"assignees": "Ijroçilar",
 			"addAssignee": "Ijroçi qöşiş",
 			"removeAssignee": "Ijroçini olib taşlaş",
 			"removeConfirm": "Ijroçi topşiriqdan olib taşlansinmi?",
 			"cannotRemoveResponded": "Javob yuborgan ijroçini olib taşlab bölmaydi",
 			"lastAssignee": "Kamida bitta ijroçi qolişi kerak",
-			"completedOnlyDescription": "Bajarilgan topşiriqda faqat tavsifni özgartiriş mumkin",
+			"completedOnlyDescription": "Bajarilgan topşiriqda faqat tavsif va hujjat raqamini özgartiriş mumkin",
 			"saved": "Özgarişlar saqlandi",
 			"selectedNew": "{count} ta yangi ijroçi tanlandi",
 			"requestExtension": "Muddatni uzaytirişni söraş",

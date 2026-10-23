@@ -39,7 +39,7 @@ export async function listTasks(f: TaskListFilters) {
     const patterns = queryVariants(f.search).map((v) => `%${v}%`);
     if (patterns.length) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s)])) as any);
+      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s), ilike(tasks.documentNumber, s)])) as any);
     }
   }
   if (f.status) conds.push(eq(tasks.status, f.status));
@@ -97,7 +97,7 @@ export async function countTasks(f: Pick<TaskListFilters, "actorId" | "actorPosi
     const patterns = queryVariants(f.search).map((v) => `%${v}%`);
     if (patterns.length) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s)])) as any);
+      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s), ilike(tasks.documentNumber, s)])) as any);
     }
   }
   if (f.scope === "mine") {

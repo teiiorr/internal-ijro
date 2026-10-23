@@ -76,6 +76,8 @@ export type EditableTaskFields = {
   priority: string;
   /** Tashkent calendar date or null. */
   deadlineDate: string | null;
+  /** Hujjat raqami (ixtiyoriy). */
+  documentNumber?: string | null;
 };
 
 export type EditableField = keyof EditableTaskFields;
@@ -94,9 +96,9 @@ export function normalizeDescription(s: string | null | undefined): string | nul
 
 export function buildTaskDiff(prev: EditableTaskFields, next: EditableTaskFields): TaskDiff {
   const diff: TaskDiff = { changed: [], old: {}, next: {} };
-  const a = { ...prev, title: prev.title.trim(), description: normalizeDescription(prev.description) };
-  const b = { ...next, title: next.title.trim(), description: normalizeDescription(next.description) };
-  const keys: EditableField[] = ["title", "description", "priority", "deadlineDate"];
+  const a = { ...prev, title: prev.title.trim(), description: normalizeDescription(prev.description), documentNumber: normalizeDescription(prev.documentNumber) };
+  const b = { ...next, title: next.title.trim(), description: normalizeDescription(next.description), documentNumber: normalizeDescription(next.documentNumber) };
+  const keys: EditableField[] = ["title", "description", "priority", "deadlineDate", "documentNumber"];
   for (const k of keys) {
     if ((a[k] ?? null) !== (b[k] ?? null)) {
       diff.changed.push(k);
@@ -107,9 +109,9 @@ export function buildTaskDiff(prev: EditableTaskFields, next: EditableTaskFields
   return diff;
 }
 
-/** On a completed task only the description may change. */
+/** On a completed task only the description and the document number may change. */
 export function touchesLockedFields(diff: TaskDiff): boolean {
-  return diff.changed.some((k) => k !== "description");
+  return diff.changed.some((k) => k !== "description" && k !== "documentNumber");
 }
 
 // ---------------------------------------------------------------- extension requests

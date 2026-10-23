@@ -61,6 +61,7 @@ export function NewStudioTaskDialog({
           description,
           priority: priority as (typeof PRIORITIES)[number],
           deadline: deadlineStr ? new Date(deadlineStr).toISOString() : null,
+          documentNumber: String(fd.get("documentNumber") ?? "").trim() || null,
         });
         if (!res.ok) {
           setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
@@ -100,6 +101,12 @@ export function NewStudioTaskDialog({
           <div className="space-y-1.5">
             <Label htmlFor="st-title">{t("tasks.fields.title")}</Label>
             <Input id="st-title" name="title" required minLength={2} maxLength={500} autoComplete="off" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="st-docnum">
+              {t("tasks.fields.documentNumber")} <span className="font-normal text-[var(--ink-3)]">{t("tasks.fields.optional")}</span>
+            </Label>
+            <Input id="st-docnum" name="documentNumber" maxLength={100} autoComplete="off" placeholder={t("tasks.fields.documentNumberPlaceholder")} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="st-desc">{t("tasks.fields.description")}</Label>

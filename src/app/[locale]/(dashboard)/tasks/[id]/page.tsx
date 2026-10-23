@@ -88,7 +88,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           <>
             {canManage && (
               <EditTaskButton
-                task={{ id: data.task.id, title: data.task.title, description: data.task.description, priority: data.task.priority, deadlineDate, status: data.task.status }}
+                task={{ id: data.task.id, title: data.task.title, description: data.task.description, priority: data.task.priority, deadlineDate, status: data.task.status, documentNumber: data.task.documentNumber }}
                 assignees={data.assignees.map((a) => ({ userId: a.userId, fullName: a.fullName, avatarUrl: a.avatarUrl, status: a.status, hasResponse: !!a.responseSubmittedAt }))}
                 people={people}
               />
@@ -114,6 +114,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           deadline: data.task.deadline as Date | null,
           createdAt: data.task.createdAt,
           registrationNumber: data.task.registrationNumber,
+          documentNumber: data.task.documentNumber,
         }}
         projectName={data.project?.name ?? null}
       />

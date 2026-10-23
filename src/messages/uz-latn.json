@@ -287,7 +287,11 @@
 			"selectAssigneeError": "Kamida bitta ijrochi tanlang",
 			"primaryAssigneeHint": "Birinchi tanlangan ijrochi — asosiy",
 			"primary": "Asosiy",
-			"selectedCount": "{n} tanlandi"
+			"selectedCount": "{n} tanlandi",
+			"byProject": "Loyiha boʻyicha",
+			"byProjectOff": "Topshiriq loyihaga bogʻlanmaydi",
+			"byProjectOn": "Quyida loyihani tanlang",
+			"selectProjectError": "Loyihani tanlang yoki tumblerni oʻchiring"
 		},
 		"view": {
 			"list": "Roʻyxat",
@@ -312,7 +316,10 @@
 			"repeat": "Takrorlash",
 			"pickAssignee": "Ijrochini tanlang",
 			"noProject": "Loyihasiz",
-			"assignees": "Ijrochilar"
+			"assignees": "Ijrochilar",
+			"documentNumber": "Hujjat raqami",
+			"documentNumberPlaceholder": "Masalan, 01-15/234",
+			"optional": "(ixtiyoriy)"
 		},
 		"status": {
 			"todo": "Bajarilishi kerak",
@@ -2154,13 +2161,14 @@
 			"fieldDescription": "Tavsif",
 			"fieldPriority": "Ustuvorlik",
 			"fieldDeadline": "Muddat",
+			"fieldDocumentNumber": "Hujjat raqami",
 			"assignees": "Ijrochilar",
 			"addAssignee": "Ijrochi qoʻshish",
 			"removeAssignee": "Ijrochini olib tashlash",
 			"removeConfirm": "Ijrochi topshiriqdan olib tashlansinmi?",
 			"cannotRemoveResponded": "Javob yuborgan ijrochini olib tashlab boʻlmaydi",
 			"lastAssignee": "Kamida bitta ijrochi qolishi kerak",
-			"completedOnlyDescription": "Bajarilgan topshiriqda faqat tavsifni oʻzgartirish mumkin",
+			"completedOnlyDescription": "Bajarilgan topshiriqda faqat tavsif va hujjat raqamini oʻzgartirish mumkin",
 			"saved": "Oʻzgarishlar saqlandi",
 			"selectedNew": "{count} ta yangi ijrochi tanlandi",
 			"requestExtension": "Muddatni uzaytirishni soʻrash",

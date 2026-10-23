@@ -19,6 +19,7 @@ type Props = {
     deadline: Date | null;
     createdAt: Date;
     registrationNumber: string | null;
+    documentNumber?: string | null;
   };
   projectName?: string | null;
 };
@@ -56,6 +57,11 @@ export async function TaskHeaderCard({ creator, task, projectName }: Props) {
         {task.registrationNumber && <CopyRegistration regNum={task.registrationNumber} />}
         <TaskStatusBadge status={task.status} />
         <TaskPriorityBadge priority={task.priority} />
+        {task.documentNumber && (
+          <span className="t-small text-[var(--ink-2)]">
+            <span className="text-[var(--ink-3)]">{t("tasks.fields.documentNumber")}:</span> {task.documentNumber}
+          </span>
+        )}
         {projectName && (
           <span className="t-small text-[var(--ink-2)]">
             <span className="text-[var(--ink-3)]">{t("common.project")}:</span> {projectName}

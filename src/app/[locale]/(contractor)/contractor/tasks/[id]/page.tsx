@@ -47,6 +47,7 @@ export default async function ContractorTaskDetailPage({ params }: { params: Pro
             deadline: data.task.deadline as Date | null,
             createdAt: data.task.createdAt,
             registrationNumber: data.task.registrationNumber,
+            documentNumber: data.task.documentNumber,
           }}
           projectName={data.project?.name ?? null}
         />

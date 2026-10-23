@@ -65,6 +65,7 @@ const FIELD_KEY: Record<string, string> = {
   description: "fieldDescription",
   priority: "fieldPriority",
   deadlineDate: "fieldDeadline",
+  documentNumber: "fieldDocumentNumber",
 };
 
 /** Creator, any assignee, direktor and orinbosar may see the trail (defence in depth; the page gates too). */

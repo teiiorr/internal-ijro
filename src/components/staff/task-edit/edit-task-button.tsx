@@ -28,6 +28,7 @@ export type EditTaskButtonProps = {
     /** Tashkent calendar date 'YYYY-MM-DD' or null. */
     deadlineDate: string | null;
     status: string;
+    documentNumber?: string | null;
   };
   assignees: Array<{
     userId: string;
@@ -52,6 +53,7 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
   const [description, setDescription] = useState(task.description ?? "");
   const [priority, setPriority] = useState<TaskPriority>(asPriority(task.priority));
   const [deadline, setDeadline] = useState(task.deadlineDate ?? "");
+  const [docNumber, setDocNumber] = useState(task.documentNumber ?? "");
   const [picks, setPicks] = useState<string[]>([]);
   const [showPicker, setShowPicker] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -68,6 +70,7 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
     setDescription(task.description ?? "");
     setPriority(asPriority(task.priority));
     setDeadline(task.deadlineDate ?? "");
+    setDocNumber(task.documentNumber ?? "");
     setPicks([]);
     setShowPicker(false);
   }
@@ -96,6 +99,7 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
           description: description.trim() ? description : null,
           priority,
           deadlineDate: deadline || null,
+          documentNumber: docNumber.trim() || null,
         });
         if (!res.ok) {
           toast.error(failMessage(res));
@@ -179,6 +183,18 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
               maxLength={20000}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="te-docnum">{t("fieldDocumentNumber")}</Label>
+            <Input
+              id="te-docnum"
+              value={docNumber}
+              onChange={(e) => setDocNumber(e.target.value)}
+              maxLength={100}
+              placeholder={tr("tasks.fields.documentNumberPlaceholder")}
+              autoComplete="off"
             />
           </div>
 

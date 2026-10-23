@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ import { createTask } from "@/server/actions/tasks";
 import { EmployeePicker, type PickerPerson } from "@/components/ui/employee-picker";
 import { shortName } from "@/lib/names";
 import { AttachmentDropzone, QueuedFileList, useAttachmentQueue } from "@/components/tasks/attachment-queue";
+import { IconFolder as Folder } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
 type Person = PickerPerson;
 type Project = { id: string; name: string };
@@ -24,6 +26,10 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  // Topşiriq loyihaga tegişli bölmasligi ham mumkin: tumbler yoqilgandagina loyiha tanlanadi.
+  const [byProject, setByProject] = useState(false);
+  const [projectId, setProjectId] = useState("");
+  const switchId = useId();
   const files = useAttachmentQueue({ maxBytes });
   // Yuklaş paytida foydalanuvçi boşqa sahifaga ötib ketsa, tugagandan keyin uni bu yerga qaytarmaymiz.
   const mounted = useRef(true);
@@ -45,6 +51,10 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
       setError(t("tasks.new.selectAssigneeError"));
       return;
     }
+    if (byProject && !projectId) {
+      setError(t("tasks.new.selectProjectError"));
+      return;
+    }
     const fd = new FormData(e.currentTarget);
     const deadlineStr = String(fd.get("deadline") ?? "");
     start(async () => {
@@ -55,7 +65,8 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
           description: (fd.get("description") as string) || null,
           assignedToUserId: primary,
           additionalAssigneeIds: rest,
-          projectId: (fd.get("projectId") as string) || null,
+          projectId: byProject && projectId ? projectId : null,
+          documentNumber: String(fd.get("documentNumber") ?? "").trim() || null,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           priority: (fd.get("priority") as any) ?? "medium",
           deadline: deadlineStr ? new Date(deadlineStr).toISOString() : null,
@@ -79,9 +90,23 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid max-w-2xl grid-cols-1 gap-5">
-        <div className="space-y-2">
-          <Label htmlFor="title">{t("tasks.fields.title")}</Label>
-          <Input id="title" name="title" required minLength={2} maxLength={500} />
+        <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_14rem]">
+          <div className="min-w-0 space-y-2">
+            <Label htmlFor="title">{t("tasks.fields.title")}</Label>
+            <Input id="title" name="title" required minLength={2} maxLength={500} />
+          </div>
+          <div className="min-w-0 space-y-2">
+            <Label htmlFor="documentNumber">
+              {t("tasks.fields.documentNumber")} <span className="font-normal text-[var(--ink-3)]">{t("tasks.fields.optional")}</span>
+            </Label>
+            <Input
+              id="documentNumber"
+              name="documentNumber"
+              maxLength={100}
+              autoComplete="off"
+              placeholder={t("tasks.fields.documentNumberPlaceholder")}
+            />
+          </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="description">{t("tasks.fields.description")}</Label>
@@ -131,16 +156,53 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
         <p className="t-micro text-[var(--ink-3)]">{t("tasks.new.primaryAssigneeHint")}</p>
       </div>
 
+      {/* Loyiha: tumbler öçiq bölsa topşiriq heç qaysi loyihaga boğlanmaydi */}
+      <div className="max-w-2xl space-y-3">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={byProject}
+          aria-labelledby={`${switchId}-label`}
+          aria-describedby={`${switchId}-hint`}
+          onClick={() => setByProject((v) => !v)}
+          className="flex w-full items-center justify-between gap-4 rounded-[var(--radius-control)] bg-[var(--surface-2)] px-4 py-3 text-left transition-colors hover:bg-[color-mix(in_oklab,var(--tint)_6%,var(--surface-2))]"
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <Folder className="size-5 shrink-0 text-[var(--tint)]" aria-hidden />
+            <span className="min-w-0">
+              <span id={`${switchId}-label`} className="block text-sm font-semibold text-[var(--ink)]">{t("tasks.new.byProject")}</span>
+              <span id={`${switchId}-hint`} className="block t-micro text-[var(--ink-3)]">{byProject ? t("tasks.new.byProjectOn") : t("tasks.new.byProjectOff")}</span>
+            </span>
+          </span>
+          <span
+            aria-hidden
+            className={cn(
+              "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-[var(--dur-ui)]",
+              byProject ? "bg-[var(--tint)]" : "bg-[color-mix(in_oklab,var(--ink-3)_35%,transparent)]",
+            )}
+          >
+            <span
+              className={cn(
+                "inline-block size-5 rounded-full bg-white shadow-[var(--shadow-raised)] transition-transform duration-[var(--dur-ui)]",
+                byProject ? "translate-x-[22px]" : "translate-x-0.5",
+              )}
+            />
+          </span>
+        </button>
+        {byProject && (
+          <div className="space-y-2">
+            <Label>{t("tasks.fields.project")}</Label>
+            <Select value={projectId} onValueChange={setProjectId}>
+              <SelectTrigger aria-label={t("tasks.fields.project")}><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
+              <SelectContent>
+                {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
+
       <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label>{t("tasks.fields.project")}</Label>
-          <Select name="projectId">
-            <SelectTrigger><SelectValue placeholder={t("common.selectPlaceholder")} /></SelectTrigger>
-            <SelectContent>
-              {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
         <div className="space-y-2">
           <Label>{t("tasks.fields.priority")}</Label>
           <Select name="priority" defaultValue="medium">
@@ -150,7 +212,7 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2 md:col-span-2">
+        <div className="space-y-2">
           <Label htmlFor="deadline">{t("tasks.fields.deadline")}</Label>
           <Input id="deadline" name="deadline" type="date" />
         </div>
