@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { listAssignableUsers } from "@/server/queries/tasks";
+import { listAssignableUsers, listTaskTypeSuggestions } from "@/server/queries/tasks";
+import { mergeTaskTypeSuggestions } from "@/lib/tasks/task-types";
 import { db } from "@/lib/db";
 import { projects } from "@/lib/db/schema";
 import { PageHeader } from "@/components/ui-biib/PageHeader";
@@ -17,16 +18,17 @@ export default async function NewTaskPage() {
   // Oçiq tayinlaş: har qanday içki xodim vazifa yaratişi/tayinlaşi mumkin (kontragentlar bundan mustasno).
   if (session.user.position === "kontragent") redirect("/tasks");
 
-  const [assignees, prjs] = await Promise.all([
+  const [assignees, prjs, usedTypes] = await Promise.all([
     listAssignableUsers(session.user.id, session.user.position, session.user.departmentId),
     db.select({ id: projects.id, name: projects.name }).from(projects).orderBy(projects.name),
+    listTaskTypeSuggestions(),
   ]);
 
   return (
     <div className="mx-auto max-w-3xl">
       <PageHeader title={t("tasks.newTitle")} back={<BackButton fallbackHref="/tasks" />} />
       <Card>
-        <NewTaskForm assignees={assignees} projects={prjs} maxBytes={MAX_UPLOAD_BYTES} />
+        <NewTaskForm assignees={assignees} projects={prjs} maxBytes={MAX_UPLOAD_BYTES} taskTypes={mergeTaskTypeSuggestions(usedTypes)} />
       </Card>
     </div>
   );

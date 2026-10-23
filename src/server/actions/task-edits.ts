@@ -76,6 +76,7 @@ type TaskRow = {
   deadline: Date | null;
   registrationNumber: string | null;
   documentNumber: string | null;
+  taskType: string | null;
   createdByUserId: string;
   assignedToUserId: string;
 };
@@ -91,6 +92,7 @@ async function loadTask(taskId: string): Promise<TaskRow> {
       deadline: tasks.deadline,
       registrationNumber: tasks.registrationNumber,
       documentNumber: tasks.documentNumber,
+      taskType: tasks.taskType,
       createdByUserId: tasks.createdByUserId,
       assignedToUserId: tasks.assignedToUserId,
     })
@@ -154,6 +156,7 @@ const updateSchema = z.object({
   priority: z.enum(TASK_PRIORITIES),
   deadlineDate: isoDate.nullable(),
   documentNumber: z.string().trim().max(100).nullable().optional(),
+  taskType: z.string().trim().max(100).nullable().optional(),
 });
 
 export async function updateTask(input: {
@@ -163,6 +166,7 @@ export async function updateTask(input: {
   priority: (typeof TASK_PRIORITIES)[number];
   deadlineDate: string | null;
   documentNumber?: string | null;
+  taskType?: string | null;
 }): Promise<TaskEditResult<{ changed: string[] }>> {
   return run(async () => {
     const me = await requireUser();
@@ -172,9 +176,9 @@ export async function updateTask(input: {
 
     const prevDeadline = t.deadline ? toTashkentIso(t.deadline) : null;
     const diff = buildTaskDiff(
-      { title: t.title, description: t.description, priority: t.priority, deadlineDate: prevDeadline, documentNumber: t.documentNumber },
+      { title: t.title, description: t.description, priority: t.priority, deadlineDate: prevDeadline, documentNumber: t.documentNumber, taskType: t.taskType },
       // Eski mijoz documentNumber yubormasa, mavjud qiymat saqlanadi.
-      { title: p.title, description: p.description, priority: p.priority, deadlineDate: p.deadlineDate, documentNumber: p.documentNumber === undefined ? t.documentNumber : p.documentNumber }
+      { title: p.title, description: p.description, priority: p.priority, deadlineDate: p.deadlineDate, documentNumber: p.documentNumber === undefined ? t.documentNumber : p.documentNumber, taskType: p.taskType === undefined ? t.taskType : p.taskType }
     );
     if (diff.changed.length === 0) return { changed: [] as string[] };
     if (t.status === "completed" && touchesLockedFields(diff)) throw new TaskEditError("task_completed");
@@ -185,6 +189,7 @@ export async function updateTask(input: {
     if (diff.changed.includes("priority")) set.priority = diff.next.priority as string;
     if (diff.changed.includes("deadlineDate")) set.deadline = diff.next.deadlineDate ? isoToDeadline(diff.next.deadlineDate) : null;
     if (diff.changed.includes("documentNumber")) set.documentNumber = diff.next.documentNumber ?? null;
+    if (diff.changed.includes("taskType")) set.taskType = diff.next.taskType ?? null;
     await db.update(tasks).set(set).where(eq(tasks.id, t.id));
 
     await logActivity({

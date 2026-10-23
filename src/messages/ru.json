@@ -323,7 +323,9 @@
 			"assignees": "Исполнители",
 			"documentNumber": "Номер документа",
 			"documentNumberPlaceholder": "Например, 01-15/234",
-			"optional": "(необязательно)"
+			"optional": "(необязательно)",
+			"taskType": "Тип задания",
+			"taskTypePlaceholder": "Например, письмо или приказ"
 		},
 		"status": {
 			"todo": "К выполнению",
@@ -2166,13 +2168,14 @@
 			"fieldPriority": "Приоритет",
 			"fieldDeadline": "Срок",
 			"fieldDocumentNumber": "Номер документа",
+			"fieldTaskType": "Тип задания",
 			"assignees": "Исполнители",
 			"addAssignee": "Добавить исполнителя",
 			"removeAssignee": "Убрать исполнителя",
 			"removeConfirm": "Убрать исполнителя из поручения?",
 			"cannotRemoveResponded": "Нельзя убрать исполнителя, который уже ответил",
 			"lastAssignee": "Должен остаться хотя бы один исполнитель",
-			"completedOnlyDescription": "В выполненном поручении можно менять только описание и номер документа",
+			"completedOnlyDescription": "В выполненном поручении можно менять только описание, номер документа и тип задания",
 			"saved": "Изменения сохранены",
 			"selectedNew": "Выбрано новых исполнителей: {count}",
 			"requestExtension": "Запросить продление срока",

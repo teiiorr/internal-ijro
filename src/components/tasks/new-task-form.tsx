@@ -20,7 +20,7 @@ type Project = { id: string; name: string };
 
 const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 
-export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Person[]; projects: Project[]; maxBytes: number }) {
+export function NewTaskForm({ assignees, projects, maxBytes, taskTypes = [] }: { assignees: Person[]; projects: Project[]; maxBytes: number; taskTypes?: string[] }) {
   const t = useTranslations();
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -30,6 +30,7 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
   const [byProject, setByProject] = useState(false);
   const [projectId, setProjectId] = useState("");
   const switchId = useId();
+  const typesListId = useId();
   const files = useAttachmentQueue({ maxBytes });
   // Yuklaş paytida foydalanuvçi boşqa sahifaga ötib ketsa, tugagandan keyin uni bu yerga qaytarmaymiz.
   const mounted = useRef(true);
@@ -67,6 +68,7 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
           additionalAssigneeIds: rest,
           projectId: byProject && projectId ? projectId : null,
           documentNumber: String(fd.get("documentNumber") ?? "").trim() || null,
+          taskType: String(fd.get("taskType") ?? "").trim() || null,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           priority: (fd.get("priority") as any) ?? "medium",
           deadline: deadlineStr ? new Date(deadlineStr).toISOString() : null,
@@ -202,8 +204,24 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
         )}
       </div>
 
-      <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="space-y-2">
+      <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="min-w-0 space-y-2">
+          <Label htmlFor="taskType">
+            {t("tasks.fields.taskType")} <span className="font-normal text-[var(--ink-3)]">{t("tasks.fields.optional")}</span>
+          </Label>
+          <Input
+            id="taskType"
+            name="taskType"
+            list={typesListId}
+            maxLength={100}
+            autoComplete="off"
+            placeholder={t("tasks.fields.taskTypePlaceholder")}
+          />
+          <datalist id={typesListId}>
+            {taskTypes.map((v) => <option key={v} value={v} />)}
+          </datalist>
+        </div>
+        <div className="min-w-0 space-y-2">
           <Label>{t("tasks.fields.priority")}</Label>
           <Select name="priority" defaultValue="medium">
             <SelectTrigger><SelectValue /></SelectTrigger>
@@ -212,7 +230,7 @@ export function NewTaskForm({ assignees, projects, maxBytes }: { assignees: Pers
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <Label htmlFor="deadline">{t("tasks.fields.deadline")}</Label>
           <Input id="deadline" name="deadline" type="date" />
         </div>

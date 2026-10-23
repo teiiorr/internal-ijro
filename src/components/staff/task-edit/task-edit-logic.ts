@@ -78,6 +78,8 @@ export type EditableTaskFields = {
   deadlineDate: string | null;
   /** Hujjat raqami (ixtiyoriy). */
   documentNumber?: string | null;
+  /** Topşiriq turi (ixtiyoriy). */
+  taskType?: string | null;
 };
 
 export type EditableField = keyof EditableTaskFields;
@@ -96,9 +98,9 @@ export function normalizeDescription(s: string | null | undefined): string | nul
 
 export function buildTaskDiff(prev: EditableTaskFields, next: EditableTaskFields): TaskDiff {
   const diff: TaskDiff = { changed: [], old: {}, next: {} };
-  const a = { ...prev, title: prev.title.trim(), description: normalizeDescription(prev.description), documentNumber: normalizeDescription(prev.documentNumber) };
-  const b = { ...next, title: next.title.trim(), description: normalizeDescription(next.description), documentNumber: normalizeDescription(next.documentNumber) };
-  const keys: EditableField[] = ["title", "description", "priority", "deadlineDate", "documentNumber"];
+  const a = { ...prev, title: prev.title.trim(), description: normalizeDescription(prev.description), documentNumber: normalizeDescription(prev.documentNumber), taskType: normalizeDescription(prev.taskType) };
+  const b = { ...next, title: next.title.trim(), description: normalizeDescription(next.description), documentNumber: normalizeDescription(next.documentNumber), taskType: normalizeDescription(next.taskType) };
+  const keys: EditableField[] = ["title", "description", "priority", "deadlineDate", "documentNumber", "taskType"];
   for (const k of keys) {
     if ((a[k] ?? null) !== (b[k] ?? null)) {
       diff.changed.push(k);
@@ -109,9 +111,9 @@ export function buildTaskDiff(prev: EditableTaskFields, next: EditableTaskFields
   return diff;
 }
 
-/** On a completed task only the description and the document number may change. */
+/** On a completed task only the description, the document number and the task type may change. */
 export function touchesLockedFields(diff: TaskDiff): boolean {
-  return diff.changed.some((k) => k !== "description" && k !== "documentNumber");
+  return diff.changed.some((k) => k !== "description" && k !== "documentNumber" && k !== "taskType");
 }
 
 // ---------------------------------------------------------------- extension requests

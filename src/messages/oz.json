@@ -323,7 +323,9 @@
 			"assignees": "Ijroçilar",
 			"documentNumber": "Hujjat raqami",
 			"documentNumberPlaceholder": "Masalan, 01-15/234",
-			"optional": "(ixtiyoriy)"
+			"optional": "(ixtiyoriy)",
+			"taskType": "Topşiriq turi",
+			"taskTypePlaceholder": "Masalan, xat yoki buyruq"
 		},
 		"status": {
 			"todo": "Bajarilişi kerak",
@@ -2166,13 +2168,14 @@
 			"fieldPriority": "Ustuvorlik",
 			"fieldDeadline": "Muddat",
 			"fieldDocumentNumber": "Hujjat raqami",
+			"fieldTaskType": "Topşiriq turi",
 			"assignees": "Ijroçilar",
 			"addAssignee": "Ijroçi qöşiş",
 			"removeAssignee": "Ijroçini olib taşlaş",
 			"removeConfirm": "Ijroçi topşiriqdan olib taşlansinmi?",
 			"cannotRemoveResponded": "Javob yuborgan ijroçini olib taşlab bölmaydi",
 			"lastAssignee": "Kamida bitta ijroçi qolişi kerak",
-			"completedOnlyDescription": "Bajarilgan topşiriqda faqat tavsif va hujjat raqamini özgartiriş mumkin",
+			"completedOnlyDescription": "Bajarilgan topşiriqda faqat tavsif, hujjat raqami va topşiriq turini özgartiriş mumkin",
 			"saved": "Özgarişlar saqlandi",
 			"selectedNew": "{count} ta yangi ijroçi tanlandi",
 			"requestExtension": "Muddatni uzaytirişni söraş",

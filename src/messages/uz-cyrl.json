@@ -323,7 +323,9 @@
 			"assignees": "Ижрочилар",
 			"documentNumber": "Ҳужжат рақами",
 			"documentNumberPlaceholder": "Масалан, 01-15/234",
-			"optional": "(ихтиёрий)"
+			"optional": "(ихтиёрий)",
+			"taskType": "Топшириқ тури",
+			"taskTypePlaceholder": "Масалан, хат ёки буйруқ"
 		},
 		"status": {
 			"todo": "Бажарилиши керак",
@@ -2166,13 +2168,14 @@
 			"fieldPriority": "Устуворлик",
 			"fieldDeadline": "Муддат",
 			"fieldDocumentNumber": "Ҳужжат рақами",
+			"fieldTaskType": "Топшириқ тури",
 			"assignees": "Ижрочилар",
 			"addAssignee": "Ижрочи қўшиш",
 			"removeAssignee": "Ижрочини олиб ташлаш",
 			"removeConfirm": "Ижрочи топшириқдан олиб ташлансинми?",
 			"cannotRemoveResponded": "Жавоб юборган ижрочини олиб ташлаб бўлмайди",
 			"lastAssignee": "Камида битта ижрочи қолиши керак",
-			"completedOnlyDescription": "Бажарилган топшириқда фақат тавсиф ва ҳужжат рақамини ўзгартириш мумкин",
+			"completedOnlyDescription": "Бажарилган топшириқда фақат тавсиф, ҳужжат рақами ва топшириқ турини ўзгартириш мумкин",
 			"saved": "Ўзгаришлар сақланди",
 			"selectedNew": "{count} та янги ижрочи танланди",
 			"requestExtension": "Муддатни узайтиришни сўраш",

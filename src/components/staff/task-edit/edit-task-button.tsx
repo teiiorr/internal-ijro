@@ -18,6 +18,7 @@ import { localizeName, shortName } from "@/lib/names";
 import { cn } from "@/lib/utils";
 import { addTaskAssignees, removeTaskAssignee, updateTask } from "@/server/actions/task-edits";
 import { errorMessageKey, type TaskEditResult } from "./task-edit-logic";
+import { TASK_TYPE_SEEDS } from "@/lib/tasks/task-types";
 
 export type EditTaskButtonProps = {
   task: {
@@ -29,6 +30,7 @@ export type EditTaskButtonProps = {
     deadlineDate: string | null;
     status: string;
     documentNumber?: string | null;
+    taskType?: string | null;
   };
   assignees: Array<{
     userId: string;
@@ -38,12 +40,14 @@ export type EditTaskButtonProps = {
     hasResponse: boolean;
   }>;
   people: PickerPerson[];
+  /** "Topşiriq turi" takliflari (berilmasa, boşlanğiç turlar). */
+  taskTypes?: string[];
 };
 
 const asPriority = (p: string): TaskPriority =>
   (TASK_PRIORITIES as readonly string[]).includes(p) ? (p as TaskPriority) : "medium";
 
-export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps) {
+export function EditTaskButton({ task, assignees, people, taskTypes }: EditTaskButtonProps) {
   const t = useTranslations("staffX.taskEdit");
   const tr = useTranslations();
   const locale = useLocale();
@@ -54,6 +58,7 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
   const [priority, setPriority] = useState<TaskPriority>(asPriority(task.priority));
   const [deadline, setDeadline] = useState(task.deadlineDate ?? "");
   const [docNumber, setDocNumber] = useState(task.documentNumber ?? "");
+  const [taskType, setTaskType] = useState(task.taskType ?? "");
   const [picks, setPicks] = useState<string[]>([]);
   const [showPicker, setShowPicker] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -71,6 +76,7 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
     setPriority(asPriority(task.priority));
     setDeadline(task.deadlineDate ?? "");
     setDocNumber(task.documentNumber ?? "");
+    setTaskType(task.taskType ?? "");
     setPicks([]);
     setShowPicker(false);
   }
@@ -100,6 +106,7 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
           priority,
           deadlineDate: deadline || null,
           documentNumber: docNumber.trim() || null,
+          taskType: taskType.trim() || null,
         });
         if (!res.ok) {
           toast.error(failMessage(res));
@@ -196,6 +203,22 @@ export function EditTaskButton({ task, assignees, people }: EditTaskButtonProps)
               placeholder={tr("tasks.fields.documentNumberPlaceholder")}
               autoComplete="off"
             />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="te-type">{t("fieldTaskType")}</Label>
+            <Input
+              id="te-type"
+              value={taskType}
+              onChange={(e) => setTaskType(e.target.value)}
+              list="te-type-list"
+              maxLength={100}
+              placeholder={tr("tasks.fields.taskTypePlaceholder")}
+              autoComplete="off"
+            />
+            <datalist id="te-type-list">
+              {(taskTypes ?? TASK_TYPE_SEEDS).map((v) => <option key={v} value={v} />)}
+            </datalist>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -6,7 +6,8 @@ import { sql } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { users as usersTbl } from "@/lib/db/schema";
-import { getTask, listAssignableUsers } from "@/server/queries/tasks";
+import { getTask, listAssignableUsers, listTaskTypeSuggestions } from "@/server/queries/tasks";
+import { mergeTaskTypeSuggestions } from "@/lib/tasks/task-types";
 import { getTaskDeadlineRequests } from "@/server/queries/task-history";
 import { getNudgeStats } from "@/server/queries/task-control";
 import { EditTaskButton } from "@/components/staff/task-edit/edit-task-button";
@@ -51,10 +52,11 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
   const deadlineDate = data.task.deadline
     ? new Date(new Date(data.task.deadline as Date).getTime() + 5 * 3600e3).toISOString().slice(0, 10)
     : null;
-  const [requests, nudgeStats, people] = await Promise.all([
+  const [requests, nudgeStats, people, usedTypes] = await Promise.all([
     getTaskDeadlineRequests(id),
     canManage ? getNudgeStats(id) : Promise.resolve({} as Record<string, { count: number; lastAt: string | null }>),
     canManage ? listAssignableUsers(me.id, me.position, me.departmentId) : Promise.resolve([]),
+    canManage ? listTaskTypeSuggestions() : Promise.resolve([] as string[]),
   ]);
   const myPending = requests.find((r) => r.requestedById === me.id && r.status === "pending");
 
@@ -88,9 +90,10 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           <>
             {canManage && (
               <EditTaskButton
-                task={{ id: data.task.id, title: data.task.title, description: data.task.description, priority: data.task.priority, deadlineDate, status: data.task.status, documentNumber: data.task.documentNumber }}
+                task={{ id: data.task.id, title: data.task.title, description: data.task.description, priority: data.task.priority, deadlineDate, status: data.task.status, documentNumber: data.task.documentNumber, taskType: data.task.taskType }}
                 assignees={data.assignees.map((a) => ({ userId: a.userId, fullName: a.fullName, avatarUrl: a.avatarUrl, status: a.status, hasResponse: !!a.responseSubmittedAt }))}
                 people={people}
+                taskTypes={mergeTaskTypeSuggestions(usedTypes)}
               />
             )}
             {data.task.projectId && <ShareTaskChatButton taskId={data.task.id} />}
@@ -115,6 +118,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ id:
           createdAt: data.task.createdAt,
           registrationNumber: data.task.registrationNumber,
           documentNumber: data.task.documentNumber,
+          taskType: data.task.taskType,
         }}
         projectName={data.project?.name ?? null}
       />

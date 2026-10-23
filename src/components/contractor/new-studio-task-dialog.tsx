@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { createStudioTask } from "@/server/actions/tasks";
 import { AttachmentDropzone, QueuedFileList, useAttachmentQueue } from "@/components/tasks/attachment-queue";
+import { TASK_TYPE_SEEDS } from "@/lib/tasks/task-types";
 
 type Stage = { id: string; name: string; orderIndex: number; status: string };
 const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
@@ -62,6 +63,7 @@ export function NewStudioTaskDialog({
           priority: priority as (typeof PRIORITIES)[number],
           deadline: deadlineStr ? new Date(deadlineStr).toISOString() : null,
           documentNumber: String(fd.get("documentNumber") ?? "").trim() || null,
+          taskType: String(fd.get("taskType") ?? "").trim() || null,
         });
         if (!res.ok) {
           setError(t(`common.actionErrors.${res.error}` as "common.actionErrors.not_found"));
@@ -107,6 +109,15 @@ export function NewStudioTaskDialog({
               {t("tasks.fields.documentNumber")} <span className="font-normal text-[var(--ink-3)]">{t("tasks.fields.optional")}</span>
             </Label>
             <Input id="st-docnum" name="documentNumber" maxLength={100} autoComplete="off" placeholder={t("tasks.fields.documentNumberPlaceholder")} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="st-type">
+              {t("tasks.fields.taskType")} <span className="font-normal text-[var(--ink-3)]">{t("tasks.fields.optional")}</span>
+            </Label>
+            <Input id="st-type" name="taskType" list="st-type-list" maxLength={100} autoComplete="off" placeholder={t("tasks.fields.taskTypePlaceholder")} />
+            <datalist id="st-type-list">
+              {TASK_TYPE_SEEDS.map((v) => <option key={v} value={v} />)}
+            </datalist>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="st-desc">{t("tasks.fields.description")}</Label>

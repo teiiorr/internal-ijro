@@ -39,7 +39,7 @@ export async function listTasks(f: TaskListFilters) {
     const patterns = queryVariants(f.search).map((v) => `%${v}%`);
     if (patterns.length) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s), ilike(tasks.documentNumber, s)])) as any);
+      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s), ilike(tasks.documentNumber, s), ilike(tasks.taskType, s)])) as any);
     }
   }
   if (f.status) conds.push(eq(tasks.status, f.status));
@@ -97,7 +97,7 @@ export async function countTasks(f: Pick<TaskListFilters, "actorId" | "actorPosi
     const patterns = queryVariants(f.search).map((v) => `%${v}%`);
     if (patterns.length) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s), ilike(tasks.documentNumber, s)])) as any);
+      conds.push(or(...patterns.flatMap((s) => [ilike(tasks.title, s), ilike(tasks.description, s), ilike(tasks.documentNumber, s), ilike(tasks.taskType, s)])) as any);
     }
   }
   if (f.scope === "mine") {
@@ -204,3 +204,15 @@ export async function listAssignableUsers(actorId: string, actorPosition: Positi
 }
 
 void gte; void lte; void inArray;
+
+/** Avval işlatilgan topşiriq turlari (eng köp işlatilgani birinçi): formadagi taklif röyxati uçun. */
+export async function listTaskTypeSuggestions(limit = 30): Promise<string[]> {
+  const rows = await db
+    .select({ v: tasks.taskType, n: sql<number>`count(*)::int` })
+    .from(tasks)
+    .where(sql`${tasks.taskType} is not null and ${tasks.taskType} <> ''`)
+    .groupBy(tasks.taskType)
+    .orderBy(sql`count(*) desc`)
+    .limit(limit);
+  return rows.map((r) => r.v as string);
+}

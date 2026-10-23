@@ -346,6 +346,8 @@ export const tasks = pgTable(
     registrationNumber: varchar("registration_number", { length: 32 }),
     /** Topşiriq asos bölgan hujjatning raqami (xat, buyruq, bildirgi). Ixtiyoriy, 0046. */
     documentNumber: varchar("document_number", { length: 100 }),
+    /** Topşiriq turi (xat, buyruq, bildirgi...). Erkin matn, ixtiyoriy, 0047. */
+    taskType: varchar("task_type", { length: 100 }),
     title: varchar("title", { length: 500 }).notNull(),
     description: text("description"),
     projectId: uuid("project_id").references(() => projects.id, { onDelete: "set null" }),

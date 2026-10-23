@@ -50,6 +50,8 @@ const createSchema = z.object({
   deadline: z.string().datetime().nullable().optional(),
   /** Ixtiyoriy hujjat raqami (xat, buyruq, bildirgi); böş satr saqlanmaydi. */
   documentNumber: z.string().trim().max(100).nullable().optional(),
+  /** Ixtiyoriy topşiriq turi (erkin matn). */
+  taskType: z.string().trim().max(100).nullable().optional(),
 });
 
 export async function createTask(input: z.infer<typeof createSchema>): Promise<ActionResult<{ id: string }>> {
@@ -82,6 +84,7 @@ export async function createTask(input: z.infer<typeof createSchema>): Promise<A
       .values({
         registrationNumber: regNum,
         documentNumber: parsed.documentNumber || null,
+        taskType: parsed.taskType || null,
         title: parsed.title,
         description: parsed.description ?? null,
         assignedToUserId: parsed.assignedToUserId,
@@ -133,6 +136,8 @@ const studioTaskSchema = z.object({
   deadline: z.string().datetime().nullable().optional(),
   /** Ixtiyoriy hujjat raqami (xat, buyruq, bildirgi); böş satr saqlanmaydi. */
   documentNumber: z.string().trim().max(100).nullable().optional(),
+  /** Ixtiyoriy topşiriq turi (erkin matn). */
+  taskType: z.string().trim().max(100).nullable().optional(),
 });
 
 /**
@@ -190,6 +195,7 @@ export async function createStudioTask(input: z.infer<typeof studioTaskSchema>):
       .values({
         registrationNumber: regNum,
         documentNumber: parsed.documentNumber || null,
+        taskType: parsed.taskType || null,
         title: parsed.title,
         description: parsed.description ?? null,
         assignedToUserId: studioUser.id,
