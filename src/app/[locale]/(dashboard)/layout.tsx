@@ -18,6 +18,10 @@ import { getReviewQueueCount } from "@/server/queries/stages";
 import { canViewContractorChats, isContractorManager } from "@/lib/permissions/contractors";
 import { canSeeMoney } from "@/lib/permissions/money";
 import { canViewWeeklyBrief } from "@/lib/reports/weekly-brief-core";
+import { installMoneyPrivacy } from "@/lib/privacy/money-privacy";
+
+// Egasi uçun: maxfiy rejim yoqilgan bölsa summalar sahifa çizilişidan oldin yashiriladi.
+const PRIVACY_SCRIPT = `(${installMoneyPrivacy.toString()})(window);`;
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -44,6 +48,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <SessionProvider>
+      {owner && <script dangerouslySetInnerHTML={{ __html: PRIVACY_SCRIPT }} />}
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[var(--radius-control)] focus:bg-[var(--tint)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-on-tint"
@@ -53,7 +58,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <RouteProgress />
       {/* overflow-x-clip: hujjat kengligi ekrandan oshmaydi (iOS'da body clip yetarli emas), sticky buzilmaydi. */}
       <div className="min-h-screen flex flex-col pb-24 md:pb-0 relative overflow-x-clip">
-        <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} />
+        <Header userName={session.user.fullName} avatarUrl={me?.avatarUrl} privacyToggle={owner} />
         <NavProvider portal="staff" viewer={viewer} badges={{ reviewQueue: reviewCount }} initialOpen={initialOpen}>
           <div className="flex flex-1 max-w-[1500px] w-full mx-auto">
             <Sidebar />

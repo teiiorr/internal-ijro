@@ -143,6 +143,10 @@
 			"already_setup": "Allaqachon sozlangan",
 			"already_pending": "Allaqachon koʻrib chiqilmoqda",
 			"already_decided": "Qaror allaqachon qabul qilingan"
+		},
+		"privacy": {
+			"hide": "Summalarni yashirish",
+			"show": "Summalarni koʻrsatish"
 		}
 	},
 	"nav": {

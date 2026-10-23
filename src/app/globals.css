@@ -1172,3 +1172,15 @@ html {
   -webkit-backdrop-filter: blur(4px) saturate(1.5);
 }
 .tag-plate > * { position: relative; }
+
+/* Egasining maxfiy rejimi (lib/privacy/money-privacy): pul summalari yashiriladi. Butunlay
+   summadan iborat element xiralaştiriladi, matn içidagi summa esa bekitiladi. */
+html[data-privacy="on"] [data-ijro-money] {
+  filter: blur(0.42em);
+  user-select: none;
+}
+::highlight(ijro-money) {
+  color: transparent;
+  background-color: color-mix(in oklab, var(--ink-3) 28%, transparent);
+  text-shadow: none;
+}

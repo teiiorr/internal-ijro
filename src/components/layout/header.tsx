@@ -6,6 +6,7 @@ import { IconLogout as LogOut, IconSettings as SettingsIcon, IconChevronRight as
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NotificationBell } from "@/components/layout/notification-bell";
+import { PrivacyToggle } from "@/components/layout/privacy-toggle";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { BrandLogo } from "@/components/brand-logo";
 import { signOut } from "next-auth/react";
@@ -14,7 +15,7 @@ import { localizeName } from "@/lib/names";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
-export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: string; avatarUrl?: string | null; rawName?: boolean; menuLinks?: { href: string; label: string }[] }) {
+export function Header({ userName, avatarUrl, rawName, menuLinks, privacyToggle }: { userName: string; avatarUrl?: string | null; rawName?: boolean; menuLinks?: { href: string; label: string }[]; privacyToggle?: boolean }) {
   const t = useTranslations();
   const locale = useLocale();
   const displayName = rawName ? userName : localizeName(userName, locale);
@@ -40,6 +41,7 @@ export function Header({ userName, avatarUrl, rawName, menuLinks }: { userName: 
 
         <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1.5">
           {!pathname.startsWith("/contractor") && <CommandPalette />}
+          {privacyToggle && <PrivacyToggle />}
           <NotificationBell />
           <LanguageSwitcher />
           {/* Mobil ekranda mavzu almashtirgich profil menyusiga ko'chadi (joy tejaladi). */}
