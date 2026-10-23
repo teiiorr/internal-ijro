@@ -77,6 +77,7 @@ export async function listTasks(f: TaskListFilters) {
       assignedToAvatarUrl: assignedAlias.avatarUrl,
       projectId: tasks.projectId,
       projectName: projects.name,
+      taskType: tasks.taskType,
       // Röyxatda qoğoz qisqiç belgisi uçun: topşiriqqa neçta hujjat biriktirilgan.
       attachmentCount: sql<number>`(SELECT count(*)::int FROM ${taskAttachments} ta WHERE ta.task_id = ${tasks.id})`,
     })

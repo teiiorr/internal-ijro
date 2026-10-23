@@ -147,7 +147,9 @@
 		"privacy": {
 			"hide": "Скрыть суммы",
 			"show": "Показать суммы"
-		}
+		},
+		"selectedPeople": "Выбрано: {count}",
+		"removePerson": "Убрать: {name}"
 	},
 	"nav": {
 		"dashboard": "Главная",

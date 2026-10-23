@@ -147,7 +147,9 @@
 		"privacy": {
 			"hide": "Суммаларни яшириш",
 			"show": "Суммаларни кўрсатиш"
-		}
+		},
+		"selectedPeople": "Танланганлар: {count}",
+		"removePerson": "Олиб ташлаш: {name}"
 	},
 	"nav": {
 		"dashboard": "Бош саҳифа",

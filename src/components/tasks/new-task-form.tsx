@@ -92,10 +92,27 @@ export function NewTaskForm({ assignees, projects, maxBytes, taskTypes = [] }: {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid max-w-2xl grid-cols-1 gap-5">
-        <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_14rem]">
+        <div className="min-w-0 space-y-2">
+          <Label htmlFor="title">{t("tasks.fields.title")}</Label>
+          <Input id="title" name="title" required minLength={2} maxLength={500} />
+        </div>
+        {/* Topşiriq turi va hujjat raqami: sarlavhadan keyin darhol, ikkalasi ham ixtiyoriy */}
+        <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-2">
           <div className="min-w-0 space-y-2">
-            <Label htmlFor="title">{t("tasks.fields.title")}</Label>
-            <Input id="title" name="title" required minLength={2} maxLength={500} />
+            <Label htmlFor="taskType">
+              {t("tasks.fields.taskType")} <span className="font-normal text-[var(--ink-3)]">{t("tasks.fields.optional")}</span>
+            </Label>
+            <Input
+              id="taskType"
+              name="taskType"
+              list={typesListId}
+              maxLength={100}
+              autoComplete="off"
+              placeholder={t("tasks.fields.taskTypePlaceholder")}
+            />
+            <datalist id={typesListId}>
+              {taskTypes.map((v) => <option key={v} value={v} />)}
+            </datalist>
           </div>
           <div className="min-w-0 space-y-2">
             <Label htmlFor="documentNumber">
@@ -141,11 +158,6 @@ export function NewTaskForm({ assignees, projects, maxBytes, taskTypes = [] }: {
       <div className="space-y-2">
         <div className="flex items-baseline justify-between gap-2">
           <Label>{t("tasks.fields.assignees")}</Label>
-          {selectedIds.length > 0 && (
-            <span className="t-micro font-medium text-[var(--ink-3)]">
-              {t("tasks.new.selectedCount", { n: selectedIds.length })}
-            </span>
-          )}
         </div>
         <EmployeePicker
           people={assignees}
@@ -204,23 +216,7 @@ export function NewTaskForm({ assignees, projects, maxBytes, taskTypes = [] }: {
         )}
       </div>
 
-      <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="min-w-0 space-y-2">
-          <Label htmlFor="taskType">
-            {t("tasks.fields.taskType")} <span className="font-normal text-[var(--ink-3)]">{t("tasks.fields.optional")}</span>
-          </Label>
-          <Input
-            id="taskType"
-            name="taskType"
-            list={typesListId}
-            maxLength={100}
-            autoComplete="off"
-            placeholder={t("tasks.fields.taskTypePlaceholder")}
-          />
-          <datalist id={typesListId}>
-            {taskTypes.map((v) => <option key={v} value={v} />)}
-          </datalist>
-        </div>
+      <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
         <div className="min-w-0 space-y-2">
           <Label>{t("tasks.fields.priority")}</Label>
           <Select name="priority" defaultValue="medium">

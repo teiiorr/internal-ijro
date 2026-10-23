@@ -2,7 +2,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder, IconCalendarEvent, IconPaperclip as Paperclip } from "@tabler/icons-react";
+import { IconList as List, IconCalendar as CalendarIcon, IconInbox as Inbox, IconFolder as Folder, IconCalendarEvent, IconPaperclip as Paperclip, IconTag as Tag } from "@tabler/icons-react";
 import { formatShortDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { useRouter } from "@/i18n/navigation";
@@ -25,6 +25,8 @@ type T = {
   assignedToName: string | null;
   assignedToAvatarUrl?: string | null;
   projectName: string | null;
+  /** Topşiriq turi (ixtiyoriy). */
+  taskType?: string | null;
   /** Biriktirilgan hujjatlar soni (röyxatda qoğoz qisqiç belgisi). */
   attachmentCount?: number | null;
 };
@@ -133,6 +135,12 @@ export function TasksViewSwitcher({
                           <span className="inline-flex min-w-0 items-center gap-1.5">
                             <UserAvatar name={row.assignedToName} avatarUrl={row.assignedToAvatarUrl} size="xs" clickable={false} />
                             <span className="truncate">{row.assignedToName}</span>
+                          </span>
+                        )}
+                        {row.taskType && (
+                          <span className="inline-flex min-w-0 items-center gap-1" title={t("tasks.fields.taskType")}>
+                            <Tag className="size-3.5 shrink-0" aria-hidden />
+                            <span className="truncate">{row.taskType}</span>
                           </span>
                         )}
                         {row.projectName && (

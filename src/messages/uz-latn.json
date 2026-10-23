@@ -147,7 +147,9 @@
 		"privacy": {
 			"hide": "Summalarni yashirish",
 			"show": "Summalarni koʻrsatish"
-		}
+		},
+		"selectedPeople": "Tanlanganlar: {count}",
+		"removePerson": "Olib tashlash: {name}"
 	},
 	"nav": {
 		"dashboard": "Bosh sahifa",
